@@ -1,0 +1,86 @@
+
+<Html>
+	<Head>
+		<Title>NeatUpload Design</Title>
+	</Head>
+	<Body>
+	<h2>Important Note</h2>
+	<p>
+	This is a work in progress.  I add to it as things come to mind.
+	</p>
+	<h2>Progress Display</h2>
+	<p>
+	The progress display is designed to work under any of the following conditions:
+	<ul>
+		<li>either in an iframe or a pop-up
+		<li>with or without javascript (though better with javascript)
+		<li>with modern browsers (at least Mozilla/Firefox and IE)
+	</ul>
+	The hardest condition is making it work without javascript.
+	</p>
+	<p>
+	Initially, we make only the refresh button visible.  And we make its url contains
+	"refresher=server" to indicate that the server should do a server-side refresh 
+	if the button is clicked.  Additionally, we register a startup script to remove the
+	refresh button because it is unnecessary if client side scripting is available. 
+	</p>
+	<p>
+	Initial request includes a postBackID which is used to find the upload context.
+	Page checks status of the upload.  Which is one of:
+	<ul>
+		<li>Unknown - the uploaded hasn't started yet or it has finished and been removed.
+		<li>InProgress
+		<li>Completed
+		<li>Cancelled
+	</ul>
+	If cancelled=true, we set the status to Cancelled.
+	Page then updates the progress bar.
+	<ul>
+		<li>Unknown - try to find the last post back based on the lastPostBackID param.
+			If successful, use the status of the last post back.
+		<li>InProgress - Display time remaining
+		<li>Completed - Display "Upload Completed!"
+		<li>Cancelled - Display "Upload Cancelled!"
+	</ul>
+	</p>
+	<p>
+	If the status is unchanged from the last refresh and it is Completed or Cancelled,
+	then the page is not refreshed and a startup script is registered to close the window
+	if it's a pop-up.  
+	</p>
+	<p>
+	Otherwise, if refresh!=false we refresh the page in one second, and add a prevStatus
+	param to the url to track the previous status.  Since we will be refreshing, we hide the
+	refresh link.  
+	<p>
+	<p>
+	Firefox doesn't do server refreshes of iframes, so we have to do client (ie javascript) 
+	refreshes some times.  Client refreshes
+	are always initiated by an onsubmit event, so we put refresher=client in the progress
+	display url for that event.  Server refreshes are always initiated by a link, so we put
+	refresher=server for those urls. 
+	</p>
+	<p>
+	If we are going to do a server refresh, we make the "Stop Refresh" button visible and add
+	"refresh=false" to it's url.
+	</p>
+	<p>
+	If we are going to do a client refresh, we make the "Cancel" button visible, make it's 
+	onclick	handler stop the upload, and add "cancelled=true" to the button
+	link url.  We also register a startup script that hides the "Cancel" button 
+	if the browser doesn't support stopping uploads. 
+	</p>
+	<h2>Thread Safety</h2>
+	<p>
+	The only data which is subject to concurrent read and write is the members of UploadContext.  
+	The UploadContext is written to as the upload is received and parsed, and it is read by the
+	ProgressBar control which is typically being displayed in another window while the upload is
+	being received.
+	</p>
+	<p>
+	To ensure thread safety, UploadContext synchronizes access to all it's members and uses a
+	synchronized Hashtable to store the UploadedFiles objects.  Note that the UploadedFiles objects
+	are never changed after they are added to the Hashtable, so they don't need to be synchronized.
+	</p>
+	</Body>
+</Html>

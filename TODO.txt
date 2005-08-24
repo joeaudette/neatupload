@@ -1,0 +1,31 @@
+ 
+Release 0.5, integrate into mojoPortal
+
+Credits
+Split parser into separate class.
+Configurable maxFileSize and maxOtherSize
+Javascript Object-detection
+Internationalized
+Comment/document code
+Target progress bar to a frame
+
+Release 1.0
+
+Add FileInput.FileUploaded event
+Document design (eg write an article about it)
+Acceptance tests
+Designer support
+XMLHttpRequest
+Multi-file
+Zip files
+destDir, destName, and overwrite properties
+maxBandwidth property
+
+Release 1.1
+
+UploadDomains which limit size, bandwidth, directory, overwrite, etc. 
+- Domains would be application-wide, and domain IDs would be MACed into postBackIds.
+- UploadDomains create UploadedFiles that FilteringWorkerRequest stores in UploadContext
+- UploadedFiles provide outputStreams to FilteringWorkerRequest
+- Those streams can limit bandwidth, filesize, etc.
+- To avoid creating large numbers of domains, do moves/overwrites in InputFile
