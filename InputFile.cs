@@ -40,6 +40,10 @@ namespace Brettle.Web.NeatUpload
 			get { return (file != null) ? file.FileName : null; }
 		}
 
+		public string ContentType {
+			get { return (file != null) ? file.ContentType : null; }
+		}
+
 		protected override void OnInit(EventArgs e)
 		{
 			InitializeComponent();

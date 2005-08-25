@@ -29,11 +29,7 @@ using log4net;
 namespace Brettle.Web.NeatUpload
 {
 	public class Demo : System.Web.UI.Page
-	{
-		// Create a logger for use in this class
-		private static readonly log4net.ILog log 
-			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-	
+	{	
 		protected HtmlForm form;
 		protected InputFile inputFile;
 		protected Button submitButton;
@@ -47,22 +43,18 @@ namespace Brettle.Web.NeatUpload
 			base.OnInit(e);
 		}
 		
-		private void submitButton_Clicked(object sender, EventArgs e)
-		{
-			if (log.IsDebugEnabled) log.Debug("In submitButton_Clicked");
-		}
-			
-		
-
 		private void InitializeComponent()
 		{
 			this.Load += new System.EventHandler(this.Page_Load);
 			this.PreRender += new System.EventHandler(this.Page_PreRender);
-			this.submitButton.Click += new System.EventHandler(this.submitButton_Clicked);
 		}
 		
 		private void Page_Load(object sender, EventArgs e)
 		{
+			// ProgressBar.AddTrigger adds script to the page which causes the
+			// progress bar to start updating when the specified button is 
+			// clicked.  AddTrigger should be called no earlier than page
+			// Load and no later than page Render.
 			progressBar.AddTrigger(submitButton);
 			inlineProgressBar.AddTrigger(submitButton);
 		}
@@ -71,12 +63,15 @@ namespace Brettle.Web.NeatUpload
 		{
 			if (this.IsPostBack)
 			{
-				if (log.IsDebugEnabled) log.Debug("inputFile=" + inputFile);
-				if (log.IsDebugEnabled) log.Debug("inputFile.TmpFile=" + inputFile.TmpFile);
-	//			inputFile.TmpFile.MoveTo(inputFile.FileName);
 				if (inputFile.TmpFile != null)
 				{
-					bodyPre.InnerText = "Size: " + inputFile.TmpFile.Length + " Name: " + inputFile.FileName;
+					/* 
+						In a real app, you'd do something like:
+							inputFile.TmpFile.MoveTo(inputFile.FileName);
+					*/
+					bodyPre.InnerText = "Name: " + inputFile.FileName + "\n";
+					bodyPre.InnerText += "Size: " + inputFile.TmpFile.Length + "\n";
+					bodyPre.InnerText += "Content type: " + inputFile.ContentType + "\n"; 
 				}
 			}
 		}

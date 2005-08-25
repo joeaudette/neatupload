@@ -1,16 +1,16 @@
 <Project name="NeatUpload" fileversion="2.0" language="C#" ctype="DotNetProject">
-  <Configurations>
+  <Configurations active="Debug">
     <Configuration name="Debug" ctype="DotNetProjectConfiguration">
-      <Output directory="./bin" assembly="NeatUpload" />
+      <Output directory="./bin/Debug" assembly="Brettle.Web.NeatUpload" />
       <Build debugmode="True" target="Library" />
       <Execution runwithwarnings="True" consolepause="False" runtime="MsNet" />
-      <CodeGeneration compiler="Csc" warninglevel="4" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" generatexmldocumentation="False" ctype="CSharpCompilerParameters" />
+      <CodeGeneration compiler="Csc" warninglevel="4" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" generatexmldocumentation="False" ctype="CSharpCompilerParameters" />
     </Configuration>
     <Configuration name="Release" ctype="DotNetProjectConfiguration">
-      <Output directory="./bin/Release" assembly="NeatUpload" />
+      <Output directory="./bin/Release" assembly="Brettle.Web.NeatUpload" />
       <Build debugmode="False" target="Library" />
       <Execution runwithwarnings="True" consolepause="False" runtime="MsNet" />
-      <CodeGeneration compiler="Csc" warninglevel="4" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" generatexmldocumentation="False" ctype="CSharpCompilerParameters" />
+      <CodeGeneration compiler="Csc" warninglevel="4" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" generatexmldocumentation="False" ctype="CSharpCompilerParameters" />
     </Configuration>
   </Configurations>
   <References>
@@ -41,7 +41,6 @@
     <File name="./Global.asax" subtype="Code" buildaction="Nothing" />
     <File name="./Global.asax.cs" subtype="Code" buildaction="Compile" />
     <File name="./Global.asax.resx" subtype="Code" buildaction="Nothing" />
-    <File name="./Design.html" subtype="Code" buildaction="Compile" />
     <File name="./SizeLimitingWorkerRequest.cs" subtype="Code" buildaction="Compile" />
     <File name="./DecoratedWorkerRequest.cs" subtype="Code" buildaction="Compile" />
     <File name="./NeatUpload.csproj" subtype="Code" buildaction="Nothing" />
@@ -51,5 +50,8 @@
     <File name="./NeatUpload/refresh.png" subtype="Code" buildaction="Nothing" />
     <File name="./NeatUpload/stop_refresh.png" subtype="Code" buildaction="Nothing" />
     <File name="./NeatUpload/default.css" subtype="Code" buildaction="Nothing" />
+    <File name="./docs" subtype="Directory" buildaction="Compile" />
+    <File name="./docs/Design.html" subtype="Code" buildaction="Nothing" />
+    <File name="./docs/Manual.html" subtype="Code" buildaction="Nothing" />
   </Contents>
 </Project>
