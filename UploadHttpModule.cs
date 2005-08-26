@@ -147,6 +147,13 @@ namespace Brettle.Web.NeatUpload
 				{
 					HttpContext.Current = savedContext;
 					log4net.ThreadContext.Properties["url"] = app.Context.Request.RawUrl;
+					
+					// Workaround for bug in mod_mono (at least rev 1.0.9) where the response status
+					// is overwritten with 200 when app.CompleteRequest() is called.  Status (and headers)
+					// *should* be ignored because they were already sent when the subrequest was processed...
+					app.Response.StatusCode = subWorker.StatusCode;
+					app.Response.StatusDescription = subWorker.StatusDescription;
+
 					// Always call CompleteRequest() to prevent further processing of the original request.
 					app.CompleteRequest();
 				}
