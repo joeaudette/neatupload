@@ -47,16 +47,17 @@ namespace Brettle.Web.NeatUpload
 		private static readonly log4net.ILog log 
 			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+		internal int StatusCode = 200;
+		internal string StatusDescription = null;
 		protected HttpWorkerRequest OrigWorker;
-		
+		private object sync = new object();
+		private bool isEndOfRequest = false;
+				
 		protected DecoratedWorkerRequest (HttpWorkerRequest origWorker) 
 		{
 			if (log.IsDebugEnabled) log.Debug("origWorker=" + origWorker);
 			OrigWorker = origWorker;
 		}
-		
-		private object sync = new object();
-		private bool isEndOfRequest = false;
 		
 		internal void WaitForEndOfRequest()
 		{
@@ -353,6 +354,8 @@ namespace Brettle.Web.NeatUpload
 
 		public override void SendStatus (int statusCode, string statusDescription)
 		{
+			StatusCode = statusCode;
+			StatusDescription = statusDescription;
 			OrigWorker.SendStatus (statusCode, statusDescription);
 		}
 		
