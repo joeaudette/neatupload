@@ -40,9 +40,9 @@ namespace Brettle.Web.NeatUpload
 					= ConfigurationSettings.AppSettings["NeatUpload.MaxNormalRequestLength"];
 				if (maxNormalRequestLengthSetting == null)
 				{
-					maxNormalRequestLengthSetting = "4194304"; // 4Mbytes
+					maxNormalRequestLengthSetting = "4096"; // 4Mbytes
 				}
-				return Int32.Parse(maxNormalRequestLengthSetting);
+				return Int32.Parse(maxNormalRequestLengthSetting) * 1024;
 			}
 		}
 
