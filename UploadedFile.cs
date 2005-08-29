@@ -25,7 +25,7 @@ using System.Configuration;
 
 namespace Brettle.Web.NeatUpload
 {
-	public class UploadedFile
+	internal class UploadedFile
 	{
 		// Create a logger for use in this class
 		private static readonly log4net.ILog log 
@@ -39,6 +39,7 @@ namespace Brettle.Web.NeatUpload
 			{
 				tmpDir = Path.GetTempPath();
 			}
+			tmpDir = Path.Combine(HttpContext.Current.Request.PhysicalApplicationPath, tmpDir);
 			DirectoryInfo tmpDirInfo = new DirectoryInfo(tmpDir);
 			if (!tmpDirInfo.Exists)
 			{
@@ -63,10 +64,15 @@ namespace Brettle.Web.NeatUpload
 		}
 		private string tmpFileName;
 		
-		public FileInfo TmpFile;
+		internal bool IsUploaded
+		{
+			get { return (TmpFile != null && (TmpFile.Length > 0 || FileName.Length > 0)); }
+		}
 		
-		public string FileName;
+		internal FileInfo TmpFile;
 		
-		public string ContentType;
+		internal string FileName;
+		
+		internal string ContentType;
 	}
 }

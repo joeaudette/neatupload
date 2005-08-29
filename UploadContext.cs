@@ -110,9 +110,30 @@ namespace Brettle.Web.NeatUpload
 				{
 					f.Dispose();
 				}
-				uploadedFiles.Clear();
+				// Don't clear the Hashtable, because we use it to determine the number of files uploaded in the
+				// last postback.
+				// uploadedFiles.Clear();
 			}
 		}
+		
+		internal int NumUploadedFiles
+		{
+			get 
+			{
+				int numUploadedFiles = 0;
+				lock(uploadedFiles.SyncRoot) 
+				{
+					foreach (UploadedFile f in uploadedFiles.Values)
+					{
+						if (f.IsUploaded)
+						{
+							numUploadedFiles++;
+						}
+					}
+				}
+				return numUploadedFiles;
+			}
+		}	
 		
 		internal double PercentComplete
 		{

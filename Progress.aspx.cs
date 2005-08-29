@@ -176,6 +176,10 @@ if (NeatUploadMainWindow.stop == null && NeatUploadMainWindow.document.execComma
 				if (lastPostBackID != null && Request.Params["refresher"] == null)
 				{
 					uploadContext = UploadContext.FindByID(lastPostBackID);
+					if (uploadContext.NumUploadedFiles == 0)
+					{
+						uploadContext = null;
+					} 
 				}
 			}			
 						
