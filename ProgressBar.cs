@@ -151,7 +151,10 @@ NeatUpload_AddHandler('" + formControl.ClientID + @"', 'submit', function () {
 <script language=""javascript"">
 <!--
 NeatUpload_AddHandler('" + control.ClientID + @"', 'click', function () {
-	NeatUpload_DisplayProgress_" + this.ClientID + @" = true;
+	if (NeatUpload_IsFilesToUpload('" + formControl.ClientID + @"'))
+	{
+		NeatUpload_DisplayProgress_" + this.ClientID + @" = true;
+	}
 });
 -->
 </script>
@@ -190,6 +193,31 @@ function NeatUpload_AddHandler(id, eventName, handler)
 			elem[""on"" + eventName] = handler;
 		}
 	}
+}
+function NeatUpload_IsFilesToUpload(id)
+{
+	var formElem = document.getElementById(id);
+	while (formElem && formElem.tagName.toLowerCase() != ""form"")
+	{
+		formElem = formElem.parent;
+	}
+	if (!formElem) 
+	{
+		return false;
+	}
+	var inputElems = formElem.getElementsByTagName(""input"");
+	var foundFileInput = false;
+	for (i = 0; i < inputElems.length; i++)
+	{
+		var inputElem = inputElems.item(i);
+		if (inputElem && inputElem.type && inputElem.type.toLowerCase() == ""file"")
+		{
+			foundFileInput = true;
+			if (inputElem.value && inputElem.value.length > 0)
+				return true;
+		}
+	}
+	return false; 
 }
 -->
 </script>

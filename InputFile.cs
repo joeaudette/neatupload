@@ -33,15 +33,15 @@ namespace Brettle.Web.NeatUpload
 		private UploadedFile file;
 		
 		public FileInfo TmpFile {
-			get { return (file != null) ? file.TmpFile : null; }
+			get { return (file != null && file.IsUploaded) ? file.TmpFile : null; }
 		}
 		
 		public string FileName {
-			get { return (file != null) ? file.FileName : null; }
+			get { return (file != null && file.IsUploaded) ? file.FileName : null; }
 		}
 
 		public string ContentType {
-			get { return (file != null) ? file.ContentType : null; }
+			get { return (file != null && file.IsUploaded) ? file.ContentType : null; }
 		}
 
 		protected override void OnInit(EventArgs e)
