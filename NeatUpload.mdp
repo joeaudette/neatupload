@@ -53,5 +53,8 @@
     <File name="./docs" subtype="Directory" buildaction="Compile" />
     <File name="./docs/Design.html" subtype="Code" buildaction="Nothing" />
     <File name="./docs/Manual.html" subtype="Code" buildaction="Nothing" />
+    <File name="./LICENSE-log4net.txt" subtype="Code" buildaction="Nothing" />
+    <File name="./LICENSE.txt" subtype="Code" buildaction="Compile" />
+    <File name="./COPYING-LIB.txt" subtype="Code" buildaction="Nothing" />
   </Contents>
 </Project>
