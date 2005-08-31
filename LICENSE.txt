@@ -1,0 +1,7 @@
+NeatUpload itself is licensed under the Lesser General Public
+License (LGPL) which can be found in COPYING-LIB.txt.
+
+NeatUpload uses log4net.  log4net is licensed under the
+Apache Software License Version 2.0 which can be found in 
+LICENSE-log4net.txt.
+
