@@ -56,5 +56,6 @@
     <File name="./LICENSE-log4net.txt" subtype="Code" buildaction="Nothing" />
     <File name="./LICENSE.txt" subtype="Code" buildaction="Compile" />
     <File name="./COPYING-LIB.txt" subtype="Code" buildaction="Nothing" />
+    <File name="./NeatUpload/Error413.aspx" subtype="Code" buildaction="Nothing" />
   </Contents>
 </Project>

@@ -165,6 +165,10 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "NeatUpload\Error413.aspx"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "NeatUpload\cancel.png"
                     BuildAction = "Content"
                 />

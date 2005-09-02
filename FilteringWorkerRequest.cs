@@ -245,7 +245,9 @@ namespace Brettle.Web.NeatUpload
 			}
 */
 			// If the non-file portion of the request is too large, throw an exception.
-			if (preloadedEntityBodyStream.Length > UploadHttpModule.MaxNormalRequestLength) {
+			if (preloadedEntityBodyStream.Length > UploadHttpModule.MaxNormalRequestLength 
+				|| this.grandTotalBytesRead > UploadHttpModule.MaxRequestLength ) {
+				if (log.IsDebugEnabled) log.Debug("Request Entity Too Large");
 				throw new HttpException(413, "Request Entity Too Large");
 			}
 		}
