@@ -41,7 +41,6 @@ namespace Brettle.Web.NeatUpload
 			return uploadContext;
 		}
 		
-		private FileStream fileStream;
 
 		public FilteringWorkerRequest (HttpWorkerRequest origWorker) : base(origWorker)
 		{
@@ -52,7 +51,8 @@ namespace Brettle.Web.NeatUpload
 		private const int bufferSize = 4096; // Arbitrary (but > maxHeadersSize) 
 		private byte[] buffer = new byte[bufferSize]; 
 		private Stream outputStream = null;
-		MemoryStream preloadedEntityBodyStream;		
+		private FileStream fileStream = null;
+		MemoryStream preloadedEntityBodyStream = null;		
 		private byte[] preloadedEntityBody = null;
 		private int writePos = 0; // Where to put the next byte read from OrigWorker
 		private int readPos = 0; // Where to get the next byte to put in a stream 
@@ -303,6 +303,13 @@ namespace Brettle.Web.NeatUpload
 				log.Error("Rethrowing exception in ParseMultipart", ex);
 				throw;
 			}
+			finally
+			{
+				if (fileStream != null)
+					fileStream.Close();
+				if (preloadedEntityBodyStream != null)
+					preloadedEntityBodyStream.Close();
+			}
 		}
 		
 		private void ParseOrThrow()
@@ -369,7 +376,7 @@ namespace Brettle.Web.NeatUpload
 				if (fileName != null && fileID.StartsWith(UploadContext.NamePrefix))
 				{
 					if (log.IsDebugEnabled) log.Debug("Calling UploadContext.Current.CreateUploadedFile(" + fileID + "...)");
-					outputStream = uploadContext.CreateUploadedFile(fileID, fileName, contentType);
+					outputStream = fileStream = uploadContext.CreateUploadedFile(fileID, fileName, contentType);
 					readPos = parsePos; // Skip past the boundary and headers
 				}
 				else
@@ -412,8 +419,6 @@ namespace Brettle.Web.NeatUpload
 
 		public override void EndOfRequest ()
 		{
-			if (fileStream != null)
-				fileStream.Close();
 			base.EndOfRequest();
 		}
 		
