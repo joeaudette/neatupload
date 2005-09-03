@@ -182,7 +182,10 @@ namespace Brettle.Web.NeatUpload
 			if (origPreloadedBody != null)
 			{
 				int read = Math.Min(count, origPreloadedBody.Length - origPreloadedBodyPos);
-				Buffer.BlockCopy(origPreloadedBody, origPreloadedBodyPos, destBuf, 0, read);
+				if (read > 0) 
+				{
+					Buffer.BlockCopy(origPreloadedBody, origPreloadedBodyPos, destBuf, totalRead, read);
+				}
 				origPreloadedBodyPos += read;
 				if (read < count)
 				{
@@ -195,7 +198,10 @@ namespace Brettle.Web.NeatUpload
 			{
 				byte[] localBuffer = new byte[count];
 				int read = OrigWorker.ReadEntityBody(localBuffer, count);
-				Buffer.BlockCopy(localBuffer, 0, destBuf, 0, read);
+				if (read > 0) 
+				{
+					Buffer.BlockCopy(localBuffer, 0, destBuf, totalRead, read);
+				}
 				totalRead += read;
 			}
 			return totalRead;
