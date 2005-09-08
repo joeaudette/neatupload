@@ -189,7 +189,7 @@ if (NeatUploadMainWindow.stop == null && NeatUploadMainWindow.document.execComma
 			}
 			else
 			{
-				barDiv.Style["width"] = uploadContext.PercentComplete + "%";
+				barDiv.Style["width"] = Math.Round(uploadContext.PercentComplete) + "%";
 				if (uploadContext.Status == UploadStatus.Cancelled)
 				{
 					cancelledSpan.Visible = true;
