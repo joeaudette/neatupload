@@ -32,7 +32,9 @@ namespace Brettle.Web.NeatUpload
 	{	
 		protected HtmlForm form;
 		protected InputFile inputFile;
+		protected InputFile inputFile2;
 		protected Button submitButton;
+		protected LinkButton linkButton;
 		protected HtmlGenericControl bodyPre;
 		protected ProgressBar progressBar;
 		protected ProgressBar inlineProgressBar;
@@ -56,22 +58,37 @@ namespace Brettle.Web.NeatUpload
 			// clicked.  AddTrigger should be called no earlier than page
 			// Load and no later than page Render.
 			progressBar.AddTrigger(submitButton);
+			progressBar.AddTrigger(linkButton);
 			inlineProgressBar.AddTrigger(submitButton);
+			inlineProgressBar.AddTrigger(linkButton);
 		}
 
 		private void Page_PreRender(object sender, EventArgs e)
 		{
 			if (this.IsPostBack)
 			{
+				bodyPre.InnerText = "";
 				if (inputFile.TmpFile != null)
 				{
 					/* 
 						In a real app, you'd do something like:
 							inputFile.TmpFile.MoveTo(inputFile.FileName);
 					*/
-					bodyPre.InnerText = "Name: " + inputFile.FileName + "\n";
-					bodyPre.InnerText += "Size: " + inputFile.TmpFile.Length + "\n";
-					bodyPre.InnerText += "Content type: " + inputFile.ContentType + "\n"; 
+					bodyPre.InnerText += "File #1:\n"; 
+					bodyPre.InnerText += "  Name: " + inputFile.FileName + "\n";
+					bodyPre.InnerText += "  Size: " + inputFile.TmpFile.Length + "\n";
+					bodyPre.InnerText += "  Content type: " + inputFile.ContentType + "\n";
+				}
+				if (inputFile2.TmpFile != null)
+				{
+					/* 
+						In a real app, you'd do something like:
+							inputFile.TmpFile.MoveTo(inputFile.FileName);
+					*/
+					bodyPre.InnerText += "File #2:\n"; 
+					bodyPre.InnerText += "  Name: " + inputFile2.FileName + "\n";
+					bodyPre.InnerText += "  Size: " + inputFile2.TmpFile.Length + "\n";
+					bodyPre.InnerText += "  Content type: " + inputFile2.ContentType + "\n";
 				}
 			}
 		}

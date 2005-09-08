@@ -31,7 +31,9 @@
 			</p>
 			<p>
 			Pick a file: <Upload:InputFile id="inputFile" runat="server" />
-			<asp:Button id="submitButton" runat="server" Text="Submit" />
+			Pick another file: <Upload:InputFile id="inputFile2" runat="server" />
+			<asp:Button id="submitButton" runat="server" Text="Submit with a button" />
+			<asp:LinkButton id="linkButton" runat="server" Text="Submit with a link" />
 			<br />
 			<pre id="bodyPre" runat="server">
 			

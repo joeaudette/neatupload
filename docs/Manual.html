@@ -2,6 +2,8 @@
 <html>
 <head>
 
+
+  
   
   <title>NeatUpload Manual</title>
 </head>
@@ -12,22 +14,36 @@
 
 <h1><a class="mozTocH1" name="mozTocId101532"></a>NeatUpload Manual</h1>
 
+
 <ul id="mozToc">
 <!--mozToc h2 1 h3 2 h4 3 h5 4 h5 5 h6 6--><li><a href="#mozTocId903858">Introduction</a></li>
+
   <li><a href="#mozTocId304923">Installation</a></li>
+
   <li><a href="#mozTocId50790">Basic Usage</a></li>
+
   <li><a href="#mozTocId875291">Advanced Usage</a>
+    
     <ul>
+
       <li><a href="#mozTocId905959">Changing the Temporary Directory</a></li>
       <li><a href="#mozTocId23283">Limiting the Size of Upload Requests</a></li>
+
       <li><a href="#mozTocId358727">Changing the Maximum Size of Normal Requests</a></li>
+
       <li><a href="#mozTocId390633">Customizing Progress.aspx</a></li>
+
       <li><a href="#mozTocId184279">Creating Custom Fallback Content for ProgressBar</a></li>
+    
     </ul>
+
   </li>
+
 </ul>
 
+
 <h2><a class="mozTocH2" name="mozTocId903858"></a>Introduction</h2>
+
 
 
 <p> <a href="http://www.brettle.com/neatupload">NeatUpload</a>
@@ -40,6 +56,7 @@ and works under <a href="http://www.mono-project.com/">Mono's</a>
 as well as Microsoft's ASP.NET implementation. </p>
 
 
+
 <p> NeatUpload contains two custom controls (<code>InputFile</code>
 and <code>ProgressBar</code>), an <code>HttpModule</code>
 (<code>UploadHttpModule</code>), and a page (<code>Progress.aspx</code>).
@@ -48,10 +65,12 @@ related. The remainder of this manual describes how to install and use
 NeatUpload. </p>
 
 
+
 <p> <code><strong>InputFile</strong></code>
 is a custom control that renders like <code>HtmlInputFile</code>,
 but provides properties to access the temporary file containing the
 upload, as well as the client-specified name and content type. </p>
+
 
 
 <p> <code><strong>ProgressBar</strong></code>
@@ -70,6 +89,7 @@ which loads the <code>Progress.aspx</code> page. <code>Progress.aspx</code>
 (described below) displays the progress bar. </p>
 
 
+
 <p> <code><strong>UploadHttpModule</strong></code>
 is an <code>HttpModule</code> that intercepts each
 request, streams <code>InputFile</code> uploads to
@@ -86,6 +106,7 @@ but no progress bar will be displayed. This greatly reduces the risk of
 adopting NeatUpload. </p>
 
 
+
 <p> <code><strong>Progress.aspx</strong></code>
 is the page that is displayed in the site provided by the <code>ProgressBar</code>
 control (i.e. in the IFRAME or popup). The codebehind for <code>Progress.aspx</code>
@@ -96,7 +117,9 @@ progress bar itself), and inserts JavaScript which causes the display
 to update. </p>
 
 
+
 <h2><a class="mozTocH2" name="mozTocId304923"></a>Installation</h2>
+
 
 
 <p> Installing NeatUpload is pretty straightforward. Just copy
@@ -105,12 +128,15 @@ modification to your <code>Web.config</code>.
 Specifically: </p>
 
 
+
 <ol>
+
 
 
   <li> If you haven't already, download the release and extract
 it wherever you want. All the files will be extracted into a
 subdirectory name <code>NeatUpload-1.0/</code>. </li>
+
 
 
   <li> (Optional) To see the demo running on your local machine,
@@ -121,9 +147,12 @@ website. To use NeatUpload in your own web application, continue with
 the remaining installation steps. </li>
 
 
+
   <li> If you aren't already using log4net:
     
+    
     <ol>
+
 
 
       <li> Copy the log4net.dll from the <code>NeatUpload-1.0/bin/Debug/</code>
@@ -132,23 +161,31 @@ the <code>bin/
         </code>directory of your web application. </li>
 
 
+
       <li> Copy <code>NeatUpload-1.0/log4net.config</code>
 to the root directory of your web application. </li>
 
 
+
       <li> Add the following line to the top of your <code>Global.asax.cs</code>:
         
+        
         <pre>[assembly: log4net.Config.XmlConfigurator(ConfigFile="log4net.config", Watch=true)]<br>	</pre>
+
 
 
       </li>
 
 
+
+    
     
     </ol>
 
 
+
   </li>
+
 
 
   <li> Copy <code>Brettle.Web.NeatUpload.dll</code>
@@ -156,6 +193,7 @@ from the <code>NeatUpload-1.0/bin/Debug/</code>
 or <code>NeatUpload-1.0/bin/Release/</code> directory to
 the <code>bin/</code>
 directory of your web application. </li>
+
 
 
   <li> Create a <code>NeatUpload/</code>
@@ -166,59 +204,78 @@ and associated files.
   </li>
 
 
+
   <li> Add the following line to your <code>Web.config</code>
 under <code>configuration/system.web/httpModules</code>:
+    
     
     <pre>&lt;add name="UploadHttpModule" type="Brettle.Web.NeatUpload.UploadHttpModule, Brettle.Web.NeatUpload" /&gt;<br>	</pre>
 
 
+
   </li>
+
 
 
   <li> (Optional) To allow larger uploads than the default of 4
 Mbytes under Microsoft's ASP.NET, add or modify the following element in your <code>Web.config</code>
 under <code>configuration/system.web</code>:
     
-    <pre>&lt;httpRuntime maxRequestLength="<var>size_in_kbytes</var>" /&gt;</pre>
+    <pre>&lt;httpRuntime maxRequestLength="<var>size_in_kbytes</var>" /&gt;<br>	</pre>
+
+
   </li>
+
   <li> (Optional) Copy <code>Demo.aspx</code> from <code>NeatUpload-1.0/</code>
 into your application. Point your browser at <code>Demo.aspx</code>
 and verify that the demo functions properly. </li>
 
 
+
 </ol>
+
 
 
 <p> That's it. Now you're ready to start using NeatUpload. Keep
 reading for details. </p>
 
 
+
 <h2><a class="mozTocH2" name="mozTocId50790"></a>Basic Usage</h2>
+
 
 
 <p> To use NeatUpload on an ASP.NET page, follow these steps: </p>
 
 
+
 <ol>
+
 
 
   <li> Add the following to the top of your page:
     
+    
     <pre> <br>&lt;%@ Register TagPrefix="Upload" Namespace="Brettle.Web.NeatUpload" Assembly="Brettle.Web.NeatUpload" %&gt;<br>	</pre>
 
 
+
   </li>
+
 
 
   <li> Add an <code>InputFile</code> control to your
 aspx page wherever you
 want the user to choose a file, using something like this:
     
+    
     <pre>&lt;Upload:InputFile id="<var>inputFileId</var>" runat="server" /&gt;<br>	</pre>
+
 
 
 Feel free to add any attributes that you would normally add to an
     <code>HtmlInputFile</code> tag. </li>
+
 
 
   <li> Add a <code>ProgressBar</code> control to
@@ -227,29 +284,32 @@ want to display an inline progress bar or, in the case of a popup
 progress bar, add it wherever you want the fallback link to be
 displayed. &nbsp;Use something like this:
     
+    
     <pre>&lt;Upload:ProgressBar id="<var>progressBarId</var>" runat="server" inline="<var>true|false</var>" /&gt;<br>	</pre>
+
 
 
 The inline attribute defaults to false. </li>
 
 
-  <li> Add a submit button to your aspx page, using your favorite
-submit button control. For example:
+
+  <li> Add a submit button to your aspx page, using a
+submit button control that renders as <code>&lt;input type="submit" ...&gt;</code>. For example:
     
-    <pre>&lt;asp:Button id="<var>submitButtonId</var>" runat="server" Text="<var>Submit</var>" /&gt;<br>	</pre>
-
-
-  </li>
-
-
+    
+    <pre>&lt;asp:Button id="<var>submitButtonId</var>" runat="server" Text="<var>Submit</var>" /&gt;<br></pre>
+    <span style="font-weight: bold;">Note</span>: <code>&lt;asp:LinkButton&gt;</code> renders as <code>&lt;a href="..."&gt;...&lt;/a&gt;</code> and is not supported by NeatUpload-1.0.x. &nbsp;Support for <code>LinkButtons</code> might be added in NeatUpload-1.1.x or later.</li>
   <li> In your codebehind file, declare each <code>InputFile</code>
 and
     <code>ProgressBar</code> control using code like this:
     
-    <pre>using Brettle.Web.NeatUpload;<br>...<br>	public class YourPage : System.Web.UI.Page<br>	{<br>	...<br>	protected InputFile <var>inputFileId</var>;<br>	protected ProgressBar <var>progressBarId</var>;<br>	</pre>
+    
+    <pre>using Brettle.Web.NeatUpload;<br>...<br>	public class YourPage : System.Web.UI.Page<br>	{<br>		...<br>		protected InputFile <var>inputFileId</var>;<br>		protected ProgressBar <var>progressBarId</var>;<br>	</pre>
+
 
 
   </li>
+
 
 
   <li> In your <code>Page_Load</code> method (or
@@ -257,14 +317,16 @@ anywhere that gets executed
 before the page is rendered), add the submit button as a trigger for
 your progress bar:
     
-    <pre>	private void Page_Load(object sender, EventArgs e)<br>	{<br>	...<br>	<var>progressBarId</var>.AddTrigger(<var>submitButtonId</var>);<br><br>	</pre>
+    
+    <pre>	private void Page_Load(object sender, EventArgs e)<br>	{<br>		...<br>	<var>	progressBarId</var>.AddTrigger(<var>submitButtonId</var>);<br><br>	</pre>
+
 
 
   </li>
 
 
-  <li> In your codebehind file where you are handling postbacks
-(e.g. in the click event handler for the submit button), process the
+
+  <li> In your codebehind file,&nbsp;process the
 uploaded
 file. The file itself can be accessed via <code><var>inputFileId</var>.TmpFile</code>.
 The <code>TmpFile </code>property is a <code>FileInfo</code>
@@ -276,19 +338,25 @@ So something like the following will put the uploaded file in the
 application's root directory if it doesn't already exist (assuming
 sufficient permissions):
     
-    <pre>using System.IO;<br>...<br>	private void Page_Load(object sender, EventArgs e)<br>	{<br>	...<br>	if (IsPostBack)<br>	{<br>	...<br>	<var>inputFileId</var>.TmpFile.MoveTo(Path.Combine(Request.PhysicalApplicationPath,&nbsp;<br>	Path.GetFileName(<var>inputFileId</var>.FileName)));<br><br></pre>
+    
+    <pre>using System.IO;<br>...<br>	private void Page_PreRender(object sender, EventArgs e)<br>	{<br>		...<br>		if (IsPostBack &amp;&amp; <var>inputFileId</var>.TmpFile != null)<br>		{<br>			...<br>		<var>	inputFileId</var>.TmpFile.MoveTo(Path.Combine(Request.PhysicalApplicationPath,&nbsp;<br>								Path.GetFileName(<var>inputFileId</var>.FileName)));<br><br></pre>
+
 
 
   </li>
 
 
+
 </ol>
+
 
 
 <h2><a class="mozTocH2" name="mozTocId875291"></a>Advanced Usage</h2>
 
 
+
 <h3><a class="mozTocH3" name="mozTocId905959"></a>Changing the Temporary Directory</h3>
+
 
 
 <p> By default, NeatUpload puts uploaded files in temporary files
@@ -299,7 +367,9 @@ under <code><tt>configuration/appSettings</tt></code>:
 </p>
 
 
+
 <pre>	&lt;add key="NeatUpload.DefaultTempDirectory" value="<var>yourTempDir</var>" /&gt;<br>	</pre>
+
 
 
 If the directory you specify is relative, it will be relative to your application root directory.
@@ -329,7 +399,9 @@ under
 
 </p>
 <pre>	&lt;customErrors mode="On"&gt;<br>		&lt;error statusCode="413" redirect="~/NeatUpload/Error413.aspx" /&gt;<br>	&lt;/customErrors&gt;</pre>
+
 <h3><a class="mozTocH3" name="mozTocId358727"></a>Changing the Maximum Size of Normal Requests</h3>
+
 
 
 <p> When you installed NeatUpload you probably increased
@@ -349,7 +421,9 @@ under
 
 
 <pre>	&lt;add key="NeatUpload.MaxNormalRequestLength" value="<em>sizeInKBytes</em>" /&gt;<br></pre>
+
 <h3><a class="mozTocH3" name="mozTocId390633"></a>Customizing <code>Progress.aspx</code></h3>
+
 
 
 <p> The <code>Progress.aspx</code> page that comes
@@ -365,133 +439,178 @@ must continue to include elements with the following id attributes and
 tag names, each with the runat attribute set to "server": </p>
 
 
+
 <table border="1">
+
 
 
   <thead><tr>
 
+
     <td><strong>ID</strong></td>
+
 
 
     <td><strong>Tag Name</strong></td>
 
+
   </tr>
+
 
 
   </thead> <tbody>
 
 
+
     <tr>
+
 
 
       <td><code>barDiv</code></td>
 
 
+
       <td>any</td>
+
 
 
     </tr>
 
 
+
     <tr>
+
 
 
       <td><code>statusDiv</code></td>
 
 
+
       <td>any</td>
+
 
 
     </tr>
 
 
+
     <tr>
+
 
 
       <td><code>inProgressSpan</code></td>
 
 
+
       <td>any</td>
+
 
 
     </tr>
 
 
+
     <tr>
+
 
 
       <td><code>remainingTimeSpan</code></td>
 
 
+
       <td>any</td>
+
 
 
     </tr>
 
 
+
     <tr>
+
 
 
       <td><code>completedSpan</code></td>
 
 
+
       <td>any</td>
+
 
 
     </tr>
 
 
+
     <tr>
+
 
 
       <td><code>cancelledSpan</code></td>
 
 
+
       <td>any</td>
+
 
 
     </tr>
 
 
+
     <tr>
+
 
 
       <td><code>refreshLink</code></td>
 
 
+
       <td>A</td>
+
 
 
     </tr>
 
 
+
     <tr>
+
 
 
       <td><code>stopRefreshLink</code></td>
 
 
+
       <td>A</td>
 
 
+
     </tr>
+
 
 
     <tr>
 
 
+
       <td><code>cancelLink</code></td>
+
 
 
       <td>A</td>
 
 
+
     </tr>
 
 
+
+  
   
   </tbody>
 </table>
+
 
 
 <p> Refer to the sample <code>Progress.aspx</code>
@@ -504,7 +623,9 @@ is available because they are used to manually start and stop
 refreshing the progress display. </p>
 
 
+
 <h3><a class="mozTocH3" name="mozTocId184279"></a>Creating Custom Fallback Content for <code>ProgressBar</code></h3>
+
 
 
 <p> If JavaScript is not available or the browser doesn't support
@@ -515,10 +636,13 @@ the desired text (or controls) between the begin and end tags of the
 <code>ProgressBar</code> element. For example: </p>
 
 
+
 <pre>	&lt;Upload:ProgressBar id="progressBar" runat="server" &gt;<br>	&lt;asp:Label id="label" runat="server" Text="Your Text Here"/&gt;<br>	&lt;/Upload:ProgressBar&gt;<br>	</pre>
 
 
+
 <p></p>
+
 
 
 </body>

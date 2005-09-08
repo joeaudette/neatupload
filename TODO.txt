@@ -1,10 +1,13 @@
 Add FileInput.FileUploaded event and support for accessing TmpFile during Page Load.
 XMLHttpRequest
+Use HttpContext.Cache instead of HttpContext.Application to store UploadContext.
+Hide/stop progress bar when an error occurs (eg upload too large).  Requires using javascript to 
+add postBackID to the action query string.
 Target progress bar to a frame
 Designer support
 Multi-file
 Zip files
-destDir, destName, and overwrite properties
+destDir, destName, and overwrite properties (stored in viewstate)
 maxBandwidth property
 
 Split parser into separate class.
