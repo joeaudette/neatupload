@@ -56,5 +56,9 @@
     <File name="./LICENSE-log4net.txt" subtype="Code" buildaction="Nothing" />
     <File name="./LICENSE.txt" subtype="Code" buildaction="Compile" />
     <File name="./COPYING-LIB.txt" subtype="Code" buildaction="Nothing" />
+    <File name="./Test.aspx" subtype="Code" buildaction="Nothing" />
+    <File name="./Test.aspx.cs" subtype="Code" buildaction="Compile" />
+    <File name="./TestControl.ascx" subtype="Code" buildaction="Nothing" />
+    <File name="./TestControl.ascx.cs" subtype="Code" buildaction="Compile" />
   </Contents>
 </Project>

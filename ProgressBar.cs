@@ -92,7 +92,7 @@ if (NeatUpload_DivNode)
 				Attributes["scrolling"] = "no";
 				displayStatement = @"
 		setTimeout(function() {
-			document.getElementById('" + this.UniqueID + "').src='" + uploadProgressUrl + @"&refresher=client'; }, 0);
+			document.getElementById('" + this.ClientID + "').src='" + uploadProgressUrl + @"&refresher=client'; }, 0);
 ";
 			}
 		}
