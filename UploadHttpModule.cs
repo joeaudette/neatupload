@@ -57,6 +57,7 @@ namespace Brettle.Web.NeatUpload
 			app.BeginRequest += new System.EventHandler(Application_BeginRequest);
 			app.Error += new System.EventHandler(Application_Error);
 			app.EndRequest += new System.EventHandler(Application_EndRequest);
+			app.PreSendRequestHeaders += new System.EventHandler(Application_PreSendRequestHeaders);
 			lock (typeof(UploadHttpModule))
 			{
 				_isEnabled = true;
@@ -75,8 +76,11 @@ namespace Brettle.Web.NeatUpload
 			return origWorker;
 		}
 
+		bool requestHandledBySubRequest;
+
 		private void Application_BeginRequest(object sender, EventArgs e)
 		{
+			requestHandledBySubRequest = false;
 			HttpApplication app = sender as HttpApplication;
 			log4net.ThreadContext.Properties["url"] = app.Context.Request.RawUrl;
 			
@@ -142,6 +146,7 @@ namespace Brettle.Web.NeatUpload
 					if (log.IsDebugEnabled) log.Debug("Called ProcessRequest().  Calling subWorker.WaitForEndOfRequest().");
 					subWorker.WaitForEndOfRequest();
 					if (log.IsDebugEnabled) log.Debug("subWorker.WaitForEndOfRequest() returned.");
+					requestHandledBySubRequest = true;
 				}
 				finally
 				{
@@ -157,6 +162,16 @@ namespace Brettle.Web.NeatUpload
 					// Always call CompleteRequest() to prevent further processing of the original request.
 					app.CompleteRequest();
 				}
+			}
+		}
+
+		private void Application_PreSendRequestHeaders(object sender, EventArgs e)
+		{
+			if (requestHandledBySubRequest)
+			{
+				HttpApplication app = sender as HttpApplication;
+				app.Response.ClearHeaders();
+				app.Response.ClearContent();
 			}
 		}
 

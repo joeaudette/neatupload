@@ -1,10 +1,10 @@
 <Combine name="NeatUpload" fileversion="2.0">
-  <Configurations>
+  <Configurations active="Debug">
     <Configuration name="Debug" ctype="CombineConfiguration">
-      <Entry build="True" name="NeatUpload" />
+      <Entry configuration="Debug" build="True" name="NeatUpload" />
     </Configuration>
     <Configuration name="Release" ctype="CombineConfiguration">
-      <Entry build="True" name="NeatUpload" />
+      <Entry configuration="Release" build="True" name="NeatUpload" />
     </Configuration>
   </Configurations>
   <StartMode startupentry="NeatUpload" single="True">
