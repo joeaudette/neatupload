@@ -91,7 +91,7 @@ namespace Brettle.Web.NeatUpload
 				sb.Length = sb.Length-1;
 				sb.Append("}");
 				if (log.IsDebugEnabled) log.Debug("sb=" + sb.ToString());
-				Response.Write("NeatUploadRefresh(" + sb.ToString() + ");\n");
+				Response.Write("NeatUploadUpdateDom(" + sb.ToString() + ");\n");
 			}
 		}
 

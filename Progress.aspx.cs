@@ -53,11 +53,35 @@ namespace Brettle.Web.NeatUpload
 
 var NeatUploadScript = null;
 
-function NeatUploadLoadScript(url) 
+var NeatUploadReq = null;
+function NeatUploadRefreshWithScript(url) 
 {
-	if (document.layers) 
+	NeatUploadReq = null;
+	if (!NeatUploadReq)
 	{
-		window.location.href = url;
+		var req = null;
+		try
+		{
+			req = new ActiveXObject(""Microsoft.XMLHTTP"");
+		}
+		catch (ex)
+		{
+			req = null;
+		}
+		if (!req && typeof(XMLHttpRequest) != ""undefined"")
+		{
+			req = new XMLHttpRequest();
+		}
+		if (req)
+		{
+			NeatUploadReq = req;
+		}
+	}
+	if (NeatUploadReq)
+	{
+		NeatUploadReq.onreadystatechange = NeatUploadEvalScript;
+		NeatUploadReq.open(""GET"", url);
+		NeatUploadReq.send(null);
 	}
 	else if (document.getElementById) 
 	{
@@ -75,11 +99,27 @@ function NeatUploadLoadScript(url)
 			NeatUploadScript.src = url;
 		}
 	}
+	else
+	{
+		return false;
+	}
+	return true;
 }
 
-function NeatUploadRefreshScript()
+function NeatUploadEvalScript()
 {
-	NeatUploadLoadScript('PROGRESSSCRIPTURL?' + document.location.search.substring(1) + '&' + Math.random());
+	if (NeatUploadReq.readyState == 4) 
+	{
+		eval(NeatUploadReq.responseText);
+	}
+}
+
+function NeatUploadRefresh()
+{
+	if (!NeatUploadRefreshWithScript('PROGRESSSCRIPTURL?' + document.location.search.substring(1) + '&' + Math.random()))
+	{
+		NeatUploadRefreshPage();
+	}
 }
 
 function NeatUploadRefreshPage() 
@@ -87,7 +127,8 @@ function NeatUploadRefreshPage()
 	window.location.replace('REFRESHURL');
 }
 
-function NeatUploadRefresh(upload)
+var NeatUploadLastUpdate = new Date(); 
+function NeatUploadUpdateDom(upload)
 {
 	if (NeatUploadScript)
 	{
@@ -100,11 +141,14 @@ function NeatUploadRefresh(upload)
 		document.getElementById(""remainingTimeSpan"").innerHTML = upload.remainingtime;
 	if (typeof( upload.status ) != ""undefined"" && upload.status == ""inprogress"")
 	{
-		NeatUploadReloadTimeoutId = window.setTimeout(NeatUploadRefreshScript, 1000);
+		var lastMillis = NeatUploadLastUpdate.getTime();
+		NeatUploadLastUpdate = new Date();
+		var delay = Math.max(lastMillis + 1000 - NeatUploadLastUpdate.getTime(), 1);
+		NeatUploadReloadTimeoutId = window.setTimeout(NeatUploadRefresh, delay);
 	}
 	else
 	{
-		NeatUploadReloadTimeoutId = window.setTimeout(NeatUploadRefreshPage, 1000);
+		NeatUploadRefreshPage();
 	}
 }
 
@@ -128,7 +172,7 @@ function NeatUploadCancel()
 		mainWindow.document.execCommand('Stop');
 }
 
-NeatUploadReloadTimeoutId = window.setTimeout(NeatUploadRefreshScript, 1000);
+NeatUploadReloadTimeoutId = window.setTimeout(NeatUploadRefresh, 1000);
 
 NeatUploadMainWindow = NeatUploadGetMainWindow();
 if (NeatUploadMainWindow.stop == null && NeatUploadMainWindow.document.execCommand == null)
