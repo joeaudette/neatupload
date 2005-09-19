@@ -51,52 +51,48 @@ namespace Brettle.Web.NeatUpload
 		
 		private string clientRefreshScript = @"<script language=""javascript"">
 
-var NeatUploadScript = null;
+self.NeatUploadScript = null;
 
-var NeatUploadReq = null;
+self.NeatUploadReq = null;
 function NeatUploadRefreshWithScript(url) 
 {
-	NeatUploadReq = null;
-	if (!NeatUploadReq)
+	var req = null;
+	try
 	{
-		var req = null;
-		try
-		{
-			req = new ActiveXObject(""Microsoft.XMLHTTP"");
-		}
-		catch (ex)
-		{
-			req = null;
-		}
-		if (!req && typeof(XMLHttpRequest) != ""undefined"")
-		{
-			req = new XMLHttpRequest();
-		}
-		if (req)
-		{
-			NeatUploadReq = req;
-		}
+		req = new ActiveXObject(""Microsoft.XMLHTTP"");
 	}
-	if (NeatUploadReq)
+	catch (ex)
 	{
-		NeatUploadReq.onreadystatechange = NeatUploadEvalScript;
-		NeatUploadReq.open(""GET"", url);
-		NeatUploadReq.send(null);
+		req = null;
+	}
+	if (!req && typeof(XMLHttpRequest) != ""undefined"")
+	{
+		req = new XMLHttpRequest();
+	}
+	if (req)
+	{
+		self.NeatUploadReq = req;
+	}
+	if (self.NeatUploadReq)
+	{
+		self.NeatUploadReq.onreadystatechange = NeatUploadEvalScript;
+		self.NeatUploadReq.open(""GET"", url);
+		self.NeatUploadReq.send(null);
 	}
 	else if (document.getElementById) 
 	{
 		if (navigator.appVersion.indexOf(""Mac"") != -1) 
 		{
-			NeatUploadScript = document.createElement('div');
-			NeatUploadScript.innerHTML = '<sc' + 'ript type=\'text/javascript\' src=\'' + url + '\'><\/sc' + 'ript>';
-			document.body.appendChild(NeatUploadScript);
+			self.NeatUploadScript = document.createElement('div');
+			self.NeatUploadScript.innerHTML = '<sc' + 'ript type=\'text/javascript\' src=\'' + url + '\'><\/sc' + 'ript>';
+			document.body.appendChild(self.NeatUploadScript);
 		}
 		else
 		{
-			NeatUploadScript = document.createElement('script');
-			NeatUploadScript.defer = true;
-			document.body.appendChild(NeatUploadScript);
-			NeatUploadScript.src = url;
+			self.NeatUploadScript = document.createElement('script');
+			self.NeatUploadScript.defer = true;
+			document.body.appendChild(self.NeatUploadScript);
+			self.NeatUploadScript.src = url;
 		}
 	}
 	else
@@ -108,9 +104,9 @@ function NeatUploadRefreshWithScript(url)
 
 function NeatUploadEvalScript()
 {
-	if (NeatUploadReq.readyState == 4) 
+	if (self.NeatUploadReq.readyState == 4) 
 	{
-		eval(NeatUploadReq.responseText);
+		eval(self.NeatUploadReq.responseText);
 	}
 }
 
@@ -124,10 +120,10 @@ function NeatUploadRefresh()
 
 function NeatUploadRefreshPage() 
 {
-	window.location.replace('REFRESHURL');
+	self.location.replace('REFRESHURL');
 }
 
-var NeatUploadLastUpdate = new Date(); 
+self.NeatUploadLastUpdate = new Date(); 
 function NeatUploadUpdateDom(upload)
 {
 	if (NeatUploadScript)
@@ -141,10 +137,10 @@ function NeatUploadUpdateDom(upload)
 		document.getElementById(""remainingTimeSpan"").innerHTML = upload.remainingtime;
 	if (typeof( upload.status ) != ""undefined"" && upload.status == ""inprogress"")
 	{
-		var lastMillis = NeatUploadLastUpdate.getTime();
-		NeatUploadLastUpdate = new Date();
-		var delay = Math.max(lastMillis + 1000 - NeatUploadLastUpdate.getTime(), 1);
-		NeatUploadReloadTimeoutId = window.setTimeout(NeatUploadRefresh, delay);
+		var lastMillis = self.NeatUploadLastUpdate.getTime();
+		self.NeatUploadLastUpdate = new Date();
+		var delay = Math.max(lastMillis + 1000 - self.NeatUploadLastUpdate.getTime(), 1);
+		self.NeatUploadReloadTimeoutId = window.setTimeout(NeatUploadRefresh, delay);
 	}
 	else
 	{
@@ -172,14 +168,14 @@ function NeatUploadCancel()
 		mainWindow.document.execCommand('Stop');
 }
 
-NeatUploadReloadTimeoutId = window.setTimeout(NeatUploadRefresh, 1000);
+self.NeatUploadReloadTimeoutId = window.setTimeout(NeatUploadRefresh, 1000);
 
-NeatUploadMainWindow = NeatUploadGetMainWindow();
-if (NeatUploadMainWindow.stop == null && NeatUploadMainWindow.document.execCommand == null)
+self.NeatUploadMainWindow = NeatUploadGetMainWindow();
+if (self.NeatUploadMainWindow.stop == null && self.NeatUploadMainWindow.document.execCommand == null)
 {
-	NeatUploadLinkNode = document.getElementById('cancelLink');
-	if (NeatUploadLinkNode) 
-		NeatUploadLinkNode.parentNode.removeChild(NeatUploadLinkNode);
+	self.NeatUploadLinkNode = document.getElementById('cancelLink');
+	if (self.NeatUploadLinkNode) 
+		self.NeatUploadLinkNode.parentNode.removeChild(self.NeatUploadLinkNode);
 }
 </script>";
 		
@@ -214,7 +210,7 @@ if (NeatUploadMainWindow.stop == null && NeatUploadMainWindow.document.execComma
 			refreshLink.Visible = true;
 			refreshLink.HRef = refreshUrl + "&refresher=server";	
 			RegisterStartupScript("scrNeatUpload", "<script language=\"javascript\">"
-				+ "NeatUploadLinkNode = document.getElementById('" + refreshLink.ClientID + "'); if (NeatUploadLinkNode) NeatUploadLinkNode.parentNode.removeChild(NeatUploadLinkNode);"
+				+ "self.NeatUploadLinkNode = document.getElementById('" + refreshLink.ClientID + "'); if (self.NeatUploadLinkNode) NeatUploadLinkNode.parentNode.removeChild(self.NeatUploadLinkNode);"
 				+ "</script>");
 
 			// Find the current upload context
@@ -323,7 +319,7 @@ if (NeatUploadMainWindow.stop == null && NeatUploadMainWindow.document.execComma
 			refreshUrl += "&refresher=client";
 			cancelLink.Visible = true;
 			cancelLink.HRef = refreshUrl + "&cancelled=true";	
-			cancelLink.Attributes["onclick"] = "javascript: if (NeatUploadReloadTimeoutId != null) window.clearTimeout(NeatUploadReloadTimeoutId); NeatUploadCancel();";
+			cancelLink.Attributes["onclick"] = "javascript: if (window.self.NeatUploadReloadTimeoutId != null) window.clearTimeout(window.self.NeatUploadReloadTimeoutId); NeatUploadCancel();";
 			string progressScriptUrl = Request.Url.AbsoluteUri;
 			progressScriptUrl = progressScriptUrl.Substring(0, progressScriptUrl.LastIndexOf('/')) + "/ProgressScript.aspx";
 			RegisterStartupScript("scrNeatUploadRefresh", clientRefreshScript.Replace("REFRESHURL", refreshUrl).Replace("PROGRESSSCRIPTURL", progressScriptUrl));
