@@ -28,10 +28,17 @@ namespace Brettle.Web.NeatUpload
 	/// </summary>
 	public class ProgressScript : Page
 	{
+		// Create a logger for use in this class
+		private static readonly log4net.ILog log 
+			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
 		private void Page_Load(object sender, EventArgs e)
 		{
 			Response.Clear();
 			Response.ContentType = "text/javascript";
+			Response.Cache.SetCacheability(System.Web.HttpCacheability.NoCache);
+			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			sb.Append("{ ");
 			try
 			{
 				string postBackID = Request.Params["postBackID"];
@@ -51,37 +58,40 @@ namespace Brettle.Web.NeatUpload
 					switch (uploadContext.Status)
 					{
 						case UploadStatus.Cancelled:
-							Response.Write("var uploadstatus='cancelled';");
+							sb.Append("status: 'cancelled',");
 							break;
 						case UploadStatus.InProgress:
 							TimeSpan tr = uploadContext.TimeRemaining;
 							remainingTimeSpan = String.Format("{0:00}:{1:00}", (int) Math.Floor(tr.TotalMinutes), tr.Seconds);
-							Response.Write("var uploadstatus='inprogress';\n");
-							Response.Write("var uploadprogress='" + uploadBarProgress + "'\n");
-							Response.Write("var uploadremainingtime='" + remainingTimeSpan + "'\n");
+							sb.Append("status: 'inprogress',");
+							sb.Append("progress: '" + uploadBarProgress + "',");
+							sb.Append("remainingtime: '" + remainingTimeSpan + "',");
 							break;
 						case UploadStatus.Completed:
 
 							if (int.Parse(uploadBarProgress) < 100)
-								Response.Write("var uploadstatus='interrupted';\n");
+								sb.Append("status: 'interrupted',");
 							else
 							{
-								Response.Write("var uploadstatus='completed';\n");
+								sb.Append("status: 'completed',");
 							}
 							break;
 						default:
-							Response.Write("var uploadstatus='unknown';\n");
+							sb.Append("status:'unknown',");
 							break;
 					}
 				}
 			}
 			catch
 			{
-				Response.Write("var uploadstatus='error';\n");
+				sb.Append("status:'error',");
 			}
 			finally
 			{
-				Response.Write("ProcessUpload();\n");
+				sb.Length = sb.Length-1;
+				sb.Append("}");
+				if (log.IsDebugEnabled) log.Debug("sb=" + sb.ToString());
+				Response.Write("NeatUploadRefresh(" + sb.ToString() + ");\n");
 			}
 		}
 

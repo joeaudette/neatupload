@@ -50,7 +50,10 @@ namespace Brettle.Web.NeatUpload
 		protected HtmlImage cancelImage;
 		
 		private string clientRefreshScript = @"<script language=""javascript"">
-function loadScript(url) 
+
+var NeatUploadScript = null;
+
+function NeatUploadLoadScript(url) 
 {
 	if (document.layers) 
 	{
@@ -60,45 +63,51 @@ function loadScript(url)
 	{
 		if (navigator.appVersion.indexOf(""Mac"") != -1) 
 		{
-			obj = document.createElement('div');
-			obj.innerHTML = '<sc' + 'ript type=\'text/javascript\' src=\'' + url + '\'><\/sc' + 'ript>';
-			document.body.appendChild(obj);
+			NeatUploadScript = document.createElement('div');
+			NeatUploadScript.innerHTML = '<sc' + 'ript type=\'text/javascript\' src=\'' + url + '\'><\/sc' + 'ript>';
+			document.body.appendChild(NeatUploadScript);
 		}
 		else
 		{
-			var script = document.createElement('script');
-			script.defer = true;
-			document.body.appendChild(script);
-			script.src = url;
+			NeatUploadScript = document.createElement('script');
+			NeatUploadScript.defer = true;
+			document.body.appendChild(NeatUploadScript);
+			NeatUploadScript.src = url;
 		}
 	}
 }
 
-function Progress()
+function NeatUploadRefreshScript()
 {
-	loadScript('PROGRESSSCRIPTURL?' + document.location.search.substring(1) + '&' + Math.random());
+	NeatUploadLoadScript('PROGRESSSCRIPTURL?' + document.location.search.substring(1) + '&' + Math.random());
 }
 
-function ProcessUpload()
-{
-	if (typeof( uploadprogress ) != ""undefined"")
-		document.getElementById(""barDiv"").style.width = uploadprogress + ""%"";
-	if (typeof( uploadremainingtime ) != ""undefined"")
-		document.getElementById(""remainingTimeSpan"").innerHTML = uploadremainingtime;
-	if (typeof( uploadstatus ) != ""undefined"" && uploadstatus == ""inprogress"")
-	{
-		NeatUploadReloadTimeoutId = window.setTimeout(Progress, 1000);
-	}
-	else
-	{
-		NeatUploadReloadTimeoutId = window.setTimeout(NeatUploadRefresh, 1000);
-	}
-}
-
-function NeatUploadRefresh() 
+function NeatUploadRefreshPage() 
 {
 	window.location.replace('REFRESHURL');
 }
+
+function NeatUploadRefresh(upload)
+{
+	if (NeatUploadScript)
+	{
+		document.body.removeChild(NeatUploadScript);
+		NeatUploadScript = null;
+	}
+	if (typeof( upload.progress ) != ""undefined"")
+		document.getElementById(""barDiv"").style.width = upload.progress + ""%"";
+	if (typeof( upload.remainingtime ) != ""undefined"")
+		document.getElementById(""remainingTimeSpan"").innerHTML = upload.remainingtime;
+	if (typeof( upload.status ) != ""undefined"" && upload.status == ""inprogress"")
+	{
+		NeatUploadReloadTimeoutId = window.setTimeout(NeatUploadRefreshScript, 1000);
+	}
+	else
+	{
+		NeatUploadReloadTimeoutId = window.setTimeout(NeatUploadRefreshPage, 1000);
+	}
+}
+
 
 function NeatUploadGetMainWindow() 
 {
@@ -119,7 +128,7 @@ function NeatUploadCancel()
 		mainWindow.document.execCommand('Stop');
 }
 
-NeatUploadReloadTimeoutId = window.setTimeout(Progress, 1000);
+NeatUploadReloadTimeoutId = window.setTimeout(NeatUploadRefreshScript, 1000);
 
 NeatUploadMainWindow = NeatUploadGetMainWindow();
 if (NeatUploadMainWindow.stop == null && NeatUploadMainWindow.document.execCommand == null)
