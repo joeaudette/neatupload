@@ -1,5 +1,4 @@
 /*
-
 NeatUpload - an HttpModule and User Controls for uploading large files
 Copyright (C) 2005  Dean Brettle
 
@@ -16,18 +15,20 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+clientRefreshScript updated for Javascript Postback Module
+released under GNU Lesser General Public License
+Copyright (C) 2005  Stefano Straus (tustena.sf.net)
 */
 
 using System;
-using System.Web;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
-using System.IO;
+using Brettle.Web.NeatUpload;
 
 namespace Brettle.Web.NeatUpload
 {
-	public class Progress : System.Web.UI.Page
+	public class Progress : Page
 	{
 /*
 		// Create a logger for use in this class
@@ -49,6 +50,51 @@ namespace Brettle.Web.NeatUpload
 		protected HtmlImage cancelImage;
 		
 		private string clientRefreshScript = @"<script language=""javascript"">
+function loadScript(url) 
+{
+	if (document.layers) 
+	{
+		window.location.href = url;
+	}
+	else if (document.getElementById) 
+	{
+		if (navigator.appVersion.indexOf(""Mac"") != -1) 
+		{
+			obj = document.createElement('div');
+			obj.innerHTML = '<sc' + 'ript type=\'text/javascript\' src=\'' + url + '\'><\/sc' + 'ript>';
+			document.body.appendChild(obj);
+		}
+		else
+		{
+			var script = document.createElement('script');
+			script.defer = true;
+			document.body.appendChild(script);
+			script.src = url;
+		}
+	}
+}
+
+function Progress()
+{
+	loadScript('PROGRESSSCRIPTURL?' + document.location.search.substring(1) + '&' + Math.random());
+}
+
+function ProcessUpload()
+{
+	if (typeof( uploadprogress ) != ""undefined"")
+		document.getElementById(""barDiv"").style.width = uploadprogress + ""%"";
+	if (typeof( uploadremainingtime ) != ""undefined"")
+		document.getElementById(""remainingTimeSpan"").innerHTML = uploadremainingtime;
+	if (typeof( uploadstatus ) != ""undefined"" && uploadstatus == ""inprogress"")
+	{
+		NeatUploadReloadTimeoutId = window.setTimeout(Progress, 1000);
+	}
+	else
+	{
+		NeatUploadReloadTimeoutId = window.setTimeout(NeatUploadRefresh, 1000);
+	}
+}
+
 function NeatUploadRefresh() 
 {
 	window.location.replace('REFRESHURL');
@@ -73,7 +119,7 @@ function NeatUploadCancel()
 		mainWindow.document.execCommand('Stop');
 }
 
-NeatUploadReloadTimeoutId = window.setTimeout(NeatUploadRefresh, 1000);
+NeatUploadReloadTimeoutId = window.setTimeout(Progress, 1000);
 
 NeatUploadMainWindow = NeatUploadGetMainWindow();
 if (NeatUploadMainWindow.stop == null && NeatUploadMainWindow.document.execCommand == null)
@@ -92,7 +138,7 @@ if (NeatUploadMainWindow.stop == null && NeatUploadMainWindow.document.execComma
 		
 		private void InitializeComponent()
 		{
-			this.PreRender += new System.EventHandler(this.Page_PreRender);
+			this.PreRender += new EventHandler(this.Page_PreRender);
 		}
 
 		private void Page_PreRender(object sender, EventArgs e)
@@ -115,8 +161,8 @@ if (NeatUploadMainWindow.stop == null && NeatUploadMainWindow.document.execComma
 			refreshLink.Visible = true;
 			refreshLink.HRef = refreshUrl + "&refresher=server";	
 			RegisterStartupScript("scrNeatUpload", "<script language=\"javascript\">"
-															+ "NeatUploadLinkNode = document.getElementById('" + refreshLink.ClientID + "'); if (NeatUploadLinkNode) NeatUploadLinkNode.parentNode.removeChild(NeatUploadLinkNode);"
-															+ "</script>");
+				+ "NeatUploadLinkNode = document.getElementById('" + refreshLink.ClientID + "'); if (NeatUploadLinkNode) NeatUploadLinkNode.parentNode.removeChild(NeatUploadLinkNode);"
+				+ "</script>");
 
 			// Find the current upload context
 			string postBackID = Request.Params["postBackID"];
@@ -149,14 +195,14 @@ if (NeatUploadMainWindow.stop == null && NeatUploadMainWindow.document.execComma
 			{
 				RegisterStartupScript("scrNeatUploadClose", "<script language=\"javascript\">window.close();</script>");
 			}
-			// Otherwise, if refresh!=false we refresh the page in one second
+				// Otherwise, if refresh!=false we refresh the page in one second
 			else if (Request.Params["refresh"] != "false" && Request.Params["refresher"] != null)
 			{
 				// Since we will be refreshing, we hide the refresh link.
 				refreshLink.Visible = false;
 				
 				// And add a prevStatus param to the url to track the previous status. 			
-	 			refreshUrl += "&prevStatus=" + curStatus;
+				refreshUrl += "&prevStatus=" + curStatus;
  				
 				Refresh(refreshUrl);
 			}
@@ -173,7 +219,7 @@ if (NeatUploadMainWindow.stop == null && NeatUploadMainWindow.document.execComma
 				// Status is unknown, so try to find the last post back based on the lastPostBackID param.
 				// If successful, use the status of the last post back.
 				string lastPostBackID = Request.Params["lastPostBackID"];
-				if (lastPostBackID != null && Request.Params["refresher"] == null)
+				if (lastPostBackID != null && lastPostBackID.Length > 0 && Request.Params["refresher"] == null)
 				{
 					uploadContext = UploadContext.FindByID(lastPostBackID);
 					if (uploadContext.NumUploadedFiles == 0)
@@ -225,7 +271,9 @@ if (NeatUploadMainWindow.stop == null && NeatUploadMainWindow.document.execComma
 			cancelLink.Visible = true;
 			cancelLink.HRef = refreshUrl + "&cancelled=true";	
 			cancelLink.Attributes["onclick"] = "javascript: if (NeatUploadReloadTimeoutId != null) window.clearTimeout(NeatUploadReloadTimeoutId); NeatUploadCancel();";
-			RegisterStartupScript("scrNeatUploadRefresh", clientRefreshScript.Replace("REFRESHURL", refreshUrl));
+			string progressScriptUrl = Request.Url.AbsoluteUri;
+			progressScriptUrl = progressScriptUrl.Substring(0, progressScriptUrl.LastIndexOf('/')) + "/ProgressScript.aspx";
+			RegisterStartupScript("scrNeatUploadRefresh", clientRefreshScript.Replace("REFRESHURL", refreshUrl).Replace("PROGRESSSCRIPTURL", progressScriptUrl));
 		}
 		
 		private void RefreshWithServerHeader(string refreshUrl)
