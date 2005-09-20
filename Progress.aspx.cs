@@ -54,7 +54,7 @@ namespace Brettle.Web.NeatUpload
 self.NeatUploadScript = null;
 
 self.NeatUploadReq = null;
-function NeatUploadRefreshWithScript(url) 
+self.NeatUploadRefreshWithScript = function (url) 
 {
 	var req = null;
 	try
@@ -71,28 +71,28 @@ function NeatUploadRefreshWithScript(url)
 	}
 	if (req)
 	{
-		self.NeatUploadReq = req;
+		this.NeatUploadReq = req;
 	}
-	if (self.NeatUploadReq)
+	if (this.NeatUploadReq)
 	{
-		self.NeatUploadReq.onreadystatechange = NeatUploadEvalScript;
-		self.NeatUploadReq.open(""GET"", url);
-		self.NeatUploadReq.send(null);
+		this.NeatUploadReq.onreadystatechange = this.NeatUploadEvalScript;
+		this.NeatUploadReq.open(""GET"", url);
+		this.NeatUploadReq.send(null);
 	}
 	else if (document.getElementById) 
 	{
 		if (navigator.appVersion.indexOf(""Mac"") != -1) 
 		{
-			self.NeatUploadScript = document.createElement('div');
-			self.NeatUploadScript.innerHTML = '<sc' + 'ript type=\'text/javascript\' src=\'' + url + '\'><\/sc' + 'ript>';
-			document.body.appendChild(self.NeatUploadScript);
+			this.NeatUploadScript = document.createElement('div');
+			this.NeatUploadScript.innerHTML = '<sc' + 'ript type=\'text/javascript\' src=\'' + url + '\'><\/sc' + 'ript>';
+			document.body.appendChild(this.NeatUploadScript);
 		}
 		else
 		{
-			self.NeatUploadScript = document.createElement('script');
-			self.NeatUploadScript.defer = true;
-			document.body.appendChild(self.NeatUploadScript);
-			self.NeatUploadScript.src = url;
+			this.NeatUploadScript = document.createElement('script');
+			this.NeatUploadScript.defer = true;
+			document.body.appendChild(this.NeatUploadScript);
+			this.NeatUploadScript.src = url;
 		}
 	}
 	else
@@ -100,36 +100,36 @@ function NeatUploadRefreshWithScript(url)
 		return false;
 	}
 	return true;
-}
+};
 
-function NeatUploadEvalScript()
+self.NeatUploadEvalScript = function ()
 {
-	if (self.NeatUploadReq.readyState == 4) 
+	if (self.NeatUploadReq && self.NeatUploadReq.readyState == 4) 
 	{
 		eval(self.NeatUploadReq.responseText);
 	}
-}
+};
 
-function NeatUploadRefresh()
+self.NeatUploadRefresh = function ()
 {
-	if (!NeatUploadRefreshWithScript('PROGRESSSCRIPTURL?' + document.location.search.substring(1) + '&' + Math.random()))
+	if (!self.NeatUploadRefreshWithScript('PROGRESSSCRIPTURL?' + document.location.search.substring(1) + '&' + Math.random()))
 	{
-		NeatUploadRefreshPage();
+		self.NeatUploadRefreshPage();
 	}
-}
+};
 
-function NeatUploadRefreshPage() 
+self.NeatUploadRefreshPage = function () 
 {
 	self.location.replace('REFRESHURL');
-}
+};
 
 self.NeatUploadLastUpdate = new Date(); 
-function NeatUploadUpdateDom(upload)
+self.NeatUploadUpdateDom = function (upload)
 {
-	if (NeatUploadScript)
+	if (this.NeatUploadScript)
 	{
-		document.body.removeChild(NeatUploadScript);
-		NeatUploadScript = null;
+		document.body.removeChild(this.NeatUploadScript);
+		this.NeatUploadScript = null;
 	}
 	if (typeof( upload.progress ) != ""undefined"")
 		document.getElementById(""barDiv"").style.width = upload.progress + ""%"";
@@ -137,19 +137,19 @@ function NeatUploadUpdateDom(upload)
 		document.getElementById(""remainingTimeSpan"").innerHTML = upload.remainingtime;
 	if (typeof( upload.status ) != ""undefined"" && upload.status == ""inprogress"")
 	{
-		var lastMillis = self.NeatUploadLastUpdate.getTime();
-		self.NeatUploadLastUpdate = new Date();
-		var delay = Math.max(lastMillis + 1000 - self.NeatUploadLastUpdate.getTime(), 1);
-		self.NeatUploadReloadTimeoutId = window.setTimeout(NeatUploadRefresh, delay);
+		var lastMillis = this.NeatUploadLastUpdate.getTime();
+		this.NeatUploadLastUpdate = new Date();
+		var delay = Math.max(lastMillis + 1000 - this.NeatUploadLastUpdate.getTime(), 1);
+		this.NeatUploadReloadTimeoutId = this.setTimeout(this.NeatUploadRefresh, delay);
 	}
 	else
 	{
-		NeatUploadRefreshPage();
+		this.NeatUploadRefreshPage();
 	}
-}
+};
 
 
-function NeatUploadGetMainWindow() 
+self.NeatUploadGetMainWindow = function() 
 {
 	var mainWindow;
 	if (window.opener) 
@@ -159,18 +159,32 @@ function NeatUploadGetMainWindow()
 	return mainWindow;
 }
 
-function NeatUploadCancel() 
+self.NeatUploadCancel = function() 
 {
 	var mainWindow = NeatUploadGetMainWindow();
 	if (mainWindow.stop)
 		mainWindow.stop();
 	else if (mainWindow.document.execCommand)
 		mainWindow.document.execCommand('Stop');
+	for (var w in mainWindow.NeatUploadWindows)
+	{
+		if (w && w.setTimeout)
+		{
+			if (w.NeatUploadReloadTimeoutId) 
+				w.clearTimeout(w.NeatUploadReloadTimeoutId);
+			w.NeatUploadReloadTimeoutId = w.setTimeout(w.NeatUploadRefresh, 1);
+		}
+	}
 }
 
-self.NeatUploadReloadTimeoutId = window.setTimeout(NeatUploadRefresh, 1000);
+self.NeatUploadReloadTimeoutId = self.setTimeout(self.NeatUploadRefresh, 1000);
 
-self.NeatUploadMainWindow = NeatUploadGetMainWindow();
+self.NeatUploadMainWindow = self.NeatUploadGetMainWindow();
+if (!self.NeatUploadMainWindow.NeatUploadWindows)
+{
+	self.NeatUploadMainWindow.NeatUploadWindows = new Array();
+}
+self.NeatUploadMainWindow.NeatUploadWindows.push(window.self);
 if (self.NeatUploadMainWindow.stop == null && self.NeatUploadMainWindow.document.execCommand == null)
 {
 	self.NeatUploadLinkNode = document.getElementById('cancelLink');
@@ -210,7 +224,7 @@ if (self.NeatUploadMainWindow.stop == null && self.NeatUploadMainWindow.document
 			refreshLink.Visible = true;
 			refreshLink.HRef = refreshUrl + "&refresher=server";	
 			RegisterStartupScript("scrNeatUpload", "<script language=\"javascript\">"
-				+ "self.NeatUploadLinkNode = document.getElementById('" + refreshLink.ClientID + "'); if (self.NeatUploadLinkNode) NeatUploadLinkNode.parentNode.removeChild(self.NeatUploadLinkNode);"
+				+ "self.NeatUploadLinkNode = document.getElementById('" + refreshLink.ClientID + "'); if (self.NeatUploadLinkNode) self.NeatUploadLinkNode.parentNode.removeChild(self.NeatUploadLinkNode);"
 				+ "</script>");
 
 			// Find the current upload context
@@ -242,7 +256,7 @@ if (self.NeatUploadMainWindow.stop == null && self.NeatUploadMainWindow.document
 			if (curStatus == prevStatus 
 				&& (curStatus == UploadStatus.Completed.ToString() || curStatus == UploadStatus.Cancelled.ToString()))
 			{
-				RegisterStartupScript("scrNeatUploadClose", "<script language=\"javascript\">window.close();</script>");
+				RegisterStartupScript("scrNeatUploadClose", "<script language=\"javascript\">self.close();</script>");
 			}
 				// Otherwise, if refresh!=false we refresh the page in one second
 			else if (Request.Params["refresh"] != "false" && Request.Params["refresher"] != null)
@@ -319,7 +333,7 @@ if (self.NeatUploadMainWindow.stop == null && self.NeatUploadMainWindow.document
 			refreshUrl += "&refresher=client";
 			cancelLink.Visible = true;
 			cancelLink.HRef = refreshUrl + "&cancelled=true";	
-			cancelLink.Attributes["onclick"] = "javascript: if (window.self.NeatUploadReloadTimeoutId != null) window.clearTimeout(window.self.NeatUploadReloadTimeoutId); NeatUploadCancel();";
+			cancelLink.Attributes["onclick"] = "javascript: window.self.NeatUploadCancel();";
 			string progressScriptUrl = Request.Url.AbsoluteUri;
 			progressScriptUrl = progressScriptUrl.Substring(0, progressScriptUrl.LastIndexOf('/')) + "/ProgressScript.aspx";
 			RegisterStartupScript("scrNeatUploadRefresh", clientRefreshScript.Replace("REFRESHURL", refreshUrl).Replace("PROGRESSSCRIPTURL", progressScriptUrl));
