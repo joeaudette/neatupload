@@ -3,6 +3,8 @@
 <head>
 
 
+
+  
   
   
   <title>NeatUpload Manual</title>
@@ -13,51 +15,68 @@
 
 
 
+
 <h1>NeatUpload Manual</h1>
+
 
 
 <ul id="mozToc">
 
 
+
 <!--mozToc h2 1 h3 2 h4 3 h4 4 h5 5 h6 6--><li><a href="#mozTocId903858">Introduction</a></li>
+
 
 
   <li><a href="#mozTocId304923">Installation</a></li>
 
 
+
   <li><a href="#mozTocId50790">Basic Usage</a></li>
+
 
 
   <li><a href="#mozTocId875291">Advanced Usage</a>
     
     
+    
     <ul>
+
 
 
       <li><a href="#mozTocId905959">Changing the Temporary Directory</a></li>
 
 
+
       <li><a href="#mozTocId358727">Changing the Maximum Size of Normal Requests</a></li>
+
 
 
       <li><a href="#mozTocId390633">Customizing Progress.aspx</a></li>
 
 
+
       <li><a href="#mozTocId184279">Creating Custom Fallback Content for ProgressBar</a></li>
 
 
+
+    
     
     
     </ul>
 
 
+
   </li>
+
 
 
 </ul>
 
 
+
 <h2><a class="mozTocH2" name="mozTocId903858"></a>Introduction</h2>
+
 
 
 
@@ -72,6 +91,7 @@ as well as Microsoft's ASP.NET implementation. </p>
 
 
 
+
 <p> NeatUpload contains two custom controls (<code>InputFile</code>
 and <code>ProgressBar</code>), an <code>HttpModule</code>
 (<code>UploadHttpModule</code>), and a page (<code>Progress.aspx</code>).
@@ -81,10 +101,12 @@ NeatUpload. </p>
 
 
 
+
 <p> <code><strong>InputFile</strong></code>
 is a custom control that renders like <code>HtmlInputFile</code>,
 but provides properties to access the temporary file containing the
 upload, as well as the client-specified name and content type. </p>
+
 
 
 
@@ -105,6 +127,7 @@ which loads the <code>Progress.aspx</code> page. <code>Progress.aspx</code>
 
 
 
+
 <p> <code><strong>UploadHttpModule</strong></code>
 is an <code>HttpModule</code> that intercepts each
 request, streams <code>InputFile</code> uploads to
@@ -122,6 +145,7 @@ adopting NeatUpload. </p>
 
 
 
+
 <p> <code><strong>Progress.aspx</strong></code>
 is the page that is displayed in the site provided by the <code>ProgressBar</code>
 control (i.e. in the IFRAME or popup). The codebehind for <code>Progress.aspx</code>
@@ -133,7 +157,9 @@ to update. </p>
 
 
 
+
 <h2><a class="mozTocH2" name="mozTocId304923"></a>Installation</h2>
+
 
 
 
@@ -144,13 +170,16 @@ Specifically: </p>
 
 
 
+
 <ol>
+
 
 
 
   <li> If you haven't already, download the release and extract
 it wherever you want. All the files will be extracted into a
 subdirectory name <code>NeatUpload-1.0/</code>. </li>
+
 
 
 
@@ -163,10 +192,13 @@ the remaining installation steps. </li>
 
 
 
+
   <li> If you aren't already using log4net:
     
     
+    
     <ol>
+
 
 
 
@@ -177,15 +209,19 @@ the <code>bin/
 
 
 
+
       <li> Copy <code>NeatUpload-1.0/log4net.config</code>
 to the root directory of your web application. </li>
+
 
 
 
       <li> Add the following line to the top of your <code>Global.asax.cs</code>:
         
         
+        
         <pre>[assembly: log4net.Config.XmlConfigurator(ConfigFile="log4net.config", Watch=true)]<br>	</pre>
+
 
 
 
@@ -193,13 +229,17 @@ to the root directory of your web application. </li>
 
 
 
+
+    
     
     
     </ol>
 
 
 
+
   </li>
+
 
 
 
@@ -211,12 +251,17 @@ directory of your web application. </li>
 
 
 
+
   <li> Create a <code>NeatUpload/</code>
 subdirectory in
 your web application by copying <code>NeatUpload-1.0/NeatUpload/</code>.
 &nbsp;That subdirectory contains <code>Progress.aspx</code>
-and associated files.
+and associated files. &nbsp;Note: If you add <code>Progress.aspx</code> to your VS.NET project it will say, "There
+is no class file in the project associated with the Web Form
+'Progress.aspx'.&nbsp; Create a new class file now?". &nbsp;Answer "No"
+because the class file is compiled into&nbsp;<code>Brettle.Web.NeatUpload.dll</code>.
   </li>
+
 
 
 
@@ -224,11 +269,14 @@ and associated files.
 under <code>configuration/system.web/httpModules</code>:
     
     
+    
     <pre>&lt;add name="UploadHttpModule" type="Brettle.Web.NeatUpload.UploadHttpModule, Brettle.Web.NeatUpload" /&gt;<br>	</pre>
 
 
 
+
   </li>
+
 
 
 
@@ -237,11 +285,14 @@ Mbytes, add or modify the following line in your <code>Web.config</code>
 under <code>configuration/system.web</code>:
     
     
+    
     <pre>&lt;httpRuntime maxRequestLength="<var>size_in_kbytes</var>" /&gt;<br>	</pre>
 
 
 
+
   </li>
+
 
 
 
@@ -251,7 +302,9 @@ and verify that the demo functions properly. </li>
 
 
 
+
 </ol>
+
 
 
 
@@ -260,7 +313,9 @@ reading for details. </p>
 
 
 
+
 <h2><a class="mozTocH2" name="mozTocId50790"></a>Basic Usage</h2>
+
 
 
 
@@ -268,18 +323,23 @@ reading for details. </p>
 
 
 
+
 <ol>
+
 
 
 
   <li> Add the following to the top of your page:
     
     
+    
     <pre> <br>&lt;%@ Register TagPrefix="Upload" Namespace="Brettle.Web.NeatUpload" Assembly="Brettle.Web.NeatUpload" %&gt;<br>	</pre>
 
 
 
+
   </li>
+
 
 
 
@@ -288,12 +348,15 @@ aspx page wherever you
 want the user to choose a file, using something like this:
     
     
+    
     <pre>&lt;Upload:InputFile id="<var>inputFileId</var>" runat="server" /&gt;<br>	</pre>
+
 
 
 
 Feel free to add any attributes that you would normally add to an
     <code>HtmlInputFile</code> tag. </li>
+
 
 
 
@@ -304,7 +367,9 @@ progress bar, add it wherever you want the fallback link to be
 displayed. &nbsp;Use something like this:
     
     
+    
     <pre>&lt;Upload:ProgressBar id="<var>progressBarId</var>" runat="server" inline="<var>true|false</var>" /&gt;<br>	</pre>
+
 
 
 
@@ -312,22 +377,29 @@ The inline attribute defaults to false. </li>
 
 
 
+
   <li> Add a submit button to your aspx page, using a
 submit button control that renders as <code>&lt;input type="submit" ...&gt;</code>. For example:
     
     
+    
     <pre>&lt;asp:Button id="<var>submitButtonId</var>" runat="server" Text="<var>Submit</var>" /&gt;<br></pre>
+
     <span style="font-weight: bold;">Note</span>: <code>&lt;asp:LinkButton&gt;</code> renders as <code>&lt;a href="..."&gt;...&lt;/a&gt;</code> and is not supported by NeatUpload-1.0.x. &nbsp;Support for <code>LinkButtons</code> might be added in NeatUpload-1.1.x or later.</li>
+
   <li> In your codebehind file, declare each <code>InputFile</code>
 and
     <code>ProgressBar</code> control using code like this:
+    
     
     
     <pre>using Brettle.Web.NeatUpload;<br>...<br>	public class YourPage : System.Web.UI.Page<br>	{<br>		...<br>		protected InputFile <var>inputFileId</var>;<br>		protected ProgressBar <var>progressBarId</var>;<br>	</pre>
 
 
 
+
   </li>
+
 
 
 
@@ -337,11 +409,14 @@ before the page is rendered), add the submit button as a trigger for
 your progress bar:
     
     
+    
     <pre>	private void Page_Load(object sender, EventArgs e)<br>	{<br>		...<br>	<var>	progressBarId</var>.AddTrigger(<var>submitButtonId</var>);<br><br>	</pre>
 
 
 
+
   </li>
+
 
 
 
@@ -358,7 +433,9 @@ application's root directory if it doesn't already exist (assuming
 sufficient permissions):
     
     
+    
     <pre>using System.IO;<br>...<br>	private void Page_PreRender(object sender, EventArgs e)<br>	{<br>		...<br>		if (IsPostBack &amp;&amp; <var>inputFileId</var>.TmpFile != null)<br>		{<br>			...<br>		<var>	inputFileId</var>.TmpFile.MoveTo(Path.Combine(Request.PhysicalApplicationPath,&nbsp;<br>								Path.GetFileName(<var>inputFileId</var>.FileName)));<br><br></pre>
+
 
 
 
@@ -366,7 +443,9 @@ sufficient permissions):
 
 
 
+
 </ol>
+
 
 
 
@@ -374,7 +453,9 @@ sufficient permissions):
 
 
 
+
 <h3><a class="mozTocH3" name="mozTocId905959"></a>Changing the Temporary Directory</h3>
+
 
 
 
@@ -387,7 +468,9 @@ under <code><tt>configuration/appSettings</tt></code>:
 
 
 
+
 <pre>	&lt;add key="NeatUpload.DefaultTempDirectory" value="<var>yourTempDir</var>" /&gt;<br>	</pre>
+
 
 
 
@@ -396,7 +479,9 @@ If the directory you specify is relative, it will be relative to your applicatio
 
 
 
+
 <h3><a class="mozTocH3" name="mozTocId358727"></a>Changing the Maximum Size of Normal Requests</h3>
+
 
 
 
@@ -417,11 +502,14 @@ under
 
 
 
+
 <pre>	&lt;add key="NeatUpload.MaxNormalRequestLength" value="<em>sizeInKBytes</em>" /&gt;<br>	</pre>
 
 
 
+
 <h3><a class="mozTocH3" name="mozTocId390633"></a>Customizing <code>Progress.aspx</code></h3>
+
 
 
 
@@ -439,21 +527,27 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
 <table border="1">
+
 
 
 
   <thead><tr>
 
 
+
     <td><strong>ID</strong></td>
+
 
 
 
     <td><strong>Tag Name</strong></td>
 
 
+
   </tr>
+
 
 
 
@@ -461,7 +555,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
     <tr>
+
 
 
 
@@ -469,7 +565,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
       <td>any</td>
+
 
 
 
@@ -477,7 +575,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
     <tr>
+
 
 
 
@@ -485,7 +585,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
       <td>any</td>
+
 
 
 
@@ -493,7 +595,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
     <tr>
+
 
 
 
@@ -501,7 +605,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
       <td>any</td>
+
 
 
 
@@ -509,7 +615,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
     <tr>
+
 
 
 
@@ -517,7 +625,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
       <td>any</td>
+
 
 
 
@@ -525,7 +635,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
     <tr>
+
 
 
 
@@ -533,7 +645,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
       <td>any</td>
+
 
 
 
@@ -541,7 +655,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
     <tr>
+
 
 
 
@@ -549,7 +665,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
       <td>any</td>
+
 
 
 
@@ -557,7 +675,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
     <tr>
+
 
 
 
@@ -565,7 +685,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
       <td>A</td>
+
 
 
 
@@ -573,7 +695,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
     <tr>
+
 
 
 
@@ -581,11 +705,14 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
       <td>A</td>
 
 
 
+
     </tr>
+
 
 
 
@@ -593,7 +720,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
       <td><code>cancelLink</code></td>
+
 
 
 
@@ -601,14 +730,18 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
     </tr>
 
 
 
+
+  
   
   
   </tbody>
 </table>
+
 
 
 
@@ -623,7 +756,9 @@ refreshing the progress display. </p>
 
 
 
+
 <h3><a class="mozTocH3" name="mozTocId184279"></a>Creating Custom Fallback Content for <code>ProgressBar</code></h3>
+
 
 
 
@@ -636,11 +771,14 @@ the desired text (or controls) between the begin and end tags of the
 
 
 
+
 <pre>	&lt;Upload:ProgressBar id="progressBar" runat="server" &gt;<br>	&lt;asp:Label id="label" runat="server" Text="Your Text Here"/&gt;<br>	&lt;/Upload:ProgressBar&gt;<br>	</pre>
 
 
 
+
 <p></p>
+
 
 
 
