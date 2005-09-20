@@ -135,7 +135,7 @@ namespace Brettle.Web.NeatUpload
 		
 		private bool FindBoundary(bool doneReading)
 		{
-			while (parsePos + boundary.Length < writePos)
+			while (parsePos + boundary.Length + 2 < writePos)
 			{			
 				int lfIndex = Array.IndexOf(buffer, (byte)'\n', parsePos + boundary.Length, 
 											writePos - (parsePos + boundary.Length));
@@ -144,7 +144,7 @@ namespace Brettle.Web.NeatUpload
 					parsePos = writePos;
 					if (!doneReading)
 					{
-						parsePos -= boundary.Length;
+						parsePos -= (boundary.Length + 2);
 					}
 					return false;
 				}
@@ -155,6 +155,10 @@ namespace Brettle.Web.NeatUpload
 				if (lfIndex - boundary.Length >= 0)
 				{
 					parsePos = lfIndex - boundary.Length; 
+					if (buffer[lfIndex-1] == '-' && buffer[lfIndex-2] == '-')
+					{
+						parsePos -= 2;
+					}
 					if (ArraysEqual(boundary, 0, buffer, parsePos, boundary.Length))
 					{
 						if (log.IsDebugEnabled) log.Debug("grandTotalBytesRead=" + grandTotalBytesRead);
