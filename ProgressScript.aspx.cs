@@ -90,7 +90,7 @@ namespace Brettle.Web.NeatUpload
 			{
 				sb.Length = sb.Length-1;
 				sb.Append("}");
-				Response.Write("self.NeatUploadUpdateDom(" + sb.ToString() + ");\n");
+				Response.Write("NeatUploadUpdateDom(" + sb.ToString() + ");\n");
 			}
 		}
 

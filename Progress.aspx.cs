@@ -51,10 +51,10 @@ namespace Brettle.Web.NeatUpload
 		
 		private string clientRefreshScript = @"<script language=""javascript"">
 
-self.NeatUploadScript = null;
+NeatUploadScript = null;
 
-self.NeatUploadReq = null;
-self.NeatUploadRefreshWithScript = function (url) 
+NeatUploadReq = null;
+function NeatUploadRefreshWithScript(url) 
 {
 	var req = null;
 	try
@@ -71,28 +71,28 @@ self.NeatUploadRefreshWithScript = function (url)
 	}
 	if (req)
 	{
-		this.NeatUploadReq = req;
+		NeatUploadReq = req;
 	}
-	if (this.NeatUploadReq)
+	if (NeatUploadReq)
 	{
-		this.NeatUploadReq.onreadystatechange = this.NeatUploadEvalScript;
-		this.NeatUploadReq.open(""GET"", url);
-		this.NeatUploadReq.send(null);
+		NeatUploadReq.onreadystatechange = NeatUploadEvalScript;
+		NeatUploadReq.open(""GET"", url);
+		NeatUploadReq.send(null);
 	}
 	else if (document.getElementById) 
 	{
 		if (navigator.appVersion.indexOf(""Mac"") != -1) 
 		{
-			this.NeatUploadScript = document.createElement('div');
-			this.NeatUploadScript.innerHTML = '<sc' + 'ript type=\'text/javascript\' src=\'' + url + '\'><\/sc' + 'ript>';
-			document.body.appendChild(this.NeatUploadScript);
+			NeatUploadScript = document.createElement('div');
+			NeatUploadScript.innerHTML = '<sc' + 'ript type=\'text/javascript\' src=\'' + url + '\'><\/sc' + 'ript>';
+			document.body.appendChild(NeatUploadScript);
 		}
 		else
 		{
-			this.NeatUploadScript = document.createElement('script');
-			this.NeatUploadScript.defer = true;
-			document.body.appendChild(this.NeatUploadScript);
-			this.NeatUploadScript.src = url;
+			NeatUploadScript = document.createElement('script');
+			NeatUploadScript.defer = true;
+			document.body.appendChild(NeatUploadScript);
+			NeatUploadScript.src = url;
 		}
 	}
 	else
@@ -100,36 +100,36 @@ self.NeatUploadRefreshWithScript = function (url)
 		return false;
 	}
 	return true;
-};
+}
 
-self.NeatUploadEvalScript = function ()
+function NeatUploadEvalScript()
 {
-	if (self.NeatUploadReq && self.NeatUploadReq.readyState == 4) 
+	if (typeof(NeatUploadReq) != ""undefined"" && NeatUploadReq.readyState == 4) 
 	{
-		eval(self.NeatUploadReq.responseText);
+		eval(NeatUploadReq.responseText);
 	}
-};
+}
 
-self.NeatUploadRefresh = function ()
+function NeatUploadRefresh()
 {
-	if (!self.NeatUploadRefreshWithScript('PROGRESSSCRIPTURL?' + document.location.search.substring(1) + '&' + Math.random()))
+	if (!NeatUploadRefreshWithScript('PROGRESSSCRIPTURL?' + document.location.search.substring(1) + '&' + Math.random()))
 	{
-		self.NeatUploadRefreshPage();
+		NeatUploadRefreshPage();
 	}
-};
+}
 
-self.NeatUploadRefreshPage = function () 
+function NeatUploadRefreshPage() 
 {
-	self.location.replace('REFRESHURL');
-};
+	window.location.replace('REFRESHURL');
+}
 
-self.NeatUploadLastUpdate = new Date(); 
-self.NeatUploadUpdateDom = function (upload)
+NeatUploadLastUpdate = new Date(); 
+function NeatUploadUpdateDom(upload)
 {
-	if (this.NeatUploadScript)
+	if (NeatUploadScript)
 	{
-		document.body.removeChild(this.NeatUploadScript);
-		this.NeatUploadScript = null;
+		document.body.removeChild(NeatUploadScript);
+		NeatUploadScript = null;
 	}
 	if (typeof( upload.progress ) != ""undefined"")
 		document.getElementById(""barDiv"").style.width = upload.progress + ""%"";
@@ -137,19 +137,19 @@ self.NeatUploadUpdateDom = function (upload)
 		document.getElementById(""remainingTimeSpan"").innerHTML = upload.remainingtime;
 	if (typeof( upload.status ) != ""undefined"" && upload.status == ""inprogress"")
 	{
-		var lastMillis = this.NeatUploadLastUpdate.getTime();
-		this.NeatUploadLastUpdate = new Date();
-		var delay = Math.max(lastMillis + 1000 - this.NeatUploadLastUpdate.getTime(), 1);
-		this.NeatUploadReloadTimeoutId = this.setTimeout(this.NeatUploadRefresh, delay);
+		var lastMillis = NeatUploadLastUpdate.getTime();
+		NeatUploadLastUpdate = new Date();
+		var delay = Math.max(lastMillis + 1000 - NeatUploadLastUpdate.getTime(), 1);
+		NeatUploadReloadTimeoutId = setTimeout(NeatUploadRefresh, delay);
 	}
 	else
 	{
-		this.NeatUploadRefreshPage();
+		NeatUploadRefreshPage();
 	}
-};
+}
 
 
-self.NeatUploadGetMainWindow = function() 
+function NeatUploadGetMainWindow() 
 {
 	var mainWindow;
 	if (window.opener) 
@@ -159,33 +159,33 @@ self.NeatUploadGetMainWindow = function()
 	return mainWindow;
 };
 
-self.NeatUploadCancel = function() 
+function NeatUploadCancel() 
 {
 	var mainWindow = NeatUploadGetMainWindow();
 	if (mainWindow.stop)
 		mainWindow.stop();
 	else if (mainWindow.document.execCommand)
 		mainWindow.document.execCommand('Stop');
-};
+}
 
 document.body.onunload = function () 
 {
-	if (window.self.NeatUploadReq && window.self.NeatUploadReq.readystate
-		&& window.self.NeatUploadReq.readystate >= 1 && window.self.NeatUploadReq.readystate <=3)
+	if (NeatUploadReq && NeatUploadReq.readystate
+		&& NeatUploadReq.readystate >= 1 && NeatUploadReq.readystate <=3)
 	{
-		window.self.NeatUploadReq.abort();
+		NeatUploadReq.abort();
 	}
-	window.self.NeatUploadReq = null;
-};
+	NeatUploadReq = null;
+}
 
-self.NeatUploadReloadTimeoutId = self.setTimeout(self.NeatUploadRefresh, 1000);
+NeatUploadReloadTimeoutId = setTimeout(NeatUploadRefresh, 1000);
 
-self.NeatUploadMainWindow = self.NeatUploadGetMainWindow();
-if (self.NeatUploadMainWindow.stop == null && self.NeatUploadMainWindow.document.execCommand == null)
+NeatUploadMainWindow = NeatUploadGetMainWindow();
+if (NeatUploadMainWindow.stop == null && NeatUploadMainWindow.document.execCommand == null)
 {
-	self.NeatUploadLinkNode = document.getElementById('cancelLink');
-	if (self.NeatUploadLinkNode) 
-		self.NeatUploadLinkNode.parentNode.removeChild(self.NeatUploadLinkNode);
+	NeatUploadLinkNode = document.getElementById('cancelLink');
+	if (NeatUploadLinkNode) 
+		NeatUploadLinkNode.parentNode.removeChild(NeatUploadLinkNode);
 }
 </script>";
 		
@@ -220,7 +220,7 @@ if (self.NeatUploadMainWindow.stop == null && self.NeatUploadMainWindow.document
 			refreshLink.Visible = true;
 			refreshLink.HRef = refreshUrl + "&refresher=server";	
 			RegisterStartupScript("scrNeatUpload", "<script language=\"javascript\">"
-				+ "self.NeatUploadLinkNode = document.getElementById('" + refreshLink.ClientID + "'); if (self.NeatUploadLinkNode) self.NeatUploadLinkNode.parentNode.removeChild(self.NeatUploadLinkNode);"
+				+ "NeatUploadLinkNode = document.getElementById('" + refreshLink.ClientID + "'); if (NeatUploadLinkNode) NeatUploadLinkNode.parentNode.removeChild(NeatUploadLinkNode);"
 				+ "</script>");
 
 			// Find the current upload context
@@ -252,7 +252,7 @@ if (self.NeatUploadMainWindow.stop == null && self.NeatUploadMainWindow.document
 			if (curStatus == prevStatus 
 				&& (curStatus == UploadStatus.Completed.ToString() || curStatus == UploadStatus.Cancelled.ToString()))
 			{
-				RegisterStartupScript("scrNeatUploadClose", "<script language=\"javascript\">self.close();</script>");
+				RegisterStartupScript("scrNeatUploadClose", "<script language=\"javascript\">window.close();</script>");
 			}
 				// Otherwise, if refresh!=false we refresh the page in one second
 			else if (Request.Params["refresh"] != "false" && Request.Params["refresher"] != null)
@@ -329,7 +329,7 @@ if (self.NeatUploadMainWindow.stop == null && self.NeatUploadMainWindow.document
 			refreshUrl += "&refresher=client";
 			cancelLink.Visible = true;
 			cancelLink.HRef = refreshUrl + "&cancelled=true";	
-			cancelLink.Attributes["onclick"] = "javascript: window.self.NeatUploadCancel();";
+			cancelLink.Attributes["onclick"] = "javascript: NeatUploadCancel();";
 			string progressScriptUrl = Request.Url.AbsoluteUri;
 			progressScriptUrl = progressScriptUrl.Substring(0, progressScriptUrl.LastIndexOf('/')) + "/ProgressScript.aspx";
 			RegisterStartupScript("scrNeatUploadRefresh", clientRefreshScript.Replace("REFRESHURL", refreshUrl).Replace("PROGRESSSCRIPTURL", progressScriptUrl));
