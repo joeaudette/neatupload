@@ -157,7 +157,7 @@ self.NeatUploadGetMainWindow = function()
 	else 
 		mainWindow = window.parent;
 	return mainWindow;
-}
+};
 
 self.NeatUploadCancel = function() 
 {
@@ -166,25 +166,21 @@ self.NeatUploadCancel = function()
 		mainWindow.stop();
 	else if (mainWindow.document.execCommand)
 		mainWindow.document.execCommand('Stop');
-	for (var w in mainWindow.NeatUploadWindows)
+};
+
+document.body.onunload = function () 
+{
+	if (window.self.NeatUploadReq && window.self.NeatUploadReq.readystate
+		&& window.self.NeatUploadReq.readystate >= 1 && window.self.NeatUploadReq.readystate <=3)
 	{
-		if (w && w.setTimeout)
-		{
-			if (w.NeatUploadReloadTimeoutId) 
-				w.clearTimeout(w.NeatUploadReloadTimeoutId);
-			w.NeatUploadReloadTimeoutId = w.setTimeout(w.NeatUploadRefresh, 1);
-		}
+		window.self.NeatUploadReq.abort();
 	}
-}
+	window.self.NeatUploadReq = null;
+};
 
 self.NeatUploadReloadTimeoutId = self.setTimeout(self.NeatUploadRefresh, 1000);
 
 self.NeatUploadMainWindow = self.NeatUploadGetMainWindow();
-if (!self.NeatUploadMainWindow.NeatUploadWindows)
-{
-	self.NeatUploadMainWindow.NeatUploadWindows = new Array();
-}
-self.NeatUploadMainWindow.NeatUploadWindows.push(window.self);
 if (self.NeatUploadMainWindow.stop == null && self.NeatUploadMainWindow.document.execCommand == null)
 {
 	self.NeatUploadLinkNode = document.getElementById('cancelLink');
