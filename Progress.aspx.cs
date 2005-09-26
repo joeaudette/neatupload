@@ -106,7 +106,14 @@ function NeatUploadEvalScript()
 {
 	if (typeof(NeatUploadReq) != ""undefined"" && NeatUploadReq.readyState == 4) 
 	{
-		eval(NeatUploadReq.responseText);
+		try
+		{
+			eval(NeatUploadReq.responseText);
+		}
+		catch (ex)
+		{
+			NeatUploadRefreshPage();
+		}
 	}
 }
 
@@ -168,7 +175,7 @@ function NeatUploadCancel()
 		mainWindow.document.execCommand('Stop');
 }
 
-document.body.onunload = function () 
+window.onunload = function () 
 {
 	if (NeatUploadReq && NeatUploadReq.readystate
 		&& NeatUploadReq.readystate >= 1 && NeatUploadReq.readystate <=3)
@@ -219,9 +226,10 @@ if (NeatUploadMainWindow.stop == null && NeatUploadMainWindow.document.execComma
 			stopRefreshLink.Visible = false;
 			refreshLink.Visible = true;
 			refreshLink.HRef = refreshUrl + "&refresher=server";	
-			RegisterStartupScript("scrNeatUpload", "<script language=\"javascript\">"
-				+ "NeatUploadLinkNode = document.getElementById('" + refreshLink.ClientID + "'); if (NeatUploadLinkNode) NeatUploadLinkNode.parentNode.removeChild(NeatUploadLinkNode);"
-				+ "</script>");
+			RegisterStartupScript("scrNeatUpload", @"<script language=""javascript"">
+NeatUploadLinkNode = document.getElementById('" + refreshLink.ClientID + @"');
+if (NeatUploadLinkNode) NeatUploadLinkNode.parentNode.removeChild(NeatUploadLinkNode);
+</script>");
 
 			// Find the current upload context
 			string postBackID = Request.Params["postBackID"];

@@ -35,8 +35,9 @@ namespace Brettle.Web.NeatUpload
 		private void Page_Load(object sender, EventArgs e)
 		{
 			Response.Clear();
-			Response.ContentType = "text/javascript";
+			Response.ContentType = "application/javascript";
 			Response.Cache.SetCacheability(System.Web.HttpCacheability.NoCache);
+			// this.Response.ContentEncoding = System.Text.Encoding.Unicode; // Required for Opera
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			sb.Append("{ ");
 			try

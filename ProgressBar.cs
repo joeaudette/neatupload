@@ -31,6 +31,9 @@ namespace Brettle.Web.NeatUpload
 	{
 		private string uploadProgressUrl;
 		private string displayStatement;
+		private bool isPopup {
+			get { return Attributes["inline"] == null || Attributes["inline"] == "false"; }
+		}
 		
 		public ProgressBar(string tagName)
 		{
@@ -67,12 +70,12 @@ namespace Brettle.Web.NeatUpload
 				uploadProgressUrl += "&lastPostBackID=" + UploadContext.Current.PostBackID;
 			}
 			
-			if (Attributes["inline"] == null || Attributes["inline"] == "false")
+			if (isPopup)
 			{
 				TagName = "div";
 				displayStatement = @"
-	window.open('" + uploadProgressUrl + "&refresher=client', '" + FormContext.Current.PostBackID + @"',
-					'width=500,height=100,directories=no,location=no,menubar=no,resizable=yes,scrollbars=no,status=no,toolbar=no');
+window.open('" + uploadProgressUrl + "&refresher=client', '" + FormContext.Current.PostBackID + @"',
+				'width=500,height=100,directories=no,location=no,menubar=no,resizable=yes,scrollbars=no,status=no,toolbar=no');
 ";
 				this.Page.RegisterStartupScript(this.UniqueID + "RemoveDiv", @"
 <script language=""javascript"">
@@ -90,9 +93,11 @@ if (NeatUpload_DivNode)
 				Attributes["src"] = uploadProgressUrl;
 				Attributes["frameborder"] = "0";
 				Attributes["scrolling"] = "no";
+				Attributes["name"] = this.ClientID;
 				displayStatement = @"
-		setTimeout(function() {
-			document.getElementById('" + this.ClientID + "').src='" + uploadProgressUrl + @"&refresher=client'; }, 0);
+setTimeout(function () {
+	frames['" + this.ClientID + @"'].location.href = '" + uploadProgressUrl + @"&refresher=client';
+}, 0);
 ";
 			}
 		}
@@ -128,17 +133,56 @@ if (NeatUpload_DivNode)
 					break;
 			}
 			
+			this.Page.RegisterStartupScript(formControl.UniqueID + "-OnSubmit", @"
+<script language=""javascript"">
+<!--
+function NeatUpload_OnSubmitForm_" + formControl.ClientID + @"()
+{
+	var elem = document.getElementById('" + formControl.ClientID + @"');
+	for (var i=0; i < elem.NeatUpload_OnSubmitHandlers.length; i++)
+	{
+		elem.NeatUpload_OnSubmitHandlers[i].call(elem);
+	}
+	return true;
+}
+
+function NeatUpload_AddSubmitHandler_" + formControl.ClientID + @"(isPopup, handler)
+{
+	var elem = document.getElementById('" + formControl.ClientID + @"');
+	if (!elem.NeatUpload_OnSubmitHandlers) 
+	{
+		elem.NeatUpload_OnSubmitHandlers = new Array();
+		elem.NeatUpload_OrigSubmit = elem.submit;
+		elem.submit = function () {
+			elem.NeatUpload_OrigSubmit();
+			NeatUpload_OnSubmitForm_" + formControl.ClientID + @"();
+		};
+	}
+	if (isPopup)
+	{
+		elem.NeatUpload_OnSubmitHandlers.unshift(handler);
+	}
+	else
+	{
+		elem.NeatUpload_OnSubmitHandlers.push(handler);
+	}	
+}
+NeatUpload_AddHandler('" + formControl.ClientID + @"', 'submit', NeatUpload_OnSubmitForm_" + formControl.ClientID + @");
+-->
+</script>
+");
+
 			this.Page.RegisterStartupScript(this.UniqueID + "-AddHandler", @"
 <script language=""javascript"">
 <!--
+
 NeatUpload_DisplayProgress_" + this.ClientID + @" = false;
-NeatUpload_AddHandler('" + formControl.ClientID + @"', 'submit', function () { 
-	if (NeatUpload_DisplayProgress_" + this.ClientID + @" == true)
-	{
-		NeatUpload_DisplayProgress_" + this.ClientID + @" = false;
-		" + displayStatement + @"
-	}
-	return true;
+NeatUpload_AddSubmitHandler_" + formControl.ClientID + "(" + (isPopup ? "true" : "false") + @", function () {
+		if (NeatUpload_DisplayProgress_" + this.ClientID + @" == true)
+		{
+			NeatUpload_DisplayProgress_" + this.ClientID + @" = false;
+			" + displayStatement + @"
+		}
 });
 -->
 </script>
@@ -166,6 +210,11 @@ NeatUpload_AddHandler('" + control.ClientID + @"', 'click', function () {
 <script language=""javascript"">
 <!--
 NeatUpload_DisplayProgress = false;
+function NeatUpload_CombineHandlers(origHandler, newHandler) 
+{
+	if (!origHandler || typeof(origHandler) == 'undefined') return newHandler;
+	return function(e) { origHandler(e); newHandler(e); };
+};
 function NeatUpload_AddHandler(id, eventName, handler)
 {
 	var elem = document.getElementById(id);
@@ -179,19 +228,7 @@ function NeatUpload_AddHandler(id, eventName, handler)
 	}
 	else
 	{
-		var origHandler = elem[""on"" + eventName];
-		if (origHandler)
-		{
-			var h = new object();
-			h.origHandler = origHandler;
-			h.newHandler = handler;
-			h.both = new function(e) { this.origHandler(e); this.handler(e); };
-			elem[""on"" + eventName] = h.both;
-		}
-		else
-		{
-			elem[""on"" + eventName] = handler;
-		}
+		elem[""on"" + eventName] = NeatUpload_CombineHandlers(elem[""on"" + eventName], handler);
 	}
 }
 function NeatUpload_IsFilesToUpload(id)
