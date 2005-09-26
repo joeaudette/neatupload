@@ -175,7 +175,13 @@ function NeatUploadCancel()
 		mainWindow.document.execCommand('Stop');
 }
 
-window.onunload = function () 
+function NeatUpload_CombineHandlers(origHandler, newHandler) 
+{
+	if (!origHandler || typeof(origHandler) == 'undefined') return newHandler;
+	return function(e) { origHandler(e); newHandler(e); };
+};
+
+window.onunload = NeatUpload_CombineHandlers(window.onunload, function () 
 {
 	if (NeatUploadReq && NeatUploadReq.readystate
 		&& NeatUploadReq.readystate >= 1 && NeatUploadReq.readystate <=3)
@@ -183,7 +189,7 @@ window.onunload = function ()
 		NeatUploadReq.abort();
 	}
 	NeatUploadReq = null;
-}
+});
 
 NeatUploadReloadTimeoutId = setTimeout(NeatUploadRefresh, 1000);
 
