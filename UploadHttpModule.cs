@@ -102,7 +102,10 @@ namespace Brettle.Web.NeatUpload
 			
 			// Ignore the subrequests we create to avoid infinite recursion...
 			if (origWorker is DecoratedWorkerRequest)
+			{
+//				HttpContext.Current.Request.SaveAs(System.IO.Path.GetTempFileName() , true);
 				return;
+			}
 
 			// Get the Content-Length header and parse it if we find it.  If it's not present we might
 			// still be OK.

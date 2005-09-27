@@ -28,6 +28,7 @@ using System.Web.UI.HtmlControls;
 
 namespace Brettle.Web.NeatUpload
 {
+	[ValidationProperty("FileName")]
 	public class InputFile : System.Web.UI.WebControls.WebControl, System.Web.UI.IPostBackDataHandler
 	{
 		private UploadedFile file;
@@ -66,26 +67,6 @@ namespace Brettle.Web.NeatUpload
 			HtmlForm form = c as HtmlForm;
 			form.Enctype = "multipart/form-data";
 			form.Method = "Post";
-			
-			// This really belongs in LoadPostData, but MS ASP.NET only calls LoadPostData if the request
-			// contains a name matching the name of our control.  Since we filter out that part of the request
-			// ASP.NET doesn't see it and doesnt' call LoadPostData.
-			if (this.Page.IsPostBack)
-			{
-				if (UploadHttpModule.IsEnabled)
-				{
-					file = UploadContext.Current.GetUploadedFile(this.UniqueID);
-				}
-				else
-				{
-					HttpPostedFile postedFile = Context.Request.Files[this.UniqueID];
-					if (postedFile != null)
-					{
-						file = new UploadedFile(postedFile.FileName, postedFile.ContentType);
-						postedFile.SaveAs(file.TmpFile.FullName);
-					}
-				}
-			}
 		}
 				
 		protected override void Render(HtmlTextWriter writer)
@@ -104,30 +85,34 @@ namespace Brettle.Web.NeatUpload
 			base.AddAttributesToRender(writer);
 			writer.RenderBeginTag(HtmlTextWriterTag.Input);
 			writer.RenderEndTag();
-/*
-			writer.AddAttribute(HtmlTextWriterAttribute.Type, "hidden");
-			writer.AddAttribute(HtmlTextWriterAttribute.Name, this.UniqueID);
-			writer.AddAttribute(HtmlTextWriterAttribute.Value, "dummy");
-			writer.RenderBeginTag(HtmlTextWriterTag.Input);
-			writer.RenderEndTag();
-*/
 		}
 
 		public virtual bool LoadPostData(string postDataKey, NameValueCollection postCollection)
 		{		
+			if (UploadHttpModule.IsEnabled)
+			{
+				file = UploadContext.Current.GetUploadedFile(this.UniqueID);
+			}
+			else
+			{
+				HttpPostedFile postedFile = Context.Request.Files[this.UniqueID];
+				if (postedFile != null)
+				{
+					file = new UploadedFile(this.UniqueID, postedFile.FileName, postedFile.ContentType);
+					postedFile.SaveAs(file.TmpFile.FullName);
+				}
+			}
 			return true;
 		}
 		
 		public virtual void RaisePostDataChangedEvent()
 		{
-			/*  See comment in Control_Load for why this is commented out
 			if (FileUploaded != null)
 			{
 				FileUploaded(this, EventArgs.Empty);
 			}
-			*/
 		}
 		
-		// public event System.EventHandler FileUploaded;
+		public event System.EventHandler FileUploaded;
 	}
 }

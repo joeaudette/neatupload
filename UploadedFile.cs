@@ -31,7 +31,7 @@ namespace Brettle.Web.NeatUpload
 		private static readonly log4net.ILog log 
 			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-		internal UploadedFile(string fileName, string contentType)
+		internal UploadedFile(string controlUniqueID, string fileName, string contentType)
 		{
 			string tmpDir 
 				= ConfigurationSettings.AppSettings["NeatUpload.DefaultTempDirectory"];
@@ -50,6 +50,7 @@ namespace Brettle.Web.NeatUpload
 			TmpFile = new FileInfo(tmpFileName);
 			FileName = fileName;
 			ContentType = contentType;
+			ControlUniqueID = controlUniqueID;
 		}
 		
 		internal void Dispose()
@@ -74,5 +75,7 @@ namespace Brettle.Web.NeatUpload
 		internal string FileName;
 		
 		internal string ContentType;
+
+		internal string ControlUniqueID;
 	}
 }

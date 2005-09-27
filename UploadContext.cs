@@ -79,15 +79,13 @@ namespace Brettle.Web.NeatUpload
 			return uploadedFiles[controlUniqueID] as UploadedFile; 
 		}
 		
-		internal FileStream CreateUploadedFile(string fileID, string fileName, string contentType)
+		internal UploadedFile CreateUploadedFile(string fileID, string fileName, string contentType)
 		{
-			// FIXME: avoid name collisions and insecure names/paths.
-			UploadedFile uploadedFile = new UploadedFile(fileName, contentType);
-			
 			// Get the control's unique ID from the fileID
 			int dashIndex = fileID.IndexOf('-');
 			string controlUniqueID = fileID.Substring(dashIndex + 1);
 			if (log.IsDebugEnabled) log.Debug("In CreateUploadedFile() controlUniqueID=" + controlUniqueID);
+			UploadedFile uploadedFile = new UploadedFile(controlUniqueID, fileName, contentType);			
 			uploadedFiles[controlUniqueID] = uploadedFile;
 			
 			// Set the PostBackID from the fileID
@@ -98,7 +96,7 @@ namespace Brettle.Web.NeatUpload
 			if (log.IsDebugEnabled) log.Debug("Storing UploadContext in Application[" + PostBackID + "]");
 			HttpContext.Current.Application[PostBackID] = this;
 			
-			return uploadedFile.TmpFile.Create();
+			return uploadedFile;
 		}
 		
 		internal void RemoveUploadedFiles()

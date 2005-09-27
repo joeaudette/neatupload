@@ -48,7 +48,6 @@ namespace Brettle.Web.NeatUpload
 		private void InitializeComponent()
 		{
 			this.Load += new System.EventHandler(this.Page_Load);
-			this.PreRender += new System.EventHandler(this.Page_PreRender);
 		}
 		
 		private void Page_Load(object sender, EventArgs e)
@@ -61,35 +60,39 @@ namespace Brettle.Web.NeatUpload
 			progressBar.AddTrigger(linkButton);
 			inlineProgressBar.AddTrigger(submitButton);
 			inlineProgressBar.AddTrigger(linkButton);
+			submitButton.Click += new System.EventHandler(this.Button_Clicked);
+			linkButton.Click += new System.EventHandler(this.Button_Clicked);
 		}
 
-		private void Page_PreRender(object sender, EventArgs e)
+		private void Button_Clicked(object sender, EventArgs e)
 		{
-			if (this.IsPostBack)
+			if (!this.IsValid)
 			{
-				bodyPre.InnerText = "";
-				if (inputFile.TmpFile != null)
-				{
-					/* 
-						In a real app, you'd do something like:
-							inputFile.TmpFile.MoveTo(inputFile.FileName);
-					*/
-					bodyPre.InnerText += "File #1:\n"; 
-					bodyPre.InnerText += "  Name: " + inputFile.FileName + "\n";
-					bodyPre.InnerText += "  Size: " + inputFile.TmpFile.Length + "\n";
-					bodyPre.InnerText += "  Content type: " + inputFile.ContentType + "\n";
-				}
-				if (inputFile2.TmpFile != null)
-				{
-					/* 
-						In a real app, you'd do something like:
-							inputFile.TmpFile.MoveTo(inputFile.FileName);
-					*/
-					bodyPre.InnerText += "File #2:\n"; 
-					bodyPre.InnerText += "  Name: " + inputFile2.FileName + "\n";
-					bodyPre.InnerText += "  Size: " + inputFile2.TmpFile.Length + "\n";
-					bodyPre.InnerText += "  Content type: " + inputFile2.ContentType + "\n";
-				}
+				bodyPre.InnerText = "Page is not valid!";
+				return;
+			}
+			bodyPre.InnerText = "";
+			if (inputFile.TmpFile != null)
+			{
+				/* 
+					In a real app, you'd do something like:
+						inputFile.TmpFile.MoveTo(inputFile.FileName);
+				*/
+				bodyPre.InnerText += "File #1:\n"; 
+				bodyPre.InnerText += "  Name: " + inputFile.FileName + "\n";
+				bodyPre.InnerText += "  Size: " + inputFile.TmpFile.Length + "\n";
+				bodyPre.InnerText += "  Content type: " + inputFile.ContentType + "\n";
+			}
+			if (inputFile2.TmpFile != null)
+			{
+				/* 
+					In a real app, you'd do something like:
+						inputFile.TmpFile.MoveTo(inputFile.FileName);
+				*/
+				bodyPre.InnerText += "File #2:\n"; 
+				bodyPre.InnerText += "  Name: " + inputFile2.FileName + "\n";
+				bodyPre.InnerText += "  Size: " + inputFile2.TmpFile.Length + "\n";
+				bodyPre.InnerText += "  Content type: " + inputFile2.ContentType + "\n";
 			}
 		}
 

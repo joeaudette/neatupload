@@ -167,7 +167,8 @@ function NeatUpload_AddSubmitHandler_" + formControl.ClientID + @"(isPopup, hand
 		elem.NeatUpload_OnSubmitHandlers.push(handler);
 	}	
 }
-NeatUpload_AddHandler('" + formControl.ClientID + @"', 'submit', NeatUpload_OnSubmitForm_" + formControl.ClientID + @");
+document.getElementById('" + formControl.ClientID + @"').onsubmit 
+	= NeatUpload_CombineHandlers(document.getElementById('" + formControl.ClientID + @"').onsubmit, NeatUpload_OnSubmitForm_" + formControl.ClientID + @");
 -->
 </script>
 ");
@@ -213,7 +214,7 @@ NeatUpload_DisplayProgress = false;
 function NeatUpload_CombineHandlers(origHandler, newHandler) 
 {
 	if (!origHandler || typeof(origHandler) == 'undefined') return newHandler;
-	return function(e) { origHandler(e); newHandler(e); };
+	return function(e) { if (origHandler(e) == false) return false; return newHandler(e); };
 };
 function NeatUpload_AddHandler(id, eventName, handler)
 {

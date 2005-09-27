@@ -388,8 +388,17 @@ namespace Brettle.Web.NeatUpload
 				if (fileName != null && fileID.StartsWith(UploadContext.NamePrefix))
 				{
 					if (log.IsDebugEnabled) log.Debug("Calling UploadContext.Current.CreateUploadedFile(" + fileID + "...)");
-					outputStream = fileStream = uploadContext.CreateUploadedFile(fileID, fileName, contentType);
+					UploadedFile uploadedFile = uploadContext.CreateUploadedFile(fileID, fileName, contentType);
+					outputStream = fileStream = uploadedFile.TmpFile.Create();
 					readPos = parsePos; // Skip past the boundary and headers
+
+					// Write out a replacement part that just contains the filename as the value.
+					preloadedEntityBodyStream.Write(boundary, 0, boundary.Length);
+					System.Text.StringBuilder replacementPart = new System.Text.StringBuilder();
+					replacementPart.Append("\r\nContent-Disposition: form-data; name=\"" + uploadedFile.ControlUniqueID + "\"\r\n\r\n");
+					replacementPart.Append(fileName);
+					byte[] replacementPartBytes = System.Text.Encoding.ASCII.GetBytes(replacementPart.ToString());
+					preloadedEntityBodyStream.Write(replacementPartBytes, 0, replacementPartBytes.Length);
 				}
 				else
 				{
