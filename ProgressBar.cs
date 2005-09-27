@@ -176,8 +176,16 @@ document.getElementById('" + formControl.ClientID + @"').onsubmit
 			this.Page.RegisterStartupScript(this.UniqueID + "-AddHandler", @"
 <script language=""javascript"">
 <!--
-
-NeatUpload_DisplayProgress_" + this.ClientID + @" = false;
+function NeatUpload_InitDisplayProgress_" + this.ClientID + @"()
+{
+	if (!NeatUpload_DisplayProgressSet_" + this.ClientID + @")
+	{
+		NeatUpload_DisplayProgress_" + this.ClientID + @" = false;
+	}
+	NeatUpload_DisplayProgressSet_" + this.ClientID + @" = false;
+}
+var NeatUpload_DisplayProgressSet_" + this.ClientID + @" = false;
+NeatUpload_InitDisplayProgress_" + this.ClientID + @"();
 NeatUpload_AddSubmitHandler_" + formControl.ClientID + "(" + (isPopup ? "true" : "false") + @", function () {
 		if (NeatUpload_DisplayProgress_" + this.ClientID + @" == true)
 		{
@@ -185,6 +193,8 @@ NeatUpload_AddSubmitHandler_" + formControl.ClientID + "(" + (isPopup ? "true" :
 			" + displayStatement + @"
 		}
 });
+
+NeatUpload_AddHandler('" + formControl.ClientID + @"', 'click', NeatUpload_InitDisplayProgress_" + this.ClientID + @");
 -->
 </script>
 ");
@@ -199,6 +209,7 @@ NeatUpload_AddHandler('" + control.ClientID + @"', 'click', function () {
 	if (NeatUpload_IsFilesToUpload('" + formControl.ClientID + @"'))
 	{
 		NeatUpload_DisplayProgress_" + this.ClientID + @" = true;
+		NeatUpload_DisplayProgressSet_" + this.ClientID + @" = true;
 	}
 });
 -->
