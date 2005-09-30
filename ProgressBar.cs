@@ -31,6 +31,8 @@ namespace Brettle.Web.NeatUpload
 	{
 		private string uploadProgressUrl;
 		private string displayStatement;
+		private string displayProgressByDefault = "true";
+
 		private bool isPopup {
 			get { return Attributes["inline"] == null || Attributes["inline"] == "false"; }
 		}
@@ -125,6 +127,61 @@ setTimeout(function () {
 			if (!UploadHttpModule.IsEnabled)
 				return;
 			
+			HtmlControl formControl = GetFormControl(control);
+			
+			RegisterScriptsForForm(formControl);
+			this.Page.RegisterStartupScript(this.UniqueID + "-AddTrigger-" + control.UniqueID, @"
+<script language=""javascript"">
+<!--
+NeatUpload_AddHandler('" + control.ClientID + @"', 'click', function () {
+	if (NeatUpload_IsFilesToUpload('" + formControl.ClientID + @"'))
+	{
+		NeatUpload_DisplayProgress_" + this.ClientID + @" = true;
+		NeatUpload_DisplayProgressSet_" + this.ClientID + @" = true;
+	}
+});
+-->
+</script>
+");			
+		}
+
+		public void AddCancelButton(Control control)
+		{
+			if (!UploadHttpModule.IsEnabled)
+				return;
+			
+			HtmlControl formControl = GetFormControl(control);
+			
+			RegisterScriptsForForm(formControl);
+			this.Page.RegisterStartupScript(this.UniqueID + "-AddCancelButton-" + control.UniqueID, @"
+<script language=""javascript"">
+<!--
+NeatUpload_AddHandler('" + control.ClientID + @"', 'click', function () {
+	var formElem = document.getElementById('" + formControl.ClientID + @"');
+	var inputFiles = formElem.getElementsByTagName('input');
+	for (var i=0; i < inputFiles.length; i++ )
+	{
+		var inputFile = inputFiles.item(i);
+		if (inputFile.type == 'file')
+		{
+/*
+			inputFile.parentNode.removeChild(inputFile);
+*/
+			var newInputFile = document.createElement('input');
+			newInputFile.setAttribute('value', '');
+			newInputFile.setAttribute('type', 'file');
+			newInputFile.setAttribute('id', inputFile.id);
+			inputFile.parentNode.replaceChild(newInputFile, inputFile);
+		}
+	}
+});
+-->
+</script>
+");			
+		}
+
+		private HtmlControl GetFormControl(Control control)
+		{
 			HtmlControl formControl = null;
 			for (Control c = control; c != null; c=c.Parent)
 			{
@@ -132,7 +189,11 @@ setTimeout(function () {
 				if (formControl != null && String.Compare(formControl.TagName, "FORM", true) == 0)
 					break;
 			}
-			
+			return formControl;
+		}
+
+		private void RegisterScriptsForForm(Control formControl)
+		{
 			this.Page.RegisterStartupScript(formControl.UniqueID + "-OnSubmit", @"
 <script language=""javascript"">
 <!--
@@ -180,16 +241,17 @@ function NeatUpload_InitDisplayProgress_" + this.ClientID + @"()
 {
 	if (!NeatUpload_DisplayProgressSet_" + this.ClientID + @")
 	{
-		NeatUpload_DisplayProgress_" + this.ClientID + @" = false;
+		NeatUpload_DisplayProgress_" + this.ClientID + @" = " + displayProgressByDefault + @";
 	}
 	NeatUpload_DisplayProgressSet_" + this.ClientID + @" = false;
 }
 var NeatUpload_DisplayProgressSet_" + this.ClientID + @" = false;
 NeatUpload_InitDisplayProgress_" + this.ClientID + @"();
 NeatUpload_AddSubmitHandler_" + formControl.ClientID + "(" + (isPopup ? "true" : "false") + @", function () {
-		if (NeatUpload_DisplayProgress_" + this.ClientID + @" == true)
+		if (NeatUpload_DisplayProgress_" + this.ClientID + @" == true 
+			&& NeatUpload_IsFilesToUpload('" + formControl.ClientID + @"'))
 		{
-			NeatUpload_DisplayProgress_" + this.ClientID + @" = false;
+			NeatUpload_DisplayProgress_" + this.ClientID + @" = " + displayProgressByDefault + @";
 			" + displayStatement + @"
 		}
 });
@@ -202,26 +264,12 @@ NeatUpload_AddHandler('" + formControl.ClientID + @"', 'click', NeatUpload_InitD
 			{
 				this.Page.RegisterClientScriptBlock("NeatUploadProgressBar", clientScript);
 			}
-			this.Page.RegisterStartupScript(this.UniqueID + "-AddTrigger-" + control.UniqueID, @"
-<script language=""javascript"">
-<!--
-NeatUpload_AddHandler('" + control.ClientID + @"', 'click', function () {
-	if (NeatUpload_IsFilesToUpload('" + formControl.ClientID + @"'))
-	{
-		NeatUpload_DisplayProgress_" + this.ClientID + @" = true;
-		NeatUpload_DisplayProgressSet_" + this.ClientID + @" = true;
-	}
-});
--->
-</script>
-");			
 		}
 
 		
 		private string clientScript = @"
 <script language=""javascript"">
 <!--
-NeatUpload_DisplayProgress = false;
 function NeatUpload_CombineHandlers(origHandler, newHandler) 
 {
 	if (!origHandler || typeof(origHandler) == 'undefined') return newHandler;

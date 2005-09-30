@@ -28,7 +28,7 @@ using System.Web.UI.HtmlControls;
 
 namespace Brettle.Web.NeatUpload
 {
-	[ValidationProperty("FileName")]
+	[ValidationProperty("ValidationFileName")]
 	public class InputFile : System.Web.UI.WebControls.WebControl, System.Web.UI.IPostBackDataHandler
 	{
 		private UploadedFile file;
@@ -39,6 +39,10 @@ namespace Brettle.Web.NeatUpload
 		
 		public string FileName {
 			get { return (file != null && file.IsUploaded) ? file.FileName : null; }
+		}
+
+		public string ValidationFileName {
+			get { return (FileName != null ? FileName : ""); }
 		}
 
 		public string ContentType {

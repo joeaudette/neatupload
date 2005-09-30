@@ -35,6 +35,7 @@ namespace Brettle.Web.NeatUpload
 		protected InputFile inputFile2;
 		protected Button submitButton;
 		protected LinkButton linkButton;
+		protected Button cancelButton;
 		protected HtmlGenericControl bodyPre;
 		protected ProgressBar progressBar;
 		protected ProgressBar inlineProgressBar;
@@ -56,10 +57,15 @@ namespace Brettle.Web.NeatUpload
 			// progress bar to start updating when the specified button is 
 			// clicked.  AddTrigger should be called no earlier than page
 			// Load and no later than page Render.
+/*
 			progressBar.AddTrigger(submitButton);
 			progressBar.AddTrigger(linkButton);
 			inlineProgressBar.AddTrigger(submitButton);
 			inlineProgressBar.AddTrigger(linkButton);
+*/
+			progressBar.AddCancelButton(cancelButton);
+			inlineProgressBar.AddCancelButton(cancelButton);
+
 			submitButton.Click += new System.EventHandler(this.Button_Clicked);
 			linkButton.Click += new System.EventHandler(this.Button_Clicked);
 		}
