@@ -30,8 +30,8 @@
 			size, and content type.  A real application would move or copy the file to its permanent location.  
 			</p>
 			<p>
-			Pick a file: <Upload:InputFile id="inputFile" runat="server" /><br />
-			Pick another file: <Upload:InputFile id="inputFile2" runat="server" /><br />
+			Pick file #1: <Upload:InputFile id="inputFile" runat="server" /><br />
+			Pick file #2: <Upload:InputFile id="inputFile2" runat="server" /><br />
 			<asp:Button id="submitButton" runat="server" Text="Submit with a button" />
 			<asp:LinkButton id="linkButton" runat="server" Text="Submit with a link" />
 			<asp:Button id="cancelButton" runat="server" Text="Cancel" />

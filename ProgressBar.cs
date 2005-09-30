@@ -167,13 +167,14 @@ NeatUpload_AddHandler('" + control.ClientID + @"', 'click', function () {
 		var inputFile = inputFiles.item(i);
 		if (inputFile.type == 'file')
 		{
-/*
-			inputFile.parentNode.removeChild(inputFile);
-*/
 			var newInputFile = document.createElement('input');
-			newInputFile.setAttribute('value', '');
+			for (var a=0; a < inputFile.attributes.length; a++)
+			{
+				var attr = inputFile.attributes.item(a); 
+				if (attr.nodeName != 'type')
+					newInputFile.setAttribute(attr.nodeName, attr.nodeValue);
+			}
 			newInputFile.setAttribute('type', 'file');
-			newInputFile.setAttribute('id', inputFile.id);
 			inputFile.parentNode.replaceChild(newInputFile, inputFile);
 		}
 	}
