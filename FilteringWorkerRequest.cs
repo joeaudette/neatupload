@@ -155,11 +155,11 @@ namespace Brettle.Web.NeatUpload
 				if (lfIndex - boundary.Length >= 0)
 				{
 					parsePos = lfIndex - boundary.Length; 
-					if (buffer[lfIndex-1] == '-' && buffer[lfIndex-2] == '-')
+					if (lfIndex >= 2 && buffer[lfIndex-1] == '-' && buffer[lfIndex-2] == '-')
 					{
 						parsePos -= 2;
 					}
-					if (ArraysEqual(boundary, 0, buffer, parsePos, boundary.Length))
+					if (parsePos > 0 && ArraysEqual(boundary, 0, buffer, parsePos, boundary.Length))
 					{
 						if (log.IsDebugEnabled) log.Debug("grandTotalBytesRead=" + grandTotalBytesRead);
 						if (log.IsDebugEnabled) log.Debug("Found boundary");
