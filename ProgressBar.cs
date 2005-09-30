@@ -130,6 +130,8 @@ setTimeout(function () {
 			HtmlControl formControl = GetFormControl(control);
 			
 			RegisterScriptsForForm(formControl);
+
+			displayProgressByDefault = "false";
 			this.Page.RegisterStartupScript(this.UniqueID + "-AddTrigger-" + control.UniqueID, @"
 <script language=""javascript"">
 <!--
@@ -150,6 +152,7 @@ NeatUpload_AddHandler('" + control.ClientID + @"', 'click', function () {
 			if (!UploadHttpModule.IsEnabled)
 				return;
 			
+			displayProgressByDefault = "true";
 			HtmlControl formControl = GetFormControl(control);
 			
 			RegisterScriptsForForm(formControl);
