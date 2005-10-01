@@ -19,6 +19,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 using System;
+using System.Collections;
 using System.IO;
 using System.Web;
 using System.Web.UI;
@@ -32,6 +33,9 @@ namespace Brettle.Web.NeatUpload
 		private string uploadProgressUrl;
 		private string displayStatement;
 		private string displayProgressByDefault = "true";
+		private ArrayList nonUploadButtonIDs = new ArrayList(); // IDs of buttons refed by NonUploadButtons attr
+		private ArrayList nonUploadButtons = new ArrayList(); // Controls passed to AddNonUploadButton()
+		private ArrayList triggers = new ArrayList(); // Controls passed to AddTrigger()
 
 		private bool isPopup {
 			get { return Attributes["inline"] == null || Attributes["inline"] == "false"; }
@@ -102,8 +106,58 @@ setTimeout(function () {
 }, 0);
 ";
 			}
+			string nonUploadButtonsString = Attributes["NonUploadButtons"];
+			if (nonUploadButtonsString != null)
+			{
+				nonUploadButtonIDs.AddRange(nonUploadButtonsString.Split(' '));
+			}
 		}
 		
+		// NOTE: this method is deprecated.  Instead, call AddNonUploadButton() with the buttons which
+		// are *not* triggers. 
+		public void AddTrigger(Control control)
+		{
+			triggers.Add(control);
+		}
+
+		public void AddNonUploadButton(Control control)
+		{
+			nonUploadButtons.Add(control);
+		}
+
+		protected override void OnPreRender (EventArgs e)
+		{
+			if (!UploadHttpModule.IsEnabled)
+				return;
+
+			if (nonUploadButtonIDs.Count + nonUploadButtons.Count > 0)
+			{
+				displayProgressByDefault = "true";
+				foreach (string buttonID in nonUploadButtonIDs)
+				{
+					Control c = NamingContainer.FindControl(buttonID);
+					if (c == null)
+						continue;
+					RegisterNonUploadButtonScripts(c);
+				}
+				foreach (Control c in nonUploadButtons)
+				{
+					RegisterNonUploadButtonScripts(c);
+				}
+			}
+			else
+			{
+				// Triggers are deprecated.
+				displayProgressByDefault = "false";
+				foreach (Control c in triggers)
+				{
+					RegisterTriggerScripts(c);
+				}
+			}
+			HtmlControl formControl = GetFormControl(this);
+			RegisterScriptsForForm(formControl);
+		}
+
 		protected override void Render(HtmlTextWriter writer)
 		{
 			if (!UploadHttpModule.IsEnabled)
@@ -122,7 +176,27 @@ setTimeout(function () {
 			base.RenderEndTag(writer);
 		}
 		
-		public void AddTrigger(Control control)
+		private void RegisterNonUploadButtonScripts(Control control)
+		{
+			if (!UploadHttpModule.IsEnabled)
+				return;
+			
+			HtmlControl formControl = GetFormControl(control);
+			
+			RegisterScriptsForForm(formControl);
+			this.Page.RegisterStartupScript(this.UniqueID + "-AddNonUploadButton-" + control.UniqueID, @"
+<script language=""javascript"">
+<!--
+NeatUpload_AddHandler('" + control.ClientID + @"', 'click', function () {
+	var formElem = document.getElementById('" + formControl.ClientID + @"');
+	NeatUpload_ClearFileInputs(formElem);
+});
+-->
+</script>
+");			
+		}
+
+		private void RegisterTriggerScripts(Control control)
 		{
 			if (!UploadHttpModule.IsEnabled)
 				return;
@@ -131,7 +205,6 @@ setTimeout(function () {
 			
 			RegisterScriptsForForm(formControl);
 
-			displayProgressByDefault = "false";
 			this.Page.RegisterStartupScript(this.UniqueID + "-AddTrigger-" + control.UniqueID, @"
 <script language=""javascript"">
 <!--
@@ -140,43 +213,6 @@ NeatUpload_AddHandler('" + control.ClientID + @"', 'click', function () {
 	{
 		NeatUpload_DisplayProgress_" + this.ClientID + @" = true;
 		NeatUpload_DisplayProgressSet_" + this.ClientID + @" = true;
-	}
-});
--->
-</script>
-");			
-		}
-
-		public void AddCancelButton(Control control)
-		{
-			if (!UploadHttpModule.IsEnabled)
-				return;
-			
-			displayProgressByDefault = "true";
-			HtmlControl formControl = GetFormControl(control);
-			
-			RegisterScriptsForForm(formControl);
-			this.Page.RegisterStartupScript(this.UniqueID + "-AddCancelButton-" + control.UniqueID, @"
-<script language=""javascript"">
-<!--
-NeatUpload_AddHandler('" + control.ClientID + @"', 'click', function () {
-	var formElem = document.getElementById('" + formControl.ClientID + @"');
-	var inputFiles = formElem.getElementsByTagName('input');
-	for (var i=0; i < inputFiles.length; i++ )
-	{
-		var inputFile = inputFiles.item(i);
-		if (inputFile.type == 'file')
-		{
-			var newInputFile = document.createElement('input');
-			for (var a=0; a < inputFile.attributes.length; a++)
-			{
-				var attr = inputFile.attributes.item(a); 
-				if (attr.nodeName != 'type')
-					newInputFile.setAttribute(attr.nodeName, attr.nodeValue);
-			}
-			newInputFile.setAttribute('type', 'file');
-			inputFile.parentNode.replaceChild(newInputFile, inputFile);
-		}
 	}
 });
 -->
@@ -204,34 +240,9 @@ NeatUpload_AddHandler('" + control.ClientID + @"', 'click', function () {
 function NeatUpload_OnSubmitForm_" + formControl.ClientID + @"()
 {
 	var elem = document.getElementById('" + formControl.ClientID + @"');
-	for (var i=0; i < elem.NeatUpload_OnSubmitHandlers.length; i++)
-	{
-		elem.NeatUpload_OnSubmitHandlers[i].call(elem);
-	}
-	return true;
+	elem.NeatUpload_OnSubmit();
 }
 
-function NeatUpload_AddSubmitHandler_" + formControl.ClientID + @"(isPopup, handler)
-{
-	var elem = document.getElementById('" + formControl.ClientID + @"');
-	if (!elem.NeatUpload_OnSubmitHandlers) 
-	{
-		elem.NeatUpload_OnSubmitHandlers = new Array();
-		elem.NeatUpload_OrigSubmit = elem.submit;
-		elem.submit = function () {
-			elem.NeatUpload_OrigSubmit();
-			NeatUpload_OnSubmitForm_" + formControl.ClientID + @"();
-		};
-	}
-	if (isPopup)
-	{
-		elem.NeatUpload_OnSubmitHandlers.unshift(handler);
-	}
-	else
-	{
-		elem.NeatUpload_OnSubmitHandlers.push(handler);
-	}	
-}
 document.getElementById('" + formControl.ClientID + @"').onsubmit 
 	= NeatUpload_CombineHandlers(document.getElementById('" + formControl.ClientID + @"').onsubmit, NeatUpload_OnSubmitForm_" + formControl.ClientID + @");
 -->
@@ -251,7 +262,7 @@ function NeatUpload_InitDisplayProgress_" + this.ClientID + @"()
 }
 var NeatUpload_DisplayProgressSet_" + this.ClientID + @" = false;
 NeatUpload_InitDisplayProgress_" + this.ClientID + @"();
-NeatUpload_AddSubmitHandler_" + formControl.ClientID + "(" + (isPopup ? "true" : "false") + @", function () {
+NeatUpload_AddSubmitHandler('" + formControl.ClientID + "'," + (isPopup ? "true" : "false") + @", function () {
 		if (NeatUpload_DisplayProgress_" + this.ClientID + @" == true 
 			&& NeatUpload_IsFilesToUpload('" + formControl.ClientID + @"'))
 		{
@@ -319,6 +330,59 @@ function NeatUpload_IsFilesToUpload(id)
 		}
 	}
 	return false; 
+}
+
+function NeatUpload_ClearFileInputs(elem)
+{
+	var inputFiles = elem.getElementsByTagName('input');
+	for (var i=0; i < inputFiles.length; i++ )
+	{
+		var inputFile = inputFiles.item(i);
+		if (inputFile.type == 'file')
+		{
+			var newInputFile = document.createElement('input');
+			for (var a=0; a < inputFile.attributes.length; a++)
+			{
+				var attr = inputFile.attributes.item(a); 
+				if (attr.nodeName != 'type')
+					newInputFile.setAttribute(attr.nodeName, attr.nodeValue);
+			}
+			newInputFile.setAttribute('type', 'file');
+			inputFile.parentNode.replaceChild(newInputFile, inputFile);
+		}
+	}
+}
+
+function NeatUpload_AddSubmitHandler(formID, isPopup, handler)
+{
+	var elem = document.getElementById(formID);
+	if (!elem.NeatUpload_OnSubmitHandlers) 
+	{
+		elem.NeatUpload_OnSubmitHandlers = new Array();
+		elem.NeatUpload_OrigSubmit = elem.submit;
+		elem.NeatUpload_OnSubmit = NeatUpload_OnSubmit;
+		elem.submit = function () {
+			elem.NeatUpload_OrigSubmit();
+			elem.NeatUpload_OnSubmit();
+		};
+	}
+	if (isPopup)
+	{
+		elem.NeatUpload_OnSubmitHandlers.unshift(handler);
+	}
+	else
+	{
+		elem.NeatUpload_OnSubmitHandlers.push(handler);
+	}	
+}
+
+function NeatUpload_OnSubmit()
+{
+	for (var i=0; i < this.NeatUpload_OnSubmitHandlers.length; i++)
+	{
+		this.NeatUpload_OnSubmitHandlers[i].call(this);
+	}
+	return true;
 }
 -->
 </script>
