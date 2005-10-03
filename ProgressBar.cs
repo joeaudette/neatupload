@@ -344,8 +344,8 @@ function NeatUpload_ClearFileInputs(elem)
 			for (var a=0; a < inputFile.attributes.length; a++)
 			{
 				var attr = inputFile.attributes.item(a); 
-				if (attr.nodeName != 'type')
-					newInputFile.setAttribute(attr.nodeName, attr.nodeValue);
+				if (attr.specified && attr.name != 'type' && attr.name != 'value')
+					newInputFile.setAttribute(attr.name, attr.value);
 			}
 			newInputFile.setAttribute('type', 'file');
 			inputFile.parentNode.replaceChild(newInputFile, inputFile);
