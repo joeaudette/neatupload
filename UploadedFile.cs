@@ -33,6 +33,11 @@ namespace Brettle.Web.NeatUpload
 
 		internal UploadedFile(string controlUniqueID, string fileName, string contentType)
 		{
+			// IE sends a full path for the fileName.  We only want the actual filename.
+			if (System.Text.RegularExpressions.Regex.IsMatch(fileName, @"^(\\\\[^\\]|[a-zA-Z]:\\).*"))
+			{
+				fileName = fileName.Substring(fileName.LastIndexOf('\\') + 1);
+			}
 			string tmpDir 
 				= ConfigurationSettings.AppSettings["NeatUpload.DefaultTempDirectory"];
 			if (tmpDir == null)
