@@ -18,35 +18,46 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-using System;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.HtmlControls;
-using System.IO;
+#if ! USE_LOG4NET
 
-namespace Brettle.Web.NeatUpload
+#warning LOGGING DISABLED.  To enable logging, add a reference to log4net and define USE_LOG4NET.
+
+using System;
+using System.Collections;
+
+namespace Brettle.Web.NeatUpload.log4net
 {
-	public class TestControl : System.Web.UI.UserControl
-	{	
-		public InputFile inputFile;
-		protected Button submitButton;
-		protected ProgressBar inlineProgressBar;
-		
-		protected override void OnInit(EventArgs e)
+	internal interface ILog
+	{
+		void Debug(string message);
+		void DebugFormat(string format, params object[] args);
+		bool IsDebugEnabled { get; }
+
+		void Error(string message, Exception ex);
+	}
+
+	internal class NullLogger : ILog
+	{
+		public void Debug(string message) {}
+		public void DebugFormat(string format, params object[] args) {}
+		public bool IsDebugEnabled { get { return false; } }
+
+		public void Error(string message, Exception ex) {}
+	}
+
+	internal class LogManager
+	{
+		internal static ILog GetLogger(Type type)
 		{
-			InitializeComponent();
-			base.OnInit(e);
-		}
-		
-		private void InitializeComponent()
-		{
-			this.Load += new System.EventHandler(this.Control_Load);
-		}
-		
-		private void Control_Load(object sender, EventArgs e)
-		{
-			inlineProgressBar.AddTrigger(submitButton);
+			return new NullLogger();
 		}
 	}
+
+	internal class ThreadContext
+	{
+		internal static Hashtable Properties = new Hashtable();
+	}
 }
+
+#endif
+

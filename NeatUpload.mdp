@@ -46,7 +46,6 @@
     <File name="./docs" subtype="Directory" buildaction="Compile" />
     <File name="./docs/Design.html" subtype="Code" buildaction="Nothing" />
     <File name="./docs/Manual.html" subtype="Code" buildaction="Nothing" />
-    <File name="./LICENSE-log4net.txt" subtype="Code" buildaction="Nothing" />
     <File name="./LICENSE.txt" subtype="Code" buildaction="Compile" />
     <File name="./COPYING-LIB.txt" subtype="Code" buildaction="Nothing" />
     <File name="./NeatUpload/Error413.aspx" subtype="Code" buildaction="Nothing" />
@@ -56,12 +55,12 @@
     <File name="./TestControl.ascx.cs" subtype="Code" buildaction="Compile" />
     <File name="./NeatUpload/ProgressScript.aspx" subtype="Code" buildaction="Nothing" />
     <File name="./ProgressScript.aspx.cs" subtype="Code" buildaction="Compile" />
+    <File name="./MyLog4net.cs" subtype="Code" buildaction="Compile" />
   </Contents>
   <References>
     <ProjectReference type="Gac" localcopy="True" refto="System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
     <ProjectReference type="Gac" localcopy="True" refto="System.Web, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <ProjectReference type="Gac" localcopy="True" refto="System.Xml, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-    <ProjectReference type="Assembly" localcopy="True" refto="./bin/log4net.dll" />
     <ProjectReference type="Gac" localcopy="True" refto="System.Security, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   </References>
 </Project>

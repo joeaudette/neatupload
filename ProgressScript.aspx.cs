@@ -28,10 +28,6 @@ namespace Brettle.Web.NeatUpload
 	/// </summary>
 	public class ProgressScript : Page
 	{
-		// Create a logger for use in this class
-		private static readonly log4net.ILog log 
-			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
 		private void Page_Load(object sender, EventArgs e)
 		{
 			Response.Clear();

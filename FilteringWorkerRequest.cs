@@ -24,7 +24,6 @@ using System.Globalization;
 using System.Web;
 using System.Web.Configuration;
 using System.IO;
-using log4net;
 
 namespace Brettle.Web.NeatUpload
 {
