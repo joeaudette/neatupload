@@ -34,10 +34,10 @@ namespace Brettle.Web.NeatUpload
 		private static readonly log4net.ILog log 
 			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 */
-		private int maxRequestLength;
-		private int totalBytesRead;
+		private long maxRequestLength;
+		private long totalBytesRead;
 		
-		public SizeLimitingWorkerRequest (HttpWorkerRequest origWorker, int maxRequestLength) : base(origWorker)
+		public SizeLimitingWorkerRequest (HttpWorkerRequest origWorker, long maxRequestLength) : base(origWorker)
 		{
 			this.maxRequestLength = maxRequestLength;
 		}

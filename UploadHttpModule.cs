@@ -31,7 +31,7 @@ namespace Brettle.Web.NeatUpload
 		private static readonly log4net.ILog log 
 			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-		public static int MaxNormalRequestLength
+		public static long MaxNormalRequestLength
 		{
 			get
 			{
@@ -41,11 +41,11 @@ namespace Brettle.Web.NeatUpload
 				{
 					maxNormalRequestLengthSetting = "4096"; // 4Mbytes
 				}
-				return Int32.Parse(maxNormalRequestLengthSetting) * 1024;
+				return Int64.Parse(maxNormalRequestLengthSetting) * 1024;
 			}
 		}
 
-		public static int MaxRequestLength
+		public static long MaxRequestLength
 		{
 			get
 			{
@@ -53,9 +53,9 @@ namespace Brettle.Web.NeatUpload
 					= ConfigurationSettings.AppSettings["NeatUpload.MaxRequestLength"];
 				if (maxRequestLengthSetting == null)
 				{
-					return Int32.MaxValue;
+					return Int64.MaxValue;
 				}
-				return Int32.Parse(maxRequestLengthSetting) * 1024;
+				return Int64.Parse(maxRequestLengthSetting) * 1024;
 			}
 		}
 
@@ -108,13 +108,13 @@ namespace Brettle.Web.NeatUpload
 
 			// Get the Content-Length header and parse it if we find it.  If it's not present we might
 			// still be OK.
-			int contentLength = 0;
+			long contentLength = 0;
 			string contentLengthHeader = origWorker.GetKnownRequestHeader(HttpWorkerRequest.HeaderContentLength);
 			if (contentLengthHeader != null)
 			{
 				try
 				{
-					contentLength = Int32.Parse(contentLengthHeader);
+					contentLength = Int64.Parse(contentLengthHeader);
 				}
 				catch (Exception ex)
 				{

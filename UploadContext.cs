@@ -154,15 +154,15 @@ namespace Brettle.Web.NeatUpload
 			set { lock(this) { startTime = value; } }
 		}
 		
-		private int bytesRead;
-		internal int BytesRead
+		private long bytesRead;
+		internal long BytesRead
 		{
 			get { lock(this) { return bytesRead; } }
 			set { lock(this) { bytesRead = value; } }
 		}
 
-		private int contentLength;
-		internal int ContentLength
+		private long contentLength;
+		internal long ContentLength
 		{
 			get { lock(this) { return contentLength; } }
 			set { lock(this) { contentLength = value; } }
@@ -186,7 +186,10 @@ namespace Brettle.Web.NeatUpload
 					}
 					else
 					{
-						return new TimeSpan((ContentLength - BytesRead) * (DateTime.Now - StartTime).Ticks / BytesRead);
+						double bytesRemaining = ((double)(ContentLength - BytesRead));
+						if (log.IsDebugEnabled) log.Debug("BytesRead = " + BytesRead + " bytesRemaining = " + bytesRemaining);
+						double ticksRemaining = bytesRemaining * (DateTime.Now - StartTime).Ticks;
+						return new TimeSpan((long)(ticksRemaining/BytesRead));
 					}
 				}
 			}

@@ -58,7 +58,7 @@ namespace Brettle.Web.NeatUpload
 		private int parsePos = 0; // Where to get the next byte to parse
 		private byte[] tmpBuffer = new byte[bufferSize];
 		private byte[] boundary;
-		private int origContentLength = 0;
+		private long origContentLength = 0;
 
 		private int entityBodyPos = 0;
 		private bool isParsed = false;
@@ -175,7 +175,7 @@ namespace Brettle.Web.NeatUpload
 		}
 
 		private bool doneReading = false;
-		private int grandTotalBytesRead = 0;
+		private long grandTotalBytesRead = 0;
 		private int origPreloadedBodyPos = 0;
 		private byte[] origPreloadedBody = null;
 		
@@ -222,7 +222,7 @@ namespace Brettle.Web.NeatUpload
 */
 			while (writePos < bufferSize 
 					&& 0 < (bytesRead = ReadOrigEntityBody(tmpBuffer, 
-					Math.Min(bufferSize - writePos, origContentLength - grandTotalBytesRead))))
+					(int)Math.Min(bufferSize - writePos, origContentLength - grandTotalBytesRead))))
 			{
 				// Fill the buffer
 				Buffer.BlockCopy(tmpBuffer, 0, buffer, writePos, bytesRead);
@@ -329,9 +329,10 @@ namespace Brettle.Web.NeatUpload
 			string contentTypeHeader = GetKnownRequestHeader(HttpWorkerRequest.HeaderContentType);
 			if (log.IsDebugEnabled) log.Debug("contentTypeHeader="+contentTypeHeader);
 			if (log.IsDebugEnabled) log.Debug("Parsing content length");
-			origContentLength = Int32.Parse(OrigWorker.GetKnownRequestHeader(HttpWorkerRequest.HeaderContentLength));
+			string origContentLengthString = OrigWorker.GetKnownRequestHeader(HttpWorkerRequest.HeaderContentLength);
+			origContentLength = Int64.Parse(origContentLengthString);
 			uploadContext.ContentLength = origContentLength;
-			if (log.IsDebugEnabled) log.Debug("=" + origContentLength);
+			if (log.IsDebugEnabled) log.Debug("=" + origContentLengthString + " -> " + origContentLength);
 			
 			boundary = System.Text.Encoding.ASCII.GetBytes("--" + GetAttribute(contentTypeHeader, "boundary"));
 			if (log.IsDebugEnabled) log.Debug("boundary=" + System.Text.Encoding.ASCII.GetString(boundary));
