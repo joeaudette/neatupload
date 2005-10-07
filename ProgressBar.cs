@@ -113,8 +113,8 @@ setTimeout(function () {
 			}
 		}
 		
-		// NOTE: this method is deprecated.  Instead, call AddNonUploadButton() with the buttons which
-		// are *not* triggers. 
+		[Obsolete("This method is obsolete and will be removed in a future version.  Instead, call AddNonUploadButton()"
+					+ " with the buttons which are *not* triggers.")] 
 		public void AddTrigger(Control control)
 		{
 			triggers.Add(control);

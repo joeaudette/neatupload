@@ -46,7 +46,6 @@ namespace Brettle.Web.NeatUpload
 		
 		private void Control_Load(object sender, EventArgs e)
 		{
-			inlineProgressBar.AddTrigger(submitButton);
 		}
 	}
 }
