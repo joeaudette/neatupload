@@ -62,8 +62,8 @@ namespace Brettle.Web.NeatUpload
 
 		private int entityBodyPos = 0;
 		private bool isParsed = false;
-		
-/*
+
+/*		
 		// The following 2 methods are useful for debugging but use them sparingly.
 		// They produce a lot of output.		
 		private void printParsePos(string msg)
@@ -112,7 +112,9 @@ namespace Brettle.Web.NeatUpload
 			int lineStart = parsePos;
 			int lfIndex = Array.IndexOf(buffer, (byte)'\n', parsePos, writePos-parsePos);
 			if (lfIndex < 0) 
+			{
 				return null;
+			}
 			parsePos = lfIndex+1;
 			if (lfIndex > 0 && buffer[lfIndex-1] == '\r') 
 				lfIndex--;
@@ -201,6 +203,11 @@ namespace Brettle.Web.NeatUpload
 			{
 				byte[] localBuffer = new byte[count];
 				int read = OrigWorker.ReadEntityBody(localBuffer, count);
+				if (log.IsDebugEnabled)
+				{
+					LogEntityBodyStream.Write(localBuffer, 0, read);
+					LogEntityBodySizesStream.WriteLine(read);
+				}
 				if (read > 0) 
 				{
 					Buffer.BlockCopy(localBuffer, 0, destBuf, totalRead, read);
@@ -261,6 +268,17 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 
+		private void ShiftAndFill()
+		{
+			Buffer.BlockCopy(buffer, parsePos, buffer, 0, writePos-parsePos);
+			writePos -= parsePos;
+			readPos -= parsePos;
+			parsePos = 0;
+			// Fill the rest of the buffer
+			if (!doneReading && FillBuffer() == 0)
+				doneReading = true;
+		}
+
 		private bool CopyUntilBoundary()
 		{
 			// Look for the boundary
@@ -273,13 +291,7 @@ namespace Brettle.Web.NeatUpload
 					WriteParsedToOutputStream();
 
 					// Put the parse position at the beginning of the buffer
-					Buffer.BlockCopy(buffer, parsePos, buffer, 0, writePos-parsePos);
-					writePos -= parsePos;
-					readPos -= parsePos;
-					parsePos = 0;
-					// Fill the rest of the buffer
-					if (!doneReading && FillBuffer() == 0)
-						doneReading = true;
+					ShiftAndFill();
 				}
 				
 				// Look for a boundary.  If we find one, return true.  If we don't
@@ -290,7 +302,13 @@ namespace Brettle.Web.NeatUpload
 				WriteParsedToOutputStream();
 
 				if (foundBoundary) 
+				{
+					if (parsePos + maxHeadersSize > writePos)
+					{
+						ShiftAndFill();
+					}
 					return true;
+				}
 				else if (doneReading)
 					break;
 			}
@@ -320,19 +338,40 @@ namespace Brettle.Web.NeatUpload
 					fileStream.Close();
 				if (preloadedEntityBodyStream != null)
 					preloadedEntityBodyStream.Close();
-			}
+				if (LogEntityBodyStream != null)
+					LogEntityBodyStream.Close();
+				if (LogEntityBodySizesStream != null)
+					LogEntityBodySizesStream.Close();
+				}
 		}
 		
+		private Stream LogEntityBodyStream = null;
+		private StreamWriter LogEntityBodySizesStream = null;
 		private void ParseOrThrow()
 		{			
 			origPreloadedBody = OrigWorker.GetPreloadedEntityBody();
-			string contentTypeHeader = GetKnownRequestHeader(HttpWorkerRequest.HeaderContentType);
-			if (log.IsDebugEnabled) log.Debug("contentTypeHeader="+contentTypeHeader);
-			if (log.IsDebugEnabled) log.Debug("Parsing content length");
-			string origContentLengthString = OrigWorker.GetKnownRequestHeader(HttpWorkerRequest.HeaderContentLength);
-			origContentLength = Int64.Parse(origContentLengthString);
+			string contentTypeHeader = OrigWorker.GetKnownRequestHeader(HttpWorkerRequest.HeaderContentType);
+			string contentLengthHeader = OrigWorker.GetKnownRequestHeader(HttpWorkerRequest.HeaderContentLength);
+			origContentLength = Int64.Parse(contentLengthHeader);
+			if (log.IsDebugEnabled)
+			{
+				string logEntityBodyBaseName = Path.GetTempFileName();
+				LogEntityBodyStream = File.Create(logEntityBodyBaseName + ".body");
+				LogEntityBodySizesStream = File.CreateText(logEntityBodyBaseName + ".sizes");
+				LogEntityBodySizesStream.WriteLine(contentTypeHeader);
+				LogEntityBodySizesStream.WriteLine(contentLengthHeader);
+				if (origPreloadedBody != null)
+				{
+					LogEntityBodyStream.Write(origPreloadedBody, 0, origPreloadedBody.Length);
+					LogEntityBodySizesStream.WriteLine(origPreloadedBody.Length);
+				}
+				else
+				{
+					LogEntityBodySizesStream.WriteLine(0);
+				}
+			}
 			uploadContext.ContentLength = origContentLength;
-			if (log.IsDebugEnabled) log.Debug("=" + origContentLengthString + " -> " + origContentLength);
+			if (log.IsDebugEnabled) log.Debug("=" + contentLengthHeader + " -> " + origContentLength);
 			
 			boundary = System.Text.Encoding.ASCII.GetBytes("--" + GetAttribute(contentTypeHeader, "boundary"));
 			if (log.IsDebugEnabled) log.Debug("boundary=" + System.Text.Encoding.ASCII.GetString(boundary));

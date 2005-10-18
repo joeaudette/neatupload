@@ -119,6 +119,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "FilterTester.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "SizeLimitingWorkerRequest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -151,6 +156,11 @@
                 />
                 <File
                     RelPath = "MyLog4net.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "MockWorkerRequest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
