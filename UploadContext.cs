@@ -63,7 +63,7 @@ namespace Brettle.Web.NeatUpload
 			this.startTime = System.DateTime.Now;
 		}
 		
-		private Hashtable uploadedFiles = Hashtable.Synchronized(new Hashtable());
+		internal Hashtable uploadedFiles = Hashtable.Synchronized(new Hashtable());
 
 		private string postBackID;
 		
@@ -96,7 +96,10 @@ namespace Brettle.Web.NeatUpload
 			// Add a reference to this UploadContext to the Application so that it can be accessed
 			// by the ProgressBar in a separate request.
 			if (log.IsDebugEnabled) log.Debug("Storing UploadContext in Application[" + PostBackID + "]");
-			HttpContext.Current.Application[PostBackID] = this;
+			if (HttpContext.Current != null)
+			{
+				HttpContext.Current.Application[PostBackID] = this;
+			}
 			
 			return uploadedFile.TmpFile.Create();
 		}
