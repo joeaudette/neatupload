@@ -30,7 +30,7 @@ namespace Brettle.Web.NeatUpload
 	public class TestControl : System.Web.UI.UserControl
 	{	
 		public InputFile inputFile;
-		protected Button submitButton;
+		public Button submitButton;
 		protected ProgressBar inlineProgressBar;
 		
 		protected override void OnInit(EventArgs e)

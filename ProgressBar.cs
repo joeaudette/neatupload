@@ -148,9 +148,9 @@ setTimeout(function () {
 			else
 			{
 				// Triggers are deprecated.
-				displayProgressByDefault = "false";
 				foreach (Control c in triggers)
 				{
+					displayProgressByDefault = "false";
 					RegisterTriggerScripts(c);
 				}
 			}

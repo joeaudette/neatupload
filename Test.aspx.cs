@@ -41,12 +41,12 @@ namespace Brettle.Web.NeatUpload
 		
 		private void InitializeComponent()
 		{
-			this.PreRender += new System.EventHandler(this.Page_PreRender);
+			testControl.submitButton.Click += new System.EventHandler(this.submitButton_Click);
 		}
 		
-		private void Page_PreRender(object sender, EventArgs e)
+		private void submitButton_Click(object sender, EventArgs e)
 		{
-			if (this.IsPostBack)
+			if (this.IsValid)
 			{
 				if (testControl.inputFile.TmpFile != null)
 				{
