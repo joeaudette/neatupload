@@ -52,11 +52,14 @@ namespace Brettle.Web.NeatUpload
 		protected HttpWorkerRequest OrigWorker;
 		private object sync = new object();
 		private bool isEndOfRequest = false;
+		internal HttpContext OrigContext;
 				
 		protected DecoratedWorkerRequest (HttpWorkerRequest origWorker) 
 		{
 			if (log.IsDebugEnabled) log.Debug("origWorker=" + origWorker);
 			OrigWorker = origWorker;
+			// Remember the original HttpContext so that it can be used by UploadHttpModule.AppendToLog().
+			OrigContext = HttpContext.Current;
 		}
 		
 		internal void WaitForEndOfRequest()

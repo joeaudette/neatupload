@@ -32,6 +32,22 @@ namespace Brettle.Web.NeatUpload
 		private static readonly log4net.ILog log 
 			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+
+		public static void AppendToLog(string param)
+		{
+			HttpContext context = HttpContext.Current;
+			if (context == null)
+			{
+				return;
+			}
+			HttpContext origContext = context.Items["NeatUpload_origContext"] as HttpContext;
+			if (origContext != null)
+			{
+				context = origContext;
+			}
+			context.Response.AppendToLog(param);
+		}
+
 		internal static int MaxNormalRequestLength
 		{
 			get
@@ -86,9 +102,18 @@ namespace Brettle.Web.NeatUpload
 			
 			HttpWorkerRequest origWorker = GetCurrentWorkerRequest();
 			
-			// Ignore the subrequests we create to avoid infinite recursion...
 			if (origWorker is DecoratedWorkerRequest)
+			{
+				// Save a reference to the original HttpContext in the subrequest context so that 
+				// AppendToLog() can use it.
+				DecoratedWorkerRequest decoratedWorkerRequest = origWorker as DecoratedWorkerRequest;
+				if (decoratedWorkerRequest.OrigContext != null)
+				{
+					HttpContext.Current.Items["NeatUpload_origContext"] = decoratedWorkerRequest.OrigContext;
+				}
+				// Ignore the subrequests to avoid infinite recursion...
 				return;
+			}
 
 			// Get the Content-Length header and parse it if we find it.  If it's not present we might
 			// still be OK.
