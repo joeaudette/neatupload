@@ -38,20 +38,7 @@ namespace Brettle.Web.NeatUpload
 			{
 				fileName = fileName.Substring(fileName.LastIndexOf('\\') + 1);
 			}
-			string tmpDir = null;
-			if (ConfigurationSettings.AppSettings != null)
-			{
-				tmpDir = ConfigurationSettings.AppSettings["NeatUpload.DefaultTempDirectory"];
-			}
-			if (tmpDir == null)
-			{
-				tmpDir = Path.GetTempPath();
-			}
-			if (HttpContext.Current != null)
-			{
-				tmpDir = Path.Combine(HttpContext.Current.Request.PhysicalApplicationPath, tmpDir);
-			}
-			DirectoryInfo tmpDirInfo = new DirectoryInfo(tmpDir);
+			DirectoryInfo tmpDirInfo = Config.Current.DefaultTempDirectory;
 			if (!tmpDirInfo.Exists)
 			{
 				tmpDirInfo.Create();

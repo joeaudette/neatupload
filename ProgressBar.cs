@@ -53,7 +53,7 @@ namespace Brettle.Web.NeatUpload
 		
 		private void InitializeComponent()
 		{
-			if (!UploadHttpModule.IsEnabled)
+			if (!Config.Current.UseHttpModule)
 				return;
 			string appPath = Context.Request.ApplicationPath;
 			if (appPath == "/")
@@ -127,7 +127,7 @@ setTimeout(function () {
 
 		protected override void OnPreRender (EventArgs e)
 		{
-			if (!UploadHttpModule.IsEnabled)
+			if (!Config.Current.UseHttpModule)
 				return;
 
 			if (nonUploadButtonIDs.Count + nonUploadButtons.Count > 0)
@@ -160,7 +160,7 @@ setTimeout(function () {
 
 		protected override void Render(HtmlTextWriter writer)
 		{
-			if (!UploadHttpModule.IsEnabled)
+			if (!Config.Current.UseHttpModule)
 				return;
 			EnsureChildControls();
 			base.RenderBeginTag(writer);
@@ -178,7 +178,7 @@ setTimeout(function () {
 		
 		private void RegisterNonUploadButtonScripts(Control control)
 		{
-			if (!UploadHttpModule.IsEnabled)
+			if (!Config.Current.UseHttpModule)
 				return;
 			
 			HtmlControl formControl = GetFormControl(control);
@@ -198,7 +198,7 @@ NeatUpload_AddHandler('" + control.ClientID + @"', 'click', function () {
 
 		private void RegisterTriggerScripts(Control control)
 		{
-			if (!UploadHttpModule.IsEnabled)
+			if (!Config.Current.UseHttpModule)
 				return;
 			
 			HtmlControl formControl = GetFormControl(control);

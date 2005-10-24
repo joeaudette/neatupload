@@ -31,7 +31,31 @@ namespace Brettle.Web.NeatUpload
 	[ValidationProperty("ValidationFileName")]
 	public class InputFile : System.Web.UI.WebControls.WebControl, System.Web.UI.IPostBackDataHandler
 	{
-		private UploadedFile file;
+
+		private UploadedFile _file = null;
+		private UploadedFile file
+		{
+			get 
+			{
+				if (_file == null)
+				{
+					if (Config.Current.UseHttpModule)
+					{
+						_file = UploadContext.Current.GetUploadedFile(this.UniqueID);
+					}
+					else
+					{
+						HttpPostedFile postedFile = Context.Request.Files[this.UniqueID];
+						if (postedFile != null)
+						{
+							_file = new UploadedFile(this.UniqueID, postedFile.FileName, postedFile.ContentType);
+							postedFile.SaveAs(file.TmpFile.FullName);
+						}
+					}
+				}
+				return _file;
+			}
+		}
 		
 		public FileInfo TmpFile {
 			get { return (file != null && file.IsUploaded) ? file.TmpFile : null; }
@@ -77,7 +101,7 @@ namespace Brettle.Web.NeatUpload
 		{
 			writer.AddAttribute(HtmlTextWriterAttribute.Type, "file");
 			string name; 
-			if (UploadHttpModule.IsEnabled)
+			if (Config.Current.UseHttpModule)
 			{
 				name = FormContext.Current.GenerateFileID(this.UniqueID);
 			}
@@ -93,19 +117,6 @@ namespace Brettle.Web.NeatUpload
 
 		public virtual bool LoadPostData(string postDataKey, NameValueCollection postCollection)
 		{		
-			if (UploadHttpModule.IsEnabled)
-			{
-				file = UploadContext.Current.GetUploadedFile(this.UniqueID);
-			}
-			else
-			{
-				HttpPostedFile postedFile = Context.Request.Files[this.UniqueID];
-				if (postedFile != null)
-				{
-					file = new UploadedFile(this.UniqueID, postedFile.FileName, postedFile.ContentType);
-					postedFile.SaveAs(file.TmpFile.FullName);
-				}
-			}
 			return true;
 		}
 		

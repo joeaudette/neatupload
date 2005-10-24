@@ -58,6 +58,8 @@
     <File name="./MyLog4net.cs" subtype="Code" buildaction="Compile" />
     <File name="./MockWorkerRequest.cs" subtype="Code" buildaction="Compile" />
     <File name="./FilterTester.cs" subtype="Code" buildaction="Compile" />
+    <File name="./ConfigSectionHandler.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Config.cs" subtype="Code" buildaction="Compile" />
   </Contents>
   <References>
     <ProjectReference type="Gac" localcopy="True" refto="System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />

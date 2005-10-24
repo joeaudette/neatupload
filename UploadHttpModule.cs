@@ -50,13 +50,7 @@ namespace Brettle.Web.NeatUpload
 		{
 			get
 			{
-				string maxNormalRequestLengthSetting 
-					= ConfigurationSettings.AppSettings["NeatUpload.MaxNormalRequestLength"];
-				if (maxNormalRequestLengthSetting == null)
-				{
-					maxNormalRequestLengthSetting = "4096"; // 4Mbytes
-				}
-				return Int64.Parse(maxNormalRequestLengthSetting) * 1024;
+				return Config.Current.MaxNormalRequestLength;
 			}
 		}
 
@@ -64,20 +58,14 @@ namespace Brettle.Web.NeatUpload
 		{
 			get
 			{
-				string maxRequestLengthSetting 
-					= ConfigurationSettings.AppSettings["NeatUpload.MaxRequestLength"];
-				if (maxRequestLengthSetting == null)
-				{
-					return Int64.MaxValue;
-				}
-				return Int64.Parse(maxRequestLengthSetting) * 1024;
+				return Config.Current.MaxRequestLength;
 			}
 		}
 
-		private static bool _isEnabled = false;		
-		internal static bool IsEnabled
+		private static bool _isInited = false;		
+		internal static bool IsInited
 		{
-			get { lock (typeof(UploadHttpModule)) { return _isEnabled;} }
+			get { lock (typeof(UploadHttpModule)) { return _isInited;} }
 		}
 		
 		public void Init(HttpApplication app)
@@ -88,7 +76,7 @@ namespace Brettle.Web.NeatUpload
 			app.PreSendRequestHeaders += new System.EventHandler(Application_PreSendRequestHeaders);
 			lock (typeof(UploadHttpModule))
 			{
-				_isEnabled = true;
+				_isInited = true;
 			}
 		}
 		
@@ -109,6 +97,10 @@ namespace Brettle.Web.NeatUpload
 		private void Application_BeginRequest(object sender, EventArgs e)
 		{
 			requestHandledBySubRequest = false;
+			if (!Config.Current.UseHttpModule)
+			{
+				return;
+			}
 			HttpApplication app = sender as HttpApplication;
 			log4net.ThreadContext.Properties["url"] = app.Context.Request.RawUrl;
 			
