@@ -319,6 +319,7 @@ function NeatUpload_IsFilesToUpload(id)
 	}
 	var inputElems = formElem.getElementsByTagName(""input"");
 	var foundFileInput = false;
+	var isFilesToUpload = false;
 	for (i = 0; i < inputElems.length; i++)
 	{
 		var inputElem = inputElems.item(i);
@@ -326,10 +327,24 @@ function NeatUpload_IsFilesToUpload(id)
 		{
 			foundFileInput = true;
 			if (inputElem.value && inputElem.value.length > 0)
-				return true;
+			{
+				isFilesToUpload = true;
+
+				// If the browser really is IE on Windows, return false if the path is not absolute because
+				// IE will not actually submit the form if any file value is not an absolute path.  If IE doesn't
+				// submit the form, any progress bars we start will never finish.  
+				if (navigator && navigator.userAgent
+					&& navigator.userAgent.toLowerCase().indexOf('msie') != -1 && typeof(ActiveXObject) != 'undefined') 
+				{
+					var re = new RegExp('^(\\\\\\\\[^\\\\]|([a-zA-Z]:)?\\\\).*');
+					var match = re.exec(inputElem.value);
+					if (match == null || match[0] == '')
+						return false;
+				}
+			}
 		}
 	}
-	return false; 
+	return isFilesToUpload; 
 }
 
 function NeatUpload_ClearFileInputs(elem)
