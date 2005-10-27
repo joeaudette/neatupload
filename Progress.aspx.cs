@@ -67,16 +67,30 @@ function NeatUploadGetMainWindow()
 function NeatUploadCancel() 
 {
 	var mainWindow = NeatUploadGetMainWindow();
-	if (mainWindow.stop)
+	if (mainWindow && mainWindow.stop)
 		mainWindow.stop();
-	else if (mainWindow.document.execCommand)
+	else if (mainWindow && mainWindow.document && mainWindow.document.execCommand)
 		mainWindow.document.execCommand('Stop');
+}
+
+function NeatUploadCanCancel()
+{
+	var mainWindow = NeatUploadGetMainWindow();
+	try
+	{
+		return (mainWindow.stop || mainWindow.document.execCommand);
+	}
+	catch (ex)
+	{
+		return false;
+	}
 }
 
 NeatUploadReloadTimeoutId = window.setTimeout(NeatUploadRefresh, 1000);
 
 NeatUploadMainWindow = NeatUploadGetMainWindow();
-if (NeatUploadMainWindow.stop == null && NeatUploadMainWindow.document.execCommand == null)
+
+if (!NeatUploadCanCancel)
 {
 	NeatUploadLinkNode = document.getElementById('cancelLink');
 	if (NeatUploadLinkNode) 
