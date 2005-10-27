@@ -42,7 +42,10 @@ namespace Brettle.Web.NeatUpload
 					config = HttpContext.Current.Items["NeatUpload_config"] as Config;
 				if (config == null)
 				{
-					if (log.IsDebugEnabled) log.Debug("Getting Config.Current");
+					config = HttpContext.Current.GetConfig("brettle.web/neatUpload") as Config;
+				}
+				if (config == null)
+				{
 					config = HttpContext.Current.GetConfig("system.web/neatUpload") as Config;
 				}
 				if (config == null && ConfigurationSettings.AppSettings != null)
