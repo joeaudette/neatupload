@@ -48,15 +48,19 @@ namespace Brettle.Web.NeatUpload
 		{
 			if (this.IsValid)
 			{
-				if (testControl.inputFile.TmpFile != null)
+				if (testControl.inputFile.HasFile)
 				{
-					/* 
-						In a real app, you'd do something like:
-							inputFile.TmpFile.MoveTo(inputFile.FileName);
-					*/
 					bodyPre.InnerText = "Name: " + testControl.inputFile.FileName + "\n";
-					bodyPre.InnerText += "Size: " + testControl.inputFile.TmpFile.Length + "\n";
-					bodyPre.InnerText += "Content type: " + testControl.inputFile.ContentType + "\n"; 
+					bodyPre.InnerText += "Size: " + testControl.inputFile.ContentLength + "\n";
+					bodyPre.InnerText += "Content type: " + testControl.inputFile.ContentType + "\n";
+					string destPath = Path.Combine(Path.GetTempPath(), testControl.inputFile.FileName); 
+					testControl.inputFile.MoveTo(destPath, InputFile.MoveToFlags.Overwrite);
+					if (testControl.inputFile.ContentType.StartsWith("text/"))
+					{
+						StreamReader r = new StreamReader(testControl.inputFile.FileContent);
+						bodyPre.InnerText += r.ReadToEnd();
+						r.Close();
+					}
 				}
 			}
 		}

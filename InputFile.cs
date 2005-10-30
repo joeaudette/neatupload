@@ -57,10 +57,15 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 		
+		[Obsolete("This property is obsolete and will be removed in a future version.  Instead use other members like InputFile.MoveTo(), InputFile.HasFile, and InputFile.ContentLength.")]
 		public FileInfo TmpFile {
 			get { return (file != null && file.IsUploaded) ? file.TmpFile : null; }
 		}
 		
+		public bool HasFile {
+			get { return (file != null && file.IsUploaded); }
+		}
+
 		public string FileName {
 			get { return (file != null && file.IsUploaded) ? file.FileName : null; }
 		}
@@ -71,6 +76,31 @@ namespace Brettle.Web.NeatUpload
 
 		public string ContentType {
 			get { return (file != null && file.IsUploaded) ? file.ContentType : null; }
+		}
+
+		public long ContentLength {
+			get { return (HasFile ? file.TmpFile.Length : 0); }
+		}
+
+		public Stream FileContent
+		{
+			get { return (HasFile ? file.TmpFile.OpenRead() : null); }
+		}
+
+		[Flags]
+		public enum MoveToFlags
+		{
+			None = 0,
+			Overwrite = 1
+		}
+
+		public virtual void MoveTo(string path, MoveToFlags flags)
+		{
+			if ((flags & MoveToFlags.Overwrite) != 0 && File.Exists(path))
+			{
+				File.Delete(path);
+			}
+			file.TmpFile.MoveTo(path);
 		}
 
 		protected override void OnInit(EventArgs e)

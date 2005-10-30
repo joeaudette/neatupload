@@ -141,7 +141,7 @@ namespace Brettle.Web.NeatUpload
 		}
 
 		internal long MaxNormalRequestLength = 4096 * 1024;
-		internal long MaxRequestLength = Int64.MaxValue;
+		internal long MaxRequestLength = 2097151 * 1024;
 		internal DirectoryInfo DefaultTempDirectory = new DirectoryInfo(Path.GetTempPath());
 		internal bool UseHttpModule = UploadHttpModule.IsInited;
 	}

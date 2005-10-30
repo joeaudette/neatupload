@@ -81,26 +81,26 @@ namespace Brettle.Web.NeatUpload
 				return;
 			}
 			bodyPre.InnerText = "";
-			if (inputFile.TmpFile != null)
+			if (inputFile.HasFile)
 			{
 				/* 
 					In a real app, you'd do something like:
-						inputFile.TmpFile.MoveTo(inputFile.FileName);
+						inputFile.MoveTo(inputFile.FileName, InputFile.MoveToFlags.Overwrite);
 				*/
 				bodyPre.InnerText += "File #1:\n"; 
 				bodyPre.InnerText += "  Name: " + inputFile.FileName + "\n";
-				bodyPre.InnerText += "  Size: " + inputFile.TmpFile.Length + "\n";
+				bodyPre.InnerText += "  Size: " + inputFile.ContentLength + "\n";
 				bodyPre.InnerText += "  Content type: " + inputFile.ContentType + "\n";
 			}
-			if (inputFile2.TmpFile != null)
+			if (inputFile2.HasFile)
 			{
 				/* 
 					In a real app, you'd do something like:
-						inputFile.TmpFile.MoveTo(inputFile.FileName);
+						inputFile.MoveTo(inputFile.FileName, InputFile.MoveToFlags.Overwrite);
 				*/
 				bodyPre.InnerText += "File #2:\n"; 
 				bodyPre.InnerText += "  Name: " + inputFile2.FileName + "\n";
-				bodyPre.InnerText += "  Size: " + inputFile2.TmpFile.Length + "\n";
+				bodyPre.InnerText += "  Size: " + inputFile2.ContentLength + "\n";
 				bodyPre.InnerText += "  Content type: " + inputFile2.ContentType + "\n";
 			}
 		}

@@ -27,10 +27,11 @@ namespace Brettle.Web.NeatUpload
 {
 	public class ConfigSectionHandler : System.Configuration.SingleTagSectionHandler
 	{
+/*
 		// Create a logger for use in this class
 		private static readonly log4net.ILog log 
 			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
+*/
 		public override object Create(object parent, object context, XmlNode section)
 		{
 			return Config.CreateFromConfigSection(parent as Config, section.Attributes);
