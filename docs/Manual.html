@@ -17,62 +17,34 @@
 
 
 <ul id="mozToc">
-
 <!--mozToc h2 1 h3 2 h4 3 h5 4 h5 5 h6 6--><li><a href="#mozTocId859773">Release Notes for NeatUpload-1.1.0</a>
-    
     <ul>
-
       <li><a href="#mozTocId432734">Upgrading from NeatUpload-1.0.x</a></li>
-
       <li><a href="#mozTocId953432">New Features in NeatUpload-1.1</a></li>
-
-    
     </ul>
-
   </li>
-
   <li><a href="#mozTocId903858">Introduction</a></li>
-
   <li><a href="#mozTocId304923">Installation</a></li>
-
   <li><a href="#mozTocId50790">Basic Usage</a></li>
-
   <li><a href="#mozTocId875291">Advanced Usage</a>
-    
     <ul>
-
+      <li><a href="#mozTocId574">Using the &lt;neatUpload&gt; Custom Configuration Section</a></li>
+      <li><a href="#mozTocId241979">Using Location Filtering to Restrict/Modify NeatUpload's Request Processing</a></li>
       <li><a href="#mozTocId610599">Avoiding Unnecessary Uploads and Progress Displays</a></li>
-
       <li><a href="#mozTocId905959">Changing the Temporary Directory</a></li>
-
       <li><a href="#mozTocId23283">Limiting the Size of Upload Requests</a></li>
-
       <li><a href="#mozTocId358727">Changing the Maximum Size of Normal Requests</a></li>
-
       <li><a href="#mozTocId390633">Customizing Progress.aspx</a></li>
-
       <li><a href="#mozTocId184279">Creating Custom Fallback Content for ProgressBar</a></li>
-
       <li><a href="#mozTocId576312">Enabling Logging with log4net</a></li>
-
-    
     </ul>
-
   </li>
-
   <li><a href="#mozTocId580088">Known Issues</a>
-    
     <ul>
-
       <li><a href="#mozTocId766780">HttpResponse.AppendToLog() does nothing when UploadHttpModule is used</a></li>
-
-    
     </ul>
-
   </li>
-
   <li><a href="#mozTocId405545">Troubleshooting</a></li>
-
 </ul>
 
 
@@ -130,29 +102,29 @@ will continue to work.<br>
 
 
 
-  <li>Added support for accessing uploaded files from server event handlers (e.g. Button.Click handlers).</li>
+  <li>Added support for accessing uploaded files from server event handlers (e.g. <code>Button.Click</code> handlers).</li>
 
 
 
-  <li>Eliminated need to call ProgressBar.AddTrigger(). &nbsp;If you
-don't call AddTrigger(), then by default the progress display will be
+  <li>Eliminated need to call <code>ProgressBar.AddTrigger()</code>. &nbsp;If you
+don't call <code>AddTrigger()</code>, then by default the progress display will be
 started anytime a file is submitted - no matter which button was used
 to submit the form. &nbsp;However you can also specify certain buttons
 (e.g. a "Cancel" button) as non-upload buttons. &nbsp;When the user
 clicks a non-upload button, NeatUpload clears all file form fields
 before the the form is submitted. &nbsp;As a result, no files are
 uploaded and the progress display is not started. &nbsp;NOTE: If you do
-call AddTrigger(), you will get the 1.0.x behavior, i.e. the progress
+call <code>AddTrigger()</code>, you will get the 1.0.x behavior, i.e. the progress
 display will only be started if you click the button you identified as
-a trigger. &nbsp;AddTrigger() is now deprecated. &nbsp;Mixing
-AddTrigger() and non-upload buttons is not supported and may yield
+a trigger. &nbsp;<code>AddTrigger()</code> is now deprecated. &nbsp;Mixing
+    <code>AddTrigger()</code> and non-upload buttons is not supported and may yield
 unexpected results.</li>
 
 
 
-  <li>Changed the InputFile.FileName property to always return just the
-client-side file name (e.g. foo.txt), even if the browser sends the
-full path (e.g. C:\dir\foo.txt). &nbsp; Since, Internet Explorer is the
+  <li>Changed the <code>InputFile.FileName</code> property to always return just the
+client-side file name (e.g. <code>foo.txt</code>), even if the browser sends the
+full path (e.g. <code>C:\dir\foo.txt</code>). &nbsp; Since, Internet Explorer is the
 only popular browser to send the full path, and the full path is
 difficult to handle reliably on non-Windows servers which don't use
 backslash ("\") as a path separator, returning the full path was likely
@@ -160,9 +132,9 @@ to result in code which is browser-specific and not portable.</li>
 
 
 
-  <li>Added support for &lt;neatUpload&gt; configuration section which can be
-placed either in the &lt;brettle.web&gt; element or the
-&lt;system.web&gt; group, either of which can be put inside of the
+  <li>Added support for <code>&lt;neatUpload&gt;</code> configuration section which can be
+placed either in the <code>&lt;brettle.web&gt;</code> or the
+    <code>&lt;system.web&gt;</code> section group, either of which can be put inside of the
 &lt;location&gt; element to apply configuration settings to just some
 pages.</li>
 
@@ -439,7 +411,7 @@ sufficient permissions):
 
 
 <h2><a class="mozTocH2" name="mozTocId875291"></a>Advanced Usage</h2>
-<h3>Using the <code>&lt;neatUpload&gt;</code> Custom Configuration Section</h3>
+<h3><a class="mozTocH3" name="mozTocId574"></a>Using the <code>&lt;neatUpload&gt;</code> Custom Configuration Section</h3>
 To configure NeatUpload, you need to add the NeatUpload configuration section handler to your <code>Web.config</code>:<br>
 <br>
 <code>&lt;configuration&gt;<br>
@@ -478,7 +450,7 @@ Once you've added the configuration section handler, you can add the &lt;neatUpl
 &lt;/configuration&gt;<br>
 </code><br>
 For more details on how to use each of the attributes see below.<br>
-<h3><br>
+<h3><a class="mozTocH3" name="mozTocId241979"></a><br>
 Using Location Filtering to Restrict/Modify NeatUpload's Request Processing</h3>
 By default, whenever NeatUpload's <code>UploadHttpModule</code> is added via the <code>&lt;httpModules&gt;</code> section of your <code>Web.config</code>, it intercepts and filters <span style="font-style: italic;">all</span><span style="font-weight: bold; font-style: italic;"> </span>requests
 sent to your application. &nbsp;For upload requests, it streams the
