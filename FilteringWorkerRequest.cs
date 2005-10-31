@@ -50,7 +50,7 @@ namespace Brettle.Web.NeatUpload
 		private const int bufferSize = 4096; // Arbitrary (but > maxHeadersSize) 
 		private byte[] buffer = new byte[bufferSize]; 
 		private Stream outputStream = null;
-		private FileStream fileStream = null;
+		private Stream fileStream = null;
 		MemoryStream preloadedEntityBodyStream = null;		
 		private byte[] preloadedEntityBody = null;
 		private int writePos = 0; // Where to put the next byte read from OrigWorker
@@ -382,7 +382,7 @@ namespace Brettle.Web.NeatUpload
 			while (CopyUntilBoundary())
 			{
 				// If we were writing to a file, close it
-				if (outputStream is FileStream)
+				if (outputStream == fileStream && outputStream != null)
 				{
 					outputStream.Close();
 				}
@@ -428,7 +428,7 @@ namespace Brettle.Web.NeatUpload
 				{
 					if (log.IsDebugEnabled) log.Debug("Calling UploadContext.Current.CreateUploadedFile(" + fileID + "...)");
 					UploadedFile uploadedFile = uploadContext.CreateUploadedFile(fileID, fileName, contentType);
-					outputStream = fileStream = uploadedFile.TmpFile.Create();
+					outputStream = fileStream = uploadedFile.CreateStream();
 					readPos = parsePos; // Skip past the boundary and headers
 
 					// Write out a replacement part that just contains the filename as the value.

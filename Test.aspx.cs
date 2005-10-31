@@ -54,7 +54,7 @@ namespace Brettle.Web.NeatUpload
 					bodyPre.InnerText += "Size: " + testControl.inputFile.ContentLength + "\n";
 					bodyPre.InnerText += "Content type: " + testControl.inputFile.ContentType + "\n";
 					string destPath = Path.Combine(Path.GetTempPath(), testControl.inputFile.FileName); 
-					testControl.inputFile.MoveTo(destPath, InputFile.MoveToFlags.Overwrite);
+					testControl.inputFile.MoveTo(destPath, MoveToOptions.Overwrite);
 					if (testControl.inputFile.ContentType.StartsWith("text/"))
 					{
 						StreamReader r = new StreamReader(testControl.inputFile.FileContent);

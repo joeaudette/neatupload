@@ -67,6 +67,34 @@ namespace Brettle.Web.NeatUpload
 		{
 			get { return (TmpFile != null && (TmpFile.Length > 0 || FileName.Length > 0)); }
 		}
+
+		internal Stream CreateStream()
+		{
+			return TmpFile.Create();
+		}
+
+		internal void MoveTo(string path, MoveToOptions opts)
+		{
+			if (opts.CanOverwrite && File.Exists(path))
+			{
+				File.Delete(path);
+			}
+			TmpFile.MoveTo(path);
+		}
+
+		internal long ContentLength 
+		{
+			get { return (TmpFile != null ? TmpFile.Length : 0); }
+		}
+
+		internal Stream OpenRead()
+		{
+			if (TmpFile == null)
+			{
+				return null;
+			}
+			return TmpFile.OpenRead();
+		} 
 		
 		internal FileInfo TmpFile;
 		

@@ -48,8 +48,26 @@ namespace Brettle.Web.NeatUpload
 						HttpPostedFile postedFile = Context.Request.Files[this.UniqueID];
 						if (postedFile != null)
 						{
+							// Copy the posted file to an UploadedFile.
 							_file = new UploadedFile(this.UniqueID, postedFile.FileName, postedFile.ContentType);
-							postedFile.SaveAs(file.TmpFile.FullName);
+							Stream outStream = null, inStream = null;
+ 							try
+							{
+								outStream = file.CreateStream();
+								inStream = postedFile.InputStream;
+								byte[] buf = new byte[4096];
+								int bytesRead = -1;
+								while (outStream.CanWrite && inStream.CanRead 
+									   && (bytesRead = inStream.Read(buf, 0, buf.Length)) > 0)
+								{
+									outStream.Write(buf, 0, bytesRead);
+								}
+							}
+							finally
+							{
+								if (inStream != null) inStream.Close();
+								if (outStream != null) outStream.Close();
+							}
 						}
 					}
 				}
@@ -79,28 +97,17 @@ namespace Brettle.Web.NeatUpload
 		}
 
 		public long ContentLength {
-			get { return (HasFile ? file.TmpFile.Length : 0); }
+			get { return (HasFile ? file.ContentLength : 0); }
 		}
 
 		public Stream FileContent
 		{
-			get { return (HasFile ? file.TmpFile.OpenRead() : null); }
+			get { return (HasFile ? file.OpenRead() : null); }
 		}
 
-		[Flags]
-		public enum MoveToFlags
+		public virtual void MoveTo(string path, MoveToOptions opts)
 		{
-			None = 0,
-			Overwrite = 1
-		}
-
-		public virtual void MoveTo(string path, MoveToFlags flags)
-		{
-			if ((flags & MoveToFlags.Overwrite) != 0 && File.Exists(path))
-			{
-				File.Delete(path);
-			}
-			file.TmpFile.MoveTo(path);
+			file.MoveTo(path, opts);
 		}
 
 		protected override void OnInit(EventArgs e)

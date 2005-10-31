@@ -85,7 +85,7 @@ namespace Brettle.Web.NeatUpload
 			{
 				/* 
 					In a real app, you'd do something like:
-						inputFile.MoveTo(inputFile.FileName, InputFile.MoveToFlags.Overwrite);
+						inputFile.MoveTo(inputFile.FileName, InputFile.MoveToOptions.Overwrite);
 				*/
 				bodyPre.InnerText += "File #1:\n"; 
 				bodyPre.InnerText += "  Name: " + inputFile.FileName + "\n";
@@ -96,7 +96,7 @@ namespace Brettle.Web.NeatUpload
 			{
 				/* 
 					In a real app, you'd do something like:
-						inputFile.MoveTo(inputFile.FileName, InputFile.MoveToFlags.Overwrite);
+						inputFile.MoveTo(inputFile.FileName, InputFile.MoveToOptions.Overwrite);
 				*/
 				bodyPre.InnerText += "File #2:\n"; 
 				bodyPre.InnerText += "  Name: " + inputFile2.FileName + "\n";
