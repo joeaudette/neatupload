@@ -175,6 +175,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "MoveToOptions.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "NeatUpload\Progress.aspx"
                     BuildAction = "Content"
                 />
