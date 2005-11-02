@@ -1,6 +1,6 @@
 /*
 
-NeatUpload - an HttpModule and User Control for uploading large files
+NeatUpload - an HttpModule and User Controls for uploading large files
 Copyright (C) 2005  Dean Brettle
 
 This library is free software; you can redistribute it and/or
@@ -19,22 +19,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 using System;
-using System.Configuration;
-using System.Web;
-using System.Xml;
+using System.Collections;
+using System.Collections.Specialized;
 
 namespace Brettle.Web.NeatUpload
 {
-	public class ConfigSectionHandler : System.Configuration.IConfigurationSectionHandler
+	public abstract class UploadStorageProvider
 	{
-/*
-		// Create a logger for use in this class
-		private static readonly log4net.ILog log 
-			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-*/
-		public object Create(object parent, object context, XmlNode section)
-		{
-			return Config.CreateFromConfigSection(parent as Config, section);
-		}
+		public abstract void Initialize(string name, NameValueCollection attrs);
+
+		public abstract UploadedFile CreateUploadedFile(string controlUniqueID, string fileName, string contentType);
 	}
 }

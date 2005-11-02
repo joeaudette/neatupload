@@ -84,7 +84,8 @@ namespace Brettle.Web.NeatUpload
 			int dashIndex = fileID.IndexOf('-');
 			string controlUniqueID = fileID.Substring(dashIndex + 1);
 			if (log.IsDebugEnabled) log.Debug("In CreateUploadedFile() controlUniqueID=" + controlUniqueID);
-			UploadedFile uploadedFile = new UploadedFile(controlUniqueID, fileName, contentType);			
+			UploadedFile uploadedFile 
+				= UploadStorage.CreateUploadedFile(controlUniqueID, fileName, contentType);			
 			uploadedFiles[controlUniqueID] = uploadedFile;
 			
 			// Set the PostBackID from the fileID

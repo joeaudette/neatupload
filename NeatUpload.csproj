@@ -139,6 +139,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "FilesystemUploadedFile.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "FilesystemUploadStorageProvider.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "FormContext.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -237,6 +247,16 @@
                 />
                 <File
                     RelPath = "UploadStatus.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "UploadStorage.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "UploadStorageProvider.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

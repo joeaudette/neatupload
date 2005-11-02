@@ -1,61 +1,75 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-
-
-  
-  
   <title>NeatUpload Manual</title>
+
+
 </head>
 
 
 <body>
 
-
-<h1><a class="mozTocH1" name="mozTocId101532"></a>NeatUpload Manual</h1>
-
-
+<h1><a class="mozTocH1" name="mozTocId101532"></a>NeatUpload
+Manual</h1>
 
 <ul id="mozToc">
-<!--mozToc h2 1 h3 2 h4 3 h5 4 h5 5 h6 6--><li><a href="#mozTocId859773">Release Notes for NeatUpload-1.1.0</a>
+<!--mozToc h2 1 h3 2 h4 3 h5 4 h5 5 h6 6--><li><a href="#mozTocId859773">Release
+Notes for NeatUpload-1.1.0</a>
     <ul>
-      <li><a href="#mozTocId432734">Upgrading from NeatUpload-1.0.x</a></li>
-      <li><a href="#mozTocId953432">New Features in NeatUpload-1.1</a></li>
+      <li><a href="#mozTocId432734">Upgrading
+from NeatUpload-1.0.x</a></li>
+      <li><a href="#mozTocId953432">New
+Features in NeatUpload-1.1</a></li>
     </ul>
   </li>
   <li><a href="#mozTocId903858">Introduction</a></li>
   <li><a href="#mozTocId304923">Installation</a></li>
-  <li><a href="#mozTocId50790">Basic Usage</a></li>
-  <li><a href="#mozTocId875291">Advanced Usage</a>
+  <li><a href="#mozTocId50790">Usage</a>
     <ul>
-      <li><a href="#mozTocId574">Using the &lt;neatUpload&gt; Custom Configuration Section</a></li>
-      <li><a href="#mozTocId241979">Using Location Filtering to Restrict/Modify NeatUpload's Request Processing</a></li>
-      <li><a href="#mozTocId610599">Avoiding Unnecessary Uploads and Progress Displays</a></li>
-      <li><a href="#mozTocId905959">Changing the Temporary Directory</a></li>
-      <li><a href="#mozTocId23283">Limiting the Size of Upload Requests</a></li>
-      <li><a href="#mozTocId358727">Changing the Maximum Size of Normal Requests</a></li>
-      <li><a href="#mozTocId390633">Customizing Progress.aspx</a></li>
-      <li><a href="#mozTocId184279">Creating Custom Fallback Content for ProgressBar</a></li>
-      <li><a href="#mozTocId576312">Enabling Logging with log4net</a></li>
+      <li><a href="#mozTocId900479">Avoiding
+Unnecessary Uploads and Progress Displays</a></li>
     </ul>
   </li>
-  <li><a href="#mozTocId580088">Known Issues</a>
+  <li><a href="#mozTocId221000">Configuration</a>
     <ul>
-      <li><a href="#mozTocId766780">HttpResponse.AppendToLog() does nothing when UploadHttpModule is used</a></li>
+      <li><a href="#mozTocId576312">Using
+the &lt;neatUpload&gt;
+Configuration Section</a></li>
+      <li><a href="#mozTocId905959">Changing
+the Temporary Directory Used by the FilesystemUploadStorageProvider</a></li>
+      <li><a href="#mozTocId134915">
+Using Location Filtering to Restrict/Modify NeatUpload's Request
+Processing</a></li>
+      <li><a href="#mozTocId23283">Limiting
+the Size of Upload Requests</a></li>
+      <li><a href="#mozTocId358727">Changing
+the Maximum Size of Normal Requests</a></li>
+    </ul>
+  </li>
+  <li><a href="#mozTocId250326">Customization</a>
+    <ul>
+      <li><a href="#mozTocId390633">Customizing
+Progress.aspx</a></li>
+      <li><a href="#mozTocId184279">Creating
+Custom Fallback Content for ProgressBar</a></li>
+      <li><a href="#mozTocId759939">Creating a Custom UploadStorageProvider</a></li>
+    </ul>
+  </li>
+  <li><a href="#mozTocId580088">Known
+Issues</a>
+    <ul>
+      <li><a href="#mozTocId766780">HttpResponse.AppendToLog()
+does nothing when UploadHttpModule is used</a></li>
     </ul>
   </li>
   <li><a href="#mozTocId405545">Troubleshooting</a></li>
 </ul>
 
+<h2><a class="mozTocH2" name="mozTocId859773"></a>Release
+Notes for NeatUpload-1.1.0</h2>
 
-
-
-<h2><a class="mozTocH2" name="mozTocId859773"></a>Release Notes for NeatUpload-1.1.0</h2>
-
-
-
-<h3><a class="mozTocH3" name="mozTocId432734"></a>Upgrading from NeatUpload-1.0.x</h3>
-
+<h3><a class="mozTocH3" name="mozTocId432734"></a>Upgrading
+from NeatUpload-1.0.x</h3>
 
 NeatUpload-1.1.x should be completely
 backward-compatible with NeatUpload-1.0.x. &nbsp;To upgrade, simply
@@ -65,92 +79,87 @@ NeatUpload-1.1.x/NeatUpload/ProgressScript.aspx to the NeatUpload
 subfolder in your web application.
 &nbsp;If you
 recompile, you will see some warnings about obsoleted/deprecated
-methods. &nbsp;Those methods may be removed in NeatUpload-2.x, so you
+methods. &nbsp;Those methods may be removed in NeatUpload-2.x, so
+you
 are
 encouraged to switch to their replacements, but that is not required
 for NeatUpload-1.1.x.
-&nbsp;You might want also want to consider&nbsp; using the new custom
+&nbsp;You might want also want to consider&nbsp; using the new
+custom
 config section instead of the old appSettings, though the appSettings
 will continue to work.<br>
 
-
-
-
-<h3><a class="mozTocH3" name="mozTocId953432"></a>New Features in NeatUpload-1.1</h3>
-
-
+<h3><a class="mozTocH3" name="mozTocId953432"></a>New
+Features in NeatUpload-1.1</h3>
 
 <ul>
 
-
-
   <li>Added support for <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpgenref/html/cpconlinkbuttonwebcontrol.asp">LinkButtons</a>.</li>
 
-
-
-  <li>Added support for <a href="http://en.wikipedia.org/wiki/AJAX">AJAX</a>-style refreshless updates of the progress bar, even on browsers that don't support <a href="http://en.wikipedia.org/wiki/XMLHTTP">XMLHttpRequest</a>.</li>
-
-
+  <li>Added support for <a href="http://en.wikipedia.org/wiki/AJAX">AJAX</a>-style
+refreshless updates of the progress bar, even on browsers that don't
+support <a href="http://en.wikipedia.org/wiki/XMLHTTP">XMLHttpRequest</a>.</li>
 
   <li>Removed dependency on <a href="http://logging.apache.org/log4net/">log4net</a>.
 &nbsp;NeatUpload can still be built to use log4net if you want.
 &nbsp;The dependency was removed to simplify installation/usage.</li>
 
+  <li>Added support for not starting the progress display if
+client-side validation fails.</li>
 
+  <li>Added support for accessing uploaded files from server
+event handlers (e.g. <code>Button.Click</code> handlers).</li>
 
-  <li>Added support for not starting the progress display if client-side validation fails.</li>
-
-
-
-  <li>Added support for accessing uploaded files from server event handlers (e.g. <code>Button.Click</code> handlers).</li>
-
-
-
-  <li>Eliminated need to call <code>ProgressBar.AddTrigger()</code>. &nbsp;If you
-don't call <code>AddTrigger()</code>, then by default the progress display will be
+  <li>Eliminated need to call <code>ProgressBar.AddTrigger()</code>.
+&nbsp;If you
+don't call <code>AddTrigger()</code>, then by default the
+progress display will be
 started anytime a file is submitted - no matter which button was used
-to submit the form. &nbsp;However you can also specify certain buttons
+to submit the form. &nbsp;However you can also specify certain
+buttons
 (e.g. a "Cancel" button) as non-upload buttons. &nbsp;When the user
 clicks a non-upload button, NeatUpload clears all file form fields
 before the the form is submitted. &nbsp;As a result, no files are
-uploaded and the progress display is not started. &nbsp;NOTE: If you do
-call <code>AddTrigger()</code>, you will get the 1.0.x behavior, i.e. the progress
+uploaded and the progress display is not started. &nbsp;NOTE: If
+you do
+call <code>AddTrigger()</code>, you will get the 1.0.x
+behavior, i.e. the progress
 display will only be started if you click the button you identified as
-a trigger. &nbsp;<code>AddTrigger()</code> is now deprecated. &nbsp;Mixing
-    <code>AddTrigger()</code> and non-upload buttons is not supported and may yield
+a trigger. &nbsp;<code>AddTrigger()</code> is now
+deprecated. &nbsp;Mixing
+    <code>AddTrigger()</code> and non-upload buttons is not
+supported and may yield
 unexpected results.</li>
 
-
-
-  <li>Changed the <code>InputFile.FileName</code> property to always return just the
-client-side file name (e.g. <code>foo.txt</code>), even if the browser sends the
-full path (e.g. <code>C:\dir\foo.txt</code>). &nbsp; Since, Internet Explorer is the
+  <li>Changed the <code>InputFile.FileName</code>
+property to always return just the
+client-side file name (e.g. <code>foo.txt</code>), even if
+the browser sends the
+full path (e.g. <code>C:\dir\foo.txt</code>). &nbsp;
+Since, Internet Explorer is the
 only popular browser to send the full path, and the full path is
 difficult to handle reliably on non-Windows servers which don't use
 backslash ("\") as a path separator, returning the full path was likely
 to result in code which is browser-specific and not portable.</li>
 
-
-
-  <li>Added support for <code>&lt;neatUpload&gt;</code> configuration section which can be
-placed either in the <code>&lt;brettle.web&gt;</code> or the
-    <code>&lt;system.web&gt;</code> section group, either of which can be put inside of the
-&lt;location&gt; element to apply configuration settings to just some
+  <li>Added support for <code>&lt;neatUpload&gt;</code>
+configuration section which can be
+placed either in the <code>&lt;brettle.web&gt;</code>
+or the
+    <code>&lt;system.web&gt;</code> section group,
+either of which can be put inside of the
+&lt;location&gt; element to apply configuration settings to
+just some
 pages.</li>
 
+  <li>Added support for limiting the size of upload requests.
+&nbsp;This is particularly useful under Mono.</li>
 
-
-  <li>Added support for limiting the size of upload requests. &nbsp;This is particularly useful under Mono.</li>
-
-
+  <li>Added support for custom UploadStorageProviders.</li>
 
 </ul>
 
-
-
 <h2><a class="mozTocH2" name="mozTocId903858"></a>Introduction</h2>
-
-
 
 <p> <a href="http://www.brettle.com/neatupload">NeatUpload</a>
 allows <a href="http://en.wikipedia.org/wiki/ASP.NET">ASP.NET</a>
@@ -161,8 +170,6 @@ and works under <a href="http://www.mono-project.com/">Mono's</a>
 / <a href="http://www.go-mono.com/asp-net.html#mod_mono">mod_mono</a>
 as well as Microsoft's ASP.NET implementation. </p>
 
-
-
 <p> NeatUpload contains two custom controls (<code>InputFile</code>
 and <code>ProgressBar</code>), an <code>HttpModule</code>
 (<code>UploadHttpModule</code>), and a page (<code>Progress.aspx</code>).
@@ -170,19 +177,16 @@ This section briefly describes what they each do and how they are
 related. The remainder of this manual describes how to install and use
 NeatUpload. </p>
 
-
-
 <p> <code><strong>InputFile</strong></code>
 is a custom control that renders like <code>HtmlInputFile</code>,
 but provides properties to access the temporary file containing the
 upload, as well as the client-specified name and content type. </p>
 
-
-
 <p> <code><strong>ProgressBar</strong></code>
 is a custom control that is responsible for providing a site for the
 progress to be displayed. It provides an attribute to control whether
-to display the progress inline or in a popup. It also provides ways to control which buttons cause the progress
+to display the progress inline or in a popup. It also provides ways to
+control which buttons cause the progress
 display to start refreshing. If the progress is displayed inline, the <code>ProgressBar</code>
 control renders as an IFRAME. Otherwise, it renders as a DIV containing
 a "Check Upload Progress" link (to display the progress in a new
@@ -192,8 +196,6 @@ that <code>ProgressBar</code> doesn't actually display the
 progress bar itself. It merely provides a site (an IFRAME or popup)
 which loads the <code>Progress.aspx</code> page. <code>Progress.aspx</code>
 (described below) displays the progress bar. </p>
-
-
 
 <p> <code><strong>UploadHttpModule</strong></code>
 is an <code>HttpModule</code> that intercepts each
@@ -210,8 +212,6 @@ will function like an <code>HtmlInputFile</code> control,
 but no progress bar will be displayed. This greatly reduces the risk of
 adopting NeatUpload. </p>
 
-
-
 <p> <code><strong>Progress.aspx</strong></code>
 is the page that is displayed in the site provided by the <code>ProgressBar</code>
 control (i.e. in the IFRAME or popup). The codebehind for <code>Progress.aspx</code>
@@ -221,28 +221,19 @@ modifies the HTML generated by Progress.aspx (e.g. the width of the
 progress bar itself), and inserts JavaScript which causes the display
 to update. </p>
 
-
-
 <h2><a class="mozTocH2" name="mozTocId304923"></a>Installation</h2>
 
-
-
 <p> Installing NeatUpload is pretty straightforward. Just copy
-the necessary assemblies and subdirectories into your application and make some
+the necessary assemblies and subdirectories into your application and
+make some
 modification to your <code>Web.config</code>.
 Specifically: </p>
 
-
-
 <ol>
-
-
 
   <li> If you haven't already, download the release and extract
 it wherever you want. All the files will be extracted into a
 subdirectory name <code>NeatUpload-1.1.<span style="font-style: italic;">x</span>/</code>. </li>
-
-
 
   <li> (Optional) To see the demo running on your local machine,
 configure IIS, mod_mono, or XSP so that <code>NeatUpload-1.1.<span style="font-style: italic;">x</span>/</code>
@@ -251,144 +242,87 @@ on that
 website. To use NeatUpload in your own web application, continue with
 the remaining installation steps. </li>
 
-
-
-  <li>Add a reference to your web application that refers to the <code>Brettle.Web.NeatUpload.dll</code> in the <code>NeatUpload-1.</code><code>1.<span style="font-style: italic;">x</span></code><code>/bin </code>directory. </li>
-
-
+  <li>Add a reference to your web application that refers to the <code>Brettle.Web.NeatUpload.dll</code>
+in the <code>NeatUpload-1.</code><code>1.<span style="font-style: italic;">x</span></code><code>/bin
+    </code>directory. </li>
 
   <li> Create a <code>NeatUpload/</code>
 subdirectory in
-your web application by copying<span style="font-style: italic;"></span> <code>NeatUpload-1.</code><code>1.<span style="font-style: italic;">x</span></code><code>/NeatUpload/</code> and its contents. &nbsp;Don't copy the whole <code>NeatUpload-1.</code><code>1.<span style="font-style: italic;">x</span></code><code>/ </code>directory, just the <code>NeatUpload-1.</code><code>1.<span style="font-style: italic;">x</span></code><code>/NeatUpload/ </code>subdirectory. &nbsp;That subdirectory contains <code>Progress.aspx</code>
-and associated files. Note: If you add <code>Progress.aspx</code> to your VS.NET project it will say, "There
+your web application by copying<span style="font-style: italic;"></span>
+    <code>NeatUpload-1.</code><code>1.<span style="font-style: italic;">x</span></code><code>/NeatUpload/</code>
+and its contents. &nbsp;Don't copy the whole <code>NeatUpload-1.</code><code>1.<span style="font-style: italic;">x</span></code><code>/
+    </code>directory, just the <code>NeatUpload-1.</code><code>1.<span style="font-style: italic;">x</span></code><code>/NeatUpload/
+    </code>subdirectory. &nbsp;That subdirectory contains <code>Progress.aspx</code>
+and associated files. Note: If you add <code>Progress.aspx</code>
+to your VS.NET project it will say, "There
 is no class file in the project associated with the Web Form
-'Progress.aspx'.&nbsp; Create a new class file now?". &nbsp;Answer "No"
-because the class file is compiled into&nbsp;<code>Brettle.Web.NeatUpload.dll</code>. Do the same for ProgressScript.aspx.
-  </li>
-
-
+'Progress.aspx'.&nbsp; Create a new class file now?".
+&nbsp;Answer "No"
+because the class file is compiled into&nbsp;<code>Brettle.Web.NeatUpload.dll</code>.
+Do the same for ProgressScript.aspx. </li>
 
   <li> Add the following line to your <code>Web.config</code>
 under <code>configuration/system.web/httpModules</code>:
-
-    
-    
     <pre>&lt;add name="UploadHttpModule" type="Brettle.Web.NeatUpload.UploadHttpModule, Brettle.Web.NeatUpload" /&gt;<br>	</pre>
 
-
-
   </li>
-
-
 
   <li> (Optional) To allow larger uploads than the default of 4
-Mbytes under Microsoft's ASP.NET, add or modify the following element in your <code>Web.config</code>
+Mbytes under Microsoft's ASP.NET, add or modify the following element
+in your <code>Web.config</code>
 under <code>configuration/system.web</code>:
-
-    
-    
     <pre>&lt;httpRuntime maxRequestLength="<var>size_in_kbytes</var>" /&gt;<br>	</pre>
 
-
-
   </li>
-
-
 
   <li> (Optional) Copy <code>Demo.aspx</code> from <code>NeatUpload-1.</code><code>1.<span style="font-style: italic;">x</span></code><code>/</code>
 into your application. Point your browser at <code>Demo.aspx</code>
 and verify that the demo functions properly. </li>
 
-
-
 </ol>
-
-
 
 <p> That's it. Now you're ready to start using NeatUpload. Keep
 reading for details. </p>
 
-
-
-<h2><a class="mozTocH2" name="mozTocId50790"></a>Basic Usage</h2>
-
-
+<h2><a class="mozTocH2" name="mozTocId50790"></a>Usage</h2>
 
 <p> To use NeatUpload on an ASP.NET page, follow these steps: </p>
 
-
-
 <ol>
 
-
-
   <li> Add the following to the top of your page:
-
-    
-    
     <pre> <br>&lt;%@ Register TagPrefix="Upload" Namespace="Brettle.Web.NeatUpload" Assembly="Brettle.Web.NeatUpload" %&gt;<br>	</pre>
 
-
-
   </li>
-
-
 
   <li> Add an <code>InputFile</code> control to your
 aspx page wherever you
 want the user to choose a file, using something like this:
-
-    
-    
     <pre>&lt;Upload:InputFile id="<var>inputFileId</var>" runat="server" /&gt;<br>	</pre>
 
-
-
-Feel free to add any attributes that you would normally add to an
-    <code>HtmlInputFile</code> tag. </li>
-
-
+Feel free to add any attributes that you would normally add to an <code>HtmlInputFile</code>
+tag. </li>
 
   <li> Add a <code>ProgressBar</code> control to
 your aspx page wherever you
 want to display an inline progress bar or, in the case of a popup
 progress bar, add it wherever you want the fallback link to be
 displayed. &nbsp;Use something like this:
-
-    
-    
     <pre>&lt;Upload:ProgressBar id="<var>progressBarId</var>" runat="server" inline="<var>true|false</var>" /&gt;<br>	</pre>
-
-
 
 The inline attribute defaults to false. </li>
 
-
-
   <li> Add a submit button to your aspx page. For example:
-    
-    
     <pre>&lt;asp:Button id="<var>submitButtonId</var>" runat="server" Text="<var>Submit</var>" /&gt;<br></pre>
-
-
 
     <span style="font-weight: bold;"></span></li>
 
-
-
-  <li><span style="font-weight: bold;"></span>In your codebehind file, declare each <code>InputFile</code>
-and
-    <code>ProgressBar</code> control using code like this:
-
-    
-    
-    <pre>using Brettle.Web.NeatUpload;<br>...<br>	public class YourPage : System.Web.UI.Page<br>	{<br>		...<br>		protected InputFile <var>inputFileId</var>;<br>		protected ProgressBar <var>progressBarId</var>;	</pre>
-
-
+  <li><span style="font-weight: bold;"></span>In
+your codebehind file, declare each <code>InputFile</code>
+and <code>ProgressBar</code> control using code like this:
+    <pre>using Brettle.Web.NeatUpload;<br>...<br>public class YourPage : System.Web.UI.Page<br>{<br>	...<br>	protected InputFile <var>inputFileId</var>;<br>	protected ProgressBar <var>progressBarId</var>; </pre>
 
   </li>
-
-
 
   <li> In your codebehind file,&nbsp;process the
 uploaded
@@ -401,194 +335,360 @@ and <code><var>inputFileId</var>.ContentType</code>.
 So something like the following will put the uploaded file in the
 application's root directory if it doesn't already exist (assuming
 sufficient permissions):
-
-    
-    
-    <pre>using System.IO;<br>...<br>	private void Button_Clicked(object sender, EventArgs e)<br>	{<br>		...<br>		if (IsValid &amp;&amp; <var>inputFileId</var>.HasFile)<br>		{<br>			...<br>		<var>	inputFileId</var>.MoveTo(Path.Combine(Request.PhysicalApplicationPath,&nbsp;<var>inputFileId</var>.FileName),&nbsp;<br>					   InputFile.MoveToFlags.Overwrite);<br></pre>
+    <pre>using Brettle.Web.NeatUpload;<br>using System.IO;<br>...<br>public class YourPage : System.Web.UI.Page<br>{<br>	...<br>	private void Button_Clicked(object sender, EventArgs e)<br>	{<br>		...<br>		if (IsValid &amp;&amp; <var>inputFileId</var>.HasFile)<br>		{<br>		...<br>	<var>		inputFileId</var>.MoveTo(Path.Combine(Request.PhysicalApplicationPath,&nbsp;<var>inputFileId</var>.FileName),&nbsp;<br>					   InputFile.MoveToFlags.Overwrite);<br></pre>
   </li>
+
 </ol>
 
+<h3><a class="mozTocH3" name="mozTocId900479"></a>Avoiding
+Unnecessary Uploads and Progress Displays</h3>
 
-
-<h2><a class="mozTocH2" name="mozTocId875291"></a>Advanced Usage</h2>
-<h3><a class="mozTocH3" name="mozTocId574"></a>Using the <code>&lt;neatUpload&gt;</code> Custom Configuration Section</h3>
-To configure NeatUpload, you need to add the NeatUpload configuration section handler to your <code>Web.config</code>:<br>
-<br>
-<code>&lt;configuration&gt;<br>
-&nbsp;&nbsp;&nbsp; &lt;configSections&gt;<br>
-&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;sectionGroup name="system.web"&gt;<br>
-&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;remove name="neatUpload" /&gt;<br>
-&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;section
-name="neatUpload" type="Brettle.Web.NeatUpload.ConfigSectionHandler,
-Brettle.Web.NeatUpload" allowLocation="true" /&gt;<br>
-&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;/sectionGroup&gt;<br>
-&nbsp;&nbsp;&nbsp; &lt;/configSections&gt;<br>
-...</code><br>
-<br>
-Note: The <code>sectionGroup</code> "name" attribute can be either
-"system.web" or "brettle.web". &nbsp;Although using "brettle.web" is
-better for preventing name collisions, it makes it impossible to do
-location filtering under Mono (at least as of 1.1.9.2). &nbsp;Even
-under .NET, you will have to do more typing to configure location
-filtering if you use "brettle.web" than if you use "system.web".
-&nbsp;The remainder of this document assumes you are using "system.web".<br>
-<br>
-Once you've added the configuration section handler, you can add the &lt;neatUpload&gt; element inside your <code>Web.config</code>'s &lt;system.web&gt; element(s), like this:<br>
-<code><br>
-&lt;configuration&gt;<br>
-&nbsp;&nbsp;&nbsp; ...<br>
-&nbsp;&nbsp;&nbsp; &lt;system.web&gt;<br>
-&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ...<br>
-&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;neatUpload <br>
-&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; useHttpModule="<span style="font-style: italic;">true or false, defaults to true</span>"<br>
-&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; maxNormalRequestLength="</code><code style="font-style: italic;">up to 2097151</code><code><span style="font-style: italic;"> in KBytes, defaults to 4096</span>" <br>
-&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; maxRequestLength="</code><code style="font-style: italic;">up to 2097151</code><code style="font-style: italic;"> in KBytes</code><code><span style="font-style: italic;">, defaults to </span></code><code style="font-style: italic;">2097151</code><code style="font-style: italic;"></code><code><span style="font-style: italic;"></span>" <br>
-&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; defaultTempDirectory="<span style="font-style: italic;">path, defaults to path returned by System.IO.Path.GetTempPath()</span>" /&gt;<br>
-&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ...<br>
-&nbsp;&nbsp;&nbsp; &lt;/system.web&gt;<br>
-&nbsp;&nbsp;&nbsp; ...<br>
-&lt;/configuration&gt;<br>
-</code><br>
-For more details on how to use each of the attributes see below.<br>
-<h3><a class="mozTocH3" name="mozTocId241979"></a><br>
-Using Location Filtering to Restrict/Modify NeatUpload's Request Processing</h3>
-By default, whenever NeatUpload's <code>UploadHttpModule</code> is added via the <code>&lt;httpModules&gt;</code> section of your <code>Web.config</code>, it intercepts and filters <span style="font-style: italic;">all</span><span style="font-weight: bold; font-style: italic;"> </span>requests
-sent to your application. &nbsp;For upload requests, it streams the
-uploaded files to disk and makes them available to your code via <code>InputFile</code>. &nbsp;It also limits the size of the non-upload part of the request <span style="font-style: italic;">and the total size of non-upload requests</span>
-because that request data is stored in server memory. &nbsp;If it
-didn't do that an attacker could mount a Denial of Service attack by
-sending a request that contains up to <code>maxRequestLength</code> kilobytes of non-file data.<br>
-<br>
-You can disable use of <code>UploadHttpModule</code> by settting the
-&lt;neatUpload&gt; useHttpModule attribute to false. &nbsp;If you want
-to use the UploadHttpModule for only some requests, you can use
-ASP.NET's &lt;location&gt; element to specify which pages it should be
-used for. &nbsp;For example, consider the following configuration:<br>
-<br>
-<code>&lt;configuration&gt;<br>
-&nbsp;&nbsp;&nbsp; ...<br>
-&nbsp;&nbsp;&nbsp; &lt;system.web&gt;<br>
-&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ...<br>
-&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;httpRuntime maxRequestLength="100" /&gt;<br>
-&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ...<br>
-&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;neatUpload
-useHttpModule="false" maxNormalRequestLength="4096"
-maxRequestLength="2097151" /&gt;<br>
-&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ...<br>
-&nbsp;&nbsp;&nbsp; &lt;/system.web&gt;<br>
-&nbsp;&nbsp;&nbsp; ...<br>
-&nbsp;&nbsp;&nbsp; &lt;location path="Demo.aspx"&gt;<br>
-&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;system.web&gt;<br>
-&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;neatUpload useHttpModule="true" /&gt;<br>
-&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
-&lt;httpRuntime maxRequestLength="2097151" executionTimeout="3600" /&gt;<br>
-&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;/system.web&gt;<br>
-&nbsp;&nbsp;&nbsp; &lt;/location&gt;<br>
-&nbsp;&nbsp;&nbsp; ...<br>
-&lt;/configuration&gt;<br>
-<br>
-</code>That configuration will cause the <code>UploadHttpModule</code> to&nbsp;only be used for requests to <code>Demo.aspx</code>. &nbsp;In addition, ASP.NET's <code>maxRequestLength</code> is set to only 100 KBytes for all requests other than <code>Demo.aspx</code>. &nbsp;For <code>Demo.aspx</code>, the <code>maxRequestLength</code> is increased to 2 GBytes and the <code>executionTimeout</code> is increased to 1 hour.<code></code>
-
-
-<h3><a class="mozTocH3" name="mozTocId610599"></a>Avoiding Unnecessary Uploads and Progress Displays</h3>
-
-
-
-By default, anytime the user submits a form containing a non-empty <code>InputFile</code> and a <code>ProgressBar</code>, the progress display is started (either inline or in a popup). &nbsp;If all <code>InputFiles</code>
-are empty, the progress display is not started. &nbsp;That ensures that
+By default, anytime the user submits a form containing a non-empty <code>InputFile</code>
+and a <code>ProgressBar</code>, the progress display is
+started (either inline or in a popup). &nbsp;If all <code>InputFiles</code>
+are empty, the progress display is not started. &nbsp;That ensures
+that
 the user is not distracted by a transient and meaningless progress
 display.<br>
 
-
-
 <br>
 
-
-
 Now consider the case where the form contains a cancel button in
-addition to a normal submit button. &nbsp;Both buttons cause the form
+addition to a normal submit button. &nbsp;Both buttons cause the
+form
 to be submitted, but when the cancel button is clicked, the server
-ignores the values on the form. &nbsp;By default, if the user selects a
+ignores the values on the form. &nbsp;By default, if the user
+selects a
 file to upload and then changes his mind and clicks the cancel button,
 the progress display will start and the user will need to wait for the
 file to be uploaded. &nbsp;To avoid this unfriendly behavior,
 NeatUpload allows you to specify that the cancel&nbsp;button is a
 "non-upload" button. &nbsp;When the user clicks on such a button,
-NeatUpload clears all the <code>InputFile</code> controls so that no files will be uploaded and the progress display will not start.<br>
-
-
+NeatUpload clears all the <code>InputFile</code> controls
+so that no files will be uploaded and the progress display will not
+start.<br>
 
 <br>
 
+There are two ways to indicate that a button is a "non-upload" button.
+&nbsp;You can either include the ID of the button in the <code>ProgressBar</code>'s
+<code>NonUploadButtons</code> attribute (multiple IDs
+should be space-separated), &nbsp;or you can call the ProgressBar's
+<code>AddNonUploadButton(Control)</code> method.<span style="font-weight: bold;"></span><br>
+<br>
+<h2><a class="mozTocH2" name="mozTocId221000"></a>Configuration</h2>
+<h3><a class="mozTocH3" name="mozTocId576312"></a>Using
+the <code>&lt;neatUpload&gt;</code>
+Configuration Section</h3>
 
+To configure NeatUpload, you need to add the NeatUpload configuration
+section handler to your <code>Web.config</code>:<br>
 
-There are two ways to indicate that a button is a "non-upload" button. &nbsp;You can either include the ID of the button in the <code>ProgressBar</code>'s <code>NonUploadButtons</code> attribute (multiple IDs should be space-separated), &nbsp;or you can call the ProgressBar's <code>AddNonUploadButton(Control)</code> method.
+<br>
 
-<h3><a class="mozTocH3" name="mozTocId905959"></a>Changing the Temporary Directory</h3>
+<code>&lt;configuration&gt;<br>
 
+&nbsp;&nbsp;&nbsp; &lt;configSections&gt;<br>
 
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&lt;sectionGroup name="system.web"&gt;<br>
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &lt;remove name="neatUpload"
+/&gt;<br>
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &lt;section name="neatUpload"
+type="Brettle.Web.NeatUpload.ConfigSectionHandler,
+Brettle.Web.NeatUpload" allowLocation="true" /&gt;<br>
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&lt;/sectionGroup&gt;<br>
+
+&nbsp;&nbsp;&nbsp; &lt;/configSections&gt;<br>
+
+...</code><br>
+
+<br>
+
+Note: The <code>sectionGroup</code> "name" attribute can
+be either "system.web" or "brettle.web". &nbsp;Although using
+"brettle.web" is better for preventing name collisions, it makes it
+impossible to do location filtering under Mono (at least as of
+1.1.9.2). &nbsp;Even under .NET, you will have to do more typing to
+configure location filtering if you use "brettle.web" than if you use
+"system.web". &nbsp;The remainder of this document assumes you are
+using "system.web".<br>
+
+<br>
+
+Once you've added the configuration section handler, you can add the
+&lt;neatUpload&gt; element inside your <code>Web.config</code>'s
+&lt;system.web&gt; element(s), like this:<br>
+
+<code><br>
+
+&lt;configuration&gt;<br>
+
+&nbsp;&nbsp;&nbsp; ...<br>
+
+&nbsp;&nbsp;&nbsp; &lt;system.web&gt;<br>
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ...<br>
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&lt;neatUpload <br>
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; useHttpModule="<span style="font-style: italic;">true or false, defaults to true</span>"<br>
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; maxNormalRequestLength="</code><code style="font-style: italic;">up to 2097151</code><code><span style="font-style: italic;"> in KBytes, defaults to 4096</span>"
+<br>
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; maxRequestLength="</code><code style="font-style: italic;">up to 2097151</code><code style="font-style: italic;"> in KBytes</code><code><span style="font-style: italic;">, defaults to </span></code><code style="font-style: italic;">2097151</code><code style="font-style: italic;"></code><code><span style="font-style: italic;"></span>" <br>
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;defaultProvider="<span style="font-style: italic;">friendly name, defaults to a FilesystemUploadStorageProvider using the system temp dir</span>"&gt;<br>
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&lt;providers&gt;<br>
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&lt;add name="<span style="font-style: italic;">friendly name</span>" <br>
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp; type="<span style="font-style: italic;">type derived from
+Brettle.Web.NeatUpload.UploadStorageProvider</span>" <br>
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp; <span style="font-style: italic;">provider-specific-<span style="font-family: monospace;">attributes</span></span>
+... /&gt;<br>
+
+</code><code>&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&lt;remove name="<span style="font-style: italic;">friendly name of provider</span>"
+/&gt;<br>
+
+</code><code>&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&lt;clear /&gt;<br>
+
+</code><code></code><code>&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&lt;/providers&gt;<br>
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&lt;/neatUpload&gt;<br>
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ...<br>
+
+&nbsp;&nbsp;&nbsp; &lt;/system.web&gt;<br>
+
+&nbsp;&nbsp;&nbsp; ...<br>
+
+&lt;/configuration&gt;<br>
+
+</code><br>
+
+The <code>&lt;providers&gt;</code> element is
+optional. &nbsp;You only need to use it if you are using an <code>UploadStorageProvider</code>
+other than the default <code>FilesystemUploadStorageProvider</code>, or you need to change the temporary directory used by the <code>FilesystemUploadStorageProvider</code>.
+&nbsp;In those cases, you should include an &lt;add&gt; element for
+each provider or provider configuration you will be using and set the
+&lt;neatUpload&gt; element's&nbsp;<code>defaultProvider</code>
+attribute to the name you chose for the provider you want to use by
+default. &nbsp;For specific pages or directories, you can override that
+default or add/remove/clear available providers using child
+configuration sections. &nbsp;Child configuration sections are
+&lt;neatUpload&gt; elements within &lt;location&gt; elements or in
+Web.config files in subdirectories.<br>
+<br>
+Note that each provider object is created and initialized at most once
+during the application lifecycle - when the configuration section
+containing the associated &lt;add&gt; element is relevant to a request.
+&nbsp;A configuration section is relevant to a request if the request
+matches the "path" attribute of the containing &lt;location&gt;
+element. &nbsp;If there is no containing &lt;location&gt; element, the
+configuration section is relevant if the requested page is in the
+directory hierarchy controlled by the containing Web.config. &nbsp;Note
+that multiple provider objects might be created and initialized in
+response to a request, but only the one configured as the
+"defaultProvider" for the requested page is actually used for that
+request. &nbsp;The others might be configured as&nbsp;default providers
+for other pages.
+<h3><a class="mozTocH3" name="mozTocId905959"></a>Changing
+the Temporary Directory Used by the FilesystemUploadStorageProvider</h3>
 
 <p> By default, NeatUpload puts uploaded files in temporary files
 in the <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfsystemiopathclassgettemppathtopic.asp">system's
-temporary directory</a>. You can specify a different directory using the <code>&lt;neatUpload&gt;</code> element's <code>defaultTempDirectory</code> attribute like this<code><tt></tt></code>:
+temporary directory</a>. You can specify a different directory
+using the <code>tempDirectory</code> attribute of the <code>FilesystemUploadStorageProvider</code>,
+like this:
 </p>
 
+<pre>	&lt;neatUpload ...<code> defaultProvider="FilesystemUploadStorageProvider" ...</code>&gt;<br><code>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;providers&gt;<br>	...<br>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;add name="<span style="font-style: italic;"></span></code><code>FilesystemUploadStorageProvider</code><code><span style="font-style: italic;"></span>" <br>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; type="Brettle.Web.NeatUpload.</code><code>FilesystemUploadStorageProvider</code><code><span style="font-style: italic;"></span>" <br>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; t</code><code>empDirectory="<span style="font-style: italic;">path, defaults to path returned by System.IO.Path.GetTempPath()</span>"</code><code><span style="font-style: italic;"></span> ... /&gt;<br>	...<br></code><code></code><code>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;/providers&gt;</code><code><br></code>	&lt;/neatUpload&gt;<br>	</pre>
 
+If the directory you specify is relative, it will be relative to your
+application root directory.
+<h3><a class="mozTocH3" name="mozTocId134915"></a>
+Using Location Filtering to Restrict/Modify NeatUpload's Request
+Processing</h3>
 
-<pre>	&lt;neatUpload ... defaultTempDirectory="<var>yourTempDir</var>" .../&gt;<br>	</pre>
+By default, whenever NeatUpload's <code>UploadHttpModule</code>
+is added via the <code>&lt;httpModules&gt;</code>
+section of your <code>Web.config</code>, it intercepts and
+filters <span style="font-style: italic;">all</span><span style="font-weight: bold; font-style: italic;"> </span>requests
+sent to your application. &nbsp;For upload requests, it streams the
+uploaded files to disk and makes them available to your code via <code>InputFile</code>.
+&nbsp;It also limits the size of the non-upload part of the request
+<span style="font-style: italic;">and the total size of
+non-upload requests</span>
+because that request data is stored in server memory. &nbsp;If it
+didn't do that an attacker could mount a Denial of Service attack by
+sending a request that contains up to <code>maxRequestLength</code>
+kilobytes of non-file data.<br>
 
+<br>
 
+You can disable use of <code>UploadHttpModule</code> by
+settting the <code>&lt;neatUpload&gt;</code> element's <code>useHttpModule</code> attribute to
+false. &nbsp;If you want to use the <code>UploadHttpModule</code> for only some
+requests, you can use ASP.NET's <code>&lt;location&gt;</code> element to
+specify which pages it should be used for. &nbsp;You can also use the <code>&lt;location&gt;</code> element to control which <code>UploadStorageProvider</code> is used for specific pages. &nbsp;For example,
+consider the following configuration:<br>
 
-If the directory you specify is relative, it will be relative to your application root directory.
+<br>
 
-<h3><a class="mozTocH3" name="mozTocId23283"></a>Limiting the Size of Upload Requests</h3>
+<code>&lt;configuration&gt;<br>
 
+&nbsp;&nbsp;&nbsp; ...<br>
 
+&nbsp;&nbsp;&nbsp; &lt;system.web&gt;<br>
 
-<p>By default, NeatUpload does not directly limit the size of uploads.
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ...<br>
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&lt;httpRuntime maxRequestLength="100" /&gt;<br>
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ...<br>
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&lt;neatUpload useHttpModule="false" maxNormalRequestLength="4096"
+maxRequestLength="2097151"&gt;<br>
+</code><code>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;providers&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;add name="special"
+type="Brettle.Web.NeatUpload.FilesystemUploadStorageProvider" <br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+tempDirectory="SpecialTempDirectory"
+/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/providers&gt;<br>
+</code><code>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&lt;/neatUpload&gt;<br>
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ...<br>
+
+&nbsp;&nbsp;&nbsp; &lt;/system.web&gt;<br>
+
+&nbsp;&nbsp;&nbsp; ...<br>
+
+&nbsp;&nbsp;&nbsp; &lt;location path="Demo.aspx"&gt;<br>
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&lt;system.web&gt;<br>
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &lt;neatUpload useHttpModule="true"
+/&gt;<br>
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &lt;httpRuntime
+maxRequestLength="2097151" executionTimeout="3600" /&gt;<br>
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&lt;/system.web&gt;<br>
+
+&nbsp;&nbsp;&nbsp; &lt;/location&gt;<br>
+</code><code>
+&nbsp;&nbsp;&nbsp; &lt;location path="Special.aspx"&gt;<br>
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&lt;system.web&gt;<br>
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &lt;neatUpload useHttpModule="true"
+defaultProvider="special" /&gt;<br>
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &lt;httpRuntime
+maxRequestLength="2097151" executionTimeout="3600" /&gt;<br>
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&lt;/system.web&gt;<br>
+
+&nbsp;&nbsp;&nbsp; &lt;/location&gt;<br>
+</code><code>
+&nbsp;&nbsp;&nbsp; ...<br>
+
+&lt;/configuration&gt;<br>
+
+<br>
+
+</code>That configuration will cause the <code>UploadHttpModule</code>
+to&nbsp;only be used for requests to <code>Demo.aspx</code> and <code>Special.aspx</code>.
+&nbsp;In addition, ASP.NET's <code>maxRequestLength</code>
+is set to only 100 KBytes for all requests other than those two pages.
+&nbsp;For those two pages<code></code>, the <code>maxRequestLength</code>
+is increased to 2 GBytes and the <code>executionTimeout</code>
+is increased to 1 hour. &nbsp;Also, requests for <code>Special.aspx</code> use the "special" provider which is configured to use uses the "SpecialTempDirectory", while requests for <code>Demo.aspx</code> use the default provider which uses the system temporary directory.<br>
+<br>
+<h3><a class="mozTocH3" name="mozTocId23283"></a>Limiting
+the Size of Upload Requests</h3>
+
+<p>By default, NeatUpload does not directly limit the size of
+uploads.
 &nbsp;Microsoft's ASP.NET does impose a limit via the httpRuntime
 maxRequestLength value, but Mono's ASP.NET implementation does not.
 &nbsp;To limit upload size under Mono (or further limit upload size
-under Microsoft's implementation),&nbsp;use the <code>&lt;neatUpload&gt;</code> element's <code>maxRequestLength </code>attribute<code></code><code></code>: 
-
+under Microsoft's implementation),&nbsp;use the <code>&lt;neatUpload&gt;</code>
+element's <code>maxRequestLength </code>attribute<code></code><code></code>:
 </p>
-
-
 
 <pre>	&lt;neatUpload ... maxRequestLength="<em>sizeInKBytes</em>" ... /&gt;<br></pre>
 
-
-
-<p>If a user attempts to upload a file larger than the specified size, NeatUpload will call:</p>
-
-
+<p>If a user attempts to upload a file larger than the specified
+size, NeatUpload will call:</p>
 
 <pre>	throw HttpException(413,&nbsp;"Request Entity Too Large")</pre>
 
-
-
 <p>By
-default, this will cause the user to see&nbsp;a browser-specific error
-message or dialog. &nbsp;For example, Firefox simply displays a dialog
-saying "Document contains no data". &nbsp;If you want something more
+default, this will cause the user to see&nbsp;a browser-specific
+error
+message or dialog. &nbsp;For example, Firefox simply displays a
+dialog
+saying "Document contains no data". &nbsp;If you want something
+more
 user-friendly, you can either handle the error by adding a handler for
-the <code>HttpApplication.Error</code> event, or you can use a custom
-error page. &nbsp;NeatUpload comes with an example custom error page. &nbsp;To
+the <code>HttpApplication.Error</code> event, or you can
+use a custom
+error page. &nbsp;NeatUpload comes with an example custom error
+page. &nbsp;To
 use it, add the following to your&nbsp;<code>Web.config</code>
 under
-<code>configuration/system.web</code>: 
+<code>configuration/system.web</code>: </p>
 
-</p>
+<pre>	&lt;customErrors mode="On"&gt;<br>	&lt;error statusCode="413" redirect="~/NeatUpload/Error413.aspx" /&gt;<br>	&lt;/customErrors&gt;</pre>
 
-
-
-<pre>	&lt;customErrors mode="On"&gt;<br>		&lt;error statusCode="413" redirect="~/NeatUpload/Error413.aspx" /&gt;<br>	&lt;/customErrors&gt;</pre>
-
-
-
-<h3><a class="mozTocH3" name="mozTocId358727"></a>Changing the Maximum Size of Normal Requests</h3>
-
-
+<h3><a class="mozTocH3" name="mozTocId358727"></a>Changing
+the Maximum Size of Normal Requests</h3>
 
 <p> When you installed NeatUpload you probably increased
 ASP.NET's <code>maxRequestLength</code> value to allow for
@@ -601,14 +701,15 @@ memory, you probably don't want to allow them to be as big as
 <code>maxRequestLength</code>. To prevent this, NeatUpload
 restricts the size of
 such requests to 4 MBytes by default. To specify a different maximum
-size,&nbsp;use the <code>&lt;neatUpload&gt;</code> element's <code>maxNormalRequestLength </code>attribute<code></code>: </p>
+size,&nbsp;use the <code>&lt;neatUpload&gt;</code>
+element's <code>maxNormalRequestLength </code>attribute<code></code>:
+</p>
+
 <pre>	&lt;neatUpload ... maxNormalRequestLength="<em>sizeInKBytes</em>" ... /&gt;<br></pre>
 
-
-
-<h3><a class="mozTocH3" name="mozTocId390633"></a>Customizing <code>Progress.aspx</code></h3>
-
-
+<h2><a class="mozTocH2" name="mozTocId250326"></a>Customization</h2>
+<h3><a class="mozTocH3" name="mozTocId390633"></a>Customizing
+<code>Progress.aspx</code></h3>
 
 <p> The <code>Progress.aspx</code> page that comes
 with NeatUpload is just an
@@ -622,182 +723,92 @@ even rearrange the layout entirely. The only restriction is that you
 must continue to include elements with the following id attributes and
 tag names, each with the runat attribute set to "server": </p>
 
-
-
 <table border="1">
-
-
 
   <thead><tr>
 
-
-
     <td><strong>ID</strong></td>
-
-
 
     <td><strong>Tag Name</strong></td>
 
-
-
   </tr>
-
-
 
   </thead> <tbody>
 
-
-
     <tr>
-
-
 
       <td><code>barDiv</code></td>
 
-
-
       <td>any</td>
-
-
 
     </tr>
 
-
-
     <tr>
-
-
 
       <td><code>statusDiv</code></td>
 
-
-
       <td>any</td>
-
-
 
     </tr>
 
-
-
     <tr>
-
-
 
       <td><code>inProgressSpan</code></td>
 
-
-
       <td>any</td>
-
-
 
     </tr>
 
-
-
     <tr>
-
-
 
       <td><code>remainingTimeSpan</code></td>
 
-
-
       <td>any</td>
-
-
 
     </tr>
 
-
-
     <tr>
-
-
 
       <td><code>completedSpan</code></td>
 
-
-
       <td>any</td>
-
-
 
     </tr>
 
-
-
     <tr>
-
-
 
       <td><code>cancelledSpan</code></td>
 
-
-
       <td>any</td>
-
-
 
     </tr>
 
-
-
     <tr>
-
-
 
       <td><code>refreshLink</code></td>
 
-
-
       <td>A</td>
-
-
 
     </tr>
 
-
-
     <tr>
-
-
 
       <td><code>stopRefreshLink</code></td>
 
-
-
       <td>A</td>
 
-
-
     </tr>
-
-
 
     <tr>
 
-
-
       <td><code>cancelLink</code></td>
-
-
 
       <td>A</td>
 
-
-
     </tr>
 
-
-
-  
-  
   </tbody>
 </table>
-
-
 
 <p> Refer to the sample <code>Progress.aspx</code>
 to see how each of these
@@ -808,11 +819,8 @@ elements are hidden whenever JavaScript
 is available because they are used to manually start and stop
 refreshing the progress display. </p>
 
-
-
-<h3><a class="mozTocH3" name="mozTocId184279"></a>Creating Custom Fallback Content for <code>ProgressBar</code></h3>
-
-
+<h3><a class="mozTocH3" name="mozTocId184279"></a>Creating
+Custom Fallback Content for <code>ProgressBar</code></h3>
 
 <p> If JavaScript is not available or the browser doesn't support
 IFRAMEs and the <code>ProgressBar</code> element is empty,
@@ -821,135 +829,155 @@ link will be displayed. To change the text of that link, simply place
 the desired text (or controls) between the begin and end tags of the
 <code>ProgressBar</code> element. For example: </p>
 
+<pre>	&lt;Upload:ProgressBar id="progressBar" runat="server" &gt;<br>	&lt;asp:Label id="label" runat="server" Text="Your Text Here"/&gt;<br>	&lt;/Upload:ProgressBar&gt;</pre>
 
 
-<pre>	&lt;Upload:ProgressBar id="progressBar" runat="server" &gt;<br>	&lt;asp:Label id="label" runat="server" Text="Your Text Here"/&gt;<br>	&lt;/Upload:ProgressBar&gt;<br>	</pre>
+<h3><a class="mozTocH3" name="mozTocId759939"></a>Creating a Custom UploadStorageProvider</h3>
 
+By default, NeatUpload uses the built-in
+<code>FilesystemUploadStorageProvider</code> which streams uploaded files to a
+temporary directory until you move them. &nbsp;If you would rather
+stream uploaded files to some other location (e.g. a database, or
+remote machine), or you want some other functionality not provided by&nbsp;<code>FilesystemUploadStorageProvider,</code> you need to
+create and use a custom <code>UploadStorageProvider</code>. &nbsp;To create a
+custom <code>UploadStorageProvider</code>, create a class which inherits from
+<code>UploadStorageProvider</code>. &nbsp;You will need to implement the following
+methods:<br>
 
+<br>
 
-<h3><a class="mozTocH3" name="mozTocId576312"></a>Enabling Logging with log4net</h3>
+<code>&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; public abstract void Initialize(string
+name, NameValueCollection attrs);<br>
 
+<br>
 
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; public
+abstract UploadedFile CreateUploadedFile(string controlUniqueID, string
+fileName, string contentType);<br>
 
-NeatUpload is capable of logging debug and error messages using <a href="http://logging.apache.org/log4net/">log4net</a>,
-but that capability is disabled by default to simplify installation and
-use of NeatUpload. &nbsp;To enable logging with log4net do the
-following:<br>
+</code><br>
 
+When the configuration section where your provider is added is first relevant to a request, NeatUpload creates an
+instance of your provider and calls it's <code>Initialize()</code> method,
+&nbsp;passing the value of the "name" attribute as the first
+parameter and the remaining attributes (other than "name", and "type")
+as the second parameter. &nbsp;You can use the remaining attributes
+to pass provider-specific configuration information to your provider.<br>
 
+<br>
 
-<ol>
+Whenever NeatUpload encounters a file upload associated with an
+<code>InputFile</code> control, it calls the<code></code> <code>CreateUploadedFile()</code>
+method of the provider that is configured as the <code>defaultProvider</code> for the requested page. &nbsp;When NeatUpload calls your provider's
+<code>CreateUploadedFile()</code> method, it passes the ID of the <code>InputFile</code> control
+associated with the upload, along with browser-specified name and MIME
+type of the file. &nbsp;<code>CreateUploadedFile()</code> is responsible for
+returning an instance of a class derived from <code>UploadedFile</code>.
+&nbsp;NeatUpload will stream the file to that object, and delegate
+various <code>InputFile</code> members to the associated methods of your
+<code>UploadedFile</code>-derived object.<br>
 
+<br>
 
+See <code>FilesystemUploadStorageProvider.cs</code> and <code>FilesystemUploadedFile.cs</code> for an example of how to implement a custom <code>UploadStorageProvider</code>.<br>
+<br>
+<h2><a class="mozTocH2" name="mozTocId580088"></a>Known
+Issues</h2>
 
-  <li>If your web application is not already using log4net:</li>
+<h3><a class="mozTocH3" name="mozTocId766780"></a><code>HttpResponse.AppendToLog()</code>
+does nothing when <code>UploadHttpModule</code> is used</h3>
 
-
-  
-  
-  
-  <ol>
-
-
-
-    <li><a href="http://logging.apache.org/log4net/downloads.html">Download</a> and <a href="http://logging.apache.org/log4net/release/building.html">build</a> log4net.</li>
-
-
-
-    <li>Add a reference to your web application that refers to the log4net.dll you built.</li>
-
-
-
-    <li>Copy <code>NeatUpload-1.1.<span style="font-style: italic;">x</span>/log4net.config</code>
-to the root directory of your web application.</li>
-
-
-
-    <li>Add the following line to your <code>Global.asax.cs</code>&nbsp;before the <code>namespace</code> keyword:
-      
-      
-      
-      <pre>[assembly: log4net.Config.XmlConfigurator(ConfigFile="log4net.config", Watch=true)]</pre>
-
-
-
-    </li>
-
-
-  
-  
-  
-  </ol>
-
-
-
-  <li>Add a reference to the NeatUpload project that refers to log4net.dll.</li>
-
-
-
-  <li>Change the properties/options for the NeatUpload project to define USE_LOG4NET.</li>
-
-
-
-  <li>Rebuild NeatUpload.</li>
-
-
-
-</ol>
-
-
-
-<h2><a class="mozTocH2" name="mozTocId580088"></a>Known Issues</h2>
-
-
-
-<h3><a class="mozTocH3" name="mozTocId766780"></a><code>HttpResponse.AppendToLog()</code> does nothing when <code>UploadHttpModule</code> is used</h3>
-
-
-
-<p>Due to the design of NeatUpload this bug will not be fixed, however NeatUpload does provide a workaround. &nbsp;Simply replace <code>Response.AppendToLog()</code> with <code>Brettle.Web.NeatUpload.UploadHttpModule.AppendToLog()</code>. &nbsp;That will work whether the <code>UploadHttpModule</code> is used or not.</p>
-
-
+<p>Due to the design of NeatUpload this bug will not be fixed,
+however NeatUpload does provide a workaround. &nbsp;Simply replace <code>Response.AppendToLog()</code>
+with <code>Brettle.Web.NeatUpload.UploadHttpModule.AppendToLog()</code>.
+&nbsp;That will work whether the <code>UploadHttpModule</code>
+is used or not.</p>
 
 <h2><a class="mozTocH2" name="mozTocId405545"></a>Troubleshooting</h2>
 
-
-
-
-
-
-<p>If you think NeatUpload's <code>UploadHttpModule</code> might be causing a problem, the first thing you should do is set the <code>&lt;neatUpload&gt;</code> element's&nbsp;<code>useHttpModule</code> attribute to&nbsp;"false" (or remove the <code>UploadHttpModule</code> from the <code>&lt;httpModules&gt;</code> section) and try to reproduce the problem. &nbsp;All of your existing code should continue to work - you just won't get progress bars and streaming of files to disk. &nbsp;If the problem goes away when you remove the <code>UploadHttpModule</code>, it is a bug so please <a href="http://www.brettle.com/neatupload_bugs">report it</a>. &nbsp;You can help me diagnosis the problem by doing the following:</p>
-
-
+<p>If you think NeatUpload's <code>UploadHttpModule</code>
+might be causing a problem, the first thing you should do is set the <code>&lt;neatUpload&gt;</code>
+element's&nbsp;<code>useHttpModule</code> attribute
+to&nbsp;"false" (or remove the <code>UploadHttpModule</code>
+from the <code>&lt;httpModules&gt;</code> section)
+and try to reproduce the problem. &nbsp;All of your existing code
+should continue to work - you just won't get progress bars and
+streaming of files to disk. &nbsp;If the problem goes away when you
+remove the <code>UploadHttpModule</code>, it is a bug so
+please <a href="http://www.brettle.com/neatupload_bugs">report
+it</a>. &nbsp;You can help me diagnosis the problem by doing
+the following:</p>
 
 <ol>
 
+  <li>Enable logging with log4net. &nbsp;NeatUpload is
+capable of logging debug and error messages using <a href="http://logging.apache.org/log4net/">log4net</a>,
+but that capability is disabled by default to simplify installation and
+use of NeatUpload. &nbsp;To enable logging with log4net:</li>
 
+  <ol>
 
-  <li>Add the <code>UploadHttpModule</code> back to your <code>Web.config</code>.</li>
+    <li>If your web application is not already using log4net:</li>
 
+    <ol>
 
+      <li><a href="http://logging.apache.org/log4net/downloads.html">Download</a>
+and <a href="http://logging.apache.org/log4net/release/building.html">build</a>
+log4net.</li>
 
-  <li>Increase the log level to DEBUG in log4net. &nbsp;To that simply change <code>&lt;level value="INFO" /&gt;</code> to <code>&lt;level value="DEBUG" /&gt;</code> in your <code>log4net.config</code>.</li>
+      <li>Add a reference to your web application that refers to
+the log4net.dll you built.</li>
 
+      <li>Copy <code>NeatUpload-1.1.<span style="font-style: italic;">x</span>/log4net.config</code>
+to the root directory of your web application.</li>
 
+      <li>Add the following line to your <code>Global.asax.cs</code>&nbsp;before
+the <code>namespace</code> keyword:
+        <pre>[assembly: log4net.Config.XmlConfigurator(ConfigFile="log4net.config", Watch=true)]</pre>
+
+      </li>
+
+    </ol>
+
+    <li>Add a reference to the NeatUpload project that refers to
+log4net.dll.</li>
+
+    <li>Change the properties/options for the NeatUpload project
+to define USE_LOG4NET.</li>
+
+    <li>Rebuild NeatUpload.
+    </li>
+
+  </ol>
+
+  <li>Add the <code>UploadHttpModule</code> back to
+your <code>Web.config</code>.</li>
+
+  <li>Increase the log level to DEBUG in log4net. &nbsp;To
+that simply change <code>&lt;level value="INFO" /&gt;</code>
+to <code>&lt;level value="DEBUG" /&gt;</code> in
+your <code>log4net.config</code>.</li>
 
   <li>Reproduce the problem.</li>
 
-
-
-  <li>Send me (dean at brettle dot com) a zip file containing the files
+  <li>Send me (dean at brettle dot com) a zip file containing the
+files
 from your temp directory with the extensions ".body" and ".sizes".
-&nbsp;Each ".body" file contains the body of a request you sent when
-reproducing the problem. &nbsp;The corresponding ".sizes" file contains
+&nbsp;Each ".body" file contains the body of a request you sent
+when
+reproducing the problem. &nbsp;The corresponding ".sizes" file
+contains
 the MIME type of the request and the size of each chunk that NeatUpload
-read. &nbsp;I can use the <code>TestFilter.exe</code> program to reproduce how the <code>UploadHttpModule</code> processed the request and (hopefully) determine exactly what went wrong.</li>
-
-
+read. &nbsp;I can use the <code>TestFilter.exe</code>
+program to reproduce how the <code>UploadHttpModule</code>
+processed the request and (hopefully) determine exactly what went wrong.</li>
 
 </ol>
 
+<ol>
 
+</ol>
 
 </body>
 </html>

@@ -22,43 +22,39 @@ using System;
 using System.IO;
 using System.Web;
 using System.Configuration;
+using System.Collections;
+using System.Collections.Specialized;
 
 namespace Brettle.Web.NeatUpload
 {
-	public abstract class UploadedFile
+	public class FilesystemUploadStorageProvider : UploadStorageProvider
 	{
-		private UploadedFile() {}
-
-		protected UploadedFile(string controlUniqueID, string fileName, string contentType)
+		public override void Initialize(string providerName, NameValueCollection attrs)
 		{
-			// IE sends a full path for the fileName.  We only want the actual filename.
-			if (System.Text.RegularExpressions.Regex.IsMatch(fileName, @"^(\\\\[^\\]|([a-zA-Z]:)?\\).*"))
+			foreach (string name in attrs.Keys)
 			{
-				fileName = fileName.Substring(fileName.LastIndexOf('\\') + 1);
+				string val = attrs[name];
+				if (name == "tempDirectory")
+				{
+					if (HttpContext.Current != null)
+					{
+						val = Path.Combine(HttpContext.Current.Request.PhysicalApplicationPath, 
+												val);
+					}
+					TempDirectory = new DirectoryInfo(val);
+				}
+				else
+				{
+					throw new System.Xml.XmlException("Unrecognized attribute: " + name);
+				}
 			}
-			FileName = fileName;
-			ContentType = contentType;
-			ControlUniqueID = controlUniqueID;
 		}
-		
-		public abstract void Dispose();
 
-		public abstract bool IsUploaded	{ get; }
+		public override UploadedFile CreateUploadedFile(string controlUniqueID, string fileName, string contentType)
+		{
+			return new FilesystemUploadedFile(this, controlUniqueID, fileName, contentType);
+		}
 
-		public abstract Stream CreateStream();
-
-		public abstract void MoveTo(string path, MoveToOptions opts);
-
-		public abstract long ContentLength { get; }
-
-		public abstract Stream OpenRead();
-		
-		public FileInfo TmpFile = null;
-		
-		public string FileName;
-		
-		public string ContentType;
-
-		public string ControlUniqueID;
+		public DirectoryInfo TempDirectory = new DirectoryInfo(Path.GetTempPath());
 	}
 }

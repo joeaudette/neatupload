@@ -49,7 +49,7 @@ namespace Brettle.Web.NeatUpload
 						if (postedFile != null)
 						{
 							// Copy the posted file to an UploadedFile.
-							_file = new UploadedFile(this.UniqueID, postedFile.FileName, postedFile.ContentType);
+							_file = UploadStorage.CreateUploadedFile(this.UniqueID, postedFile.FileName, postedFile.ContentType);
 							Stream outStream = null, inStream = null;
  							try
 							{

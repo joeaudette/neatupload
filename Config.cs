@@ -39,14 +39,16 @@ namespace Brettle.Web.NeatUpload
 			{
 				Config config = null;
 				if (HttpContext.Current != null)
+				{
 					config = HttpContext.Current.Items["NeatUpload_config"] as Config;
-				if (config == null)
-				{
-					config = HttpContext.Current.GetConfig("brettle.web/neatUpload") as Config;
-				}
-				if (config == null)
-				{
-					config = HttpContext.Current.GetConfig("system.web/neatUpload") as Config;
+					if (config == null)
+					{
+						config = HttpContext.Current.GetConfig("brettle.web/neatUpload") as Config;
+					}
+					if (config == null)
+					{
+						config = HttpContext.Current.GetConfig("system.web/neatUpload") as Config;
+					}
 				}
 				if (config == null && ConfigurationSettings.AppSettings != null)
 				{
@@ -59,13 +61,26 @@ namespace Brettle.Web.NeatUpload
 
 				if (HttpContext.Current != null)
 				{
-					HttpContext.Current.Items["NeatUpload_config"] = config;
+					// If 2 threads try to create a new config simultaneously, only use the first one.
+					lock (HttpContext.Current.Items.SyncRoot)
+					{
+						if (HttpContext.Current.Items["NeatUpload_config"] == null)
+						{
+							HttpContext.Current.Items["NeatUpload_config"] = config;
+						}
+						else
+						{
+							config = (Config) HttpContext.Current.Items["NeatUpload_config"];
+						}
+					}
 				}
 				return config;
 			}
 		}
 
-		private Config() {}
+		private Config() 
+		{
+		}
 
 		private static Config CreateFromAppSettings(System.Collections.Specialized.NameValueCollection appSettings)
 		{
@@ -91,23 +106,24 @@ namespace Brettle.Web.NeatUpload
 				{
 					tmpDir = Path.Combine(HttpContext.Current.Request.PhysicalApplicationPath, tmpDir);
 				}
-				config.DefaultTempDirectory = new DirectoryInfo(tmpDir);
+				UploadStorage.LastResortProvider.TempDirectory = new DirectoryInfo(tmpDir);
 			}
 			return config;
 		}
 
-		internal static Config CreateFromConfigSection(Config parent, System.Xml.XmlAttributeCollection attrs)
+		internal static Config CreateFromConfigSection(Config parent, System.Xml.XmlNode section)
 		{
 			if (log.IsDebugEnabled) log.Debug("In CreateFromConfigSection");
 			Config config = new Config();
 			if (parent != null)
 			{
-				config.DefaultTempDirectory = parent.DefaultTempDirectory;
 				config.MaxNormalRequestLength = parent.MaxNormalRequestLength;
 				config.MaxRequestLength = parent.MaxNormalRequestLength;
 				config.UseHttpModule = parent.UseHttpModule;
+				config.Providers = (Hashtable) parent.Providers.Clone();
+				config.DefaultProviderName = parent.DefaultProviderName;
 			}
-			foreach (XmlAttribute attr in attrs)
+			foreach (XmlAttribute attr in section.Attributes)
 			{
 				string name = attr.Name as string;
 				string val = attr.Value as string;
@@ -120,29 +136,51 @@ namespace Brettle.Web.NeatUpload
 				{
 					config.MaxRequestLength = Int64.Parse(val) * 1024;
 				}
-				else if (name == "defaultTempDirectory")
-				{
-					if (HttpContext.Current != null)
-					{
-						val = Path.Combine(HttpContext.Current.Request.PhysicalApplicationPath, val);
-					}
-					config.DefaultTempDirectory = new DirectoryInfo(val);
-				}
 				else if (name == "useHttpModule")
 				{
 					config.UseHttpModule = bool.Parse(val) && UploadHttpModule.IsInited;
+				}
+				else if (name == "defaultProvider")
+				{
+					config.DefaultProviderName = val;
 				}
 				else
 				{
 					throw new XmlException("Unrecognized attribute: " + name);
 				}
 			}
+			XmlNode providersElem = section.SelectSingleNode("providers");
+			if (providersElem != null)
+			{
+				foreach (XmlNode providerActionElem in providersElem.ChildNodes)
+				{
+					string tagName = providerActionElem.LocalName;
+					string providerName = providerActionElem.Attributes["name"].Value;
+					if (tagName == "add")
+					{
+						config.Providers[providerName] = UploadStorage.CreateProvider(providerActionElem);
+					}
+					else if (tagName == "remove")
+					{
+						config.Providers.Remove(providerName);
+					}
+					else if (tagName == "clear")
+					{
+						config.Providers.Clear();
+					}
+					else
+					{
+						throw new XmlException("Unrecognized tag name: " + tagName);
+					}
+				}
+			}
 			return config;
 		}
 
+		internal string DefaultProviderName = null;
+		internal Hashtable Providers = new Hashtable();
 		internal long MaxNormalRequestLength = 4096 * 1024;
 		internal long MaxRequestLength = 2097151 * 1024;
-		internal DirectoryInfo DefaultTempDirectory = new DirectoryInfo(Path.GetTempPath());
 		internal bool UseHttpModule = UploadHttpModule.IsInited;
 	}
 }
