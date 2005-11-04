@@ -32,7 +32,6 @@ namespace Brettle.Web.NeatUpload
 		private static readonly log4net.ILog log 
 			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-
 		public static void AppendToLog(string param)
 		{
 			HttpContext context = HttpContext.Current;
@@ -48,7 +47,7 @@ namespace Brettle.Web.NeatUpload
 			context.Response.AppendToLog(param);
 		}
 
-		internal static int MaxNormalRequestLength
+		public static int MaxNormalRequestLength
 		{
 			get
 			{
@@ -59,6 +58,20 @@ namespace Brettle.Web.NeatUpload
 					maxNormalRequestLengthSetting = "4096"; // 4Mbytes
 				}
 				return Int32.Parse(maxNormalRequestLengthSetting) * 1024;
+			}
+		}
+
+		public static int MaxRequestLength
+		{
+			get
+			{
+				string maxRequestLengthSetting 
+					= ConfigurationSettings.AppSettings["NeatUpload.MaxRequestLength"];
+				if (maxRequestLengthSetting == null)
+				{
+					return Int32.MaxValue;
+				}
+				return Int32.Parse(maxRequestLengthSetting) * 1024;
 			}
 		}
 
@@ -146,6 +159,14 @@ namespace Brettle.Web.NeatUpload
 			{
 				if (contentLengthHeader == null)
 					throw new HttpException(411, "Length Required");
+				// If the client-specified content length is too large, we reject the request
+				// immediately.  If it's not, the client could be lying so we need to use
+				// FilteringWorkerRequest to actually count the bytes.
+				if (contentLength > MaxRequestLength)
+				{
+					if (log.IsDebugEnabled) log.Debug("contentLength > MaxRequestLength");
+					throw new HttpException(413, "Request Entity Too Large");
+				}
 				subWorker = new FilteringWorkerRequest(origWorker);
 			}
 			else

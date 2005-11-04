@@ -5,6 +5,8 @@
 
 
 
+
+  
   
   
   
@@ -19,7 +21,9 @@
 
 
 
+
 <h1>NeatUpload Manual</h1>
+
 
 
 
@@ -31,6 +35,7 @@
   <li><a href="#mozTocId875291">Advanced Usage</a>
     <ul>
       <li><a href="#mozTocId905959">Changing the Temporary Directory</a></li>
+      <li><a href="#mozTocId329006">Limiting the Size of Upload Requests</a></li>
       <li><a href="#mozTocId358727">Changing the Maximum Size of Normal Requests</a></li>
       <li><a href="#mozTocId390633">Customizing Progress.aspx</a></li>
       <li><a href="#mozTocId184279">Creating Custom Fallback Content for ProgressBar</a></li>
@@ -47,7 +52,9 @@
 
 
 
+
 <h2><a class="mozTocH2" name="mozTocId903858"></a>Introduction</h2>
+
 
 
 
@@ -66,6 +73,7 @@ as well as Microsoft's ASP.NET implementation. </p>
 
 
 
+
 <p> NeatUpload contains two custom controls (<code>InputFile</code>
 and <code>ProgressBar</code>), an <code>HttpModule</code>
 (<code>UploadHttpModule</code>), and a page (<code>Progress.aspx</code>).
@@ -77,10 +85,12 @@ NeatUpload. </p>
 
 
 
+
 <p> <code><strong>InputFile</strong></code>
 is a custom control that renders like <code>HtmlInputFile</code>,
 but provides properties to access the temporary file containing the
 upload, as well as the client-specified name and content type. </p>
+
 
 
 
@@ -105,6 +115,7 @@ which loads the <code>Progress.aspx</code> page. <code>Progress.aspx</code>
 
 
 
+
 <p> <code><strong>UploadHttpModule</strong></code>
 is an <code>HttpModule</code> that intercepts each
 request, streams <code>InputFile</code> uploads to
@@ -124,6 +135,7 @@ adopting NeatUpload. </p>
 
 
 
+
 <p> <code><strong>Progress.aspx</strong></code>
 is the page that is displayed in the site provided by the <code>ProgressBar</code>
 control (i.e. in the IFRAME or popup). The codebehind for <code>Progress.aspx</code>
@@ -137,7 +149,9 @@ to update. </p>
 
 
 
+
 <h2><a class="mozTocH2" name="mozTocId304923"></a>Installation</h2>
+
 
 
 
@@ -152,7 +166,9 @@ Specifically: </p>
 
 
 
+
 <ol>
+
 
 
 
@@ -161,6 +177,7 @@ Specifically: </p>
   <li> If you haven't already, download the release and extract
 it wherever you want. All the files will be extracted into a
 subdirectory name <code>NeatUpload-1.0/</code>. </li>
+
 
 
 
@@ -177,12 +194,15 @@ the remaining installation steps. </li>
 
 
 
+
   <li> If you aren't already using log4net:
     
     
     
     
+    
     <ol>
+
 
 
 
@@ -197,8 +217,10 @@ the <code>bin/
 
 
 
+
       <li> Copy <code>NeatUpload-1.0/log4net.config</code>
 to the root directory of your web application. </li>
+
 
 
 
@@ -209,7 +231,9 @@ to the root directory of your web application. </li>
         
         
         
+        
         <pre>[assembly: log4net.Config.XmlConfigurator(ConfigFile="log4net.config", Watch=true)]<br>	</pre>
+
 
 
 
@@ -221,11 +245,14 @@ to the root directory of your web application. </li>
 
 
 
+
+    
     
     
     
     
     </ol>
+
 
 
 
@@ -237,11 +264,13 @@ to the root directory of your web application. </li>
 
 
 
+
   <li> Copy <code>Brettle.Web.NeatUpload.dll</code>
 from the <code>NeatUpload-1.0/bin/Debug/</code>
 or <code>NeatUpload-1.0/bin/Release/</code> directory to
 the <code>bin/</code>
 directory of your web application. </li>
+
 
 
 
@@ -261,8 +290,10 @@ because the class file is compiled into&nbsp;<code>Brettle.Web.NeatUpload.dll</c
 
 
 
+
   <li> Add the following line to your <code>Web.config</code>
 under <code>configuration/system.web/httpModules</code>:
+    
     
     
     
@@ -273,32 +304,34 @@ under <code>configuration/system.web/httpModules</code>:
 
 
 
+
   </li>
+
 
 
 
 
 
   <li> (Optional) To allow larger uploads than the default of 4
-Mbytes, add or modify the following line in your <code>Web.config</code>
+Mbytes, you <span style="font-style: italic;">might</span> need to add or modify the following line in your <code>Web.config</code>
 under <code>configuration/system.web</code>:
     
     
     
     
-    <pre>&lt;httpRuntime maxRequestLength="<var>size_in_kbytes</var>" /&gt;<br>	</pre>
-
-
-
-
-
+    
+    <pre>&lt;httpRuntime maxRequestLength="<var>size_in_kbytes</var>" /&gt;&nbsp;<br></pre>
+At the moment, both .NET and Mono seem to ignore that setting when
+NeatUpload is being used, but there is no official documentation
+specifying exactly when that limit is enforced, so a future version of
+.NET or Mono might enforce the limit even when NeatUpload is being
+used. &nbsp; Setting the <code>&lt;httpRuntime&gt;</code> element's <code>maxRequestLength</code>
+attribute simply provides insurance against such future changes.
+&nbsp;Note that since that attribute is currently ignored when
+NeatUpload is used, you can't use it to actually restrict the size of
+uploads. &nbsp;To do that, see <a href="#Limiting_the_Size_of_Upload_Requests">Limiting the Size of Upload Requests</a> below.<br>
   </li>
-
-
-
-
-
-  <li> (Optional) Copy <code>Demo.aspx</code> from <code>NeatUpload-1.0/</code>
+  <li>(Optional) Copy <code>Demo.aspx</code> from <code>NeatUpload-1.0/</code>
 into your application. Point your browser at <code>Demo.aspx</code>
 and verify that the demo functions properly. </li>
 
@@ -306,7 +339,9 @@ and verify that the demo functions properly. </li>
 
 
 
+
 </ol>
+
 
 
 
@@ -319,7 +354,9 @@ reading for details. </p>
 
 
 
+
 <h2><a class="mozTocH2" name="mozTocId50790"></a>Basic Usage</h2>
+
 
 
 
@@ -331,7 +368,9 @@ reading for details. </p>
 
 
 
+
 <ol>
+
 
 
 
@@ -342,13 +381,16 @@ reading for details. </p>
     
     
     
+    
     <pre> <br>&lt;%@ Register TagPrefix="Upload" Namespace="Brettle.Web.NeatUpload" Assembly="Brettle.Web.NeatUpload" %&gt;<br>	</pre>
 
 
 
 
 
+
   </li>
+
 
 
 
@@ -361,7 +403,9 @@ want the user to choose a file, using something like this:
     
     
     
+    
     <pre>&lt;Upload:InputFile id="<var>inputFileId</var>" runat="server" /&gt;<br>	</pre>
+
 
 
 
@@ -369,6 +413,7 @@ want the user to choose a file, using something like this:
 
 Feel free to add any attributes that you would normally add to an
     <code>HtmlInputFile</code> tag. </li>
+
 
 
 
@@ -383,7 +428,9 @@ displayed. &nbsp;Use something like this:
     
     
     
+    
     <pre>&lt;Upload:ProgressBar id="<var>progressBarId</var>" runat="server" inline="<var>true|false</var>" /&gt;<br>	</pre>
+
 
 
 
@@ -395,8 +442,10 @@ The inline attribute defaults to false. </li>
 
 
 
+
   <li> Add a submit button to your aspx page, using a
 submit button control that renders as <code>&lt;input type="submit" ...&gt;</code>. For example:
+    
     
     
     
@@ -404,12 +453,15 @@ submit button control that renders as <code>&lt;input type="submit" ...&gt;</cod
     <pre>&lt;asp:Button id="<var>submitButtonId</var>" runat="server" Text="<var>Submit</var>" /&gt;<br></pre>
 
 
+
     <span style="font-weight: bold;">Note</span>: <code>&lt;asp:LinkButton&gt;</code> renders as <code>&lt;a href="..."&gt;...&lt;/a&gt;</code> and is not supported by NeatUpload-1.0.x. &nbsp;Support for <code>LinkButtons</code> might be added in NeatUpload-1.1.x or later.</li>
+
 
 
   <li> In your codebehind file, declare each <code>InputFile</code>
 and
     <code>ProgressBar</code> control using code like this:
+    
     
     
     
@@ -420,7 +472,9 @@ and
 
 
 
+
   </li>
+
 
 
 
@@ -434,13 +488,16 @@ your progress bar:
     
     
     
+    
     <pre>	private void Page_Load(object sender, EventArgs e)<br>	{<br>		...<br>	<var>	progressBarId</var>.AddTrigger(<var>submitButtonId</var>);<br><br>	</pre>
 
 
 
 
 
+
   </li>
+
 
 
 
@@ -461,7 +518,9 @@ sufficient permissions):
     
     
     
+    
     <pre>using System.IO;<br>...<br>	private void Page_PreRender(object sender, EventArgs e)<br>	{<br>		...<br>		if (IsPostBack &amp;&amp; <var>inputFileId</var>.TmpFile != null)<br>		{<br>			...<br>		<var>	inputFileId</var>.TmpFile.MoveTo(Path.Combine(Request.PhysicalApplicationPath,&nbsp;<br>								Path.GetFileName(<var>inputFileId</var>.FileName)));<br><br></pre>
+
 
 
 
@@ -473,7 +532,9 @@ sufficient permissions):
 
 
 
+
 </ol>
+
 
 
 
@@ -485,7 +546,9 @@ sufficient permissions):
 
 
 
+
 <h3><a class="mozTocH3" name="mozTocId905959"></a>Changing the Temporary Directory</h3>
+
 
 
 
@@ -502,14 +565,38 @@ under <code><tt>configuration/appSettings</tt></code>:
 
 
 
+
 <pre>	&lt;add key="NeatUpload.DefaultTempDirectory" value="<var>yourTempDir</var>" /&gt;<br>	</pre>
 
 
 
 
 
+
 If the directory you specify is relative, it will be relative to your application root directory.
-<p></p>
+<h3><a class="mozTocH3" name="Limiting_the_Size_of_Upload_Requests"></a>Limiting the Size of Upload Requests</h3>
+
+<p>By default, NeatUpload does not directly limit the size of uploads.
+&nbsp;To limit upload size&nbsp;add a line like this to your <code>Web.config</code>
+under
+<code>configuration/appSettings</code>: 
+
+</p>
+
+<pre>	&lt;add key="NeatUpload.MaxRequestLength" value="<em>sizeInKBytes</em>" /&gt;<br></pre>
+
+<p>If a user attempts to upload a file larger than the specified size, NeatUpload will call:</p>
+
+<pre>	throw HttpException(413,&nbsp;"Request Entity Too Large")</pre>
+
+<p>By
+default, this will cause the user to see&nbsp;a browser-specific error
+message or dialog. &nbsp;For example, Firefox simply displays a dialog
+saying "Document contains no data". &nbsp;If you want something more
+user-friendly, you can either handle the error by adding a handler for
+the <code>HttpApplication.Error</code> event, or you can use a custom
+error page.</p>
+
 
 
 
@@ -521,20 +608,14 @@ If the directory you specify is relative, it will be relative to your applicatio
 
 
 
-<p> When you installed NeatUpload you probably increased
-ASP.NET's <code>maxRequestLength</code> value to allow for
-uploads larger than 4
-MBytes. Of course, the <code>maxRequestLength</code>
-setting applies to all
-requests, not just those that contain uploads. Since non-upload
-requests (and the non-upload portion of upload requests) are stored in
-memory, you probably don't want to allow them to be as big as
-<code>maxRequestLength</code>. To prevent this, NeatUpload
+
+<p>By default, NeatUpload
 restricts the size of
-such requests to 4 MBytes by default. To specify a different maximum
+non-upload requests and the non-upload portion of upload requests to 4 MBytes. To specify a different maximum
 size, add a line like this to your <code>Web.config</code>
 under
 <code>configuration/appSettings</code>: </p>
+
 
 
 
@@ -546,7 +627,9 @@ under
 
 
 
+
 <h3><a class="mozTocH3" name="mozTocId390633"></a>Customizing <code>Progress.aspx</code></h3>
+
 
 
 
@@ -568,7 +651,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
 <table border="1">
+
 
 
 
@@ -579,7 +664,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
     <td><strong>ID</strong></td>
+
 
 
 
@@ -590,7 +677,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
   </tr>
+
 
 
 
@@ -602,7 +691,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
     <tr>
+
 
 
 
@@ -614,7 +705,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
       <td>any</td>
+
 
 
 
@@ -626,7 +719,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
     <tr>
+
 
 
 
@@ -638,7 +733,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
       <td>any</td>
+
 
 
 
@@ -650,7 +747,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
     <tr>
+
 
 
 
@@ -662,7 +761,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
       <td>any</td>
+
 
 
 
@@ -674,7 +775,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
     <tr>
+
 
 
 
@@ -686,7 +789,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
       <td>any</td>
+
 
 
 
@@ -698,7 +803,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
     <tr>
+
 
 
 
@@ -710,7 +817,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
       <td>any</td>
+
 
 
 
@@ -722,7 +831,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
     <tr>
+
 
 
 
@@ -734,7 +845,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
       <td>any</td>
+
 
 
 
@@ -746,7 +859,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
     <tr>
+
 
 
 
@@ -758,7 +873,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
       <td>A</td>
+
 
 
 
@@ -770,7 +887,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
     <tr>
+
 
 
 
@@ -782,13 +901,16 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
       <td>A</td>
 
 
 
 
 
+
     </tr>
+
 
 
 
@@ -800,7 +922,9 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
       <td><code>cancelLink</code></td>
+
 
 
 
@@ -812,18 +936,22 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
+
     </tr>
 
 
 
 
 
+
+  
   
   
   
   
   </tbody>
 </table>
+
 
 
 
@@ -842,7 +970,9 @@ refreshing the progress display. </p>
 
 
 
+
 <h3><a class="mozTocH3" name="mozTocId184279"></a>Creating Custom Fallback Content for <code>ProgressBar</code></h3>
+
 
 
 
@@ -859,32 +989,49 @@ the desired text (or controls) between the begin and end tags of the
 
 
 
+
 <pre>	&lt;Upload:ProgressBar id="progressBar" runat="server" &gt;<br>	&lt;asp:Label id="label" runat="server" Text="Your Text Here"/&gt;<br>	&lt;/Upload:ProgressBar&gt;<br>	</pre>
 
 
 
 
 
+
 <h2><a class="mozTocH2" name="mozTocId580088"></a>Known Issues</h2>
+
 <h3><a class="mozTocH3" name="mozTocId766780"></a><code>HttpResponse.AppendToLog()</code> does nothing when <code>UploadHttpModule</code> is used</h3>
+
 <p>Due to the design of NeatUpload this bug will not be fixed, however NeatUpload does provide a workaround. &nbsp;Simply replace <code>Response.AppendToLog()</code> with <code>Brettle.Web.NeatUpload.UploadHttpModule.AppendToLog()</code>. &nbsp;That will work whether the <code>UploadHttpModule</code> is used or not.</p>
+
 <h2><a class="mozTocH2" name="mozTocId405545"></a>Troubleshooting</h2>
-<p>Whenever NeatUpload's <code>UploadHttpModule</code> is added via the <code>&lt;httpModules&gt;</code> section of your <code>Web.config</code>, it intercepts and filters <span style="font-style: italic;">all</span><span style="font-weight: bold; font-style: italic;"> </span>requests sent to your application. &nbsp;For upload requests, it streams the uploaded files to disk and makes them available to your code via <code>InputFile</code>. &nbsp;It also limits the size of the non-upload part of the request <span style="font-style: italic;">and the total size of non-upload requests</span>
+
+<p>Whenever NeatUpload's <code>UploadHttpModule</code> is added via the <code>&lt;httpModules&gt;</code> section of your <code>Web.config</code>, it intercepts and filters <span style="font-style: italic;">all</span><span style="font-weight: bold; font-style: italic;"> </span>requests
+sent to your application. &nbsp;For upload requests, it streams the
+uploaded files to disk and makes them available to your code via <code>InputFile</code>. &nbsp;It also limits the size of the non-upload part of the request <span style="font-style: italic;">and the total size of non-upload requests</span>
 because that request data is stored in server memory. &nbsp;If it
 didn't do that an attacker could mount a Denial of Service attack by
-sending a request that contains up to <code>maxRequestLength</code> kilobytes of non-file data.</p>
+sending a request that contains a large amount of non-file data.</p>
+
 <p>If you think NeatUpload's <code>UploadHttpModule</code> might be causing a problem, the first thing you should do is remove the <code>UploadHttpModule</code> from your <code>Web.config</code> and try to reproduce the problem. &nbsp;All of your existing code should continue to work without the <code>UploadHttpModule</code> - you just won't get progress bars and streaming of files to disk. &nbsp;If the problem goes away when you remove the <code>UploadHttpModule</code>, it is a bug so please <a href="http://www.brettle.com/neatupload_bugs">report it</a>. &nbsp;You can help me diagnosis the problem by doing the following:</p>
+
 <ol>
+
   <li>Add the <code>UploadHttpModule</code> back to your <code>Web.config</code>.</li>
+
   <li>Increase the log level to DEBUG in log4net. &nbsp;To that simply change <code>&lt;level value="INFO" /&gt;</code> to <code>&lt;level value="DEBUG" /&gt;</code> in your <code>log4net.config</code>.</li>
+
   <li>Reproduce the problem.</li>
+
   <li>Send me (dean at brettle dot com) a zip file containing the files
 from your temp directory with the extensions ".body" and ".sizes".
 &nbsp;Each ".body" file contains the body of a request you sent when
 reproducing the problem. &nbsp;The corresponding ".sizes" file contains
 the MIME type of the request and the size of each chunk that NeatUpload
 read. &nbsp;I can use the <code>TestFilter.exe</code> program to reproduce how the <code>UploadHttpModule</code> processed the request and (hopefully) determine exactly what went wrong.</li>
+
 </ol>
+
 <br>
+
 </body>
 </html>
