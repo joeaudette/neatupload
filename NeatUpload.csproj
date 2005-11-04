@@ -261,6 +261,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "UploadStorageProviderCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Web.config"
                     BuildAction = "Content"
                 />

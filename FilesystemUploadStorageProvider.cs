@@ -31,6 +31,7 @@ namespace Brettle.Web.NeatUpload
 	{
 		public override void Initialize(string providerName, NameValueCollection attrs)
 		{
+			this._name = providerName;
 			foreach (string name in attrs.Keys)
 			{
 				string val = attrs[name];
@@ -49,6 +50,11 @@ namespace Brettle.Web.NeatUpload
 				}
 			}
 		}
+
+		public override string Description { get { return "Streams uploads to disk."; } }
+
+		private string _name = null;
+		public override string Name { get { return _name; } }
 
 		public override UploadedFile CreateUploadedFile(string controlUniqueID, string fileName, string contentType)
 		{

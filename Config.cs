@@ -120,7 +120,7 @@ namespace Brettle.Web.NeatUpload
 				config.MaxNormalRequestLength = parent.MaxNormalRequestLength;
 				config.MaxRequestLength = parent.MaxNormalRequestLength;
 				config.UseHttpModule = parent.UseHttpModule;
-				config.Providers = (Hashtable) parent.Providers.Clone();
+				config.Providers = parent.Providers.Clone();
 				config.DefaultProviderName = parent.DefaultProviderName;
 			}
 			foreach (XmlAttribute attr in section.Attributes)
@@ -158,7 +158,7 @@ namespace Brettle.Web.NeatUpload
 					string providerName = providerActionElem.Attributes["name"].Value;
 					if (tagName == "add")
 					{
-						config.Providers[providerName] = UploadStorage.CreateProvider(providerActionElem);
+						config.Providers.Add(UploadStorage.CreateProvider(providerActionElem));
 					}
 					else if (tagName == "remove")
 					{
@@ -178,7 +178,7 @@ namespace Brettle.Web.NeatUpload
 		}
 
 		internal string DefaultProviderName = null;
-		internal Hashtable Providers = new Hashtable();
+		internal UploadStorageProviderCollection Providers = new UploadStorageProviderCollection();
 		internal long MaxNormalRequestLength = 4096 * 1024;
 		internal long MaxRequestLength = 2097151 * 1024;
 		internal bool UseHttpModule = UploadHttpModule.IsInited;

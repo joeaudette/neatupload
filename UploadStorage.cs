@@ -45,7 +45,15 @@ namespace Brettle.Web.NeatUpload
 				{
 					return LastResortProvider;
 				}
-				return (UploadStorageProvider) config.Providers[config.DefaultProviderName];
+				return config.Providers[config.DefaultProviderName];
+			}
+		}
+
+		public static UploadStorageProviderCollection Providers
+		{
+			get
+			{
+				return Config.Current.Providers;
 			}
 		}
 

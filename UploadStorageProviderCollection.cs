@@ -1,6 +1,6 @@
 /*
 
-NeatUpload - an HttpModule and User Controls for uploading large files
+NeatUpload - an HttpModule and User Control for uploading large files
 Copyright (C) 2005  Dean Brettle
 
 This library is free software; you can redistribute it and/or
@@ -20,18 +20,33 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Collections;
-using System.Collections.Specialized;
 
 namespace Brettle.Web.NeatUpload
 {
-	public abstract class UploadStorageProvider
+	public class UploadStorageProviderCollection : Hashtable
 	{
-		public abstract void Initialize(string name, NameValueCollection attrs);
+		public new UploadStorageProvider this[string key] 
+		{
+			get { return (UploadStorageProvider)base[key]; }
+		}
+	
+		public virtual void Add(UploadStorageProvider provider)
+		{
+			if (provider == null)
+			{
+				throw new System.ArgumentNullException("provider");
+			}
+			base.Add(provider.Name, provider);
+		}
 
-		public abstract string Description { get; }
-
-		public abstract string Name { get; }
-
-		public abstract UploadedFile CreateUploadedFile(string controlUniqueID, string fileName, string contentType);
+		public new UploadStorageProviderCollection Clone()
+		{
+			UploadStorageProviderCollection clone = new UploadStorageProviderCollection();
+			foreach (UploadStorageProvider provider in Values)
+			{
+				clone.Add(provider);
+			}
+			return clone;
+		}
 	}
 }
