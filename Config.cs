@@ -118,7 +118,7 @@ namespace Brettle.Web.NeatUpload
 			if (parent != null)
 			{
 				config.MaxNormalRequestLength = parent.MaxNormalRequestLength;
-				config.MaxRequestLength = parent.MaxNormalRequestLength;
+				config.MaxRequestLength = parent.MaxRequestLength;
 				config.UseHttpModule = parent.UseHttpModule;
 				config.Providers = parent.Providers.Clone();
 				config.DefaultProviderName = parent.DefaultProviderName;
