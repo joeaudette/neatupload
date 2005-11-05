@@ -150,14 +150,6 @@ namespace Brettle.Web.NeatUpload
 			{
 				if (contentLengthHeader == null)
 					throw new HttpException(411, "Length Required");
-				// If the client-specified content length is too large, we reject the request
-				// immediately.  If it's not, the client could be lying so we need to use
-				// FilteringWorkerRequest to actually count the bytes.
-				if (contentLength > MaxRequestLength)
-				{
-					if (log.IsDebugEnabled) log.Debug("contentLength > MaxRequestLength");
-					throw new HttpException(413, "Request Entity Too Large");
-				}
 				subWorker = new FilteringWorkerRequest(origWorker);
 			}
 			else
