@@ -354,6 +354,7 @@ namespace Brettle.Web.NeatUpload
 			string contentTypeHeader = OrigWorker.GetKnownRequestHeader(HttpWorkerRequest.HeaderContentType);
 			string contentLengthHeader = OrigWorker.GetKnownRequestHeader(HttpWorkerRequest.HeaderContentLength);
 			origContentLength = Int32.Parse(contentLengthHeader);
+
 			if (log.IsDebugEnabled)
 			{
 				string logEntityBodyBaseName = Path.GetTempFileName();
@@ -430,6 +431,16 @@ namespace Brettle.Web.NeatUpload
 					if (log.IsDebugEnabled) log.Debug("Calling UploadContext.Current.CreateUploadedFile(" + fileID + "...)");
 					outputStream = fileStream = uploadContext.CreateUploadedFile(fileID, fileName, contentType);
 					readPos = parsePos; // Skip past the boundary and headers
+
+					// If the client-specified content length is too large, we set the status to Cancelled 
+					// so that progress displays will stop.  We do this after having created the UploadedFile
+					// because that is necessary for the progress display to find the uploadContext.
+					if (origContentLength > UploadHttpModule.MaxRequestLength)
+					{
+						if (log.IsDebugEnabled) log.Debug("contentLength > MaxRequestLength");
+						uploadContext.Status = UploadStatus.Cancelled;
+						throw new HttpException(413, "Request Entity Too Large");
+					}
 				}
 				else
 				{
