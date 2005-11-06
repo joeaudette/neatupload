@@ -438,7 +438,9 @@ namespace Brettle.Web.NeatUpload
 					if (origContentLength > UploadHttpModule.MaxRequestLength)
 					{
 						if (log.IsDebugEnabled) log.Debug("contentLength > MaxRequestLength");
-						uploadContext.Status = UploadStatus.Cancelled;
+						uploadContext.Status = UploadStatus.RejectedRequestTooLarge;
+						// Wait 5 seconds for the browser to stop the upload.
+						System.Threading.Thread.Sleep(5000);
 						throw new HttpException(413, "Request Entity Too Large");
 					}
 

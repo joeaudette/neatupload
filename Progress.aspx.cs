@@ -42,12 +42,62 @@ namespace Brettle.Web.NeatUpload
 		protected HtmlGenericControl remainingTimeSpan;
 		protected HtmlGenericControl completedSpan;
 		protected HtmlGenericControl cancelledSpan;
+		protected HtmlGenericControl rejectedRequestTooLargeSpan;
 		protected HtmlAnchor refreshLink;
 		protected HtmlAnchor stopRefreshLink;
 		protected HtmlAnchor cancelLink;
 		protected HtmlImage refreshImage;
 		protected HtmlImage stopRefreshImage;
 		protected HtmlImage cancelImage;
+
+		private string nonRefreshScriptFuncs = @"<script language=""javascript"">
+<!--
+function NeatUploadGetMainWindow() 
+{
+	var mainWindow;
+	if (window.opener) 
+		mainWindow = window.opener;
+	else 
+		mainWindow = window.parent;
+	return mainWindow;
+};
+
+function NeatUploadCancel() 
+{
+	var mainWindow = NeatUploadGetMainWindow();
+	if (mainWindow && mainWindow.stop)
+		mainWindow.stop();
+	else if (mainWindow && mainWindow.document && mainWindow.document.execCommand)
+		mainWindow.document.execCommand('Stop');
+}
+
+function NeatUpload_CombineHandlers(origHandler, newHandler) 
+{
+	if (!origHandler || typeof(origHandler) == 'undefined') return newHandler;
+	return function(e) { origHandler(e); newHandler(e); };
+}
+
+function NeatUploadCanCancel()
+{
+	var mainWindow = NeatUploadGetMainWindow();
+	try
+	{
+		return (mainWindow.stop || mainWindow.document.execCommand);
+	}
+	catch (ex)
+	{
+		return false;
+	}
+}
+
+function NeatUploadRemoveCancelLink()
+{
+	NeatUploadLinkNode = document.getElementById('cancelLink');
+	if (NeatUploadLinkNode) 
+		NeatUploadLinkNode.parentNode.removeChild(NeatUploadLinkNode);
+}
+-->
+</script>";
 		
 		private string clientRefreshScript = @"<script language=""javascript"">
 
@@ -155,45 +205,6 @@ function NeatUploadUpdateDom(upload)
 	}
 }
 
-
-function NeatUploadGetMainWindow() 
-{
-	var mainWindow;
-	if (window.opener) 
-		mainWindow = window.opener;
-	else 
-		mainWindow = window.parent;
-	return mainWindow;
-};
-
-function NeatUploadCancel() 
-{
-	var mainWindow = NeatUploadGetMainWindow();
-	if (mainWindow && mainWindow.stop)
-		mainWindow.stop();
-	else if (mainWindow && mainWindow.document && mainWindow.document.execCommand)
-		mainWindow.document.execCommand('Stop');
-}
-
-function NeatUpload_CombineHandlers(origHandler, newHandler) 
-{
-	if (!origHandler || typeof(origHandler) == 'undefined') return newHandler;
-	return function(e) { origHandler(e); newHandler(e); };
-}
-
-function NeatUploadCanCancel()
-{
-	var mainWindow = NeatUploadGetMainWindow();
-	try
-	{
-		return (mainWindow.stop || mainWindow.document.execCommand);
-	}
-	catch (ex)
-	{
-		return false;
-	}
-}
-
 NeatUploadReloadTimeoutId = window.setTimeout(NeatUploadRefresh, 1000);
 
 window.onunload = NeatUpload_CombineHandlers(window.onunload, function () 
@@ -212,9 +223,7 @@ NeatUploadMainWindow = NeatUploadGetMainWindow();
 
 if (!NeatUploadCanCancel)
 {
-	NeatUploadLinkNode = document.getElementById('cancelLink');
-	if (NeatUploadLinkNode) 
-		NeatUploadLinkNode.parentNode.removeChild(NeatUploadLinkNode);
+	NeatUploadRemoveCancelLink();
 }
 </script>";
 		
@@ -231,6 +240,8 @@ if (!NeatUploadCanCancel)
 
 		private void Page_PreRender(object sender, EventArgs e)
 		{
+			this.RegisterClientScriptBlock("scrNeatUploadNonRefreshFuncs", nonRefreshScriptFuncs);
+
 			// The base refresh url contains just the postBackID (which is the first parameter)
 			string refreshUrl = Request.Url.AbsoluteUri;
 			int ampIndex = refreshUrl.IndexOf("&");
@@ -276,15 +287,28 @@ if (NeatUploadLinkNode) NeatUploadLinkNode.parentNode.removeChild(NeatUploadLink
 				curStatus = uploadContext.Status.ToString();
 			}
 
-			// If the status is unchanged from the last refresh and it is Completed or Cancelled,
+			// If the status is unchanged from the last refresh and it is not Unknown nor InProgress,
 			// then the page is not refreshed and a startup script is registered to close the window
 			// if it's a pop-up.  
 			if (curStatus == prevStatus 
-				&& (curStatus == UploadStatus.Completed.ToString() || curStatus == UploadStatus.Cancelled.ToString()))
+				&& (curStatus != UploadStatus.Unknown.ToString() && curStatus != UploadStatus.InProgress.ToString()))
 			{
+				if (curStatus == UploadStatus.RejectedRequestTooLarge.ToString() 
+					&& this.rejectedRequestTooLargeSpan != null)
+				{
+					RegisterStartupScript("scrNeatUploadCancelRejected", @"
+<script language=""javascript"">
+<!--
+if (NeatUploadCanCancel()) 
+{
+	NeatUploadCancel();
+}
+-->
+</script>");
+				}
 				RegisterStartupScript("scrNeatUploadClose", "<script language=\"javascript\">window.close();</script>");
 			}
-				// Otherwise, if refresh!=false we refresh the page in one second
+			// Otherwise, if refresh!=false we refresh the page in one second
 			else if (Request.Params["refresh"] != "false" && Request.Params["refresher"] != null)
 			{
 				// Since we will be refreshing, we hide the refresh link.
@@ -302,6 +326,10 @@ if (NeatUploadLinkNode) NeatUploadLinkNode.parentNode.removeChild(NeatUploadLink
 			inProgressSpan.Visible = false;
 			completedSpan.Visible = false;
 			cancelledSpan.Visible = false;
+			if (rejectedRequestTooLargeSpan != null)
+			{
+				rejectedRequestTooLargeSpan.Visible = false;
+			}
 
 			if (uploadContext == null || uploadContext.Status == UploadStatus.Unknown)
 			{
@@ -338,6 +366,17 @@ if (NeatUploadLinkNode) NeatUploadLinkNode.parentNode.removeChild(NeatUploadLink
 				else if (uploadContext.Status == UploadStatus.Completed)
 				{
 					completedSpan.Visible = true;
+				}
+				else if (uploadContext.Status == UploadStatus.RejectedRequestTooLarge)
+				{
+					if (rejectedRequestTooLargeSpan != null)
+					{
+						rejectedRequestTooLargeSpan.Visible = true;
+					}
+					else
+					{
+						cancelledSpan.Visible = true;
+					}
 				}
 			}
 		}

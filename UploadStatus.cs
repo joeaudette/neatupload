@@ -29,6 +29,6 @@ namespace Brettle.Web.NeatUpload
 {
 	internal enum UploadStatus : long
 	{
-		Unknown, InProgress, Completed, Cancelled
+		Unknown, InProgress, Completed, Cancelled, RejectedRequestTooLarge
 	}
 }
