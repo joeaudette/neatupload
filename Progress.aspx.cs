@@ -306,7 +306,10 @@ if (NeatUploadCanCancel())
 -->
 </script>");
 				}
-				RegisterStartupScript("scrNeatUploadClose", "<script language=\"javascript\">window.close();</script>");
+				else
+				{
+					RegisterStartupScript("scrNeatUploadClose", "<script language=\"javascript\">window.close();</script>");
+				}
 			}
 			// Otherwise, if refresh!=false we refresh the page in one second
 			else if (Request.Params["refresh"] != "false" && Request.Params["refresher"] != null)
