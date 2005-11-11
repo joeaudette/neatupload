@@ -20,7 +20,7 @@
 		<form id="uploadForm" runat="server">
 			<h1>NeatUpload Demo</h1>
 			<p>
-			This page demonstrates the basic functionality of <a href="http://www.brettle.com/neatupload/">NeatUpload</a>.
+			This page demonstrates the basic functionality of <a href="http://www.brettle.com/neatupload">NeatUpload</a>.
 			Select a file and click Submit. You will see <strong>both</strong> an inline progress bar and a popup 
 			progress bar.  Of course you would normally use just one or the other.
 			</p>
