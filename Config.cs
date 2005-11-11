@@ -24,6 +24,7 @@ using System.Configuration;
 using System.Web;
 using System.IO;
 using System.Xml;
+using System.Resources;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -80,6 +81,7 @@ namespace Brettle.Web.NeatUpload
 
 		private Config() 
 		{
+			this.ResourceManager = new ResourceManager(typeof(Brettle.Web.NeatUpload.Progress));
 		}
 
 		private static Config CreateFromAppSettings(System.Collections.Specialized.NameValueCollection appSettings)
@@ -122,6 +124,7 @@ namespace Brettle.Web.NeatUpload
 				config.UseHttpModule = parent.UseHttpModule;
 				config.Providers = parent.Providers.Clone();
 				config.DefaultProviderName = parent.DefaultProviderName;
+				config.ResourceManager = parent.ResourceManager;
 			}
 			foreach (XmlAttribute attr in section.Attributes)
 			{
@@ -182,5 +185,6 @@ namespace Brettle.Web.NeatUpload
 		internal long MaxNormalRequestLength = 4096 * 1024;
 		internal long MaxRequestLength = 2097151 * 1024;
 		internal bool UseHttpModule = UploadHttpModule.IsInited;
+		internal ResourceManager ResourceManager = null;
 	}
 }

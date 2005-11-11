@@ -73,8 +73,11 @@ namespace Brettle.Web.NeatUpload
 								sb.Append("status: 'completed',");
 							}
 							break;
-						case UploadStatus.RejectedRequestTooLarge:
-							sb.Append("status: 'rejectedRequestTooLarge',");
+						case UploadStatus.Rejected:
+							sb.Append("status: 'rejected',");
+							break;
+						case UploadStatus.Error:
+							sb.Append("status: 'error',");
 							break;
 						default:
 							sb.Append("status:'unknown',");

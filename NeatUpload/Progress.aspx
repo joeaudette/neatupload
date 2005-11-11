@@ -57,7 +57,8 @@
 				<span id="inProgressSpan" runat="server">Remaining: <span id="remainingTimeSpan" runat="server">00:01</span></span>
 				<span id="completedSpan" runat="server">Upload Complete!</span>
 				<span id="cancelledSpan" runat="server">Upload Cancelled!</span>
-				<span id="rejectedRequestTooLargeSpan" runat="server">Upload Rejected - Too Large!</span>
+				<span id="rejectedSpan" runat="server">Upload Rejected! <span id="rejectedMessageSpan" runat="server"></span></span>
+				<span id="errorSpan" runat="server">Upload Error! <span id="errorMessageSpan" runat="server"></span></span>
 				<div id="barDiv" runat="server" class="ProgressBar"></div>
 			</div>
 		</td>

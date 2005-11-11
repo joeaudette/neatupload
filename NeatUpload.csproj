@@ -194,6 +194,11 @@
                     BuildAction = "Content"
                 />
                 <File
+                    RelPath = "NeatUpload\Progress.aspx.resx"
+                    DependentUpon = "Global.asax.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "NeatUpload\ProgressScript.aspx"
                     BuildAction = "Content"
                 />
@@ -232,6 +237,16 @@
                 />
                 <File
                     RelPath = "UploadContext.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "UploadException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "UploadTooLargeException.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

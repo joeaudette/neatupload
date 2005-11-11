@@ -179,6 +179,13 @@ namespace Brettle.Web.NeatUpload
 			set { lock(this) { status = value; } }
 		}
  
+		private Exception error = null;
+		internal Exception Error
+		{
+			get { lock(this) { return error; } }
+			set { lock(this) { error = value; } }
+		}
+		
 		internal TimeSpan TimeRemaining
 		{
 			get {

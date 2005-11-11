@@ -53,7 +53,7 @@ namespace Brettle.Web.NeatUpload
 							Stream outStream = null, inStream = null;
  							try
 							{
-								outStream = file.CreateStream();
+								outStream = _file.CreateStream();
 								inStream = postedFile.InputStream;
 								byte[] buf = new byte[4096];
 								int bytesRead = -1;

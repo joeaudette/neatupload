@@ -80,12 +80,13 @@ namespace Brettle.Web.NeatUpload
 				bodyPre.InnerText = "Page is not valid!";
 				return;
 			}
-			bodyPre.InnerText = "";
+			bodyPre.InnerText = Request.PhysicalApplicationPath + "\n";
 			if (inputFile.HasFile)
 			{
 				/* 
 					In a real app, you'd do something like:
-						inputFile.MoveTo(inputFile.FileName, InputFile.MoveToOptions.Overwrite);
+					inputFile.MoveTo(Path.Combine(Request.PhysicalApplicationPath, inputFile.FileName), 
+									 MoveToOptions.Overwrite);
 				*/
 				bodyPre.InnerText += "File #1:\n"; 
 				bodyPre.InnerText += "  Name: " + inputFile.FileName + "\n";
@@ -96,7 +97,8 @@ namespace Brettle.Web.NeatUpload
 			{
 				/* 
 					In a real app, you'd do something like:
-						inputFile.MoveTo(inputFile.FileName, InputFile.MoveToOptions.Overwrite);
+					inputFile2.MoveTo(Path.Combine(Request.PhysicalApplicationPath, inputFile2.FileName), 
+									  MoveToOptions.Overwrite);
 				*/
 				bodyPre.InnerText += "File #2:\n"; 
 				bodyPre.InnerText += "  Name: " + inputFile2.FileName + "\n";

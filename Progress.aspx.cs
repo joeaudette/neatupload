@@ -42,7 +42,10 @@ namespace Brettle.Web.NeatUpload
 		protected HtmlGenericControl remainingTimeSpan;
 		protected HtmlGenericControl completedSpan;
 		protected HtmlGenericControl cancelledSpan;
-		protected HtmlGenericControl rejectedRequestTooLargeSpan;
+		protected HtmlGenericControl rejectedSpan;
+		protected HtmlGenericControl rejectedMessageSpan;
+		protected HtmlGenericControl errorSpan;
+		protected HtmlGenericControl errorMessageSpan;
 		protected HtmlAnchor refreshLink;
 		protected HtmlAnchor stopRefreshLink;
 		protected HtmlAnchor cancelLink;
@@ -288,15 +291,15 @@ if (NeatUploadLinkNode) NeatUploadLinkNode.parentNode.removeChild(NeatUploadLink
 			}
 
 			// If the status is unchanged from the last refresh and it is not Unknown nor InProgress,
-			// then the page is not refreshed and a startup script is registered to close the window
-			// if it's a pop-up.  
+			// then the page is not refreshed.  Instead, if an UploadException occurred we try to cancel
+			// the upload.  Otherwise, we close the progress display window (if it's a pop-up)  
 			if (curStatus == prevStatus 
 				&& (curStatus != UploadStatus.Unknown.ToString() && curStatus != UploadStatus.InProgress.ToString()))
 			{
-				if (curStatus == UploadStatus.RejectedRequestTooLarge.ToString() 
-					&& this.rejectedRequestTooLargeSpan != null)
+				if (curStatus == UploadStatus.Rejected.ToString() 
+					&& this.rejectedSpan != null)
 				{
-					RegisterStartupScript("scrNeatUploadCancelRejected", @"
+					RegisterStartupScript("scrNeatUploadError", @"
 <script language=""javascript"">
 <!--
 if (NeatUploadCanCancel()) 
@@ -329,9 +332,13 @@ if (NeatUploadCanCancel())
 			inProgressSpan.Visible = false;
 			completedSpan.Visible = false;
 			cancelledSpan.Visible = false;
-			if (rejectedRequestTooLargeSpan != null)
+			if (rejectedSpan != null)
 			{
-				rejectedRequestTooLargeSpan.Visible = false;
+				rejectedSpan.Visible = false;
+			}
+			if (errorSpan != null)
+			{
+				errorSpan.Visible = false;
 			}
 
 			if (uploadContext == null || uploadContext.Status == UploadStatus.Unknown)
@@ -356,6 +363,7 @@ if (NeatUploadCanCancel())
 			else
 			{
 				barDiv.Style["width"] = Math.Round(uploadContext.PercentComplete) + "%";
+				Error = uploadContext.Error;
 				if (uploadContext.Status == UploadStatus.Cancelled)
 				{
 					cancelledSpan.Visible = true;
@@ -370,11 +378,30 @@ if (NeatUploadCanCancel())
 				{
 					completedSpan.Visible = true;
 				}
-				else if (uploadContext.Status == UploadStatus.RejectedRequestTooLarge)
+				else if (uploadContext.Status == UploadStatus.Rejected)
 				{
-					if (rejectedRequestTooLargeSpan != null)
+					if (rejectedSpan != null)
 					{
-						rejectedRequestTooLargeSpan.Visible = true;
+						rejectedSpan.Visible = true;
+						if (uploadContext.Error != null && rejectedMessageSpan != null)
+						{
+							rejectedMessageSpan.InnerText = uploadContext.Error.Message;
+						}
+					}
+					else
+					{
+						cancelledSpan.Visible = true;
+					}
+				}
+				else if (uploadContext.Status == UploadStatus.Error)
+				{
+					if (errorSpan != null)
+					{
+						errorSpan.Visible = true;
+						if (uploadContext.Error != null && errorMessageSpan != null)
+						{
+							errorMessageSpan.InnerText = uploadContext.Error.Message;
+						}
 					}
 					else
 					{
@@ -383,6 +410,8 @@ if (NeatUploadCanCancel())
 				}
 			}
 		}
+
+		protected Exception Error = null;
 		
 		private void Refresh(string refreshUrl)
 		{

@@ -328,7 +328,20 @@ namespace Brettle.Web.NeatUpload
 			}
 			catch (Exception ex)
 			{
-				uploadContext.Status = UploadStatus.Cancelled;
+				uploadContext.Error = ex;
+				if (ex is UploadException)
+				{
+					uploadContext.Status = UploadStatus.Rejected;
+					// Wait 5 seconds to give the client a chance to stop the request.  If the client
+					// stops the request, the user will see the original form instead of an error page.
+					// Regardless, the progress display the error so the user knows what went wrong.
+					System.Threading.Thread.Sleep(5000);
+				}
+				else if (uploadContext.Status != UploadStatus.Cancelled)
+				{
+					uploadContext.Status = UploadStatus.Error;
+				}
+
 				log.Error("Rethrowing exception in ParseMultipart", ex);
 				throw;
 			}
@@ -342,7 +355,7 @@ namespace Brettle.Web.NeatUpload
 					LogEntityBodyStream.Close();
 				if (LogEntityBodySizesStream != null)
 					LogEntityBodySizesStream.Close();
-				}
+			}
 		}
 		
 		private Stream LogEntityBodyStream = null;
@@ -432,16 +445,14 @@ namespace Brettle.Web.NeatUpload
 					outputStream = fileStream = uploadedFile.CreateStream();
 					readPos = parsePos; // Skip past the boundary and headers
 
-					// If the client-specified content length is too large, we set the status to Cancelled 
-					// so that progress displays will stop.  We do this after having created the UploadedFile
-					// because that is necessary for the progress display to find the uploadContext.
+					// If the client-specified content length is too large, we set the status to
+					// RejectedRequestTooLarge so that progress displays will stop.  We do this after 
+					// having created the UploadedFile because that is necessary for the progress display
+					// to find the uploadContext.
 					if (origContentLength > UploadHttpModule.MaxRequestLength)
 					{
 						if (log.IsDebugEnabled) log.Debug("contentLength > MaxRequestLength");
-						uploadContext.Status = UploadStatus.RejectedRequestTooLarge;
-						// Wait 5 seconds for the browser to stop the upload.
-						System.Threading.Thread.Sleep(5000);
-						throw new HttpException(413, "Request Entity Too Large");
+						throw new UploadTooLargeException(UploadHttpModule.MaxRequestLength);
 					}
 
 					// Write out a replacement part that just contains the filename as the value.

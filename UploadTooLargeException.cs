@@ -19,16 +19,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 using System;
-using System.IO;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.HtmlControls;
 
 namespace Brettle.Web.NeatUpload
 {
-	internal enum UploadStatus : long
+	public class UploadTooLargeException : UploadException
 	{
-		Unknown, InProgress, Completed, Cancelled, Rejected, Error
+		public UploadTooLargeException(long maxRequestLength) 
+			: base(413, String.Format(Config.Current.ResourceManager.GetString("UploadTooLargeMessageFormat"), maxRequestLength))
+		{
+			MaxRequestLength = maxRequestLength;
+		}
+
+		public long MaxRequestLength = 0;
 	}
 }
