@@ -384,7 +384,7 @@ namespace Brettle.Web.NeatUpload
 					LogEntityBodySizesStream.WriteLine(0);
 				}
 			}
-			uploadContext.ContentLength = origContentLength;
+			uploadContext.SetContentLength(origContentLength);
 			if (log.IsDebugEnabled) log.Debug("=" + contentLengthHeader + " -> " + origContentLength);
 			
 			boundary = System.Text.Encoding.ASCII.GetBytes("--" + GetAttribute(contentTypeHeader, "boundary"));

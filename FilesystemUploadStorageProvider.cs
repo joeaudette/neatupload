@@ -56,7 +56,7 @@ namespace Brettle.Web.NeatUpload
 		private string _name = null;
 		public override string Name { get { return _name; } }
 
-		public override UploadedFile CreateUploadedFile(string controlUniqueID, string fileName, string contentType)
+		public override UploadedFile CreateUploadedFile(UploadContext context, string controlUniqueID, string fileName, string contentType)
 		{
 			return new FilesystemUploadedFile(this, controlUniqueID, fileName, contentType);
 		}

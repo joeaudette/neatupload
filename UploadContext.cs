@@ -25,7 +25,7 @@ using System.Collections;
 
 namespace Brettle.Web.NeatUpload
 {
-	internal class UploadContext
+	public class UploadContext
 	{
 		// Create a logger for use in this class
 		private static readonly log4net.ILog log 
@@ -85,7 +85,7 @@ namespace Brettle.Web.NeatUpload
 			string controlUniqueID = fileID.Substring(dashIndex + 1);
 			if (log.IsDebugEnabled) log.Debug("In CreateUploadedFile() controlUniqueID=" + controlUniqueID);
 			UploadedFile uploadedFile 
-				= UploadStorage.CreateUploadedFile(controlUniqueID, fileName, contentType);			
+				= UploadStorage.CreateUploadedFile(this, controlUniqueID, fileName, contentType);			
 			uploadedFiles[controlUniqueID] = uploadedFile;
 			
 			// Set the PostBackID from the fileID
@@ -166,10 +166,14 @@ namespace Brettle.Web.NeatUpload
 		}
 
 		private long contentLength;
-		internal long ContentLength
+		public long ContentLength
 		{
 			get { lock(this) { return contentLength; } }
-			set { lock(this) { contentLength = value; } }
+		}
+
+		internal void SetContentLength(long val)
+		{
+			lock(this) { contentLength = val; }
 		}
 		
 		private UploadStatus status = UploadStatus.InProgress;

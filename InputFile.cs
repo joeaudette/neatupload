@@ -49,7 +49,13 @@ namespace Brettle.Web.NeatUpload
 						if (postedFile != null)
 						{
 							// Copy the posted file to an UploadedFile.
-							_file = UploadStorage.CreateUploadedFile(this.UniqueID, postedFile.FileName, postedFile.ContentType);
+							// We use a temporary UploadContext so that we have something we can pass to the
+							// UploadStorageProvider.  Note that unlike when the UploadHttpModule is used,
+							// this temporary context is not shared between uploaded files.
+							UploadContext ctx = new UploadContext();
+							ctx.SetContentLength(this.Page.Request.ContentLength);
+							ctx.Status = UploadStatus.InProgress;
+							_file = UploadStorage.CreateUploadedFile(ctx, this.UniqueID, postedFile.FileName, postedFile.ContentType);
 							Stream outStream = null, inStream = null;
  							try
 							{
@@ -57,11 +63,15 @@ namespace Brettle.Web.NeatUpload
 								inStream = postedFile.InputStream;
 								byte[] buf = new byte[4096];
 								int bytesRead = -1;
+								long totalBytesRead = 0;
 								while (outStream.CanWrite && inStream.CanRead 
 									   && (bytesRead = inStream.Read(buf, 0, buf.Length)) > 0)
 								{
 									outStream.Write(buf, 0, bytesRead);
+									ctx.BytesRead += bytesRead;
 								}
+								ctx.BytesRead = ctx.ContentLength;
+								ctx.Status = UploadStatus.Completed;
 							}
 							finally
 							{

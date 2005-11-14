@@ -32,6 +32,6 @@ namespace Brettle.Web.NeatUpload
 
 		public abstract string Name { get; }
 
-		public abstract UploadedFile CreateUploadedFile(string controlUniqueID, string fileName, string contentType);
+		public abstract UploadedFile CreateUploadedFile(UploadContext context, string controlUniqueID, string fileName, string contentType);
 	}
 }

@@ -31,9 +31,9 @@ namespace Brettle.Web.NeatUpload
 		private static readonly log4net.ILog log 
 			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-		public static UploadedFile CreateUploadedFile(string controlUniqueID, string fileName, string contentType)
+		public static UploadedFile CreateUploadedFile(UploadContext context, string controlUniqueID, string fileName, string contentType)
 		{
-			return Provider.CreateUploadedFile(controlUniqueID, fileName, contentType);
+			return Provider.CreateUploadedFile(context, controlUniqueID, fileName, contentType);
 		}
 
 		public static UploadStorageProvider Provider
