@@ -27,10 +27,6 @@ namespace Brettle.Web.NeatUpload
 {
 	public class UploadStorage
 	{
-		// Create a logger for use in this class
-		private static readonly log4net.ILog log 
-			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
 		public static UploadedFile CreateUploadedFile(UploadContext context, string controlUniqueID, string fileName, string contentType)
 		{
 			return Provider.CreateUploadedFile(context, controlUniqueID, fileName, contentType);

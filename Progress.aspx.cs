@@ -363,7 +363,7 @@ if (NeatUploadCanCancel())
 			else
 			{
 				barDiv.Style["width"] = Math.Round(uploadContext.PercentComplete) + "%";
-				Error = uploadContext.Error;
+				Exception = uploadContext.Exception;
 				if (uploadContext.Status == UploadStatus.Cancelled)
 				{
 					cancelledSpan.Visible = true;
@@ -383,9 +383,9 @@ if (NeatUploadCanCancel())
 					if (rejectedSpan != null)
 					{
 						rejectedSpan.Visible = true;
-						if (uploadContext.Error != null && rejectedMessageSpan != null)
+						if (uploadContext.Exception != null && rejectedMessageSpan != null)
 						{
-							rejectedMessageSpan.InnerText = uploadContext.Error.Message;
+							rejectedMessageSpan.InnerText = uploadContext.Exception.Message;
 						}
 					}
 					else
@@ -398,9 +398,9 @@ if (NeatUploadCanCancel())
 					if (errorSpan != null)
 					{
 						errorSpan.Visible = true;
-						if (uploadContext.Error != null && errorMessageSpan != null)
+						if (uploadContext.Exception != null && errorMessageSpan != null)
 						{
-							errorMessageSpan.InnerText = uploadContext.Error.Message;
+							errorMessageSpan.InnerText = uploadContext.Exception.Message;
 						}
 					}
 					else
@@ -411,7 +411,7 @@ if (NeatUploadCanCancel())
 			}
 		}
 
-		protected Exception Error = null;
+		protected Exception Exception = null;
 		
 		private void Refresh(string refreshUrl)
 		{

@@ -63,7 +63,6 @@ namespace Brettle.Web.NeatUpload
 								inStream = postedFile.InputStream;
 								byte[] buf = new byte[4096];
 								int bytesRead = -1;
-								long totalBytesRead = 0;
 								while (outStream.CanWrite && inStream.CanRead 
 									   && (bytesRead = inStream.Read(buf, 0, buf.Length)) > 0)
 								{

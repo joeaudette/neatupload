@@ -328,7 +328,7 @@ namespace Brettle.Web.NeatUpload
 			}
 			catch (Exception ex)
 			{
-				uploadContext.Error = ex;
+				uploadContext.Exception = ex;
 				if (ex is UploadException)
 				{
 					uploadContext.Status = UploadStatus.Rejected;
