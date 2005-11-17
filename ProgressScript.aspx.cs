@@ -23,9 +23,6 @@ using Brettle.Web.NeatUpload;
 
 namespace Brettle.Web.NeatUpload
 {
-	/// <summary>
-	/// Descrizione di riepilogo per jsupload.
-	/// </summary>
 	public class ProgressScript : Page
 	{
 		private void Page_Load(object sender, EventArgs e)
