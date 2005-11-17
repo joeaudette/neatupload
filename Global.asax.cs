@@ -24,6 +24,10 @@ namespace Brettle.Web.NeatUpload
 //#pragma warning restore 169
 //#endif
 
+		// Create a logger for use in this class
+		private static readonly log4net.ILog log 
+			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
 		public Global()
 		{
 			InitializeComponent();
@@ -56,6 +60,7 @@ namespace Brettle.Web.NeatUpload
 
 		protected void Application_Error(Object sender, EventArgs e)
 		{
+			if (log.IsDebugEnabled) log.DebugFormat("In Global.Application_Error(): {0}", Server.GetLastError());
 
 		}
 

@@ -53,6 +53,7 @@ namespace Brettle.Web.NeatUpload
 		private object sync = new object();
 		private bool isEndOfRequest = false;
 		internal HttpContext OrigContext;
+		internal Exception Exception;
 				
 		protected DecoratedWorkerRequest (HttpWorkerRequest origWorker) 
 		{
@@ -114,8 +115,11 @@ namespace Brettle.Web.NeatUpload
 		
 		public override void FlushResponse (bool finalFlush)
 		{
-			if (log.IsDebugEnabled) log.Debug("Calling FlushResponse(" + finalFlush + ")");
-			OrigWorker.FlushResponse(false);
+			if (Exception == null)
+			{
+				if (log.IsDebugEnabled) log.Debug("Calling FlushResponse(" + finalFlush + ")");
+				OrigWorker.FlushResponse(false);
+			}
 		}
 
 		public override string GetAppPath ()
@@ -359,7 +363,10 @@ namespace Brettle.Web.NeatUpload
 		{
 			StatusCode = statusCode;
 			StatusDescription = statusDescription;
-			OrigWorker.SendStatus (statusCode, statusDescription);
+			if (Exception == null)
+			{
+				OrigWorker.SendStatus (statusCode, statusDescription);
+			}
 		}
 		
 		public override void SendUnknownResponseHeader (string name, string value)
