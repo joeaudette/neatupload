@@ -74,6 +74,7 @@ namespace Brettle.Web.NeatUpload
 			app.Error += new System.EventHandler(Application_Error);
 			app.EndRequest += new System.EventHandler(Application_EndRequest);
 			app.PreSendRequestHeaders += new System.EventHandler(Application_PreSendRequestHeaders);
+			RememberErrorHandler = new System.EventHandler(RememberError);
 			lock (typeof(UploadHttpModule))
 			{
 				_isInited = true;
@@ -108,6 +109,12 @@ namespace Brettle.Web.NeatUpload
 			
 			if (origWorker is DecoratedWorkerRequest)
 			{
+				// If an unhandled error occurs, we want to remember it so that we can rethrow it
+				// in the original context.
+				if (RememberErrorHandler != null)
+				{
+					app.Error += RememberErrorHandler;
+				}
 				// Save a reference to the original HttpContext in the subrequest context so that 
 				// AppendToLog() can use it.
 				DecoratedWorkerRequest decoratedWorkerRequest = origWorker as DecoratedWorkerRequest;
@@ -188,7 +195,21 @@ namespace Brettle.Web.NeatUpload
 					app.Response.StatusCode = subWorker.StatusCode;
 					app.Response.StatusDescription = subWorker.StatusDescription;
 
-					// Always call CompleteRequest() to prevent further processing of the original request.
+					// If there was an error, rethrow it so that ASP.NET uses any custom error pages.
+					if (subWorker.Exception != null)
+					{
+						requestHandledBySubRequest = false;
+						HttpException httpException = subWorker.Exception as HttpException;
+						if (httpException != null)
+						{
+							throw new HttpException(httpException.GetHttpCode(), "Unhandled HttpException while processing NeatUpload child request",
+											httpException);
+						}
+						throw new Exception("Unhandled Exception while processing NeatUpload child request",
+											subWorker.Exception);
+					}
+
+					// Otherwise call CompleteRequest() to prevent further processing of the original request.
 					app.CompleteRequest();
 				}
 			}
@@ -207,6 +228,7 @@ namespace Brettle.Web.NeatUpload
 		private void Application_Error(object sender, EventArgs e)
 		{
 			if (log.IsDebugEnabled) log.Debug("In Application_Error");
+
 			UploadContext uploadContext = UploadContext.Current;
 			if (uploadContext != null)
 			{
@@ -214,9 +236,33 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 
+		private EventHandler RememberErrorHandler; 
+		private void RememberError(object sender, EventArgs e)
+		{
+			DecoratedWorkerRequest decoratedWorker = GetCurrentWorkerRequest() as DecoratedWorkerRequest;
+			HttpApplication app = sender as HttpApplication;
+			
+			if (decoratedWorker != null)
+			{
+				decoratedWorker.Exception = app.Server.GetLastError();
+				if (log.IsDebugEnabled) log.DebugFormat("Remembering error: {0}", decoratedWorker.Exception);
+				if (decoratedWorker.Exception != null)
+				{
+					app.Server.ClearError();
+					app.CompleteRequest();
+				}
+			}
+		}
+
 		private void Application_EndRequest(object sender, EventArgs e)
 		{
 			if (log.IsDebugEnabled) log.Debug("In Application_EndRequest");
+
+			HttpApplication app = sender as HttpApplication;
+			if (RememberErrorHandler != null)
+			{
+				app.Error -= RememberErrorHandler;
+			}
 			UploadContext uploadContext = UploadContext.Current;
 			if (uploadContext != null)
 			{
