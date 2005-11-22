@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Collections;
 using System.IO;
+using System.ComponentModel;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -28,8 +29,12 @@ using System.Web.UI.HtmlControls;
 
 namespace Brettle.Web.NeatUpload
 {
+	[ToolboxData("<{0}:ProgressBar runat='server' inline='false'/>"),
+	 DefaultProperty("Inline")]
 	public class ProgressBar : System.Web.UI.HtmlControls.HtmlGenericControl
 	{
+		private bool IsDesignTime = (HttpContext.Current == null);
+
 		private string uploadProgressUrl;
 		private string displayStatement;
 		private string displayProgressByDefault = "true";
@@ -37,12 +42,16 @@ namespace Brettle.Web.NeatUpload
 		private ArrayList nonUploadButtons = new ArrayList(); // Controls passed to AddNonUploadButton()
 		private ArrayList triggers = new ArrayList(); // Controls passed to AddTrigger()
 
-		private bool isPopup {
-			get { return Attributes["inline"] == null || Attributes["inline"] == "false"; }
+		[DefaultValue(false)]
+		public bool Inline
+		{
+			get { return (bool)ViewState["inline"]; }
+			set { ViewState["inline"] = value; }
 		}
 		
 		public ProgressBar(string tagName)
 		{
+			ViewState["inline"] = false;
 		}
 		
 		protected override void OnInit(EventArgs e)
@@ -53,7 +62,7 @@ namespace Brettle.Web.NeatUpload
 		
 		private void InitializeComponent()
 		{
-			if (!Config.Current.UseHttpModule)
+			if (IsDesignTime || !Config.Current.UseHttpModule)
 				return;
 			string appPath = Context.Request.ApplicationPath;
 			if (appPath == "/")
@@ -76,7 +85,20 @@ namespace Brettle.Web.NeatUpload
 				uploadProgressUrl += "&lastPostBackID=" + UploadContext.Current.PostBackID;
 			}
 			
-			if (isPopup)
+			if (Inline)
+			{
+				TagName = "iframe";					
+				Attributes["src"] = uploadProgressUrl;
+				Attributes["frameborder"] = "0";
+				Attributes["scrolling"] = "no";
+				Attributes["name"] = this.ClientID;
+				displayStatement = @"
+setTimeout(function () {
+	frames['" + this.ClientID + @"'].location.href = '" + uploadProgressUrl + @"&refresher=client';
+}, 0);
+";
+			}
+			else
 			{
 				TagName = "div";
 				displayStatement = @"
@@ -92,19 +114,6 @@ if (NeatUpload_DivNode)
 -->
 </script>
 ");
-			}
-			else
-			{
-				TagName = "iframe";					
-				Attributes["src"] = uploadProgressUrl;
-				Attributes["frameborder"] = "0";
-				Attributes["scrolling"] = "no";
-				Attributes["name"] = this.ClientID;
-				displayStatement = @"
-setTimeout(function () {
-	frames['" + this.ClientID + @"'].location.href = '" + uploadProgressUrl + @"&refresher=client';
-}, 0);
-";
 			}
 			string nonUploadButtonsString = Attributes["NonUploadButtons"];
 			if (nonUploadButtonsString != null)
@@ -160,10 +169,25 @@ setTimeout(function () {
 
 		protected override void Render(HtmlTextWriter writer)
 		{
-			if (!Config.Current.UseHttpModule)
+			if (IsDesignTime)
+			{
+				TagName = "div";
+			}
+			else if (!Config.Current.UseHttpModule)
 				return;
 			EnsureChildControls();
 			base.RenderBeginTag(writer);
+			if (IsDesignTime)
+			{
+				if (Inline)
+				{
+					writer.Write("<i>Inline ProgressBar - no-IFRAME fallback = {</i>");
+				}
+				else
+				{
+					writer.Write("<i>Pop-up ProgressBar - no-Javascript fallback = {</i>");
+				}
+			}
 			writer.AddAttribute("href", uploadProgressUrl + "&refresher=server");
 			writer.AddAttribute("target", FormContext.Current.PostBackID);
 			writer.RenderBeginTag(HtmlTextWriterTag.A);
@@ -173,6 +197,10 @@ setTimeout(function () {
 			}
 			base.RenderChildren(writer);
 			writer.RenderEndTag();
+			if (IsDesignTime)
+			{
+				writer.Write("<i>}</i>");
+			}
 			base.RenderEndTag(writer);
 		}
 		
@@ -262,7 +290,7 @@ function NeatUpload_InitDisplayProgress_" + this.ClientID + @"()
 }
 var NeatUpload_DisplayProgressSet_" + this.ClientID + @" = false;
 NeatUpload_InitDisplayProgress_" + this.ClientID + @"();
-NeatUpload_AddSubmitHandler('" + formControl.ClientID + "'," + (isPopup ? "true" : "false") + @", function () {
+NeatUpload_AddSubmitHandler('" + formControl.ClientID + "'," + (Inline ? "false" : "true") + @", function () {
 		if (NeatUpload_DisplayProgress_" + this.ClientID + @" == true 
 			&& NeatUpload_IsFilesToUpload('" + formControl.ClientID + @"'))
 		{

@@ -23,14 +23,20 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Web;
 using System.Web.UI;
+using System.Web.UI.Design;
+using System.ComponentModel;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 
+[assembly: TagPrefix("Brettle.Web.NeatUpload", "Upload")]
 namespace Brettle.Web.NeatUpload
 {
-	[ValidationProperty("ValidationFileName")]
+	[ToolboxData("<{0}:InputFile runat='server'/>"),
+	 ValidationProperty("ValidationFileName")]
 	public class InputFile : System.Web.UI.WebControls.WebControl, System.Web.UI.IPostBackDataHandler
 	{
+
+		private bool IsDesignTime = (HttpContext.Current == null);
 
 		private UploadedFile _file = null;
 		private UploadedFile file
@@ -132,6 +138,8 @@ namespace Brettle.Web.NeatUpload
 				
 		private void Control_Load(object sender, EventArgs e)
 		{
+			if (IsDesignTime)
+				return;
 			// Find the containing <form> tag and set enctype="multipart/form-data" method="Post"
 			Control c = Parent;
 			while (c != null && !(c is HtmlForm))
@@ -147,7 +155,7 @@ namespace Brettle.Web.NeatUpload
 		{
 			writer.AddAttribute(HtmlTextWriterAttribute.Type, "file");
 			string name; 
-			if (Config.Current.UseHttpModule)
+			if (!IsDesignTime && Config.Current.UseHttpModule)
 			{
 				name = FormContext.Current.GenerateFileID(this.UniqueID);
 			}

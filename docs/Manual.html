@@ -36,6 +36,8 @@ Features in NeatUpload-1.1</a></li>
   <li><a href="#mozTocId304923">Installation</a></li>
   <li><a href="#mozTocId50790">Usage</a>
     <ul>
+      <li><a href="#mozTocId879490">Using NeatUpload with the Visual Studio Web Form Designer</a></li>
+      <li><a href="#mozTocId170882">Using NeatUpload without the Visual Studio Web Form Designer</a></li>
       <li><a href="#mozTocId900479">Avoiding
 Unnecessary Uploads and Progress Displays</a></li>
     </ul>
@@ -423,7 +425,31 @@ reading for details. </p>
 
 
 
-<p> To use NeatUpload on an ASP.NET page, follow these steps: </p>
+<h3><a class="mozTocH3" name="mozTocId879490"></a>Using NeatUpload with the Visual Studio Web Form Designer</h3>
+<p style="text-decoration: underline; color: rgb(255, 0, 0);">Note: the
+instructions in this section are currently completely untested.
+&nbsp;Please report any problems to me (dean@brettle.com).</p>
+<p>To use the Visual Studio web form designer to add NeatUpload to a web form, follow these steps:	</p>
+<ol>
+  <li>Drag the following controls from the toolbox onto your web form:&nbsp;<code>InputFile</code>, <code>ProgressBar</code>, and <code>Button</code>.</li>
+  <li>(Optional) If you want an inline progress bar, set the <code>ProgressBar</code>'s <code>Inline</code> property to <code>true</code>. </li>
+  <li>(Optional) If you want to customize the <code>ProgressBar</code> fallback behavior, drag whatever control(s) you want displayed as a fallback onto the <code>ProgressBar</code> control. &nbsp;For example, to just change the text, you could drag a <code>Label</code> control onto the ProgressBar and edit its contents.</li>
+  <li>In your codebehind file,&nbsp;process the
+uploaded
+file. &nbsp;The client-specified
+name and content type of the uploaded file can be accessed via <code><var>inputFileId</var>.FileName</code>
+and <code><var>inputFileId</var>.ContentType</code>. &nbsp;You can also use <code><span style="font-style: italic;">inputFileId</span>.MoveTo()</code> method to
+move the uploaded file to a permanent location. &nbsp;So something like the following will put the uploaded file in the
+application's root directory (assuming
+sufficient permissions):
+    
+    
+    
+    <pre>using Brettle.Web.NeatUpload;<br>...<br>using System.IO;<br>...<br>public class YourPage : System.Web.UI.Page<br>{<br>	private void Page_Load(object sender, EventArgs e)<br>	{<br>		...<br style="font-style: italic;"><span style="font-style: italic;">		submitButtonId.Click</span> += new System.EventHandler(this.Button_Clicked);<br>		...<br>	}<br>	...<br>	private void Button_Clicked(object sender, EventArgs e)<br>	{<br>		...<br>		if (IsValid &amp;&amp; <var>inputFileId</var>.HasFile)<br>		{<br>		...<br>	<var>		inputFileId</var>.MoveTo(Path.Combine(Request.PhysicalApplicationPath,&nbsp;<var>inputFileId</var>.FileName),&nbsp;<br>					   MoveToOptions.Overwrite);</pre>
+  </li>
+</ol>
+<h3><a class="mozTocH3" name="mozTocId170882"></a>Using NeatUpload <span style="font-style: italic;">without</span> the Visual Studio Web Form Designer</h3>
+<p> To use NeatUpload on a web form <span style="font-style: italic;">without</span> using the Visual Studio designer, follow these steps: </p>
 
 
 
