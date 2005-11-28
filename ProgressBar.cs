@@ -47,9 +47,8 @@ namespace Brettle.Web.NeatUpload
 
 		private string uploadProgressUrl;
 		private string displayStatement;
-		private string displayProgressByDefault = "true";
 		private ArrayList otherNonUploadButtons = new ArrayList(); // Controls passed to AddNonUploadButton()
-		private ArrayList triggers = new ArrayList(); // Controls passed to AddTrigger()
+		private ArrayList otherTriggers = new ArrayList(); // Controls passed to AddTrigger()
 
 		/// <summary>
 		/// Whether to display the progress bar inline or as a pop-up.</summary>
@@ -66,11 +65,36 @@ namespace Brettle.Web.NeatUpload
 		/// <remarks>
 		/// When a user clicks on a non-upload control, Javascript clears all <see cref="InputFile" /> controls. 
 		/// As a result, the progress display does not start and no files are uploaded when the form is submitted.
-		/// This is useful for "Cancel" buttons, for example.</remarks>  
+		/// If no triggers are listed in <see cref="Triggers"/> or added via <see cref="AddTrigger"/> then any control
+		/// other than those listed in <see cref="NonUploadButtons"/> or added via <see cref="AddNonUploadButton"/>
+		/// will be considered a trigger and will upload files and start the progress display.  If you do specify
+		/// one or more triggers, then all links and submit buttons <i>other</i> than those triggers will be considered
+		/// non-upload controls (in addition to any controls listed in <see cref="NonUploadButtons"/> or added via
+		/// <see cref="AddNonUploadButton"/>).  This means that in most cases you can simply specify one or more
+		/// triggers and not worry about specifying non-upload controls unless you have controls other than links and
+		/// submit buttons that cause the form to submit.</remarks>  
 		public string NonUploadButtons
 		{
 			get { return (string)ViewState["NonUploadButtons"]; }
 			set { ViewState["NonUploadButtons"] = value; }
+		}
+
+		/// <summary>
+		/// Space-separated list of the IDs of controls which should upload files and start the progress 
+		/// display. </summary>
+		/// <remarks>
+		/// If no triggers are listed in <see cref="Triggers"/> or added via <see cref="AddTrigger"/> then any control
+		/// other than those listed in <see cref="NonUploadButtons"/> or added via <see cref="AddNonUploadButton"/>
+		/// will be considered a trigger and will upload files and start the progress display.  If you do specify
+		/// one or more triggers, then all links and submit buttons <i>other</i> than those triggers will be considered
+		/// non-upload controls (in addition to any controls listed in <see cref="NonUploadButtons"/> or added via
+		/// <see cref="AddNonUploadButton"/>).  This means that in most cases you can simply specify one or more
+		/// triggers and not worry about specifying non-upload controls unless you have controls other than links and
+		/// submit buttons that cause the form to submit.</remarks>  
+		public string Triggers
+		{
+			get { return (string)ViewState["Triggers"]; }
+			set { ViewState["Triggers"] = value; }
 		}
 
 		/// <summary>
@@ -144,21 +168,33 @@ if (NeatUpload_DivNode)
 			}
 		}
 		
-		[Obsolete("This method is obsolete and will be removed in a future version.  Instead, call AddNonUploadButton()"
-					+ " with the buttons which are *not* triggers.")] 
+		/// <summary>
+		/// Adds a control (typically a button) to a list trigger controls.</summary>
+		/// <param name="control">the control to add to the list</param>
+		/// <remarks>
+		/// See the <see cref="Triggers"/> property for information on what triggers are.  This method is
+		/// primarily for situations where the see cref="Triggers"/> property can't be used because the ID of the
+		/// trigger control is not known until runtime (e.g. for
+		/// controls in Repeaters).  Controls added via this method are maintained in a separate list from those
+		/// listed in the <see cref="Triggers"/> property, and said list is not maintained as part of this
+		/// control's <see cref="ViewState"/>.  That means that if you use this method, you will need to call it
+		/// for each request, not just non-postback requests.  Also, you can use both this method and the
+		/// <see cref="Triggers"/> property for the same control.
+		/// </remarks>
 		public void AddTrigger(Control control)
 		{
-			triggers.Add(control);
+			otherTriggers.Add(control);
 		}
 
 		/// <summary>
 		/// Adds a control (typically a button) to a list non-upload controls.</summary>
 		/// <param name="control">the control to add to the list</param>
 		/// <remarks>
-		/// In most cases, it is easier to use the <see cref="NonUploadButtons"/> property.  This method is
-		/// primarily for situations where the ID of the non-upload control is not known until runtime (e.g. for 
+		/// See the <see cref="NonUploadButtons"/> property for information on what non-upload buttons are.
+		/// This method is primarily for situations where the see cref="NonUploadButtons"/> property can't be used
+		/// because the ID of the non-upload control is not known until runtime (e.g. for
 		/// controls in Repeaters).  Controls added via this method are maintained in a separate list from those
-		/// listed in the <see cref="NonUploadButtons"/> property, and that list is not maintained as part of this
+		/// listed in the <see cref="NonUploadButtons"/> property, and said list is not maintained as part of this
 		/// control's <see cref="ViewState"/>.  That means that if you use this method, you will need to call it
 		/// for each request, not just non-postback requests.  Also, you can use both this method and the
 		/// <see cref="NonUploadButtons"/> property for the same control.
@@ -180,7 +216,6 @@ if (NeatUpload_DivNode)
 			}
 			if (nonUploadButtonIDs.Count + otherNonUploadButtons.Count > 0)
 			{
-				displayProgressByDefault = "true";
 				foreach (string buttonID in nonUploadButtonIDs)
 				{
 					Control c = NamingContainer.FindControl(buttonID);
@@ -193,14 +228,21 @@ if (NeatUpload_DivNode)
 					RegisterNonUploadButtonScripts(c);
 				}
 			}
-			else
+			ArrayList triggerIDs = new ArrayList(); // IDs of controls refed by Triggers property
+			if (Triggers != null)
 			{
-				// Triggers are deprecated.
-				foreach (Control c in triggers)
-				{
-					displayProgressByDefault = "false";
-					RegisterTriggerScripts(c);
-				}
+				triggerIDs.AddRange(Triggers.Split(' '));
+			}
+			foreach (string buttonID in triggerIDs)
+			{
+				Control c = NamingContainer.FindControl(buttonID);
+				if (c == null)
+					continue;
+				RegisterTriggerScripts(c);
+			}
+			foreach (Control c in otherTriggers)
+			{
+				RegisterTriggerScripts(c);
 			}
 			HtmlControl formControl = GetFormControl(this);
 			RegisterScriptsForForm(formControl);
@@ -254,11 +296,9 @@ if (NeatUpload_DivNode)
 			this.Page.RegisterStartupScript(this.UniqueID + "-AddNonUploadButton-" + control.UniqueID, @"
 <script language=""javascript"">
 <!--
-NeatUpload_AddHandler('" + control.ClientID + @"', 'click', function () {
-	var formElem = document.getElementById('" + formControl.ClientID + @"');
-	NeatUpload_ClearFileInputs(formElem);
-});
--->
+NeatUpload_NonUploadIDs_" + this.ClientID + @"['" + control.ClientID + @"'] 
+	= ++NeatUpload_NonUploadIDs_" + this.ClientID + @".NeatUpload_length;
+// -->
 </script>
 ");			
 		}
@@ -275,13 +315,8 @@ NeatUpload_AddHandler('" + control.ClientID + @"', 'click', function () {
 			this.Page.RegisterStartupScript(this.UniqueID + "-AddTrigger-" + control.UniqueID, @"
 <script language=""javascript"">
 <!--
-NeatUpload_AddHandler('" + control.ClientID + @"', 'click', function () {
-	if (NeatUpload_IsFilesToUpload('" + formControl.ClientID + @"'))
-	{
-		NeatUpload_DisplayProgress_" + this.ClientID + @" = true;
-		NeatUpload_DisplayProgressSet_" + this.ClientID + @" = true;
-	}
-});
+NeatUpload_TriggerIDs_" + this.ClientID + @"['" + control.ClientID + @"'] 
+	= ++NeatUpload_TriggerIDs_" + this.ClientID + @".NeatUpload_length;
 -->
 </script>
 ");			
@@ -319,26 +354,61 @@ document.getElementById('" + formControl.ClientID + @"').onsubmit
 			this.Page.RegisterStartupScript(this.UniqueID + "-AddHandler", @"
 <script language=""javascript"">
 <!--
-function NeatUpload_InitDisplayProgress_" + this.ClientID + @"()
-{
-	if (!NeatUpload_DisplayProgressSet_" + this.ClientID + @")
-	{
-		NeatUpload_DisplayProgress_" + this.ClientID + @" = " + displayProgressByDefault + @";
-	}
-	NeatUpload_DisplayProgressSet_" + this.ClientID + @" = false;
-}
-var NeatUpload_DisplayProgressSet_" + this.ClientID + @" = false;
-NeatUpload_InitDisplayProgress_" + this.ClientID + @"();
 NeatUpload_AddSubmitHandler('" + formControl.ClientID + "'," + (Inline ? "false" : "true") + @", function () {
-		if (NeatUpload_DisplayProgress_" + this.ClientID + @" == true 
-			&& NeatUpload_IsFilesToUpload('" + formControl.ClientID + @"'))
-		{
-			NeatUpload_DisplayProgress_" + this.ClientID + @" = " + displayProgressByDefault + @";
-			" + displayStatement + @"
-		}
+	if (NeatUpload_IsFilesToUpload('" + formControl.ClientID + @"'))
+	{
+		" + displayStatement + @"
+	}
 });
 
-NeatUpload_AddHandler('" + formControl.ClientID + @"', 'click', NeatUpload_InitDisplayProgress_" + this.ClientID + @");
+NeatUpload_NonUploadIDs_" + this.ClientID + @" = new Object();
+NeatUpload_NonUploadIDs_" + this.ClientID + @".NeatUpload_length = 0;
+NeatUpload_TriggerIDs_" + this.ClientID + @" = new Object();
+NeatUpload_TriggerIDs_" + this.ClientID + @".NeatUpload_length = 0;
+						
+NeatUpload_AddHandler('" + formControl.ClientID + @"', 'click', function (ev) {
+	if (!ev)
+	{
+		return;
+	}
+	var src = null;
+	if (ev.srcElement)
+		src = ev.srcElement;
+	else if (ev.target)
+		src = ev.target;
+	if (src == null)
+	{
+		return;
+	}
+	var tagName = src.tagName;
+	if (tagName) tagName = tagName.toLowerCase();
+	if (NeatUpload_TriggerIDs_" + this.ClientID + @"[src.id])
+	{
+		return;
+	}
+	var formElem = document.getElementById('" + formControl.ClientID + @"');
+	if (NeatUpload_NonUploadIDs_" + this.ClientID + @"[src.id])
+	{
+		NeatUpload_ClearFileInputs(formElem);
+	}
+	else if (NeatUpload_TriggerIDs_" + this.ClientID + @".NeatUpload_length == 0)
+	{
+		return;
+	}
+	else if (tagName == 'input' || tagName == 'button')
+	{
+		var inputType = src.getAttribute('type');
+		if (inputType) inputType = inputType.toLowerCase();
+		if (!inputType || inputType == 'submit' || inputType == 'image')
+		{
+			NeatUpload_ClearFileInputs(formElem);
+		}
+	}
+	else if (tagName == 'a' && !src.getAttribute('name')) 
+	{
+		NeatUpload_ClearFileInputs(formElem);
+	}
+});
 -->
 </script>
 ");

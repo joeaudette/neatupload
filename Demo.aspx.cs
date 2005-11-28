@@ -57,20 +57,17 @@ namespace Brettle.Web.NeatUpload
 			linkButton.Click += new System.EventHandler(this.Button_Clicked);
 
 /*
-			// Instead of setting the NonUploadButtons attribute of the 
+			// Instead of setting the Triggers property of the 
 			// ProgressBar element in the aspx file, you can put lines like
 			// the following in your code-behind:
-			progressBar.AddNonUploadButton(cancelButton);
-			inlineProgressBar.AddNonUploadButton(cancelLinkButton);
-
-			// For compatibility with previous versions of NeatUpload, the
-			// following method still works but is deprecated:
 			progressBar.AddTrigger(submitButton);
 			progressBar.AddTrigger(linkButton);
 			inlineProgressBar.AddTrigger(submitButton);
 			inlineProgressBar.AddTrigger(linkButton);
+			
+			// If you have controls that submit the form other than links and submit buttons,
+			// you might also need to use the NonUploadButtons property or AddNonUploadButton() method.
 */
-
 		}
 
 		private void Button_Clicked(object sender, EventArgs e)

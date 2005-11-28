@@ -145,7 +145,7 @@ support <a href="http://en.wikipedia.org/wiki/XMLHTTP">XMLHttpRequest</a>.</li>
 
 
 
-  <li>Added support for not starting the progress display when
+  <li>Added support for disabling the progress display when
 client-side validation fails.</li>
 
 
@@ -153,34 +153,12 @@ client-side validation fails.</li>
 
   <li>Added support for accessing uploaded files from server
 event handlers (e.g. <code>Button.Click</code> handlers).</li>
-
-
-
-
-  <li>Eliminated need to call <code>ProgressBar.AddTrigger()</code>.
-&nbsp;If you
-don't call <code>AddTrigger()</code>, then by default the
-progress display will be
-started anytime a file is submitted - no matter which button was used
-to submit the form. &nbsp;However you can also specify certain
-buttons
-(e.g. a "Cancel" button) as non-upload buttons. &nbsp;When the user
-clicks a non-upload button, NeatUpload clears all file form fields
-before the the form is submitted. &nbsp;As a result, no files are
-uploaded and the progress display is not started. &nbsp;NOTE: If
-you do
-call <code>AddTrigger()</code>, you will get the 1.0.x
-behavior, i.e. the progress
-display will only be started if you click the button you identified as
-a trigger. &nbsp;<code>AddTrigger()</code> is now
-deprecated. &nbsp;Mixing
-    <code>AddTrigger()</code> and non-upload buttons is not
-supported and may yield
-unexpected results.</li>
-
-
-
-
+  <li>Added&nbsp;<code>Triggers</code> property to <code>ProgressBar</code> which can be used instead of the <code>ProgressBar.AddTrigger()</code> method.</li>
+  <li>Added support for disabling file upload and progress display when
+(non-trigger) submit buttons and links are clicked. &nbsp;At least one
+trigger control must be specified for this to work. &nbsp;Additional
+controls which should disable file upload and progress display can be
+specified with the <code>NonUploadButtons</code> property of the <code>ProgressBar</code> or the <code>ProgressBar.AddNonUploadButton()</code> method.</li>
   <li>Changed the <code>InputFile.FileName</code>
 property to always return just the
 client-side file name (e.g. <code>foo.txt</code>), even if
@@ -204,6 +182,7 @@ either of which can be put inside of the
     <code>&lt;location&gt;</code> element to apply configuration settings to specific
 pages.</li>
   <li>Added support for custom <code>UploadStorageProvider</code>s.</li>
+  <li>Added Visual Studio designer support.</li>
 
 
 
@@ -575,10 +554,6 @@ display.<br>
 
 
 <br>
-
-
-
-
 Now consider the case where the form contains a cancel button in
 addition to a normal submit button. &nbsp;Both buttons cause the
 form
@@ -588,11 +563,12 @@ selects a
 file to upload and then changes his mind and clicks the cancel button,
 the progress display will start and the user will need to wait for the
 file to be uploaded. &nbsp;To avoid this unfriendly behavior,
-NeatUpload allows you to specify that the cancel&nbsp;button is a
-"non-upload" button. &nbsp;When the user clicks on such a button,
+NeatUpload allows you to specify "trigger" controls. &nbsp;When the
+user clicks on submit buttons or links other than the triggers you
+specify,
 NeatUpload clears all the <code>InputFile</code> controls
 so that no files will be uploaded and the progress display will not
-start.<br>
+start. &nbsp;You can also explicitly specify additional "non-upload" controls.<br>
 
 
 
@@ -602,14 +578,16 @@ start.<br>
 
 
 
-There are two ways to indicate that a button is a "non-upload" button.
+There are two ways to indicate that a button is a "trigger" control.
 &nbsp;You can either include the ID of the button in the <code>ProgressBar</code>'s
-<code>NonUploadButtons</code> attribute (multiple IDs
-should be space-separated), &nbsp;or you can call the ProgressBar's
-<code>AddNonUploadButton(Control)</code> method. &nbsp;Note: if you call the <code>AddNonUploadButton(Control)</code> method, you need to call it each time the page is loaded (even when <code>Page.IsPostBack</code> is <code>true</code>) because the list of non-upload buttons is not maintained in the page's <code>ViewState</code>.<span style="font-weight: bold;"></span><br>
+<code>Triggers </code>property (multiple IDs
+should be space-separated),&nbsp;or you can call the ProgressBar's <span style="font-family: monospace;">AddTrigger</span><code>(Control)</code> method. &nbsp;Note: if you call the <code>AddTrigger(Control)</code> method, you need to call it each time the page is loaded (even when <code>Page.IsPostBack</code> is <code>true</code>) because the list of trigger controls is not maintained in the page's <code>ViewState</code>.<br>
+<br>
 
 
 
+
+Similarly, you can specify additional "non-upload" controls via the&nbsp;<code>ProgressBar</code>'s <span style="font-family: monospace;">NonUploadButtons</span><code> </code>property, or <span style="font-family: monospace;">AddNonUploadButton</span><code>(Control)</code> method .<br>
 <br>
 
 
