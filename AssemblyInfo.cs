@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Web.UI;
 
 // Information about this assembly is defined by the following
 // attributes.
@@ -30,3 +31,7 @@ using System.Runtime.CompilerServices;
 // This is not required, if you don't want signing let these attributes like they're.
 [assembly: AssemblyDelaySign(false)]
 [assembly: AssemblyKeyFile("")]
+
+// This helps with VS designer support.
+[assembly: TagPrefix("Brettle.Web.NeatUpload", "Upload")]
+

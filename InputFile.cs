@@ -28,7 +28,6 @@ using System.ComponentModel;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 
-[assembly: TagPrefix("Brettle.Web.NeatUpload", "Upload")]
 namespace Brettle.Web.NeatUpload
 {
 	/// <summary>
