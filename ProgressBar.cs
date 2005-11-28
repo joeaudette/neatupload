@@ -101,7 +101,7 @@ namespace Brettle.Web.NeatUpload
 		/// <summary>
 		/// Constructs a ProgressBar control.</summary>
 		/// <param name="tagName">ignored</param>
-		public ProgressBar(string tagName)
+		public ProgressBar(string tagName) : base(tagName)
 		{
 			ViewState["inline"] = false;
 		}
