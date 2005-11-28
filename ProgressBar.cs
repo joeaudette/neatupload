@@ -40,6 +40,7 @@ namespace Brettle.Web.NeatUpload
 	/// display (e.g. "Cancel" buttons).
 	/// </remarks>
 	[ToolboxData("<{0}:ProgressBar runat='server' inline='false'/>"),
+	 ToolboxItem(true),
 	 DefaultProperty("Inline")]
 	public class ProgressBar : System.Web.UI.HtmlControls.HtmlGenericControl
 	{
@@ -206,7 +207,7 @@ if (NeatUpload_DivNode)
 
 		protected override void OnPreRender (EventArgs e)
 		{
-			if (!Config.Current.UseHttpModule)
+			if (IsDesignTime || !Config.Current.UseHttpModule)
 				return;
 
 			ArrayList nonUploadButtonIDs = new ArrayList(); // IDs of buttons refed by NonUploadButtons property

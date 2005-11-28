@@ -43,6 +43,7 @@ namespace Brettle.Web.NeatUpload
 	/// its methods/properties act on the file in the standard ASP.NET <see cref="HttpRequest.Files"/> collection.
 	/// </remarks>
 	[ToolboxData("<{0}:InputFile runat='server'/>"),
+	 ToolboxItem(true),
 	 ValidationProperty("ValidationFileName")]
 	public class InputFile : System.Web.UI.WebControls.WebControl, System.Web.UI.IPostBackDataHandler
 	{
@@ -56,6 +57,7 @@ namespace Brettle.Web.NeatUpload
 			{
 				if (_file == null)
 				{
+					if (IsDesignTime) return null;
 					if (Config.Current.UseHttpModule)
 					{
 						_file = UploadContext.Current.GetUploadedFile(this.UniqueID);
@@ -102,14 +104,16 @@ namespace Brettle.Web.NeatUpload
 		}
 		
 		[Obsolete("This property is obsolete and will be removed in a future version.  Instead use other members like InputFile.MoveTo(), InputFile.HasFile, and InputFile.ContentLength.")]
+		[Browsable(false)]
 		public FileInfo TmpFile {
-			get { return (file != null && file.IsUploaded) ? file.TmpFile : null; }
+			get { return HasFile ? file.TmpFile : null; }
 		}
 		
 		/// <summary>
 		/// Whether a file was uploaded using this control. </summary>
 		/// <remarks>
 		/// HasFile is true if a file was uploaded during the last postback, otherwise false.</remarks>
+		[Browsable(false)]
 		public bool HasFile {
 			get { return (file != null && file.IsUploaded); }
 		}
@@ -119,8 +123,9 @@ namespace Brettle.Web.NeatUpload
 		/// <remarks>
 		/// FileName is the name (not the full path) of the uploaded file on the user's machine if a file was
 		/// uploaded during the last postback, otherwise it is null.</remarks>
+		[Browsable(false)]
 		public string FileName {
-			get { return (file != null && file.IsUploaded) ? file.FileName : null; }
+			get { return HasFile ? file.FileName : null; }
 		}
 
 		/// <summary>
@@ -128,6 +133,7 @@ namespace Brettle.Web.NeatUpload
 		/// <remarks>
 		/// ValidationFileName is the same as <see cref="FileName"/> if a file was uploaded during the last postback.
 		/// However, if no file was uploaded, ValidationFileName is String.Empty while FileName is null.</remarks>
+		[Browsable(false)]
 		public string ValidationFileName {
 			get { return (FileName != null ? FileName : String.Empty); }
 		}
@@ -139,8 +145,9 @@ namespace Brettle.Web.NeatUpload
 		/// uploaded during the last postback, otherwise it is null.  Note that different browsers determine
 		/// the MIME type differently.  They might use the file's extension, the first few bytes of the file, or
 		/// something else entirely to determine the MIME type.</remarks>
+		[Browsable(false)]
 		public string ContentType {
-			get { return (file != null && file.IsUploaded) ? file.ContentType : null; }
+			get { return HasFile ? file.ContentType : null; }
 		}
 
 		/// <summary>
@@ -148,6 +155,7 @@ namespace Brettle.Web.NeatUpload
 		/// <remarks>
 		/// Number of bytes in the uploaded file if a file was uploaded during the last postback, 
 		/// otherwise 0.</remarks>
+		[Browsable(false)]
 		public long ContentLength {
 			get { return (HasFile ? file.ContentLength : 0); }
 		}
@@ -158,6 +166,7 @@ namespace Brettle.Web.NeatUpload
 		/// A readable <see cref="Stream"/> on the uploaded file if a file was uploaded during the last postback, 
 		/// otherwise null.
 		/// </remarks>
+		[Browsable(false)]
 		public Stream FileContent
 		{
 			get { return (HasFile ? file.OpenRead() : null); }
