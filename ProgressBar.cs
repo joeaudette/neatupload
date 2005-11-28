@@ -29,6 +29,16 @@ using System.Web.UI.HtmlControls;
 
 namespace Brettle.Web.NeatUpload
 {
+	/// <summary>
+	/// Displays progress and status of an upload.</summary>
+	/// <remarks>
+	/// For the progress bar to be displayed, the <see cref="UploadHttpModule"/> must be in use.
+	/// For the progress display to be started, the form being submitted must include an <see cref="InputFile"/>
+	/// control that is not empty.  Use the <see cref="Inline"/> property to control how the progress bar is
+	/// displayed.  Use the <see cref="NonUploadButtons"/> property (or the <see cref="AddNonUploadButton"/> method)
+	/// to specify any buttons which should not cause files to be uploaded and should not start the progress
+	/// display (e.g. "Cancel" buttons).
+	/// </remarks>
 	[ToolboxData("<{0}:ProgressBar runat='server' inline='false'/>"),
 	 DefaultProperty("Inline")]
 	public class ProgressBar : System.Web.UI.HtmlControls.HtmlGenericControl
@@ -38,10 +48,11 @@ namespace Brettle.Web.NeatUpload
 		private string uploadProgressUrl;
 		private string displayStatement;
 		private string displayProgressByDefault = "true";
-		private ArrayList nonUploadButtonIDs = new ArrayList(); // IDs of buttons refed by NonUploadButtons attr
-		private ArrayList nonUploadButtons = new ArrayList(); // Controls passed to AddNonUploadButton()
+		private ArrayList otherNonUploadButtons = new ArrayList(); // Controls passed to AddNonUploadButton()
 		private ArrayList triggers = new ArrayList(); // Controls passed to AddTrigger()
 
+		/// <summary>
+		/// Whether to display the progress bar inline or as a pop-up.</summary>
 		[DefaultValue(false)]
 		public bool Inline
 		{
@@ -49,6 +60,22 @@ namespace Brettle.Web.NeatUpload
 			set { ViewState["inline"] = value; }
 		}
 		
+		/// <summary>
+		/// Space-separated list of the IDs of controls which should not upload files and start the progress 
+		/// display. </summary>
+		/// <remarks>
+		/// When a user clicks on a non-upload control, Javascript clears all <see cref="InputFile" /> controls. 
+		/// As a result, the progress display does not start and no files are uploaded when the form is submitted.
+		/// This is useful for "Cancel" buttons, for example.</remarks>  
+		public string NonUploadButtons
+		{
+			get { return (string)ViewState["NonUploadButtons"]; }
+			set { ViewState["NonUploadButtons"] = value; }
+		}
+
+		/// <summary>
+		/// Constructs a ProgressBar control.</summary>
+		/// <param name="tagName">ignored</param>
 		public ProgressBar(string tagName)
 		{
 			ViewState["inline"] = false;
@@ -115,11 +142,6 @@ if (NeatUpload_DivNode)
 </script>
 ");
 			}
-			string nonUploadButtonsString = Attributes["NonUploadButtons"];
-			if (nonUploadButtonsString != null)
-			{
-				nonUploadButtonIDs.AddRange(nonUploadButtonsString.Split(' '));
-			}
 		}
 		
 		[Obsolete("This method is obsolete and will be removed in a future version.  Instead, call AddNonUploadButton()"
@@ -129,9 +151,21 @@ if (NeatUpload_DivNode)
 			triggers.Add(control);
 		}
 
+		/// <summary>
+		/// Adds a control (typically a button) to a list non-upload controls.</summary>
+		/// <param name="control">the control to add to the list</param>
+		/// <remarks>
+		/// In most cases, it is easier to use the <see cref="NonUploadButtons"/> property.  This method is
+		/// primarily for situations where the ID of the non-upload control is not known until runtime (e.g. for 
+		/// controls in Repeaters).  Controls added via this method are maintained in a separate list from those
+		/// listed in the <see cref="NonUploadButtons"/> property, and that list is not maintained as part of this
+		/// control's <see cref="ViewState"/>.  That means that if you use this method, you will need to call it
+		/// for each request, not just non-postback requests.  Also, you can use both this method and the
+		/// <see cref="NonUploadButtons"/> property for the same control.
+		/// </remarks>
 		public void AddNonUploadButton(Control control)
 		{
-			nonUploadButtons.Add(control);
+			otherNonUploadButtons.Add(control);
 		}
 
 		protected override void OnPreRender (EventArgs e)
@@ -139,7 +173,12 @@ if (NeatUpload_DivNode)
 			if (!Config.Current.UseHttpModule)
 				return;
 
-			if (nonUploadButtonIDs.Count + nonUploadButtons.Count > 0)
+			ArrayList nonUploadButtonIDs = new ArrayList(); // IDs of buttons refed by NonUploadButtons property
+			if (NonUploadButtons != null)
+			{
+				nonUploadButtonIDs.AddRange(NonUploadButtons.Split(' '));
+			}
+			if (nonUploadButtonIDs.Count + otherNonUploadButtons.Count > 0)
 			{
 				displayProgressByDefault = "true";
 				foreach (string buttonID in nonUploadButtonIDs)
@@ -149,7 +188,7 @@ if (NeatUpload_DivNode)
 						continue;
 					RegisterNonUploadButtonScripts(c);
 				}
-				foreach (Control c in nonUploadButtons)
+				foreach (Control c in otherNonUploadButtons)
 				{
 					RegisterNonUploadButtonScripts(c);
 				}

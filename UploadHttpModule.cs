@@ -25,6 +25,24 @@ using System.Threading;
 
 namespace Brettle.Web.NeatUpload
 {
+	/// <summary>
+	/// Limits the size of incoming HTTP requests and allows <see cref="ProgressBar"/> to monitor the progress of 
+	/// upload requests associated with <see cref="InputFile"/> controls.</summary>
+	/// <remarks>
+	/// To use this module, add it to the <see href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpgenref/html/gngrfhttpmodulessection.asp">
+	/// httpModules section</see> of your Web.config like this:
+	/// <example>
+	/// <code escaped="true">
+	/// <configuration>
+	///   <system.web>
+	///	    <httpModules>
+	///		  <add name="UploadHttpModule" type="Brettle.Web.NeatUpload.UploadHttpModule, Brettle.Web.NeatUpload" />
+	///	    </httpModules>
+	///   </system.web>
+	/// </configuration>
+	/// </code>
+	/// </example>
+	/// </remarks>
 	public class UploadHttpModule : IHttpModule
 	{
 		// Create a logger for use in this class

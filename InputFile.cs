@@ -31,6 +31,17 @@ using System.Web.UI.HtmlControls;
 [assembly: TagPrefix("Brettle.Web.NeatUpload", "Upload")]
 namespace Brettle.Web.NeatUpload
 {
+	/// <summary>
+	/// File upload control that can be used with the <see cref="UploadHttpModule"/> and <see cref="ProgressBar"/>.
+	/// </summary>
+	/// <remarks>
+	/// On post back, you can use <see cref="HasFile"/> to determine whether a file has been uploaded and use
+	/// <see cref="FileName"/>, <see cref="ContentType"/>, <see cref="ContentLength"/>, <see cref="FileContent"/>
+	/// to access the file's name, MIME type, length, and contents.  If you want to save the file for use after
+	/// the current request, use the <see cref="MoveTo"/> method.
+	/// This control will function even if the <see cref="UploadHttpModule"/> is not being used.  In that case,
+	/// its methods/properties act on the file in the standard ASP.NET <see cref="HttpRequest.Files"/> collection.
+	/// </remarks>
 	[ToolboxData("<{0}:InputFile runat='server'/>"),
 	 ValidationProperty("ValidationFileName")]
 	public class InputFile : System.Web.UI.WebControls.WebControl, System.Web.UI.IPostBackDataHandler
@@ -95,31 +106,87 @@ namespace Brettle.Web.NeatUpload
 			get { return (file != null && file.IsUploaded) ? file.TmpFile : null; }
 		}
 		
+		/// <summary>
+		/// Whether a file was uploaded using this control. </summary>
+		/// <remarks>
+		/// HasFile is true if a file was uploaded during the last postback, otherwise false.</remarks>
 		public bool HasFile {
 			get { return (file != null && file.IsUploaded); }
 		}
 
+		/// <summary>
+		/// Client-side name of the uploaded file. </summary>
+		/// <remarks>
+		/// FileName is the name (not the full path) of the uploaded file on the user's machine if a file was
+		/// uploaded during the last postback, otherwise it is null.</remarks>
 		public string FileName {
 			get { return (file != null && file.IsUploaded) ? file.FileName : null; }
 		}
 
+		/// <summary>
+		/// Client-side name of the uploaded file for validation purposes. </summary>
+		/// <remarks>
+		/// ValidationFileName is the same as <see cref="FileName"/> if a file was uploaded during the last postback.
+		/// However, if no file was uploaded, ValidationFileName is String.Empty while FileName is null.</remarks>
 		public string ValidationFileName {
-			get { return (FileName != null ? FileName : ""); }
+			get { return (FileName != null ? FileName : String.Empty); }
 		}
 
+		/// <summary>
+		/// Browser-specified MIME type of the uploaded file. </summary>
+		/// <remarks>
+		/// ContentType is browser-specified MIME type of the uploaded file if a file was
+		/// uploaded during the last postback, otherwise it is null.  Note that different browsers determine
+		/// the MIME type differently.  They might use the file's extension, the first few bytes of the file, or
+		/// something else entirely to determine the MIME type.</remarks>
 		public string ContentType {
 			get { return (file != null && file.IsUploaded) ? file.ContentType : null; }
 		}
 
+		/// <summary>
+		/// Number of bytes in the uploaded file. </summary>
+		/// <remarks>
+		/// Number of bytes in the uploaded file if a file was uploaded during the last postback, 
+		/// otherwise 0.</remarks>
 		public long ContentLength {
 			get { return (HasFile ? file.ContentLength : 0); }
 		}
 
+		/// <summary>
+		/// A readable <see cref="Stream"/> on the uploaded file. </summary>
+		/// <remarks>
+		/// A readable <see cref="Stream"/> on the uploaded file if a file was uploaded during the last postback, 
+		/// otherwise null.
+		/// </remarks>
 		public Stream FileContent
 		{
 			get { return (HasFile ? file.OpenRead() : null); }
 		}
 
+		/// <summary>
+		/// Moves an uploaded file to a permanent location.</summary>
+		/// <param name="path">the permanent location to move the uploaded file to.</param>
+		/// <param name="opts">options associated with moving the file (e.g. 
+		/// <see cref="MoveToOptions.Overwrite">MoveToOptions.Overwrite</see> or 
+		/// <see cref="MoveToOptions.None">MoveToOptions.None</see></param>
+		/// <remarks>
+		/// <para>
+		/// The default <see cref="UploadStorageProvider"/> (a <see cref="FilesystemUploadStorageProvider"/>)
+		/// temporarily stores uploaded files on disk.  If you don't call MoveTo() in response to the postback, the temporary file will be 
+		/// automatically deleted.</para>
+		/// <para>  
+		/// The <paramref name="path"/> you pass to MoveTo() is the filesystem path where you want the uploaded file
+		/// to be permanently moved.  If you want any existing file at that path to be overwritten, pass 
+		/// <see cref="MoveToOptions.Overwrite">MoveToOptions.Overwrite</see> as the <paramref name="opts"/> 
+		/// parameter.  Otherwise, pass <see cref="MoveToOptions.None">MoveToOptions.None</see>.
+		/// Only the last call to MoveTo() in response to a particular postback will determine the uploaded file's
+		/// permanent location.</para>
+		/// <para>
+		/// If you are using a non-default <see cref="UploadStorageProvider"/>, it might interpret 
+		/// <paramref name="path"/> differently.  For example, it might use it as the primary key to identify a row 
+		/// in a database table.  A non-default <see cref="UploadStorageProvider"/> might also allow other options
+		/// by accepting a subclass of <see cref="MoveToOptions"/> for the <paramref name="opts"/> parameter.</para>
+		/// </remarks>
 		public virtual void MoveTo(string path, MoveToOptions opts)
 		{
 			file.MoveTo(path, opts);
@@ -169,11 +236,17 @@ namespace Brettle.Web.NeatUpload
 			writer.RenderEndTag();
 		}
 
+		/// <summary>
+		/// Called by ASP.NET so that controls can find and process their post back data</summary>
+		/// <returns>the true if a file was uploaded with this control</returns>
 		public virtual bool LoadPostData(string postDataKey, NameValueCollection postCollection)
 		{		
-			return true;
+			return HasFile;
 		}
 		
+		/// <summary>
+		/// Called by ASP.NET if <see cref="LoadPostData()"/> returns true (i.e. if a file was uploaded to this 
+		/// control).  Fires the <see cref="FileUploaded"/> event.</summary>
 		public virtual void RaisePostDataChangedEvent()
 		{
 			if (FileUploaded != null)
@@ -182,6 +255,8 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 		
+		/// <summary>
+		/// Fired when a file is uploaded to this control.</summary>
 		public event System.EventHandler FileUploaded;
 	}
 }
