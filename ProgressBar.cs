@@ -263,7 +263,8 @@ if (NeatUpload_DivNode)
 				}
 			}
 			writer.AddAttribute("href", uploadProgressUrl + "&refresher=server");
-			writer.AddAttribute("target", FormContext.Current.PostBackID);
+			string target = IsDesignTime ? "_blank" : FormContext.Current.PostBackID;
+			writer.AddAttribute("target", target);
 			writer.RenderBeginTag(HtmlTextWriterTag.A);
 			if (!HasControls())
 			{
