@@ -138,7 +138,7 @@ on that
 website. To use NeatUpload in your own web application, continue with
 the remaining installation steps. </li>
 
-  <li>If you aren't already using log4net:
+  <li>NeatUpload requires&nbsp;<a href="http://logging.apache.org/log4net/">log4net</a> which can be configured to log useful debugging information. &nbsp;If you aren't already using log4net:
     <ol>
 
       <li>Copy the log4net.dll from the <code>NeatUpload-1.0/bin/Debug/</code>
@@ -150,7 +150,7 @@ the copy of <code>log4net.dll</code> in your <code>bin/</code>
 directory.</li>
 
       <li>Copy <code>NeatUpload-1.0/log4net.config</code>
-to the root directory of your web application. </li>
+to the root directory of your web application. &nbsp;With that configuration log4net will not actually log anything. </li>
 
       <li>Add the following line to the top of your <code>Global.asax.cs</code>:
         <pre>[assembly: log4net.Config.XmlConfigurator(ConfigFile="log4net.config", Watch=true)]<br>	</pre>
