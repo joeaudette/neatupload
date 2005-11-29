@@ -153,9 +153,13 @@ directory.</li>
 to the root directory of your web application. &nbsp;With that configuration log4net will not actually log anything. </li>
 
       <li>Add the following line to the top of your <code>Global.asax.cs</code>:
-        <pre>[assembly: log4net.Config.XmlConfigurator(ConfigFile="log4net.config", Watch=true)]<br>	</pre>
-
-      </li>
+        <br>
+        <br>
+        <code>[assembly: log4net.Config.XmlConfigurator(ConfigFile="log4net.config", Watch=true)]</code><br>
+        <br>
+or if you are using VB.NET, add the following to the top of your Global.asax.vb:<br>
+        <code><br>
+&lt;assembly: log4net.Config.XmlConfigurator(ConfigFile:="log4net.config", Watch:=true)&gt;</code>	</li>
 
     </ol>
 
