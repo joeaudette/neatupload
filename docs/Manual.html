@@ -311,7 +311,14 @@ the remaining installation steps. </li>
 
 
 
-  <li>Add a reference to your web application that refers to the <code>Brettle.Web.NeatUpload.dll</code>
+  <li>If you will be using the Visual Studio Web Form Designer, add
+the NeatUpload controls to your toolbox. &nbsp;To do that, right-click
+on the Toolbox, click Add/Remove Items, Browse to the
+Brettle.Web.NeatUpload.dll you installed, click Open, and then click
+OK. &nbsp;A reference to Brettle.Web.NeatUpload.dll will automatically
+be added to your project the first time you use the designer to add one
+of the NeatUpload controls to a form.</li>
+  <li>If you won't be using the Visual Studio Web Form Designer, add a reference to your web application that refers to the <code>Brettle.Web.NeatUpload.dll</code>
 in the <code>NeatUpload-1.</code><code>1.<span style="font-style: italic;">x</span></code><code>/bin
     </code>directory. </li>
 
@@ -405,14 +412,11 @@ reading for details. </p>
 
 
 <h3><a class="mozTocH3" name="mozTocId879490"></a>Using NeatUpload with the Visual Studio Web Form Designer</h3>
-<p style="text-decoration: underline; color: rgb(255, 0, 0);">Note: the
-instructions in this section are currently completely untested.
-&nbsp;Please report any problems to me (dean@brettle.com).</p>
 <p>To use the Visual Studio web form designer to add NeatUpload to a web form, follow these steps:	</p>
 <ol>
   <li>Drag the following controls from the toolbox onto your web form:&nbsp;<code>InputFile</code>, <code>ProgressBar</code>, and <code>Button</code>.</li>
   <li>(Optional) If you want an inline progress bar, set the <code>ProgressBar</code>'s <code>Inline</code> property to <code>true</code>. </li>
-  <li>(Optional) If you want to customize the <code>ProgressBar</code> fallback behavior, drag whatever control(s) you want displayed as a fallback onto the <code>ProgressBar</code> control. &nbsp;For example, to just change the text, you could drag a <code>Label</code> control onto the ProgressBar and edit its contents.</li>
+  <li>(Optional) If you want to customize the <code>ProgressBar</code> fallback behavior, drag whatever control(s) you want displayed as a fallback onto the <code>ProgressBar</code> control. &nbsp;For example, to just change the fallback text, you could drag a <code>Label</code> control onto the ProgressBar and edit its contents.</li>
   <li>In your codebehind file,&nbsp;process the
 uploaded
 file. &nbsp;The client-specified

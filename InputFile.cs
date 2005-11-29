@@ -41,9 +41,7 @@ namespace Brettle.Web.NeatUpload
 	/// This control will function even if the <see cref="UploadHttpModule"/> is not being used.  In that case,
 	/// its methods/properties act on the file in the standard ASP.NET <see cref="HttpRequest.Files"/> collection.
 	/// </remarks>
-	[ToolboxData("<{0}:InputFile runat='server'/>"),
-	 ToolboxItem(true),
-	 ValidationProperty("ValidationFileName")]
+	[ValidationProperty("ValidationFileName")]
 	public class InputFile : System.Web.UI.WebControls.WebControl, System.Web.UI.IPostBackDataHandler
 	{
 

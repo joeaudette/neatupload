@@ -39,10 +39,8 @@ namespace Brettle.Web.NeatUpload
 	/// to specify any buttons which should not cause files to be uploaded and should not start the progress
 	/// display (e.g. "Cancel" buttons).
 	/// </remarks>
-	[ToolboxData("<{0}:ProgressBar runat='server' inline='false'/>"),
-	 ToolboxItem(true),
-	 DefaultProperty("Inline")]
-	public class ProgressBar : System.Web.UI.HtmlControls.HtmlGenericControl
+	[DefaultProperty("Inline"), ParseChildren(false), PersistChildren(true)]
+	public class ProgressBar : System.Web.UI.WebControls.WebControl
 	{
 		private bool IsDesignTime = (HttpContext.Current == null);
 
@@ -50,13 +48,14 @@ namespace Brettle.Web.NeatUpload
 		private string displayStatement;
 		private ArrayList otherNonUploadButtons = new ArrayList(); // Controls passed to AddNonUploadButton()
 		private ArrayList otherTriggers = new ArrayList(); // Controls passed to AddTrigger()
+		private	HtmlTextWriterTag Tag;
 
 		/// <summary>
 		/// Whether to display the progress bar inline or as a pop-up.</summary>
 		[DefaultValue(false)]
 		public bool Inline
 		{
-			get { return (bool)ViewState["inline"]; }
+			get { return (ViewState["inline"] != null && (bool)ViewState["inline"]); }
 			set { ViewState["inline"] = value; }
 		}
 		
@@ -97,14 +96,6 @@ namespace Brettle.Web.NeatUpload
 			get { return (string)ViewState["Triggers"]; }
 			set { ViewState["Triggers"] = value; }
 		}
-
-		/// <summary>
-		/// Constructs a ProgressBar control.</summary>
-		/// <param name="tagName">ignored</param>
-		public ProgressBar(string tagName) : base(tagName)
-		{
-			ViewState["inline"] = false;
-		}
 		
 		protected override void OnInit(EventArgs e)
 		{
@@ -139,7 +130,7 @@ namespace Brettle.Web.NeatUpload
 			
 			if (Inline)
 			{
-				TagName = "iframe";					
+				Tag = HtmlTextWriterTag.Iframe;
 				Attributes["src"] = uploadProgressUrl;
 				Attributes["frameborder"] = "0";
 				Attributes["scrolling"] = "no";
@@ -152,7 +143,7 @@ setTimeout(function () {
 			}
 			else
 			{
-				TagName = "div";
+				Tag = HtmlTextWriterTag.Div;
 				displayStatement = @"
 window.open('" + uploadProgressUrl + "&refresher=client', '" + FormContext.Current.PostBackID + @"',
 				'width=500,height=100,directories=no,location=no,menubar=no,resizable=yes,scrollbars=no,status=no,toolbar=no');
@@ -253,12 +244,13 @@ if (NeatUpload_DivNode)
 		{
 			if (IsDesignTime)
 			{
-				TagName = "div";
+				Tag = HtmlTextWriterTag.Div;
 			}
 			else if (!Config.Current.UseHttpModule)
 				return;
 			EnsureChildControls();
-			base.RenderBeginTag(writer);
+			base.AddAttributesToRender(writer);
+			writer.RenderBeginTag(Tag);
 			if (IsDesignTime)
 			{
 				if (Inline)
@@ -283,7 +275,7 @@ if (NeatUpload_DivNode)
 			{
 				writer.Write("<i>}</i>");
 			}
-			base.RenderEndTag(writer);
+			writer.RenderEndTag();
 		}
 		
 		private void RegisterNonUploadButtonScripts(Control control)
