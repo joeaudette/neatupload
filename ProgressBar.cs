@@ -26,6 +26,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
+using System.Security.Permissions;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -39,7 +40,11 @@ namespace Brettle.Web.NeatUpload
 	/// to specify any buttons which should not cause files to be uploaded and should not start the progress
 	/// display (e.g. "Cancel" buttons).
 	/// </remarks>
-	[DefaultProperty("Inline"), ParseChildren(false), PersistChildren(true)]
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[DefaultProperty("Inline")]
+	[ParseChildren(false)]
+	[PersistChildren(true)]
 	public class ProgressBar : System.Web.UI.WebControls.WebControl
 	{
 		private bool IsDesignTime = (HttpContext.Current == null);

@@ -27,6 +27,7 @@ using System.Web.UI.Design;
 using System.ComponentModel;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
+using System.Security.Permissions;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -41,6 +42,8 @@ namespace Brettle.Web.NeatUpload
 	/// This control will function even if the <see cref="UploadHttpModule"/> is not being used.  In that case,
 	/// its methods/properties act on the file in the standard ASP.NET <see cref="HttpRequest.Files"/> collection.
 	/// </remarks>
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[ValidationProperty("ValidationFileName")]
 	public class InputFile : System.Web.UI.WebControls.WebControl, System.Web.UI.IPostBackDataHandler
 	{
