@@ -49,6 +49,16 @@ namespace Brettle.Web.NeatUpload
 				if (uploadContext != null)
 				{
 					uploadBarProgress = Math.Round(uploadContext.PercentComplete).ToString();
+					lock(uploadContext)
+					{
+						sb.Append("fileName: '" + uploadContext.CurrentFileName + "',");
+						sb.Append("uploadedCount: '" + uploadContext.UploadedCount + "',");
+						sb.Append("totalCount: '" + uploadContext.TotalCount + "',");
+						sb.Append("countUnits: '" + uploadContext.CountUnits + "',");
+						sb.Append("percentComplete: '" + Math.Round(uploadContext.PercentComplete) + "',");
+						sb.Append("rate: '" + uploadContext.Rate + "',");
+						sb.Append("rateUnits: '" + uploadContext.RateUnits + "',");
+					}
 					switch (uploadContext.Status)
 					{
 						case UploadStatus.Cancelled:

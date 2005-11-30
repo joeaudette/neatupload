@@ -19,6 +19,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 using System;
+using System.Text;
 using System.Collections;
 using System.IO;
 using System.ComponentModel;
@@ -102,6 +103,19 @@ namespace Brettle.Web.NeatUpload
 			set { ViewState["Triggers"] = value; }
 		}
 		
+		/// <summary>
+		/// URL of an aspx page that displays the upload progress.</summary>
+		/// <remarks>
+		/// The specified page should inherits from the <see cref="Brettle.Web.NeatUpload.Progress"/> code behind class.
+		/// You may use an absolute or relative URL that refers to a page in the same web application.  If the URL
+		/// starts with "~", the "~" will be replaced with the web application root as returned by
+		/// <see cref="HttpRequest.ApplicationPath"/>.  By default, "~/NeatUpload/Progress.aspx" will be used.</remarks>
+		public string Url
+		{
+			get { return (string)ViewState["Url"]; }
+			set { ViewState["Url"] = value; }
+		}
+				
 		protected override void OnInit(EventArgs e)
 		{
 			InitializeComponent();
@@ -117,10 +131,16 @@ namespace Brettle.Web.NeatUpload
 			{
 				appPath = "";
 			}
-			uploadProgressUrl = Attributes["src"];
+			uploadProgressUrl = Url;
 			if (uploadProgressUrl == null)
+			{
 				uploadProgressUrl = appPath + "/NeatUpload/Progress.aspx";
-
+			}
+			else if (uploadProgressUrl.StartsWith("~"))
+			{
+				uploadProgressUrl = appPath + uploadProgressUrl.Substring(1);
+			}
+			
 			uploadProgressUrl += "?postBackID=" + FormContext.Current.PostBackID;
 
 			if (Attributes["class"] == null)
@@ -149,9 +169,11 @@ setTimeout(function () {
 			else
 			{
 				Tag = HtmlTextWriterTag.Div;
+				string width = GetPopupDimension("Width", Width, 500);
+				string height = GetPopupDimension("Height", Height, 100);
 				displayStatement = @"
 window.open('" + uploadProgressUrl + "&refresher=client', '" + FormContext.Current.PostBackID + @"',
-				'width=500,height=100,directories=no,location=no,menubar=no,resizable=yes,scrollbars=no,status=no,toolbar=no');
+				'width=" + width + @",height=" + height + @",directories=no,location=no,menubar=no,resizable=yes,scrollbars=auto,status=no,toolbar=no');
 ";
 				this.Page.RegisterStartupScript(this.UniqueID + "RemoveDiv", @"
 <script language=""javascript"">
@@ -162,6 +184,26 @@ if (NeatUpload_DivNode)
 -->
 </script>
 ");
+			}
+		}
+		
+		private string GetPopupDimension(string name, Unit length, int min)
+		{
+			if (length == Unit.Empty)
+			{
+				return min.ToString();
+			}
+			else if (length.Type != UnitType.Pixel)
+			{
+				throw new System.ArgumentOutOfRangeException(name, "must use pixel(px) units");
+			}
+			else if (length.Value < min)
+			{
+				throw new System.ArgumentOutOfRangeException(name, "must be at least " + min + " pixels");
+			}
+			else
+			{
+				return length.ToString();
 			}
 		}
 		
@@ -205,26 +247,53 @@ if (NeatUpload_DivNode)
 		{
 			if (IsDesignTime || !Config.Current.UseHttpModule)
 				return;
+			
+			HtmlControl formControl = GetFormControl(this);
+			
+			if (!Page.IsClientScriptBlockRegistered("NeatUploadProgressBar"))
+			{
+				Page.RegisterClientScriptBlock("NeatUploadProgressBar", clientScript);
+			}
+			
+			this.Page.RegisterStartupScript(formControl.UniqueID + "-OnSubmit", @"
+<script language=""javascript"">
+<!--
+function NeatUpload_OnSubmitForm_" + formControl.ClientID + @"()
+{
+	var elem = document.getElementById('" + formControl.ClientID + @"');
+	elem.NeatUpload_OnSubmit();
+}
 
+document.getElementById('" + formControl.ClientID + @"').onsubmit 
+	= NeatUpload_CombineHandlers(document.getElementById('" + formControl.ClientID + @"').onsubmit, NeatUpload_OnSubmitForm_" + formControl.ClientID + @");
+-->
+</script>
+");
+
+			StringBuilder scriptBuilder = new StringBuilder();
+			scriptBuilder.Append(@"
+<script language=""javascript"">
+<!--
+");
+			AddPerProgressBarScripts(scriptBuilder, formControl);
+			
 			ArrayList nonUploadButtonIDs = new ArrayList(); // IDs of buttons refed by NonUploadButtons property
 			if (NonUploadButtons != null)
 			{
 				nonUploadButtonIDs.AddRange(NonUploadButtons.Split(' '));
 			}
-			if (nonUploadButtonIDs.Count + otherNonUploadButtons.Count > 0)
+			foreach (string buttonID in nonUploadButtonIDs)
 			{
-				foreach (string buttonID in nonUploadButtonIDs)
-				{
-					Control c = NamingContainer.FindControl(buttonID);
-					if (c == null)
-						continue;
-					RegisterNonUploadButtonScripts(c);
-				}
-				foreach (Control c in otherNonUploadButtons)
-				{
-					RegisterNonUploadButtonScripts(c);
-				}
+				Control c = NamingContainer.FindControl(buttonID);
+				if (c == null)
+					continue;
+				AddNonUploadButtonScripts(scriptBuilder, c);
 			}
+			foreach (Control c in otherNonUploadButtons)
+			{
+				AddNonUploadButtonScripts(scriptBuilder, c);
+			}
+			
 			ArrayList triggerIDs = new ArrayList(); // IDs of controls refed by Triggers property
 			if (Triggers != null)
 			{
@@ -235,14 +304,18 @@ if (NeatUpload_DivNode)
 				Control c = NamingContainer.FindControl(buttonID);
 				if (c == null)
 					continue;
-				RegisterTriggerScripts(c);
+				AddTriggerScripts(scriptBuilder, c);
 			}
 			foreach (Control c in otherTriggers)
 			{
-				RegisterTriggerScripts(c);
+				AddTriggerScripts(scriptBuilder, c);
 			}
-			HtmlControl formControl = GetFormControl(this);
-			RegisterScriptsForForm(formControl);
+			
+			scriptBuilder.Append(@"
+// -->
+</script>
+");
+			Page.RegisterStartupScript(this.UniqueID, scriptBuilder.ToString());
 		}
 
 		protected override void Render(HtmlTextWriter writer)
@@ -284,43 +357,6 @@ if (NeatUpload_DivNode)
 			writer.RenderEndTag();
 		}
 		
-		private void RegisterNonUploadButtonScripts(Control control)
-		{
-			if (!Config.Current.UseHttpModule)
-				return;
-			
-			HtmlControl formControl = GetFormControl(control);
-			
-			RegisterScriptsForForm(formControl);
-			this.Page.RegisterStartupScript(this.UniqueID + "-AddNonUploadButton-" + control.UniqueID, @"
-<script language=""javascript"">
-<!--
-NeatUpload_NonUploadIDs_" + this.ClientID + @"['" + control.ClientID + @"'] 
-	= ++NeatUpload_NonUploadIDs_" + this.ClientID + @".NeatUpload_length;
-// -->
-</script>
-");			
-		}
-
-		private void RegisterTriggerScripts(Control control)
-		{
-			if (!Config.Current.UseHttpModule)
-				return;
-			
-			HtmlControl formControl = GetFormControl(control);
-			
-			RegisterScriptsForForm(formControl);
-
-			this.Page.RegisterStartupScript(this.UniqueID + "-AddTrigger-" + control.UniqueID, @"
-<script language=""javascript"">
-<!--
-NeatUpload_TriggerIDs_" + this.ClientID + @"['" + control.ClientID + @"'] 
-	= ++NeatUpload_TriggerIDs_" + this.ClientID + @".NeatUpload_length;
--->
-</script>
-");			
-		}
-
 		private HtmlControl GetFormControl(Control control)
 		{
 			HtmlControl formControl = null;
@@ -333,26 +369,9 @@ NeatUpload_TriggerIDs_" + this.ClientID + @"['" + control.ClientID + @"']
 			return formControl;
 		}
 
-		private void RegisterScriptsForForm(Control formControl)
+		private void AddPerProgressBarScripts(StringBuilder scriptBuilder, Control formControl)
 		{
-			this.Page.RegisterStartupScript(formControl.UniqueID + "-OnSubmit", @"
-<script language=""javascript"">
-<!--
-function NeatUpload_OnSubmitForm_" + formControl.ClientID + @"()
-{
-	var elem = document.getElementById('" + formControl.ClientID + @"');
-	elem.NeatUpload_OnSubmit();
-}
-
-document.getElementById('" + formControl.ClientID + @"').onsubmit 
-	= NeatUpload_CombineHandlers(document.getElementById('" + formControl.ClientID + @"').onsubmit, NeatUpload_OnSubmitForm_" + formControl.ClientID + @");
--->
-</script>
-");
-
-			this.Page.RegisterStartupScript(this.UniqueID + "-AddHandler", @"
-<script language=""javascript"">
-<!--
+			scriptBuilder.Append(@"
 NeatUpload_AddSubmitHandler('" + formControl.ClientID + "'," + (Inline ? "false" : "true") + @", function () {
 	if (NeatUpload_IsFilesToUpload('" + formControl.ClientID + @"'))
 	{
@@ -408,16 +427,30 @@ NeatUpload_AddHandler('" + formControl.ClientID + @"', 'click', function (ev) {
 		NeatUpload_ClearFileInputs(formElem);
 	}
 });
--->
-</script>
 ");
-			if (!this.Page.IsClientScriptBlockRegistered("NeatUploadProgressBar"))
-			{
-				this.Page.RegisterClientScriptBlock("NeatUploadProgressBar", clientScript);
-			}
 		}
 
 		
+		private void AddNonUploadButtonScripts(StringBuilder scriptBuilder, Control control)
+		{
+			if (!Config.Current.UseHttpModule)
+				return;
+			
+			scriptBuilder.Append(@"NeatUpload_NonUploadIDs_" + this.ClientID + @"['" + control.ClientID + @"'] 
+	= ++NeatUpload_NonUploadIDs_" + this.ClientID + @".NeatUpload_length;
+");			
+		}
+
+		private void AddTriggerScripts(StringBuilder scriptBuilder, Control control)
+		{
+			if (!Config.Current.UseHttpModule)
+				return;
+			
+			scriptBuilder.Append(@"NeatUpload_TriggerIDs_" + this.ClientID + @"['" + control.ClientID + @"'] 
+	= ++NeatUpload_TriggerIDs_" + this.ClientID + @".NeatUpload_length;
+");			
+		}
+
 		private string clientScript = @"
 <script language=""javascript"">
 <!--

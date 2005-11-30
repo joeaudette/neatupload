@@ -86,7 +86,10 @@ namespace Brettle.Web.NeatUpload
 			if (log.IsDebugEnabled) log.Debug("In CreateUploadedFile() controlUniqueID=" + controlUniqueID);
 			UploadedFile uploadedFile 
 				= UploadStorage.CreateUploadedFile(this, controlUniqueID, fileName, contentType);			
-			uploadedFiles[controlUniqueID] = uploadedFile;
+				uploadedFiles[controlUniqueID] = uploadedFile;
+			
+			if (fileName != null && fileName != string.Empty)
+				CurrentFileName = fileName;
 			
 			// Set the PostBackID from the fileID
 			PostBackID = fileID.Substring(0, dashIndex);
@@ -209,6 +212,82 @@ namespace Brettle.Web.NeatUpload
 				}
 			}
 		}
+		
+		private string currentFileName = "";
+		internal string CurrentFileName
+		{
+			get { lock(this) { return currentFileName; } }
+			set { lock(this) { currentFileName = value; } }
+		}
+		
+		
+		// NOTE: Callers should lock() this UploadContext object while retrieving the following values to ensure that
+		// they are self-consistent.
+		internal string CountUnits
+		{
+			get { return UnitsArray[GetReadablePowerOf1024(ContentLength)]; }
+		}
+		
+		internal long UploadedCount
+		{
+			get { return BytesRead >> (10 * GetReadablePowerOf1024(ContentLength)); }
+		}
+		
+		internal long TotalCount
+		{
+			get { return ContentLength >> (10 * GetReadablePowerOf1024(ContentLength)); }
+		}
+		
+		internal int Rate
+		{
+			get
+			{
+				return BytesPerSec >> (10 * GetReadablePowerOf1024(BytesPerSec));
+			}
+		}
+		
+		internal string RateUnits
+		{
+			get
+			{
+				return UnitsArray[GetReadablePowerOf1024(BytesPerSec)];
+			}
+		}					
+		
+		private string[] UnitsArray = new string[] {"Bytes", "KB", "MB", "GB"};
+				
+		private int GetReadablePowerOf1024(long val)
+		{
+			int result = 0;
+			while ((val >> (10 * result)) > 9999 && result < UnitsArray.Length)
+			{
+				result++;
+			}
+			return result;
+		}
 
+		private long BytesReadAtLastRateUpdate;
+		private DateTime TimeOfLastRateUpdate = DateTime.MinValue;
+		private int _BytesPerSec = 0;
+		private int BytesPerSec
+		{
+			get
+			{
+				TimeSpan timeSinceLastUpdate = DateTime.Now - TimeOfLastRateUpdate;
+				if (Status == UploadStatus.InProgress && timeSinceLastUpdate > TimeSpan.FromSeconds(1))
+				{
+					_BytesPerSec
+						= (int)Math.Round((BytesRead - BytesReadAtLastRateUpdate) / timeSinceLastUpdate.TotalSeconds);
+					BytesReadAtLastRateUpdate = BytesRead;
+					TimeOfLastRateUpdate = DateTime.Now;
+				}
+				else if (Status != UploadStatus.InProgress)
+				{
+					_BytesPerSec
+						= (int)Math.Round(BytesRead / (DateTime.Now - StartTime).TotalSeconds);
+				}
+				return _BytesPerSec;
+			}
+		}
 	}
 }

@@ -36,6 +36,8 @@ namespace Brettle.Web.NeatUpload
 			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 */
 	
+		protected string DynamicStyle;
+
 		protected HtmlGenericControl barDiv;
 		protected HtmlGenericControl statusDiv;
 		protected HtmlGenericControl inProgressSpan;
@@ -52,7 +54,14 @@ namespace Brettle.Web.NeatUpload
 		protected HtmlImage refreshImage;
 		protected HtmlImage stopRefreshImage;
 		protected HtmlImage cancelImage;
-
+		protected HtmlGenericControl fileNameSpan;
+		protected HtmlGenericControl uploadedCountSpan;
+		protected HtmlGenericControl totalCountSpan;
+		protected HtmlGenericControl countUnitsSpan;
+		protected HtmlGenericControl percentCompleteSpan;
+		protected HtmlGenericControl rateSpan;
+		protected HtmlGenericControl rateUnitsSpan;
+		
 		private string nonRefreshScriptFuncs = @"<script language=""javascript"">
 <!--
 function NeatUploadGetMainWindow() 
@@ -195,6 +204,30 @@ function NeatUploadUpdateDom(upload)
 		document.getElementById(""barDiv"").style.width = upload.progress + ""%"";
 	if (typeof( upload.remainingtime ) != ""undefined"")
 		document.getElementById(""remainingTimeSpan"").innerHTML = upload.remainingtime;
+	
+	var detailElem;
+	if (typeof( upload.fileName ) != ""undefined""
+	     && (detailElem = document.getElementById(""fileNameSpan"")))
+		detailElem.innerHTML = upload.fileName;
+	if (typeof( upload.uploadedCount ) != ""undefined""
+	     && (detailElem = document.getElementById(""uploadedCountSpan"")))
+		detailElem.innerHTML = upload.uploadedCount;
+	if (typeof( upload.totalCount ) != ""undefined""
+	     && (detailElem = document.getElementById(""totalCountSpan"")))
+		detailElem.innerHTML = upload.totalCount;
+	if (typeof( upload.countUnits ) != ""undefined""
+	     && (detailElem = document.getElementById(""countUnitsSpan"")))
+		detailElem.innerHTML = upload.countUnits;
+	if (typeof( upload.percentComplete ) != ""undefined""
+	     && (detailElem = document.getElementById(""percentCompleteSpan"")))
+		detailElem.innerHTML = upload.percentComplete;
+	if (typeof( upload.rate ) != ""undefined""
+	     && (detailElem = document.getElementById(""rateSpan"")))
+		detailElem.innerHTML = upload.rate;
+	if (typeof( upload.rateUnits ) != ""undefined""
+	     && (detailElem = document.getElementById(""rateUnitsSpan"")))
+	    detailElem.innerHTML = upload.rateUnits;
+	
 	if (typeof( upload.status ) != ""undefined"" && upload.status == ""inprogress"")
 	{
 		var lastMillis = NeatUploadLastUpdate.getTime();
@@ -329,18 +362,28 @@ if (NeatUploadCanCancel())
 
 		private void UpdateProgressBar(UploadContext uploadContext)
 		{
-			inProgressSpan.Visible = false;
-			completedSpan.Visible = false;
-			cancelledSpan.Visible = false;
-			if (rejectedSpan != null)
+			DynamicStyle = ".UploadDetails { display: none; }";
+			
+			HtmlGenericControl[] spans = new HtmlGenericControl[]
 			{
-				rejectedSpan.Visible = false;
-			}
-			if (errorSpan != null)
+				inProgressSpan,
+				completedSpan,
+				cancelledSpan,
+				rejectedSpan,
+				errorSpan,
+				fileNameSpan,
+				uploadedCountSpan,
+				totalCountSpan,
+				countUnitsSpan,
+				percentCompleteSpan,
+				rateSpan,
+				rateUnitsSpan
+			};
+			foreach (HtmlGenericControl s in spans)
 			{
-				errorSpan.Visible = false;
+				if (s != null) s.Visible = false;
 			}
-
+			
 			if (uploadContext == null || uploadContext.Status == UploadStatus.Unknown)
 			{
 				// Status is unknown, so try to find the last post back based on the lastPostBackID param.
@@ -363,19 +406,33 @@ if (NeatUploadCanCancel())
 			else
 			{
 				barDiv.Style["width"] = Math.Round(uploadContext.PercentComplete) + "%";
+				lock(uploadContext)
+				{
+					SetControlText(fileNameSpan, uploadContext.CurrentFileName);
+					SetControlText(uploadedCountSpan, uploadContext.UploadedCount.ToString());
+					SetControlText(totalCountSpan, uploadContext.TotalCount.ToString());
+					SetControlText(countUnitsSpan, uploadContext.CountUnits);
+					SetControlText(percentCompleteSpan, Math.Round(uploadContext.PercentComplete).ToString());
+					SetControlText(rateSpan, uploadContext.Rate.ToString());
+					SetControlText(rateUnitsSpan, uploadContext.RateUnits);
+				}
+				
 				Exception = uploadContext.Exception;
 				if (uploadContext.Status == UploadStatus.Cancelled)
 				{
+					DynamicStyle = "";
 					cancelledSpan.Visible = true;
 				}
 				else if (uploadContext.Status == UploadStatus.InProgress)
 				{
+					DynamicStyle = "";
 					TimeSpan tr = uploadContext.TimeRemaining;
 					remainingTimeSpan.InnerHtml = String.Format("{0:00}:{1:00}", (int)Math.Floor(tr.TotalMinutes), tr.Seconds);
 					inProgressSpan.Visible = true;
 				}
 				else if (uploadContext.Status == UploadStatus.Completed)
 				{
+					DynamicStyle = "";
 					completedSpan.Visible = true;
 				}
 				else if (uploadContext.Status == UploadStatus.Rejected)
@@ -411,6 +468,15 @@ if (NeatUploadCanCancel())
 			}
 		}
 
+		private void SetControlText(HtmlGenericControl c, string text)
+		{
+			if (c != null)
+			{
+				c.Visible = true;
+				c.InnerText = text;
+			}
+		}
+		
 		protected Exception Exception = null;
 		
 		private void Refresh(string refreshUrl)

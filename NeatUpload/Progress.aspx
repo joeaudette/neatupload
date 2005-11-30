@@ -42,6 +42,8 @@
 			height: 100%;
 			width: 75%;
 		}
+		
+		<%= DynamicStyle %>
 -->
 		</style>
 	</Head>
@@ -54,11 +56,18 @@
 		</td>
 		<td id="barTd" >
 			<div id="statusDiv" runat="server" class="StatusMessage">&nbsp;
-				<span id="inProgressSpan" runat="server">Remaining: <span id="remainingTimeSpan" runat="server">00:01</span></span>
-				<span id="completedSpan" runat="server">Upload Complete!</span>
-				<span id="cancelledSpan" runat="server">Upload Cancelled!</span>
-				<span id="rejectedSpan" runat="server">Upload Rejected! <span id="rejectedMessageSpan" runat="server"></span></span>
-				<span id="errorSpan" runat="server">Upload Error! <span id="errorMessageSpan" runat="server"></span></span>
+				<span id="completedSpan" runat="server">Complete: </span>
+				<span id="cancelledSpan" runat="server">Cancelled: </span>
+				<span id="rejectedSpan" runat="server">Rejected: <span id="rejectedMessageSpan" runat="server"></span></span>
+				<span id="errorSpan" runat="server">Error: <span id="errorMessageSpan" runat="server"></span></span>
+				<span class="UploadDetails" style="font-weight: normal;">
+					<span id="uploadedCountSpan" runat="server">??</span>/<span id="totalCountSpan" runat="server">??</span>
+					<span id="countUnitsSpan" runat="server"></span>
+					(<span id="percentCompleteSpan" runat="server">0</span>%)
+					at <span id="rateSpan" runat="server">??</span>
+					<span id="rateUnitsSpan" runat="server"></span>/sec
+					<span id="inProgressSpan" runat="server">- <span id="remainingTimeSpan" runat="server">00:01</span> remain</span>
+				</span>
 				<div id="barDiv" runat="server" class="ProgressBar"></div>
 			</div>
 		</td>
