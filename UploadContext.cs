@@ -225,24 +225,24 @@ namespace Brettle.Web.NeatUpload
 		// they are self-consistent.
 		internal string CountUnits
 		{
-			get { return UnitsArray[GetReadablePowerOf1024(ContentLength)]; }
+			get { return UnitsArray[GetReadablePowerOf1024(ContentLength, 9999)]; }
 		}
 		
 		internal long UploadedCount
 		{
-			get { return BytesRead >> (10 * GetReadablePowerOf1024(ContentLength)); }
+			get { return BytesRead >> (10 * GetReadablePowerOf1024(ContentLength, 9999)); }
 		}
 		
 		internal long TotalCount
 		{
-			get { return ContentLength >> (10 * GetReadablePowerOf1024(ContentLength)); }
+			get { return ContentLength >> (10 * GetReadablePowerOf1024(ContentLength, 9999)); }
 		}
 		
 		internal int Rate
 		{
 			get
 			{
-				return BytesPerSec >> (10 * GetReadablePowerOf1024(BytesPerSec));
+				return BytesPerSec >> (10 * GetReadablePowerOf1024(BytesPerSec, 9999));
 			}
 		}
 		
@@ -250,16 +250,38 @@ namespace Brettle.Web.NeatUpload
 		{
 			get
 			{
-				return UnitsArray[GetReadablePowerOf1024(BytesPerSec)];
+				return UnitsArray[GetReadablePowerOf1024(BytesPerSec, 9999)];
 			}
 		}					
 		
 		private string[] UnitsArray = new string[] {"Bytes", "KB", "MB", "GB"};
-				
-		private int GetReadablePowerOf1024(long val)
+		
+		/// <summary>
+		/// Returns a number that can be used convert a value to more readable units.
+		/// </summary>
+		/// <param name="val">the value to be converted</param>
+		/// <param name="maxNumber">the maximum value considered readable when selecting units</param>
+		/// <returns>a power of 1024 that can be used to index into <see cname="UnitsArray"/> and also
+		/// convert the value to the selected units</returns>
+		/// <remarks>
+		/// To convert 123456789 to readable units of 117 MB:
+		/// <example><code>
+		/// int val = 123456789;
+		/// int index = GetReadablePowerOf1024(val, 9999); // = 2
+		/// int num = val &gt;&gt; (10 * index); // = 117
+		/// string units = UnitsArray[index]; // = "MB"
+		/// </code></example>
+		/// Note:
+		/// <code>
+		///	using maxNumber == 999  means  999 gives "999 Bytes"     but 1000 gives "0 KB"    and 1024 gives "1 KB".
+		///	using maxNumber == 9999  means 9999 gives "9999 Bytes"   but 10000 gives "9 KB"   and 10240 gives "10 KB".
+		/// using maxNumber == 99999 means 99999 gives "99999 Bytes" but 100000 gives "99 KB" and 102400 gives "100 KB".
+		/// </code>
+		/// </remarks>
+		private int GetReadablePowerOf1024(long val, int maxNumber)
 		{
 			int result = 0;
-			while ((val >> (10 * result)) > 9999 && result < UnitsArray.Length)
+			while ((val >> (10 * result)) > maxNumber && result < UnitsArray.Length)
 			{
 				result++;
 			}
@@ -273,18 +295,25 @@ namespace Brettle.Web.NeatUpload
 		{
 			get
 			{
+				if (TimeOfLastRateUpdate == DateTime.MinValue)
+				{
+					TimeOfLastRateUpdate = StartTime;
+				}
 				TimeSpan timeSinceLastUpdate = DateTime.Now - TimeOfLastRateUpdate;
-				if (Status == UploadStatus.InProgress && timeSinceLastUpdate > TimeSpan.FromSeconds(1))
+				// If we're done or we're just starting, use the average rate for all bytes read so far and pretend
+				// at least 1 sec has elapsed to ensure that we don't get outrageous rates.
+				if (Status != UploadStatus.InProgress
+				    || (TimeOfLastRateUpdate == StartTime && timeSinceLastUpdate < TimeSpan.FromSeconds(1)))
+				{
+					return (int)Math.Round(BytesRead / Math.Max((DateTime.Now - StartTime).TotalSeconds, 1.0));
+				}
+				// Otherwise, keep track of the number bytes read over the last second or so.
+				if (timeSinceLastUpdate > TimeSpan.FromSeconds(1))
 				{
 					_BytesPerSec
 						= (int)Math.Round((BytesRead - BytesReadAtLastRateUpdate) / timeSinceLastUpdate.TotalSeconds);
 					BytesReadAtLastRateUpdate = BytesRead;
 					TimeOfLastRateUpdate = DateTime.Now;
-				}
-				else if (Status != UploadStatus.InProgress)
-				{
-					_BytesPerSec
-						= (int)Math.Round(BytesRead / (DateTime.Now - StartTime).TotalSeconds);
 				}
 				return _BytesPerSec;
 			}
