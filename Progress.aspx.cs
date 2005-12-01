@@ -60,7 +60,6 @@ namespace Brettle.Web.NeatUpload
 		protected HtmlGenericControl countUnitsSpan;
 		protected HtmlGenericControl percentCompleteSpan;
 		protected HtmlGenericControl rateSpan;
-		protected HtmlGenericControl rateUnitsSpan;
 		
 		private string nonRefreshScriptFuncs = @"<script language=""javascript"">
 <!--
@@ -224,9 +223,6 @@ function NeatUploadUpdateDom(upload)
 	if (typeof( upload.rate ) != ""undefined""
 	     && (detailElem = document.getElementById(""rateSpan"")))
 		detailElem.innerHTML = upload.rate;
-	if (typeof( upload.rateUnits ) != ""undefined""
-	     && (detailElem = document.getElementById(""rateUnitsSpan"")))
-	    detailElem.innerHTML = upload.rateUnits;
 	
 	if (typeof( upload.status ) != ""undefined"" && upload.status == ""inprogress"")
 	{
@@ -376,8 +372,7 @@ if (NeatUploadCanCancel())
 				totalCountSpan,
 				countUnitsSpan,
 				percentCompleteSpan,
-				rateSpan,
-				rateUnitsSpan
+				rateSpan
 			};
 			foreach (HtmlGenericControl s in spans)
 			{
@@ -409,12 +404,11 @@ if (NeatUploadCanCancel())
 				lock(uploadContext)
 				{
 					SetControlText(fileNameSpan, uploadContext.CurrentFileName);
-					SetControlText(uploadedCountSpan, uploadContext.UploadedCount.ToString());
-					SetControlText(totalCountSpan, uploadContext.TotalCount.ToString());
+					SetControlText(uploadedCountSpan, uploadContext.FormatCount(uploadContext.BytesRead));
+					SetControlText(totalCountSpan, uploadContext.FormatCount(uploadContext.ContentLength));
 					SetControlText(countUnitsSpan, uploadContext.CountUnits);
 					SetControlText(percentCompleteSpan, Math.Round(uploadContext.PercentComplete).ToString());
-					SetControlText(rateSpan, uploadContext.Rate.ToString());
-					SetControlText(rateUnitsSpan, uploadContext.RateUnits);
+					SetControlText(rateSpan, uploadContext.FormattedRate);
 				}
 				
 				Exception = uploadContext.Exception;

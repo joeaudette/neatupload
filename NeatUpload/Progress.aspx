@@ -61,11 +61,10 @@
 				<span id="rejectedSpan" runat="server">Rejected: <span id="rejectedMessageSpan" runat="server"></span></span>
 				<span id="errorSpan" runat="server">Error: <span id="errorMessageSpan" runat="server"></span></span>
 				<span class="UploadDetails" style="font-weight: normal;">
-					<span id="uploadedCountSpan" runat="server">??</span>/<span id="totalCountSpan" runat="server">??</span>
-					<span id="countUnitsSpan" runat="server"></span>
+					<span id="uploadedCountSpan" runat="server">0</span>/<span id="totalCountSpan" runat="server">0</span>
+					<span id="countUnitsSpan" runat="server">KB</span>
 					(<span id="percentCompleteSpan" runat="server">0</span>%)
-					at <span id="rateSpan" runat="server">??</span>
-					<span id="rateUnitsSpan" runat="server"></span>/sec
+					at <span id="rateSpan" runat="server">0 KB/s</span>
 					<span id="inProgressSpan" runat="server">- <span id="remainingTimeSpan" runat="server">00:01</span> remain</span>
 				</span>
 				<div id="barDiv" runat="server" class="ProgressBar"></div>

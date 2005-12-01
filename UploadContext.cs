@@ -221,72 +221,57 @@ namespace Brettle.Web.NeatUpload
 		}
 		
 		
-		// NOTE: Callers should lock() this UploadContext object while retrieving the following values to ensure that
-		// they are self-consistent.
+		// NOTE: Callers should maintain a lock() on this UploadContext object while retrieving both the CountUnits and
+		// calling FormatCount to ensure they are self-consistent.
+		internal string FormatCount(long count)
+		{
+			lock(this)
+			{
+				string format;
+				if (ContentLength < 1000)
+					format = Config.Current.ResourceManager.GetString("ByteCountFormat");
+				else if (ContentLength < 1000*1000)
+					format = Config.Current.ResourceManager.GetString("KBCountFormat");
+				else
+					format = Config.Current.ResourceManager.GetString("MBCountFormat");
+				return String.Format(format, count);
+			}
+		}
+				
 		internal string CountUnits
-		{
-			get { return UnitsArray[GetReadablePowerOf1024(ContentLength, 9999)]; }
-		}
-		
-		internal long UploadedCount
-		{
-			get { return BytesRead >> (10 * GetReadablePowerOf1024(ContentLength, 9999)); }
-		}
-		
-		internal long TotalCount
-		{
-			get { return ContentLength >> (10 * GetReadablePowerOf1024(ContentLength, 9999)); }
-		}
-		
-		internal int Rate
 		{
 			get
 			{
-				return BytesPerSec >> (10 * GetReadablePowerOf1024(BytesPerSec, 9999));
+				lock(this)
+				{
+					if (ContentLength < 1000)
+						return Config.Current.ResourceManager.GetString("ByteUnits");
+					else if (ContentLength < 1000*1000)
+						return Config.Current.ResourceManager.GetString("KBUnits");
+					else
+						return Config.Current.ResourceManager.GetString("MBUnits");
+				}
 			}
 		}
 		
-		internal string RateUnits
+		internal string FormattedRate
 		{
 			get
 			{
-				return UnitsArray[GetReadablePowerOf1024(BytesPerSec, 9999)];
+				lock(this)
+				{
+					string format;
+					if (BytesPerSec < 1000)
+						format = Config.Current.ResourceManager.GetString("ByteRateFormat");
+					else if (BytesPerSec < 1000*1000)
+						format = Config.Current.ResourceManager.GetString("KBRateFormat");
+					else
+						format = Config.Current.ResourceManager.GetString("MBRateFormat");
+					return String.Format(format, BytesPerSec);
+				}
 			}
 		}					
 		
-		private string[] UnitsArray = new string[] {"Bytes", "KB", "MB", "GB"};
-		
-		/// <summary>
-		/// Returns a number that can be used convert a value to more readable units.
-		/// </summary>
-		/// <param name="val">the value to be converted</param>
-		/// <param name="maxNumber">the maximum value considered readable when selecting units</param>
-		/// <returns>a power of 1024 that can be used to index into <see cname="UnitsArray"/> and also
-		/// convert the value to the selected units</returns>
-		/// <remarks>
-		/// To convert 123456789 to readable units of 117 MB:
-		/// <example><code>
-		/// int val = 123456789;
-		/// int index = GetReadablePowerOf1024(val, 9999); // = 2
-		/// int num = val &gt;&gt; (10 * index); // = 117
-		/// string units = UnitsArray[index]; // = "MB"
-		/// </code></example>
-		/// Note:
-		/// <code>
-		///	using maxNumber == 999  means  999 gives "999 Bytes"     but 1000 gives "0 KB"    and 1024 gives "1 KB".
-		///	using maxNumber == 9999  means 9999 gives "9999 Bytes"   but 10000 gives "9 KB"   and 10240 gives "10 KB".
-		/// using maxNumber == 99999 means 99999 gives "99999 Bytes" but 100000 gives "99 KB" and 102400 gives "100 KB".
-		/// </code>
-		/// </remarks>
-		private int GetReadablePowerOf1024(long val, int maxNumber)
-		{
-			int result = 0;
-			while ((val >> (10 * result)) > maxNumber && result < UnitsArray.Length)
-			{
-				result++;
-			}
-			return result;
-		}
 
 		private long BytesReadAtLastRateUpdate;
 		private DateTime TimeOfLastRateUpdate = DateTime.MinValue;

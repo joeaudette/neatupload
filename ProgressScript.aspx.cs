@@ -52,12 +52,11 @@ namespace Brettle.Web.NeatUpload
 					lock(uploadContext)
 					{
 						sb.Append("fileName: '" + uploadContext.CurrentFileName + "',");
-						sb.Append("uploadedCount: '" + uploadContext.UploadedCount + "',");
-						sb.Append("totalCount: '" + uploadContext.TotalCount + "',");
+						sb.Append("uploadedCount: '" + uploadContext.FormatCount(uploadContext.BytesRead) + "',");
+						sb.Append("totalCount: '" + uploadContext.FormatCount(uploadContext.ContentLength) + "',");
 						sb.Append("countUnits: '" + uploadContext.CountUnits + "',");
 						sb.Append("percentComplete: '" + Math.Round(uploadContext.PercentComplete) + "',");
-						sb.Append("rate: '" + uploadContext.Rate + "',");
-						sb.Append("rateUnits: '" + uploadContext.RateUnits + "',");
+						sb.Append("rate: '" + uploadContext.FormattedRate + "',");
 					}
 					switch (uploadContext.Status)
 					{
