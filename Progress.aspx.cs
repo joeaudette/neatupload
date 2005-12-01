@@ -400,14 +400,14 @@ if (NeatUploadCanCancel())
 			}
 			else
 			{
-				barDiv.Style["width"] = Math.Round(uploadContext.PercentComplete) + "%";
+				barDiv.Style["width"] = Math.Round(uploadContext.FractionComplete * 100) + "%";
 				lock(uploadContext)
 				{
 					SetControlText(fileNameSpan, uploadContext.CurrentFileName);
 					SetControlText(uploadedCountSpan, uploadContext.FormatCount(uploadContext.BytesRead));
 					SetControlText(totalCountSpan, uploadContext.FormatCount(uploadContext.ContentLength));
 					SetControlText(countUnitsSpan, uploadContext.CountUnits);
-					SetControlText(percentCompleteSpan, Math.Round(uploadContext.PercentComplete).ToString());
+					SetControlText(percentCompleteSpan, uploadContext.FormattedPercentComplete);
 					SetControlText(rateSpan, uploadContext.FormattedRate);
 				}
 				
@@ -420,8 +420,7 @@ if (NeatUploadCanCancel())
 				else if (uploadContext.Status == UploadStatus.InProgress)
 				{
 					DynamicStyle = "";
-					TimeSpan tr = uploadContext.TimeRemaining;
-					remainingTimeSpan.InnerHtml = String.Format("{0:00}:{1:00}", (int)Math.Floor(tr.TotalMinutes), tr.Seconds);
+					remainingTimeSpan.InnerText = uploadContext.FormattedTimeRemaining;
 					inProgressSpan.Visible = true;
 				}
 				else if (uploadContext.Status == UploadStatus.Completed)

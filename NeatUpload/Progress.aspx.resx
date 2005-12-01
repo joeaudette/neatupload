@@ -40,13 +40,17 @@
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
 	<data name="UploadTooLargeMessageFormat"><value>Total size &gt; {0} bytes</value></data>
-	<data name="ByteCountFormat"><value>{0:0}</value></data>
-	<data name="KBCountFormat"><value>{0:0,.#}</value></data>
-	<data name="MBCountFormat"><value>{0:0,,.##}</value></data>
-	<data name="ByteUnits"><value>Bytes</value></data>
+	<data name="ByteCountFormat"><value>{0:0,.0}</value></data>
+	<data name="KBCountFormat"><value>{0:0,.0}</value></data>
+	<data name="MBCountFormat"><value>{0:0,,.00}</value></data>
+	<data name="ByteUnits"><value>KB</value></data>
 	<data name="KBUnits"><value>KB</value></data>
 	<data name="MBUnits"><value>MB</value></data>
-	<data name="ByteRateFormat"><value>{0:0} Bytes/s</value></data>
-	<data name="KBRateFormat"><value>{0:0,.#} KB/s</value></data>
-	<data name="MBRateFormat"><value>{0:0,,.##} MB/s</value></data>
+	<data name="PercentCompleteFormat"><value>{0:0%}</value></data>
+	<data name="ByteRateFormat"><value>{0:0,.0} KB/s</value></data>
+	<data name="KBRateFormat"><value>{0:0,.0} KB/s</value></data>
+	<data name="MBRateFormat"><value>{0:0,,.00} MB/s</value></data>
+	<data name="SecondsRemainingFormat"><value>{1:00}:{2:00} left</value></data>
+	<data name="MinutesRemainingFormat"><value>{1:00}:{2:00} left</value></data>
+	<data name="HoursRemainingFormat"><value>{3:0.0}h left</value></data>
 </root>

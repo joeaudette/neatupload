@@ -139,7 +139,7 @@ namespace Brettle.Web.NeatUpload
 			}
 		}	
 		
-		internal double PercentComplete
+		internal double FractionComplete
 		{
 			get 
 			{
@@ -149,7 +149,7 @@ namespace Brettle.Web.NeatUpload
 					{
 						return 0;
 					}
-					return BytesRead * 100.0 / ContentLength; 
+					return (double)BytesRead / ContentLength; 
 				}
 			}
 		}
@@ -272,7 +272,41 @@ namespace Brettle.Web.NeatUpload
 			}
 		}					
 		
+		internal string FormattedTimeRemaining
+		{
+			get
+			{
+				lock(this)
+				{
+					string format;
+					if (TimeRemaining.TotalSeconds < 60)
+						format = Config.Current.ResourceManager.GetString("SecondsRemainingFormat");
+					else if (TimeRemaining.TotalSeconds < 60*60)
+						format = Config.Current.ResourceManager.GetString("MinutesRemainingFormat");
+					else
+						format = Config.Current.ResourceManager.GetString("HoursRemainingFormat");
+					return String.Format(format,
+					                          (int)Math.Floor(TimeRemaining.TotalHours),
+					                          (int)Math.Floor(TimeRemaining.TotalMinutes),
+					                          TimeRemaining.Seconds,
+					                          TimeRemaining.TotalHours,
+					                          TimeRemaining.TotalMinutes);
+				}
+			}
+		}					
 
+		internal string FormattedPercentComplete
+		{
+			get
+			{
+				lock(this)
+				{
+					return String.Format(Config.Current.ResourceManager.GetString("PercentCompleteFormat"),
+					                     FractionComplete);
+				}
+			}
+		}					
+		
 		private long BytesReadAtLastRateUpdate;
 		private DateTime TimeOfLastRateUpdate = DateTime.MinValue;
 		private int _BytesPerSec = 0;

@@ -45,18 +45,18 @@ namespace Brettle.Web.NeatUpload
 				}
 
 				string uploadBarProgress;
-				string remainingTimeSpan;
 				if (uploadContext != null)
 				{
-					uploadBarProgress = Math.Round(uploadContext.PercentComplete).ToString();
+					uploadBarProgress = Math.Round(uploadContext.FractionComplete * 100).ToString();
 					lock(uploadContext)
 					{
 						sb.Append("fileName: '" + uploadContext.CurrentFileName + "',");
 						sb.Append("uploadedCount: '" + uploadContext.FormatCount(uploadContext.BytesRead) + "',");
 						sb.Append("totalCount: '" + uploadContext.FormatCount(uploadContext.ContentLength) + "',");
 						sb.Append("countUnits: '" + uploadContext.CountUnits + "',");
-						sb.Append("percentComplete: '" + Math.Round(uploadContext.PercentComplete) + "',");
+						sb.Append("percentComplete: '" + uploadContext.FormattedPercentComplete + "',");
 						sb.Append("rate: '" + uploadContext.FormattedRate + "',");
+						sb.Append("remainingtime: '" + uploadContext.FormattedTimeRemaining + "',");
 					}
 					switch (uploadContext.Status)
 					{
@@ -64,11 +64,8 @@ namespace Brettle.Web.NeatUpload
 							sb.Append("status: 'cancelled',");
 							break;
 						case UploadStatus.InProgress:
-							TimeSpan tr = uploadContext.TimeRemaining;
-							remainingTimeSpan = String.Format("{0:00}:{1:00}", (int) Math.Floor(tr.TotalMinutes), tr.Seconds);
 							sb.Append("status: 'inprogress',");
 							sb.Append("progress: '" + uploadBarProgress + "',");
-							sb.Append("remainingtime: '" + remainingTimeSpan + "',");
 							break;
 						case UploadStatus.Completed:
 
