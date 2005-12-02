@@ -79,7 +79,7 @@ namespace Brettle.Web.NeatUpload
 		/// <see cref="AddNonUploadButton"/>).  This means that in most cases you can simply specify one or more
 		/// triggers and not worry about specifying non-upload controls unless you have controls other than links and
 		/// submit buttons that cause the form to submit.</remarks>  
-		public string NonUploadButtons
+		private string NonUploadButtons
 		{
 			get { return (string)ViewState["NonUploadButtons"]; }
 			set { ViewState["NonUploadButtons"] = value; }
@@ -89,14 +89,10 @@ namespace Brettle.Web.NeatUpload
 		/// Space-separated list of the IDs of controls which should upload files and start the progress 
 		/// display. </summary>
 		/// <remarks>
-		/// If no triggers are listed in <see cref="Triggers"/> or added via <see cref="AddTrigger"/> then any control
-		/// other than those listed in <see cref="NonUploadButtons"/> or added via <see cref="AddNonUploadButton"/>
-		/// will be considered a trigger and will upload files and start the progress display.  If you do specify
-		/// one or more triggers, then all links and submit buttons <i>other</i> than those triggers will be considered
-		/// non-upload controls (in addition to any controls listed in <see cref="NonUploadButtons"/> or added via
-		/// <see cref="AddNonUploadButton"/>).  This means that in most cases you can simply specify one or more
-		/// triggers and not worry about specifying non-upload controls unless you have controls other than links and
-		/// submit buttons that cause the form to submit.</remarks>  
+		/// If no triggers are listed in <see cref="Triggers"/> or added via <see cref="AddTrigger"/> then whenever
+		/// the form is submitted with any files selected the progress display will start.  If you do specify
+		/// one or more triggers, then any form submissions initiated via any other controls that you didn't specify
+		/// as triggers will <i>not</i> include any files and will <i>not</i> start the progress display.</remarks>  
 		public string Triggers
 		{
 			get { return (string)ViewState["Triggers"]; }
@@ -238,7 +234,7 @@ if (NeatUpload_DivNode)
 		/// for each request, not just non-postback requests.  Also, you can use both this method and the
 		/// <see cref="NonUploadButtons"/> property for the same control.
 		/// </remarks>
-		public void AddNonUploadButton(Control control)
+		private void AddNonUploadButton(Control control)
 		{
 			otherNonUploadButtons.Add(control);
 		}
@@ -372,61 +368,84 @@ document.getElementById('" + formControl.ClientID + @"').onsubmit
 		private void AddPerProgressBarScripts(StringBuilder scriptBuilder, Control formControl)
 		{
 			scriptBuilder.Append(@"
+NeatUpload_NonUploadIDs_" + this.ClientID + @" = new Object();
+NeatUpload_NonUploadIDs_" + this.ClientID + @".NeatUpload_length = 0;
+NeatUpload_TriggerIDs_" + this.ClientID + @" = new Object();
+NeatUpload_TriggerIDs_" + this.ClientID + @".NeatUpload_length = 0;
+NeatUpload_LastEventSourceId = null;
+NeatUpload_LastEventType = null;
+
 NeatUpload_AddSubmitHandler('" + formControl.ClientID + "'," + (Inline ? "false" : "true") + @", function () {
 	if (NeatUpload_IsFilesToUpload('" + formControl.ClientID + @"'))
 	{
 		" + displayStatement + @"
 	}
 });
-
-NeatUpload_NonUploadIDs_" + this.ClientID + @" = new Object();
-NeatUpload_NonUploadIDs_" + this.ClientID + @".NeatUpload_length = 0;
-NeatUpload_TriggerIDs_" + this.ClientID + @" = new Object();
-NeatUpload_TriggerIDs_" + this.ClientID + @".NeatUpload_length = 0;
 						
-NeatUpload_AddHandler('" + formControl.ClientID + @"', 'click', function (ev) {
-	if (!ev)
+NeatUpload_EventsThatCouldTriggerPostBack = ['click', 'keypress', 'change', 'drop', 'mousedown', 'keydown'];
+						
+for (var i = 0; i < NeatUpload_EventsThatCouldTriggerPostBack.length; i++)
+{
+	var eventName = NeatUpload_EventsThatCouldTriggerPostBack[i];
+	NeatUpload_AddHandler('" + formControl.ClientID + @"', eventName, function (ev) {
+		ev = ev || window.event;
+		if (!ev)
+		{
+			return true;
+		}
+		var src = ev.srcElement || ev.target;
+		if (!src)
+		{
+			return true;
+		}
+		NeatUpload_LastEventType = ev.type;
+		NeatUpload_LastEventSourceId = src.id;
+		if (ev.type != 'click' && ev.type != 'keypress')
+		{
+			return true;
+		}
+		if (NeatUpload_TriggerIDs_" + this.ClientID + @"[src.id]
+		      || NeatUpload_TriggerIDs_" + this.ClientID + @".NeatUpload_length == 0)
+		{
+			return true;
+		}
+		var tagName = src.tagName;
+		if (!tagName)
+		{
+			return true;
+		}
+		tagName = tagName.toLowerCase();
+		if (tagName == 'input' || tagName == 'button')
+		{
+			var inputType = src.getAttribute('type');
+			if (inputType) inputType = inputType.toLowerCase();
+			if (!inputType || inputType == 'submit' || inputType == 'image')
+			{
+				var formElem = document.getElementById('" + formControl.ClientID + @"');
+				NeatUpload_ClearFileInputs(formElem);
+			}
+		}
+		return true;
+	}, true);
+}
+
+NeatUpload_AddSubmittingHandler('" + formControl.ClientID + @"', function () {
+	if (!NeatUpload_LastEventSourceId)
 	{
 		return;
 	}
-	var src = null;
-	if (ev.srcElement)
-		src = ev.srcElement;
-	else if (ev.target)
-		src = ev.target;
-	if (src == null)
-	{
-		return;
-	}
-	var tagName = src.tagName;
-	if (tagName) tagName = tagName.toLowerCase();
-	if (NeatUpload_TriggerIDs_" + this.ClientID + @"[src.id])
+	if (NeatUpload_TriggerIDs_" + this.ClientID + @"[NeatUpload_LastEventSourceId])
 	{
 		return;
 	}
 	var formElem = document.getElementById('" + formControl.ClientID + @"');
-	if (NeatUpload_NonUploadIDs_" + this.ClientID + @"[src.id])
-	{
-		NeatUpload_ClearFileInputs(formElem);
-	}
-	else if (NeatUpload_TriggerIDs_" + this.ClientID + @".NeatUpload_length == 0)
-	{
-		return;
-	}
-	else if (tagName == 'input' || tagName == 'button')
-	{
-		var inputType = src.getAttribute('type');
-		if (inputType) inputType = inputType.toLowerCase();
-		if (!inputType || inputType == 'submit' || inputType == 'image')
-		{
-			NeatUpload_ClearFileInputs(formElem);
-		}
-	}
-	else if (tagName == 'a' && !src.getAttribute('name')) 
+	if (NeatUpload_NonUploadIDs_" + this.ClientID + @"[NeatUpload_LastEventSourceId]
+	     || NeatUpload_TriggerIDs_" + this.ClientID + @".NeatUpload_length)
 	{
 		NeatUpload_ClearFileInputs(formElem);
 	}
 });
+
 ");
 		}
 
@@ -459,12 +478,14 @@ function NeatUpload_CombineHandlers(origHandler, newHandler)
 	if (!origHandler || typeof(origHandler) == 'undefined') return newHandler;
 	return function(e) { if (origHandler(e) == false) return false; return newHandler(e); };
 };
-function NeatUpload_AddHandler(id, eventName, handler)
+function NeatUpload_AddHandler(id, eventName, handler, useCapture)
 {
+	if (typeof(useCapture) == 'undefined')
+		useCapture = false;
 	var elem = document.getElementById(id);
 	if (elem.addEventListener)
 	{
-		elem.addEventListener(eventName, handler, false);
+		elem.addEventListener(eventName, handler, useCapture);
 	}
 	else if (elem.attachEvent)
 	{
@@ -546,6 +567,7 @@ function NeatUpload_AddSubmitHandler(formID, isPopup, handler)
 		elem.NeatUpload_OrigSubmit = elem.submit;
 		elem.NeatUpload_OnSubmit = NeatUpload_OnSubmit;
 		elem.submit = function () {
+			elem.NeatUpload_OnSubmitting();
 			elem.NeatUpload_OrigSubmit();
 			elem.NeatUpload_OnSubmit();
 		};
@@ -558,6 +580,26 @@ function NeatUpload_AddSubmitHandler(formID, isPopup, handler)
 	{
 		elem.NeatUpload_OnSubmitHandlers.push(handler);
 	}	
+}
+
+function NeatUpload_AddSubmittingHandler(formID, handler)
+{
+	var elem = document.getElementById(formID);
+	if (!elem.NeatUpload_OnSubmittingHandlers) 
+	{
+		elem.NeatUpload_OnSubmittingHandlers = new Array();
+		elem.NeatUpload_OnSubmitting = NeatUpload_OnSubmitting;
+	}
+	elem.NeatUpload_OnSubmittingHandlers.push(handler);
+}
+
+function NeatUpload_OnSubmitting()
+{
+	for (var i=0; i < this.NeatUpload_OnSubmittingHandlers.length; i++)
+	{
+		this.NeatUpload_OnSubmittingHandlers[i].call(this);
+	}
+	return true;
 }
 
 function NeatUpload_OnSubmit()

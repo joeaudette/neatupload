@@ -30,13 +30,22 @@ namespace Brettle.Web.NeatUpload
 	public class Demo : System.Web.UI.Page
 	{	
 		protected HtmlForm form;
+		protected DropDownList progressBarTypeDropDown;
+		protected DropDownList buttonTypeDropDown;
 		protected InputFile inputFile;
 		protected InputFile inputFile2;
+		protected HtmlGenericControl submitButtonSpan;
 		protected Button submitButton;
-		protected LinkButton linkButton;
 		protected Button cancelButton;
+		protected HtmlGenericControl commandButtonSpan;
+		protected Button commandButton;
+		protected Button cancelCommandButton;
+		protected HtmlGenericControl linkButtonSpan;
+		protected LinkButton linkButton;
 		protected LinkButton cancelLinkButton;
 		protected HtmlGenericControl bodyPre;
+		protected HtmlGenericControl inlineProgressBarDiv;
+		protected HtmlGenericControl popupProgressBarDiv;
 		protected ProgressBar progressBar;
 		protected ProgressBar inlineProgressBar;
 		
@@ -53,6 +62,13 @@ namespace Brettle.Web.NeatUpload
 		
 		private void Page_Load(object sender, EventArgs e)
 		{
+			submitButtonSpan.Visible = (buttonTypeDropDown.SelectedValue == "Button");
+			linkButtonSpan.Visible = (buttonTypeDropDown.SelectedValue == "LinkButton");
+			commandButtonSpan.Visible = (buttonTypeDropDown.SelectedValue == "CommandButton");
+			
+			inlineProgressBarDiv.Visible = (progressBarTypeDropDown.SelectedValue == "Inline");
+			popupProgressBarDiv.Visible = (progressBarTypeDropDown.SelectedValue == "Popup");
+			
 			submitButton.Click += new System.EventHandler(this.Button_Clicked);
 			linkButton.Click += new System.EventHandler(this.Button_Clicked);
 
@@ -64,9 +80,6 @@ namespace Brettle.Web.NeatUpload
 			progressBar.AddTrigger(linkButton);
 			inlineProgressBar.AddTrigger(submitButton);
 			inlineProgressBar.AddTrigger(linkButton);
-			
-			// If you have controls that submit the form other than links and submit buttons,
-			// you might also need to use the NonUploadButtons property or AddNonUploadButton() method.
 */
 		}
 
