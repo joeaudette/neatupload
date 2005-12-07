@@ -59,7 +59,7 @@ namespace Brettle.Web.NeatUpload
 		private int parsePos = 0; // Where to get the next byte to parse
 		private byte[] tmpBuffer = new byte[bufferSize];
 		private byte[] boundary;
-		private int origContentLength = 0;
+		private int origContentLength = -1;
 
 		private int entityBodyPos = 0;
 		private bool isParsed = false;
@@ -230,7 +230,7 @@ namespace Brettle.Web.NeatUpload
 */
 			while (writePos < bufferSize 
 					&& 0 < (bytesRead = ReadOrigEntityBody(tmpBuffer, 
-					Math.Min(bufferSize - writePos, origContentLength - grandTotalBytesRead))))
+					(origContentLength == -1) ? (bufferSize - writePos) : Math.Min(bufferSize - writePos, origContentLength - grandTotalBytesRead))))
 			{
 				// Fill the buffer
 				Buffer.BlockCopy(tmpBuffer, 0, buffer, writePos, bytesRead);
@@ -353,7 +353,10 @@ namespace Brettle.Web.NeatUpload
 			origPreloadedBody = OrigWorker.GetPreloadedEntityBody();
 			string contentTypeHeader = OrigWorker.GetKnownRequestHeader(HttpWorkerRequest.HeaderContentType);
 			string contentLengthHeader = OrigWorker.GetKnownRequestHeader(HttpWorkerRequest.HeaderContentLength);
-			origContentLength = Int32.Parse(contentLengthHeader);
+			if (contentLengthHeader != null)
+			{
+				origContentLength = Int32.Parse(contentLengthHeader);
+			}
 
 			if (log.IsDebugEnabled)
 			{

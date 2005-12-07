@@ -208,7 +208,7 @@ if (!NeatUploadCanCancel)
 				{
 					cancelledSpan.Visible = true;
 				}
-				else if (uploadContext.Status == UploadStatus.InProgress)
+				else if (uploadContext.Status == UploadStatus.InProgress && uploadContext.ContentLength >= 0)
 				{
 					TimeSpan tr = uploadContext.TimeRemaining;
 					remainingTimeSpan.InnerHtml = String.Format("{0:00}:{1:00}", (int)Math.Floor(tr.TotalMinutes), tr.Seconds);

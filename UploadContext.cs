@@ -144,7 +144,7 @@ namespace Brettle.Web.NeatUpload
 			{
 				lock (this)
 				{
-					if (ContentLength == 0)
+					if (ContentLength <= 0)
 					{
 						return 0;
 					}
@@ -186,7 +186,7 @@ namespace Brettle.Web.NeatUpload
 			get {
 				lock(this) 
 				{
-					if (BytesRead == 0)
+					if (BytesRead == 0 || ContentLength < 0)
 					{
 						return TimeSpan.MaxValue;
 					}
@@ -197,6 +197,5 @@ namespace Brettle.Web.NeatUpload
 				}
 			}
 		}
-
 	}
 }
