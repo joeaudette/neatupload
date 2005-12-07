@@ -1,86 +1,171 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
 
-<Html>
-	<Head>
-		<Title>NeatUpload Design</Title>
-	</Head>
-	<Body>
-	<h2>Important Note</h2>
-	<p>
+		
+  <title>NeatUpload Design</title>
+</head>
+
+
+	<body>
+
+	
+<h2>Important Note</h2>
+
+	
+<p>
 	This is a work in progress.  I add to it as things come to mind.
 	</p>
-	<h2>Progress Display</h2>
-	<p>
+
+	
+<h2>Progress Display</h2>
+
+	
+<p>
 	The progress display is designed to work under any of the following conditions:
-	<ul>
-		<li>either in an iframe or a pop-up
-		<li>with or without javascript (though better with javascript)
-		<li>with modern browsers (at least Mozilla/Firefox and IE)
-	</ul>
-	The hardest condition is making it work without javascript.
 	</p>
-	<p>
+<ul>
+
+		<li>either in an iframe or a pop-up
+		</li>
+  <li>with or without javascript (though better with javascript)
+		</li>
+  <li>with modern browsers (at least Mozilla/Firefox and IE)
+	</li>
+</ul>
+
+	The hardest condition is making it work without javascript.
+	
+<p></p>
+
+	
+<p>
 	Initially, we make only the refresh button visible.  And we make its url contains
 	"refresher=server" to indicate that the server should do a server-side refresh 
 	if the button is clicked.  Additionally, we register a startup script to remove the
 	refresh button because it is unnecessary if client side scripting is available. 
 	</p>
-	<p>
+
+	
+<p>
 	Initial request includes a postBackID which is used to find the upload context.
 	Page checks status of the upload.  Which is one of:
-	<ul>
+	</p>
+<ul>
+
 		<li>Unknown - the uploaded hasn't started yet or it has finished and been removed.
-		<li>InProgress
-		<li>Completed
-		<li>Cancelled
-	</ul>
+		</li>
+  <li>InProgress
+		</li>
+  <li>Completed
+		</li>
+  <li>Cancelled
+	</li>
+</ul>
+
 	If cancelled=true, we set the status to Cancelled.
 	Page then updates the progress bar.
-	<ul>
+	
+<ul>
+
 		<li>Unknown - try to find the last post back based on the lastPostBackID param.
 			If successful, use the status of the last post back.
-		<li>InProgress - Display time remaining
-		<li>Completed - Display "Upload Completed!"
-		<li>Cancelled - Display "Upload Cancelled!"
-	</ul>
-	</p>
-	<p>
+		</li>
+  <li>InProgress - Display time remaining
+		</li>
+  <li>Completed - Display "Upload Completed!"
+		</li>
+  <li>Cancelled - Display "Upload Cancelled!"
+	</li>
+</ul>
+
+	
+<p></p>
+
+	
+<p>
 	If the status is unchanged from the last refresh and it is Completed or Cancelled,
 	then the page is not refreshed and a startup script is registered to close the window
 	if it's a pop-up.  
 	</p>
-	<p>
+
+	
+<p>
 	Otherwise, if refresh!=false we refresh the page in one second, and add a prevStatus
 	param to the url to track the previous status.  Since we will be refreshing, we hide the
 	refresh link.  
-	<p>
-	<p>
+	</p>
+<p>
+	</p>
+<p>
 	Firefox doesn't do server refreshes of iframes, so we have to do client (ie javascript) 
 	refreshes some times.  Client refreshes
 	are always initiated by an onsubmit event, so we put refresher=client in the progress
 	display url for that event.  Server refreshes are always initiated by a link, so we put
 	refresher=server for those urls. 
 	</p>
-	<p>
+
+	
+<p>
 	If we are going to do a server refresh, we make the "Stop Refresh" button visible and add
 	"refresh=false" to it's url.
 	</p>
-	<p>
+
+	
+<p>
 	If we are going to do a client refresh, we make the "Cancel" button visible, make it's 
 	onclick	handler stop the upload, and add "cancelled=true" to the button
 	link url.  We also register a startup script that hides the "Cancel" button 
-	if the browser doesn't support stopping uploads. 
-	</p>
-	<h2>Thread Safety</h2>
-	<p>
+	if the browser doesn't support stopping uploads.</p>
+<h2>Thoughts on Making the Progress Display Customizable/Localizable</h2>
+<p>The following is not yet implemented.</p>
+<p>For javascript to know how to modify the display using info received
+from server, it needs the following foreach modification: the ID of the
+element, the name of the attribute (null for the content), and the new
+value. &nbsp;The server needs this same info. &nbsp;Server could simply
+send back javascript that modifies the relevant content. &nbsp;The
+server keeps track what needs to be modified via an UploadView attached
+to the UploadContext. &nbsp;Initial request to progress display page
+causes page to create a new UploadView, assign it a GUID, attach it to
+the UploadContext, and put the view GUID in the URL that the javascript
+uses to request the upload status. &nbsp;When responding to the upload
+status request, the server looks up the UploadView, and includes
+javascript in the response that will update the content that needs to
+be modified.</p>
+<p>The developer/designer specifies content to be customized using the
+SpanTemplate or DivTemplate control. &nbsp;If the control has a
+resourceKey attribute, the content of the element is set to the value
+of the specified resource. &nbsp; The control goes through all
+attributes containing "{valueName[:optionalFormat]}" replaces that with
+specified value formatted with the specified format, and saves the
+information associated with the substitution in the UploadView.
+&nbsp;If the control content is all literal, the server replaces any
+such strings with &lt;span id="guid"&gt;formattedValue&lt;/span&gt; and
+notes the ID and substitution to be performed in the UploadView.</p>
+<p>Class ProgressPage provides a virtual CreateUploadView()
+method&nbsp;which can be overriden to create a subclass of UploadView
+that provides new valueNames or new formatting for existing values.
+&nbsp;ProgressPage also provides a virtual GetResourceObject() method
+which by default calls GetResourceManager().GetResourceObject().
+&nbsp;GetResourceManager() is also virtual so that it is easy control
+localization by simply specifying a ResourceManager.</p>
+<h2>Thread Safety</h2>
+
+	
+<p>
 	The only data which is subject to concurrent read and write is the members of UploadContext.  
 	The UploadContext is written to as the upload is received and parsed, and it is read by the
 	ProgressBar control which is typically being displayed in another window while the upload is
 	being received.
 	</p>
-	<p>
+
+	
+<p>
 	To ensure thread safety, UploadContext synchronizes access to all it's members and uses a
 	synchronized Hashtable to store the UploadedFiles objects.  Note that the UploadedFiles objects
 	are never changed after they are added to the Hashtable, so they don't need to be synchronized.
 	</p>
-	</Body>
-</Html>
+
+	
+</body>
+</html>
