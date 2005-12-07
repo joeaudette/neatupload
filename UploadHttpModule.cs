@@ -173,8 +173,6 @@ namespace Brettle.Web.NeatUpload
 			string contentTypeHeader = origWorker.GetKnownRequestHeader(HttpWorkerRequest.HeaderContentType);
 			if (contentTypeHeader != null && contentTypeHeader.StartsWith("multipart/form-data"))
 			{
-				if (contentLengthHeader == null)
-					throw new HttpException(411, "Length Required");
 				subWorker = new FilteringWorkerRequest(origWorker);
 			}
 			else
