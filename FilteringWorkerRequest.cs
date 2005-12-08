@@ -56,13 +56,12 @@ namespace Brettle.Web.NeatUpload
 		private int writePos = 0; // Where to put the next byte read from OrigWorker
 		private int readPos = 0; // Where to get the next byte to put in a stream 
 		private int parsePos = 0; // Where to get the next byte to parse
+		private byte[] tmpBuffer = new byte[bufferSize];
 		private byte[] boundary;
-		private long origContentLength = -1;
+		private long origContentLength = 0;
 
 		private int entityBodyPos = 0;
 		private bool isParsed = false;
-		
-		private EntityBody DecodedBody;
 
 /*		
 		// The following 2 methods are useful for debugging but use them sparingly.
@@ -179,6 +178,44 @@ namespace Brettle.Web.NeatUpload
 
 		private bool doneReading = false;
 		private long grandTotalBytesRead = 0;
+		private int origPreloadedBodyPos = 0;
+		private byte[] origPreloadedBody = null;
+		
+		private int ReadOrigEntityBody(byte[] destBuf, int count)
+		{
+			int totalRead = 0;
+			if (origPreloadedBody != null)
+			{
+				int read = Math.Min(count, origPreloadedBody.Length - origPreloadedBodyPos);
+				if (read > 0) 
+				{
+					Buffer.BlockCopy(origPreloadedBody, origPreloadedBodyPos, destBuf, totalRead, read);
+				}
+				origPreloadedBodyPos += read;
+				if (read < count)
+				{
+					origPreloadedBody = null;
+				}
+				count -= read;
+				totalRead += read;
+			}
+			if (count > 0)
+			{
+				byte[] localBuffer = new byte[count];
+				int read = OrigWorker.ReadEntityBody(localBuffer, count);
+				if (log.IsDebugEnabled)
+				{
+					LogEntityBodyStream.Write(localBuffer, 0, read);
+					LogEntityBodySizesStream.WriteLine(read);
+				}
+				if (read > 0) 
+				{
+					Buffer.BlockCopy(localBuffer, 0, destBuf, totalRead, read);
+				}
+				totalRead += read;
+			}
+			return totalRead;
+		}
 		
 		private int FillBuffer()
 		{
@@ -187,20 +224,22 @@ namespace Brettle.Web.NeatUpload
 			int bytesRead = 0;
 			int totalBytesRead = 0;
 /*
-			if (log.IsDebugEnabled) log.DebugFormat("buffer.Length = {0}, bufferSize = {1}, writePos = {2}, origContentLength = {3}, grandTotalBytesRead = {4}",
-												buffer.Length, bufferSize, writePos, origContentLength, grandTotalBytesRead);
+			if (log.IsDebugEnabled) log.DebugFormat("tmpBuffer.Length = {0}, bufferSize = {1}, writePos = {2}, origContentLength = {3}, grandTotalBytesRead = {4}",
+												tmpBuffer.Length, bufferSize, writePos, origContentLength, grandTotalBytesRead);
 */
 			while (writePos < bufferSize 
-					&& 0 < (bytesRead = DecodedBody.Read(buffer, writePos, bufferSize - writePos)))
+					&& 0 < (bytesRead = ReadOrigEntityBody(tmpBuffer, 
+					(int)Math.Min(bufferSize - writePos, origContentLength - grandTotalBytesRead))))
 			{
 				// Fill the buffer
+				Buffer.BlockCopy(tmpBuffer, 0, buffer, writePos, bytesRead);
 				writePos += bytesRead;
 				totalBytesRead += bytesRead;
 				grandTotalBytesRead += bytesRead;
 				uploadContext.BytesRead = grandTotalBytesRead;
 /*
-				if (log.IsDebugEnabled) log.DebugFormat("buffer.Length = {0}, bufferSize = {1}, writePos = {2}, origContentLength = {3}, grandTotalBytesRead = {4}",
-													buffer.Length, bufferSize, writePos, origContentLength, grandTotalBytesRead);
+				if (log.IsDebugEnabled) log.DebugFormat("tmpBuffer.Length = {0}, bufferSize = {1}, writePos = {2}, origContentLength = {3}, grandTotalBytesRead = {4}",
+													tmpBuffer.Length, bufferSize, writePos, origContentLength, grandTotalBytesRead);
 */
 			}
 			if (bytesRead == 0)
@@ -323,18 +362,10 @@ namespace Brettle.Web.NeatUpload
 		private StreamWriter LogEntityBodySizesStream = null;
 		private void ParseOrThrow()
 		{			
+			origPreloadedBody = OrigWorker.GetPreloadedEntityBody();
 			string contentTypeHeader = OrigWorker.GetKnownRequestHeader(HttpWorkerRequest.HeaderContentType);
 			string contentLengthHeader = OrigWorker.GetKnownRequestHeader(HttpWorkerRequest.HeaderContentLength);
-			string transferEncodingHeader = OrigWorker.GetKnownRequestHeader(HttpWorkerRequest.HeaderTransferEncoding);
-			bool isChunked = false;
-			if (transferEncodingHeader != null && transferEncodingHeader.Trim() == "chunked")
-			{
-				isChunked = true;
-			}
-			if (!isChunked)
-			{
-				origContentLength = Int64.Parse(contentLengthHeader);
-			}
+			origContentLength = Int64.Parse(contentLengthHeader);
 
 			if (log.IsDebugEnabled)
 			{
@@ -342,19 +373,10 @@ namespace Brettle.Web.NeatUpload
 				LogEntityBodyStream = File.Create(logEntityBodyBaseName + ".body");
 				LogEntityBodySizesStream = File.CreateText(logEntityBodyBaseName + ".sizes");
 				LogEntityBodySizesStream.WriteLine(contentTypeHeader);
-				if (isChunked)
-				{
-					LogEntityBodySizesStream.WriteLine(transferEncodingHeader);
-				}
-				else
-				{
-					LogEntityBodySizesStream.WriteLine(contentLengthHeader);
-				}
-				
-				byte[] origPreloadedBody = OrigWorker.GetPreloadedEntityBody();
-
+				LogEntityBodySizesStream.WriteLine(contentLengthHeader);
 				if (origPreloadedBody != null)
 				{
+					LogEntityBodyStream.Write(origPreloadedBody, 0, origPreloadedBody.Length);
 					LogEntityBodySizesStream.WriteLine(origPreloadedBody.Length);
 				}
 				else
@@ -369,19 +391,6 @@ namespace Brettle.Web.NeatUpload
 			if (log.IsDebugEnabled) log.Debug("boundary=" + System.Text.Encoding.ASCII.GetString(boundary));
 
 			preloadedEntityBodyStream = new MemoryStream();
-			if (isChunked)
-			{
-				DechunkedEntityBody dechunkedBody = new DechunkedEntityBody(OrigWorker);
-				dechunkedBody.FoundTrailer += new DechunkedEntityBody.FoundTrailerCallBack(FoundTrailer);
-				DecodedBody = dechunkedBody;
-			}
-			else
-			{
-				DecodedBody = new FixedSizeEntityBody(OrigWorker, origContentLength);
-			}
-			
-			DecodedBody.ReadSome += new EntityBody.ReadSomeCallBack(ReadSome);
-			
 			outputStream = preloadedEntityBodyStream;
 			readPos = writePos = parsePos = 0;
 			while (CopyUntilBoundary())
@@ -473,28 +482,6 @@ namespace Brettle.Web.NeatUpload
 			uploadContext.Status = UploadStatus.Completed;
 		}
 		
-		private void ReadSome(bool isPreloaded, byte[] buffer, int position, int count)
-		{
-			if (log.IsDebugEnabled)
-			{
-				// We write the count of bytes in the preloaded body in ParseOrThrow()
-				if (!isPreloaded)
-				{
-					LogEntityBodySizesStream.WriteLine(count);
-				}
-				LogEntityBodyStream.Write(buffer, position, count);
-			}
-		}
-		
-				
-		private Hashtable Trailers = new Hashtable();
-		private void FoundTrailer(string headerName, string headerValue)
-		{
-			string existingValue = Trailers[headerName] as string;
-			Trailers[headerName] = CombineHeaderValues(existingValue, headerValue);
-		}
-		
-		
 		public override int ReadEntityBody (byte[] buffer, int size)
 		{
 			ParseMultipart();
@@ -503,16 +490,7 @@ namespace Brettle.Web.NeatUpload
 			entityBodyPos += count;
 			return count;
 		}
-		
-		private string CombineHeaderValues(string value1, string value2)
-		{
-			if (value1 == null)
-				return value2;
-			if (value2 != null)
-				value1 = value1 + "," + value2;
-			return value1;
-		}
-			
+
 		public override string GetKnownRequestHeader (int index)
 		{
 			ParseMultipart();
@@ -520,52 +498,9 @@ namespace Brettle.Web.NeatUpload
 			{
 				return preloadedEntityBody.Length.ToString();
 			}
-			string headerValue = OrigWorker.GetKnownRequestHeader (index);
-			string trailerValue = Trailers[HttpWorkerRequest.GetKnownRequestHeaderName(index)] as string;
-			return CombineHeaderValues(headerValue, trailerValue);
-		}
-		
-		public override string GetUnknownRequestHeader (string name)
-		{
-			ParseMultipart();
-			string headerValue = OrigWorker.GetUnknownRequestHeader (name);
-			string trailerValue = Trailers[name] as string;
-			return CombineHeaderValues(headerValue, trailerValue);
+			return OrigWorker.GetKnownRequestHeader (index);
 		}
 
-		public override string [][] GetUnknownRequestHeaders ()
-		{
-			ParseMultipart();
-			Hashtable unknownHeaders = new Hashtable();
-			string [][] origUnknownHeaders = OrigWorker.GetUnknownRequestHeaders ();
-			int i = 0;
-			for (i = 0; i < origUnknownHeaders.Length; i++)
-			{
-				string headerName = origUnknownHeaders[i][0];
-				string existingValue = unknownHeaders[headerName] as string;
-				unknownHeaders[headerName] = CombineHeaderValues(existingValue, origUnknownHeaders[i][1]);
-			}
-			
-			foreach (DictionaryEntry entry in Trailers)
-			{
-				string headerName = entry.Key as string;
-				if (HttpWorkerRequest.GetKnownRequestHeaderIndex(headerName) == -1)
-				{
-					string existingValue = unknownHeaders[headerName] as string;
-					unknownHeaders[headerName] = CombineHeaderValues(existingValue, entry.Value as string);
-				}
-			}
-			
-			string [][] result = new string[unknownHeaders.Count][];
-			i = 0;
-			foreach (DictionaryEntry entry in unknownHeaders)
-			{
-				result[i++] = new string[] { entry.Key as string, entry.Value as string };
-			}
-			
-			return result;
-		}
-		
 		public override void EndOfRequest ()
 		{
 			base.EndOfRequest();

@@ -114,11 +114,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "DechunkedEntityBody.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Demo.aspx"
                     BuildAction = "Content"
                 />
@@ -130,11 +125,6 @@
                 />
                 <File
                     RelPath = "DecoratedWorkerRequest.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "EntityBody.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -160,11 +150,6 @@
                 />
                 <File
                     RelPath = "FilesystemUploadStorageProvider.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FixedSizeEntityBody.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
