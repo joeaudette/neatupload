@@ -159,17 +159,30 @@ namespace Brettle.Web.NeatUpload
 		public long ContentLength {
 			get { return (HasFile ? file.ContentLength : 0); }
 		}
-
+		
+		private Stream fileContent;
+		
 		/// <summary>
 		/// A readable <see cref="Stream"/> on the uploaded file. </summary>
 		/// <remarks>
 		/// A readable <see cref="Stream"/> on the uploaded file if a file was uploaded during the last postback, 
-		/// otherwise null.
+		/// otherwise null.  Note that the <see cref="Stream"/> is opened when this property is first accessed and
+		/// that stream becomes the permanent value of this property.  If you use this
+		/// property and don't either close the stream or call <see cref="MoveTo"/> before the request ends you
+		/// may get an exception when NeatUpload tries to delete the underlying temporary storage at the end of the
+		/// request.
 		/// </remarks>
 		[Browsable(false)]
 		public Stream FileContent
 		{
-			get { return (HasFile ? file.OpenRead() : null); }
+			get
+			{
+				if (fileContent != null)
+					return fileContent;
+				if (HasFile)
+					fileContent = file.OpenRead();
+				return fileContent;
+			}
 		}
 
 		/// <summary>
