@@ -57,6 +57,7 @@ namespace Brettle.Web.NeatUpload
 						sb.Append("percentComplete: '" + uploadContext.FormattedPercentComplete + "',");
 						sb.Append("rate: '" + uploadContext.FormattedRate + "',");
 						sb.Append("remainingtime: '" + uploadContext.FormattedTimeRemaining + "',");
+						sb.Append("elapsedtime: '" + uploadContext.FormattedTimeElapsed + "',");
 					}
 					switch (uploadContext.Status)
 					{

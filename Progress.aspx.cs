@@ -42,6 +42,7 @@ namespace Brettle.Web.NeatUpload
 		protected HtmlGenericControl statusDiv;
 		protected HtmlGenericControl inProgressSpan;
 		protected HtmlGenericControl remainingTimeSpan;
+		protected HtmlGenericControl elapsedTimeSpan;
 		protected HtmlGenericControl completedSpan;
 		protected HtmlGenericControl cancelledSpan;
 		protected HtmlGenericControl rejectedSpan;
@@ -205,6 +206,9 @@ function NeatUploadUpdateDom(upload)
 		document.getElementById(""remainingTimeSpan"").innerHTML = upload.remainingtime;
 	
 	var detailElem;
+	if (typeof( upload.elapsedtime ) != ""undefined""
+	     && (detailElem = document.getElementById(""elapsedTimeSpan"")))
+		detailElem.innerHTML = upload.elapsedtime;
 	if (typeof( upload.fileName ) != ""undefined""
 	     && (detailElem = document.getElementById(""fileNameSpan"")))
 		detailElem.innerHTML = upload.fileName;
@@ -409,6 +413,8 @@ if (NeatUploadCanCancel())
 					SetControlText(countUnitsSpan, uploadContext.CountUnits);
 					SetControlText(percentCompleteSpan, uploadContext.FormattedPercentComplete);
 					SetControlText(rateSpan, uploadContext.FormattedRate);
+					SetControlText(elapsedTimeSpan, uploadContext.FormattedTimeElapsed);
+					SetControlText(remainingTimeSpan, uploadContext.FormattedTimeRemaining);
 				}
 				
 				Exception = uploadContext.Exception;
@@ -420,7 +426,6 @@ if (NeatUploadCanCancel())
 				else if (uploadContext.Status == UploadStatus.InProgress)
 				{
 					DynamicStyle = "";
-					remainingTimeSpan.InnerText = uploadContext.FormattedTimeRemaining;
 					inProgressSpan.Visible = true;
 				}
 				else if (uploadContext.Status == UploadStatus.Completed)
@@ -457,6 +462,17 @@ if (NeatUploadCanCancel())
 					{
 						cancelledSpan.Visible = true;
 					}
+				}
+				if (uploadContext.ContentLength >= 0)
+				{
+					remainingTimeSpan.Visible = true;
+					elapsedTimeSpan.Visible = false;
+				}
+				else
+				{
+					remainingTimeSpan.Visible = false;
+					elapsedTimeSpan.Visible = true;
+					DynamicStyle += ".HaveTotalCount { display: none; }";
 				}
 			}
 		}

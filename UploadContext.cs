@@ -145,7 +145,7 @@ namespace Brettle.Web.NeatUpload
 			{
 				lock (this)
 				{
-					if (ContentLength == 0)
+					if (ContentLength <= 0)
 					{
 						return 0;
 					}
@@ -195,10 +195,11 @@ namespace Brettle.Web.NeatUpload
 		
 		internal TimeSpan TimeRemaining
 		{
-			get {
+			get
+			{
 				lock(this) 
 				{
-					if (BytesRead == 0)
+					if (BytesRead == 0 || ContentLength < 0)
 					{
 						return TimeSpan.MaxValue;
 					}
@@ -209,6 +210,16 @@ namespace Brettle.Web.NeatUpload
 						double ticksRemaining = bytesRemaining * (DateTime.Now - StartTime).Ticks;
 						return new TimeSpan((long)(ticksRemaining/BytesRead));
 					}
+				}
+			}
+		}
+		
+		internal TimeSpan TimeElapsed
+		{
+			get {
+				lock(this) 
+				{
+					return DateTime.Now - StartTime;
 				}
 			}
 		}
@@ -228,14 +239,19 @@ namespace Brettle.Web.NeatUpload
 			lock(this)
 			{
 				string format;
-				if (ContentLength < 1000)
+				if (UnitSelector < 1000)
 					format = Config.Current.ResourceManager.GetString("ByteCountFormat");
-				else if (ContentLength < 1000*1000)
+				else if (UnitSelector < 1000*1000)
 					format = Config.Current.ResourceManager.GetString("KBCountFormat");
 				else
 					format = Config.Current.ResourceManager.GetString("MBCountFormat");
 				return String.Format(format, count);
 			}
+		}
+		
+		private long UnitSelector
+		{
+			get { return (ContentLength < 0) ? BytesRead : ContentLength; }
 		}
 				
 		internal string CountUnits
@@ -244,9 +260,9 @@ namespace Brettle.Web.NeatUpload
 			{
 				lock(this)
 				{
-					if (ContentLength < 1000)
+					if (UnitSelector < 1000)
 						return Config.Current.ResourceManager.GetString("ByteUnits");
-					else if (ContentLength < 1000*1000)
+					else if (UnitSelector < 1000*1000)
 						return Config.Current.ResourceManager.GetString("KBUnits");
 					else
 						return Config.Current.ResourceManager.GetString("MBUnits");
@@ -268,6 +284,29 @@ namespace Brettle.Web.NeatUpload
 					else
 						format = Config.Current.ResourceManager.GetString("MBRateFormat");
 					return String.Format(format, BytesPerSec);
+				}
+			}
+		}					
+				
+		internal string FormattedTimeElapsed
+		{
+			get
+			{
+				lock(this)
+				{
+					string format;
+					if (TimeElapsed.TotalSeconds < 60)
+						format = Config.Current.ResourceManager.GetString("SecondsElapsedFormat");
+					else if (TimeElapsed.TotalSeconds < 60*60)
+						format = Config.Current.ResourceManager.GetString("MinutesElapsedFormat");
+					else
+						format = Config.Current.ResourceManager.GetString("HoursElapsedFormat");
+					return String.Format(format,
+					                          (int)Math.Floor(TimeElapsed.TotalHours),
+					                          (int)Math.Floor(TimeElapsed.TotalMinutes),
+					                          TimeElapsed.Seconds,
+					                          TimeElapsed.TotalHours,
+					                          TimeElapsed.TotalMinutes);
 				}
 			}
 		}					

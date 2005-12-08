@@ -53,4 +53,7 @@
 	<data name="SecondsRemainingFormat"><value>{1:00}:{2:00} left</value></data>
 	<data name="MinutesRemainingFormat"><value>{1:00}:{2:00} left</value></data>
 	<data name="HoursRemainingFormat"><value>{3:0.0}h left</value></data>
+	<data name="SecondsElapsedFormat"><value>{1:00}:{2:00} elapsed</value></data>
+	<data name="MinutesElapsedFormat"><value>{1:00}:{2:00} elapsed</value></data>
+	<data name="HoursElapsedFormat"><value>{3:0.0}h elapsed</value></data>
 </root>
