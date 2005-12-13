@@ -264,7 +264,15 @@ namespace Brettle.Web.NeatUpload
 				if (log.IsDebugEnabled) log.DebugFormat("Remembering error: {0}", decoratedWorker.Exception);
 				if (decoratedWorker.Exception != null)
 				{
+					// For the remainder of the subrequest, act as though there was no error.
 					app.Server.ClearError();
+					
+					// Clear any content that has not yet been written to the client so that it isn't written
+					// when we end the subrequest.
+					app.Response.ClearHeaders();
+					app.Response.ClearContent();
+					
+					// Finish the subrequest.
 					app.CompleteRequest();
 				}
 			}
