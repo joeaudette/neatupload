@@ -266,7 +266,7 @@ namespace Brettle.Web.NeatUpload
 			if (preloadedEntityBodyStream.Length > UploadHttpModule.MaxNormalRequestLength 
 				|| this.grandTotalBytesRead > UploadHttpModule.MaxRequestLength ) {
 				if (log.IsDebugEnabled) log.Debug("Request Entity Too Large");
-				throw new HttpException(413, "Request Entity Too Large");
+				IgnoreRemainingBodyAndThrow(new HttpException(413, "Request Entity Too Large"));
 			}
 		}
 
@@ -457,7 +457,7 @@ namespace Brettle.Web.NeatUpload
 					{
 						if (log.IsDebugEnabled) log.Debug("contentLength > MaxRequestLength");
 						uploadContext.Status = UploadStatus.Cancelled;
-						throw new HttpException(413, "Request Entity Too Large");
+						IgnoreRemainingBodyAndThrow(new HttpException(413, "Request Entity Too Large"));
 					}
 				}
 				else
