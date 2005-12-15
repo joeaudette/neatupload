@@ -265,7 +265,7 @@ namespace Brettle.Web.NeatUpload
 			if (preloadedEntityBodyStream.Length > UploadHttpModule.MaxNormalRequestLength 
 				|| this.grandTotalBytesRead > UploadHttpModule.MaxRequestLength ) {
 				if (log.IsDebugEnabled) log.Debug("Request Entity Too Large");
-				IgnoreRemainingBodyAndThrow(new UploadTooLargeException(UploadHttpModule.MaxRequestLength));
+				throw new UploadTooLargeException(UploadHttpModule.MaxRequestLength);
 			}
 		}
 
@@ -333,16 +333,16 @@ namespace Brettle.Web.NeatUpload
 				if (ex is UploadException)
 				{
 					uploadContext.Status = UploadStatus.Rejected;
-					// Wait 5 seconds to give the client a chance to stop the request.  If the client
-					// stops the request, the user will see the original form instead of an error page.
-					// Regardless, the progress display the error so the user knows what went wrong.
-					System.Threading.Thread.Sleep(5000);
 				}
 				else if (uploadContext.Status != UploadStatus.Cancelled)
 				{
 					uploadContext.Status = UploadStatus.Error;
 				}
 
+				byte[] buffer = new byte[4096];
+				while (0 < OrigWorker.ReadEntityBody(buffer, buffer.Length))
+					; // Ignore the remaining body
+				
 				log.Error("Rethrowing exception in ParseMultipart", ex);
 				throw;
 			}
@@ -471,7 +471,7 @@ namespace Brettle.Web.NeatUpload
 					{
 						if (log.IsDebugEnabled) log.Debug("contentLength > MaxRequestLength");
 						uploadContext.Status = UploadStatus.Cancelled;
-						IgnoreRemainingBodyAndThrow(new UploadTooLargeException(UploadHttpModule.MaxRequestLength));
+						throw new UploadTooLargeException(UploadHttpModule.MaxRequestLength);
 					}
 
 					// Write out a replacement part that just contains the filename as the value.
