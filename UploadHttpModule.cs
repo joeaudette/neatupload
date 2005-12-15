@@ -162,7 +162,7 @@ namespace Brettle.Web.NeatUpload
 			// module.  SizeLimitingWorkerRequest ensures that normal requests which are too large are
 			// rejected.
 			string contentTypeHeader = origWorker.GetKnownRequestHeader(HttpWorkerRequest.HeaderContentType);
-			if (contentTypeHeader != null && contentTypeHeader.StartsWith("multipart/form-data"))
+			if (contentTypeHeader != null && contentTypeHeader.ToLower().StartsWith("multipart/form-data"))
 			{
 				subWorker = new FilteringWorkerRequest(origWorker);
 			}
@@ -284,6 +284,5 @@ namespace Brettle.Web.NeatUpload
 				uploadContext.RemoveUploadedFiles();
 			}
 		}
-
 	}
 }
