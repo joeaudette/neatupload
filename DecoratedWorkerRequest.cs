@@ -82,6 +82,14 @@ namespace Brettle.Web.NeatUpload
 			if (log.IsDebugEnabled) log.Debug("HttpRuntime.ProcessRequest() returned");
 		}
 		
+		protected void IgnoreRemainingBodyAndThrow(Exception ex)
+		{
+			byte[] buffer = new byte[4096];
+			while (0 < OrigWorker.ReadEntityBody(buffer, buffer.Length))
+				; // Ignore the remaining body
+			throw ex;
+		}
+		
 		public override int ReadEntityBody (byte[] buffer, int size)
 		{
 			return OrigWorker.ReadEntityBody(buffer, size);

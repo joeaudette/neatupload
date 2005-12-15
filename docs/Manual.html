@@ -1260,17 +1260,13 @@ bar is in a pop-up window, it will leave the window
 open to ensure that the user sees why the
 upload was rejected. &nbsp; Next it will attempt to stop the upload
 by asking the browser run javascript that simulates clicking the
-browser's Stop button. &nbsp;Five seconds later NeatUpload throws
+browser's Stop button. &nbsp;Next it will read the remainder of the request and then throw
 an <code>UploadTooLargeException</code> . &nbsp;That
 is a subclass of <code>UploadException</code> (which is a
 subclass of <code>HttpException</code>) with an HTTP
 status code of 413. &nbsp;If the browser hasn't stopped the upload
-for some reason, the exception will cause the user to see&nbsp;a
-browser-specific
-error
-message or dialog. &nbsp;For example, Firefox simply displays a
-dialog
-saying "Document contains no data". &nbsp;If you want something
+for some reason, the exception will cause the user to see&nbsp;a generic error
+page. &nbsp;If you want something
 more
 user-friendly, you can either handle the error by adding a handler for
 the <code>HttpApplication.Error</code> event, or you can
@@ -1283,7 +1279,15 @@ under
 
 
 
-<pre>	&lt;customErrors mode="On"&gt;<br>	&lt;error statusCode="413" redirect="~/NeatUpload/Error413.aspx" /&gt;<br>	&lt;/customErrors&gt;</pre>
+<pre>	&lt;customErrors mode="On"&gt;<br>	&lt;error statusCode="413" redirect="~/NeatUpload/Error413.aspx" /&gt;<br>	&lt;/customErrors&gt;<br></pre>
+<p>Note:
+most browsers, including IE and Firefox, won't display anything until
+the entire upload has been sent to the server. &nbsp;If that takes longer
+than the amount of time specified via the <code>httpRuntime</code> element's <code>executionTimeout</code>
+attribute, the server may choose to close the connection and the user
+will see a different error. &nbsp;IE will display a generic error page
+saying "Page cannot be displayed". &nbsp;Firefox will display a dialog
+saying "Document contains no data". &nbsp;The default <code>executionTimeout</code> is 360 seconds.</p>
 
 
 
@@ -1303,6 +1307,9 @@ element's <code>maxNormalRequestLength </code>attribute<code></code>:
 
 
 <pre>	&lt;neatUpload ... maxNormalRequestLength="<em>sizeInKBytes</em>" ... /&gt;<br></pre>
+The behavior when this value is exceeded is similar to the behavior when the <code>maxRequestLength</code>
+is exceeded. &nbsp;See the preceding section for details. &nbsp;The
+only difference is that for non-upload requests that exceed the <code>maxNormalRequestLength</code> limit, NeatUpload does not attempt to use javascript to interrupt the browser and the exception that is thrown is an <code>HttpException(413, "Request Entity Too Large")</code> instead of an <code>UploadTooLargeException()</code>.<br>
 
 
 

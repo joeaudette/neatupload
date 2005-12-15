@@ -56,7 +56,7 @@ namespace Brettle.Web.NeatUpload
 
 			if (totalBytesRead + bytesPreloaded > maxRequestLength)
 			{ 
-				throw new HttpException(413, "Request Entity Too Large");
+				IgnoreRemainingBodyAndThrow(new HttpException(413, "Request Entity Too Large"));
 			}
 			return bytesRead;
 		}

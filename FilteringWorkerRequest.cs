@@ -118,9 +118,10 @@ namespace Brettle.Web.NeatUpload
 			parsePos = lfIndex+1;
 			if (lfIndex > 0 && buffer[lfIndex-1] == '\r') 
 				lfIndex--;
-			// FIXME: Use correct encoding from Content-Type: foo; charset="encoding"
-			return System.Text.Encoding.ASCII.GetString(buffer, lineStart, lfIndex-lineStart);
+			return ContentEncoding.GetString(buffer, lineStart, lfIndex-lineStart);
 		}
+		
+		private System.Text.Encoding ContentEncoding = System.Text.Encoding.UTF8;
 		
 		private static bool ArraysEqual(byte[] arr1, int pos1, byte[] arr2, int pos2, int count)
 		{
@@ -260,11 +261,11 @@ namespace Brettle.Web.NeatUpload
 							preloadedEntityBodyStream.Length, UploadHttpModule.MaxNormalRequestLength);
 			}
 */
-			// If the non-file portion of the request is too large, throw an exception.
+			// If the file or non-file portion of the request is too large, throw an exception.
 			if (preloadedEntityBodyStream.Length > UploadHttpModule.MaxNormalRequestLength 
 				|| this.grandTotalBytesRead > UploadHttpModule.MaxRequestLength ) {
 				if (log.IsDebugEnabled) log.Debug("Request Entity Too Large");
-				throw new HttpException(413, "Request Entity Too Large");
+				IgnoreRemainingBodyAndThrow(new UploadTooLargeException(UploadHttpModule.MaxRequestLength));
 			}
 		}
 
@@ -392,6 +393,20 @@ namespace Brettle.Web.NeatUpload
 			
 			boundary = System.Text.Encoding.ASCII.GetBytes("--" + GetAttribute(contentTypeHeader, "boundary"));
 			if (log.IsDebugEnabled) log.Debug("boundary=" + System.Text.Encoding.ASCII.GetString(boundary));
+			
+			string charset = GetAttribute(contentTypeHeader, "charset");
+			if (charset != null)
+			{
+				try
+				{
+					System.Text.Encoding encoding = System.Text.Encoding.GetEncoding(charset);
+					ContentEncoding = encoding;
+				}
+				catch (NotSupportedException)
+				{
+					if (log.IsDebugEnabled) log.Debug("Ignoring unsupported charset " + charset + ".  Using utf-8.");
+				}
+			}
 
 			preloadedEntityBodyStream = new MemoryStream();
 			outputStream = preloadedEntityBodyStream;
@@ -455,7 +470,8 @@ namespace Brettle.Web.NeatUpload
 					if (origContentLength > UploadHttpModule.MaxRequestLength)
 					{
 						if (log.IsDebugEnabled) log.Debug("contentLength > MaxRequestLength");
-						throw new UploadTooLargeException(UploadHttpModule.MaxRequestLength);
+						uploadContext.Status = UploadStatus.Cancelled;
+						IgnoreRemainingBodyAndThrow(new UploadTooLargeException(UploadHttpModule.MaxRequestLength));
 					}
 
 					// Write out a replacement part that just contains the filename as the value.
