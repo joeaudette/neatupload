@@ -81,7 +81,8 @@ namespace Brettle.Web.NeatUpload
 
 		private Config() 
 		{
-			this.ResourceManager = new ResourceManager(typeof(Brettle.Web.NeatUpload.Progress));
+			this.ResourceManager = new ResourceManager("NeatUpload.NeatUpload.Progress.aspx",
+			                                            System.Reflection.Assembly.GetExecutingAssembly());
 		}
 
 		private static Config CreateFromAppSettings(System.Collections.Specialized.NameValueCollection appSettings)
