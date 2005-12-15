@@ -119,9 +119,10 @@ namespace Brettle.Web.NeatUpload
 			parsePos = lfIndex+1;
 			if (lfIndex > 0 && buffer[lfIndex-1] == '\r') 
 				lfIndex--;
-			// FIXME: Use correct encoding from Content-Type: foo; charset="encoding"
-			return System.Text.Encoding.ASCII.GetString(buffer, lineStart, lfIndex-lineStart);
+			return ContentEncoding.GetString(buffer, lineStart, lfIndex-lineStart);
 		}
+		
+		private System.Text.Encoding ContentEncoding = System.Text.Encoding.UTF8;
 		
 		private static bool ArraysEqual(byte[] arr1, int pos1, byte[] arr2, int pos2, int count)
 		{
@@ -380,6 +381,20 @@ namespace Brettle.Web.NeatUpload
 			
 			boundary = System.Text.Encoding.ASCII.GetBytes("--" + GetAttribute(contentTypeHeader, "boundary"));
 			if (log.IsDebugEnabled) log.Debug("boundary=" + System.Text.Encoding.ASCII.GetString(boundary));
+			
+			string charset = GetAttribute(contentTypeHeader, "charset");
+			if (charset != null)
+			{
+				try
+				{
+					System.Text.Encoding encoding = System.Text.Encoding.GetEncoding(charset);
+					ContentEncoding = encoding;
+				}
+				catch (NotSupportedException)
+				{
+					if (log.IsDebugEnabled) log.Debug("Ignoring unsupported charset " + charset + ".  Using utf-8.");
+				}
+			}
 
 			preloadedEntityBodyStream = new MemoryStream();
 			outputStream = preloadedEntityBodyStream;
