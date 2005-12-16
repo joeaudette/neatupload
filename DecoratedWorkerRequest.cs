@@ -339,32 +339,50 @@ namespace Brettle.Web.NeatUpload
 
 		public override void SendCalculatedContentLength (int contentLength)
 		{
-			OrigWorker.SendCalculatedContentLength (contentLength);
+			if (Exception == null)
+			{
+				OrigWorker.SendCalculatedContentLength (contentLength);
+			}
 		}
 
 		public override void SendKnownResponseHeader (int index, string value)
 		{
-			OrigWorker.SendKnownResponseHeader (index, value);
+			if (Exception == null)
+			{
+				OrigWorker.SendKnownResponseHeader (index, value);
+			}
 		}
 
 		public override void SendResponseFromFile (IntPtr handle, long offset, long length)
 		{
-			OrigWorker.SendResponseFromFile (handle, offset, length);
+			if (Exception == null)
+			{
+				OrigWorker.SendResponseFromFile (handle, offset, length);
+			}
 		}
 
 		public override void SendResponseFromFile (string filename, long offset, long length)
 		{
-			OrigWorker.SendResponseFromFile (filename, offset, length);
+			if (Exception == null)
+			{
+				OrigWorker.SendResponseFromFile (filename, offset, length);
+			}
 		}
 
 		public override void SendResponseFromMemory (byte [] data, int length)
 		{
-			OrigWorker.SendResponseFromMemory (data, length);
+			if (Exception == null)
+			{
+				OrigWorker.SendResponseFromMemory (data, length);
+			}
 		}
 
 		public override void SendResponseFromMemory (IntPtr data, int length)
 		{
-			OrigWorker.SendResponseFromMemory (data, length);
+			if (Exception == null)
+			{
+				OrigWorker.SendResponseFromMemory (data, length);
+			}
 		}
 
 		public override void SendStatus (int statusCode, string statusDescription)
@@ -379,7 +397,10 @@ namespace Brettle.Web.NeatUpload
 		
 		public override void SendUnknownResponseHeader (string name, string value)
 		{
-			OrigWorker.SendUnknownResponseHeader (name, value);
+			if (Exception == null)
+			{
+				OrigWorker.SendUnknownResponseHeader (name, value);
+			}
 		}
 
 		public override void SetEndOfSendNotification (EndOfSendNotification callback, object extraData)
