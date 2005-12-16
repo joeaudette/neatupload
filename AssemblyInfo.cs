@@ -24,7 +24,9 @@ using System.Web.UI;
 // You can specify all values by your own or you can build default build and revision
 // numbers with the '*' character (the default):
 
-[assembly: AssemblyVersion("1.1.0")]
+[assembly: AssemblyVersion("1.1.*")]
+
+[assembly: AssemblyInformationalVersion("trunk")]
 
 // The following attributes specify the key for the sign of your assembly. See the
 // .NET Framework documentation for more information about signing.
