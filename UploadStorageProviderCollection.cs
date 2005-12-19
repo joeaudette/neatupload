@@ -25,7 +25,7 @@ namespace Brettle.Web.NeatUpload
 {
 	public class UploadStorageProviderCollection : Hashtable
 	{
-		public new UploadStorageProvider this[string key] 
+		public UploadStorageProvider this[string key] 
 		{
 			get { return (UploadStorageProvider)base[key]; }
 		}
