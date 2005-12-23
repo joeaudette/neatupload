@@ -60,6 +60,7 @@ namespace Brettle.Web.NeatUpload
 		internal UploadContext()
 		{
 			this.startTime = System.DateTime.Now;
+			this.stopTime = System.DateTime.MaxValue;
 		}
 		
 		internal Hashtable uploadedFiles = Hashtable.Synchronized(new Hashtable());
@@ -161,6 +162,13 @@ namespace Brettle.Web.NeatUpload
 			set { lock(this) { startTime = value; } }
 		}
 		
+		private DateTime stopTime;
+		internal DateTime StopTime
+		{
+			get { lock(this) { return stopTime; } }
+			set { lock(this) { stopTime = value; } }
+		}
+		
 		private long bytesRead;
 		internal long BytesRead
 		{
@@ -179,7 +187,7 @@ namespace Brettle.Web.NeatUpload
 			lock(this) { contentLength = val; }
 		}
 		
-		private UploadStatus status = UploadStatus.InProgress;
+		private UploadStatus status = UploadStatus.NormalInProgress;
 		internal UploadStatus Status
 		{
 			get { lock(this) { return status; } }
@@ -207,7 +215,7 @@ namespace Brettle.Web.NeatUpload
 					{
 						double bytesRemaining = ((double)(ContentLength - BytesRead));
 						if (log.IsDebugEnabled) log.Debug("BytesRead = " + BytesRead + " bytesRemaining = " + bytesRemaining);
-						double ticksRemaining = bytesRemaining * (DateTime.Now - StartTime).Ticks;
+						double ticksRemaining = bytesRemaining * TimeElapsed.Ticks;
 						return new TimeSpan((long)(ticksRemaining/BytesRead));
 					}
 				}
@@ -219,7 +227,10 @@ namespace Brettle.Web.NeatUpload
 			get {
 				lock(this) 
 				{
-					return DateTime.Now - StartTime;
+					if (StopTime == DateTime.MaxValue)
+						return DateTime.Now - StartTime;
+					else
+						return StopTime - StartTime;
 				}
 			}
 		}
@@ -231,125 +242,10 @@ namespace Brettle.Web.NeatUpload
 			set { lock(this) { currentFileName = value; } }
 		}
 		
-		
-		// NOTE: Callers should maintain a lock() on this UploadContext object while retrieving both the CountUnits and
-		// calling FormatCount to ensure they are self-consistent.
-		internal string FormatCount(long count)
-		{
-			lock(this)
-			{
-				string format;
-				if (UnitSelector < 1000)
-					format = Config.Current.ResourceManager.GetString("ByteCountFormat");
-				else if (UnitSelector < 1000*1000)
-					format = Config.Current.ResourceManager.GetString("KBCountFormat");
-				else
-					format = Config.Current.ResourceManager.GetString("MBCountFormat");
-				return String.Format(format, count);
-			}
-		}
-		
-		private long UnitSelector
-		{
-			get { return (ContentLength < 0) ? BytesRead : ContentLength; }
-		}
-				
-		internal string CountUnits
-		{
-			get
-			{
-				lock(this)
-				{
-					if (UnitSelector < 1000)
-						return Config.Current.ResourceManager.GetString("ByteUnits");
-					else if (UnitSelector < 1000*1000)
-						return Config.Current.ResourceManager.GetString("KBUnits");
-					else
-						return Config.Current.ResourceManager.GetString("MBUnits");
-				}
-			}
-		}
-		
-		internal string FormattedRate
-		{
-			get
-			{
-				lock(this)
-				{
-					string format;
-					if (BytesPerSec < 1000)
-						format = Config.Current.ResourceManager.GetString("ByteRateFormat");
-					else if (BytesPerSec < 1000*1000)
-						format = Config.Current.ResourceManager.GetString("KBRateFormat");
-					else
-						format = Config.Current.ResourceManager.GetString("MBRateFormat");
-					return String.Format(format, BytesPerSec);
-				}
-			}
-		}					
-				
-		internal string FormattedTimeElapsed
-		{
-			get
-			{
-				lock(this)
-				{
-					string format;
-					if (TimeElapsed.TotalSeconds < 60)
-						format = Config.Current.ResourceManager.GetString("SecondsElapsedFormat");
-					else if (TimeElapsed.TotalSeconds < 60*60)
-						format = Config.Current.ResourceManager.GetString("MinutesElapsedFormat");
-					else
-						format = Config.Current.ResourceManager.GetString("HoursElapsedFormat");
-					return String.Format(format,
-					                          (int)Math.Floor(TimeElapsed.TotalHours),
-					                          (int)Math.Floor(TimeElapsed.TotalMinutes),
-					                          TimeElapsed.Seconds,
-					                          TimeElapsed.TotalHours,
-					                          TimeElapsed.TotalMinutes);
-				}
-			}
-		}					
-		
-		internal string FormattedTimeRemaining
-		{
-			get
-			{
-				lock(this)
-				{
-					string format;
-					if (TimeRemaining.TotalSeconds < 60)
-						format = Config.Current.ResourceManager.GetString("SecondsRemainingFormat");
-					else if (TimeRemaining.TotalSeconds < 60*60)
-						format = Config.Current.ResourceManager.GetString("MinutesRemainingFormat");
-					else
-						format = Config.Current.ResourceManager.GetString("HoursRemainingFormat");
-					return String.Format(format,
-					                          (int)Math.Floor(TimeRemaining.TotalHours),
-					                          (int)Math.Floor(TimeRemaining.TotalMinutes),
-					                          TimeRemaining.Seconds,
-					                          TimeRemaining.TotalHours,
-					                          TimeRemaining.TotalMinutes);
-				}
-			}
-		}					
-
-		internal string FormattedPercentComplete
-		{
-			get
-			{
-				lock(this)
-				{
-					return String.Format(Config.Current.ResourceManager.GetString("PercentCompleteFormat"),
-					                     FractionComplete);
-				}
-			}
-		}					
-		
 		private long BytesReadAtLastRateUpdate;
 		private DateTime TimeOfLastRateUpdate = DateTime.MinValue;
 		private int _BytesPerSec = 0;
-		private int BytesPerSec
+		internal int BytesPerSec
 		{
 			get
 			{
@@ -360,10 +256,10 @@ namespace Brettle.Web.NeatUpload
 				TimeSpan timeSinceLastUpdate = DateTime.Now - TimeOfLastRateUpdate;
 				// If we're done or we're just starting, use the average rate for all bytes read so far and pretend
 				// at least 1 sec has elapsed to ensure that we don't get outrageous rates.
-				if (Status != UploadStatus.InProgress
+				if ((Status != UploadStatus.NormalInProgress && Status != UploadStatus.ChunkedInProgress)
 				    || (TimeOfLastRateUpdate == StartTime && timeSinceLastUpdate < TimeSpan.FromSeconds(1)))
 				{
-					return (int)Math.Round(BytesRead / Math.Max((DateTime.Now - StartTime).TotalSeconds, 1.0));
+					return (int)Math.Round(BytesRead / Math.Max(TimeElapsed.TotalSeconds, 1.0));
 				}
 				// Otherwise, keep track of the number bytes read over the last second or so.
 				if (timeSinceLastUpdate > TimeSpan.FromSeconds(1))

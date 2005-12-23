@@ -42,25 +42,16 @@ namespace Brettle.Web.NeatUpload
 		protected HtmlGenericControl statusDiv;
 		protected HtmlGenericControl inProgressSpan;
 		protected HtmlGenericControl remainingTimeSpan;
-		protected HtmlGenericControl elapsedTimeSpan;
 		protected HtmlGenericControl completedSpan;
 		protected HtmlGenericControl cancelledSpan;
-		protected HtmlGenericControl rejectedSpan;
-		protected HtmlGenericControl rejectedMessageSpan;
-		protected HtmlGenericControl errorSpan;
-		protected HtmlGenericControl errorMessageSpan;
 		protected HtmlAnchor refreshLink;
 		protected HtmlAnchor stopRefreshLink;
 		protected HtmlAnchor cancelLink;
 		protected HtmlImage refreshImage;
 		protected HtmlImage stopRefreshImage;
 		protected HtmlImage cancelImage;
-		protected HtmlGenericControl fileNameSpan;
-		protected HtmlGenericControl uploadedCountSpan;
-		protected HtmlGenericControl totalCountSpan;
-		protected HtmlGenericControl countUnitsSpan;
-		protected HtmlGenericControl percentCompleteSpan;
-		protected HtmlGenericControl rateSpan;
+		
+		protected double FractionComplete;
 		
 		private string nonRefreshScriptFuncs = @"<script language=""javascript"">
 <!--
@@ -112,12 +103,13 @@ function NeatUploadRemoveCancelLink()
 </script>";
 		
 		private string clientRefreshScript = @"<script language=""javascript"">
-
+<!--
 NeatUploadScript = null;
 
 NeatUploadReq = null;
 function NeatUploadRefreshWithScript(url) 
 {
+	NeatUploadReq = null;
 	var req = null;
 	try
 	{
@@ -137,25 +129,9 @@ function NeatUploadRefreshWithScript(url)
 	}
 	if (NeatUploadReq)
 	{
-		NeatUploadReq.onreadystatechange = NeatUploadEvalScript;
+		NeatUploadReq.onreadystatechange = NeatUploadUpdateHtml;
 		NeatUploadReq.open(""GET"", url);
 		NeatUploadReq.send(null);
-	}
-	else if (document.getElementById) 
-	{
-		if (navigator.appVersion.indexOf(""Mac"") != -1) 
-		{
-			NeatUploadScript = document.createElement('div');
-			NeatUploadScript.innerHTML = '<sc' + 'ript type=\'text/javascript\' src=\'' + url + '\'><\/sc' + 'ript>';
-			document.body.appendChild(NeatUploadScript);
-		}
-		else
-		{
-			NeatUploadScript = document.createElement('script');
-			NeatUploadScript.defer = true;
-			document.body.appendChild(NeatUploadScript);
-			NeatUploadScript.src = url;
-		}
 	}
 	else
 	{
@@ -164,16 +140,58 @@ function NeatUploadRefreshWithScript(url)
 	return true;
 }
 
-function NeatUploadEvalScript()
+function NeatUploadUpdateHtml()
 {
 	if (typeof(NeatUploadReq) != ""undefined"" && NeatUploadReq.readyState == 4) 
 	{
 		try
 		{
-			eval(NeatUploadReq.responseText);
+			var responseXmlDoc = NeatUploadReq.responseXML;
+			if (responseXmlDoc.parseError && responseXmlDoc.parseError.errorCode != 0)
+			{
+//				window.alert('parse error: ' + responseXmlDoc.parseError.reason);
+			}
+			var templates = responseXmlDoc.getElementsByTagName('neatUploadDetails');
+			var status = templates.item(0).getAttribute('status');
+			for (var t = 0; t < templates.length; t++)
+			{
+				var srcElem = templates.item(t);
+				var innerXml = '';
+				for (var i = 0; i < srcElem.childNodes.length; i++)
+				{
+					var childNode = srcElem.childNodes.item(i);
+					var xml = childNode.xml;
+					if (xml == null)
+						xml = new XMLSerializer().serializeToString(childNode);
+					innerXml += xml;
+				}
+				var id = srcElem.getAttribute('id');
+				var destElem = document.getElementById(id);
+				destElem.innerHTML = innerXml;
+				for (var a=0; a < srcElem.attributes.length; a++)
+				{
+					var attr = srcElem.attributes.item(a);
+					if (attr.specified)
+					{
+						if (attr.name == 'style' && destElem.style && destElem.style.cssText)
+							destElem.style.cssText = attr.value;
+						else
+							destElem.setAttribute(attr.name, attr.value);
+					}
+				}
+			}
+			if (status != 'NormalInProgress' && status != 'ChunkedInProgress' && status != 'Unknown')
+			{
+				NeatUploadRefreshPage();
+			}
+			var lastMillis = NeatUploadLastUpdate.getTime();
+			NeatUploadLastUpdate = new Date();
+			var delay = Math.max(lastMillis + 1000 - NeatUploadLastUpdate.getTime(), 1);
+			NeatUploadReloadTimeoutId = setTimeout(NeatUploadRefresh, delay);
 		}
 		catch (ex)
 		{
+//			window.alert(ex);
 			NeatUploadRefreshPage();
 		}
 	}
@@ -181,7 +199,7 @@ function NeatUploadEvalScript()
 
 function NeatUploadRefresh()
 {
-	if (!NeatUploadRefreshWithScript('PROGRESSSCRIPTURL?' + document.location.search.substring(1) + '&' + Math.random()))
+	if (!NeatUploadRefreshWithScript('REFRESHURL&useXml=true'))
 	{
 		NeatUploadRefreshPage();
 	}
@@ -193,55 +211,6 @@ function NeatUploadRefreshPage()
 }
 
 NeatUploadLastUpdate = new Date(); 
-function NeatUploadUpdateDom(upload)
-{
-	if (NeatUploadScript)
-	{
-		document.body.removeChild(NeatUploadScript);
-		NeatUploadScript = null;
-	}
-	if (typeof( upload.progress ) != ""undefined"")
-		document.getElementById(""barDiv"").style.width = upload.progress + ""%"";
-	if (typeof( upload.remainingtime ) != ""undefined"")
-		document.getElementById(""remainingTimeSpan"").innerHTML = upload.remainingtime;
-	
-	var detailElem;
-	if (typeof( upload.elapsedtime ) != ""undefined""
-	     && (detailElem = document.getElementById(""elapsedTimeSpan"")))
-		detailElem.innerHTML = upload.elapsedtime;
-	if (typeof( upload.fileName ) != ""undefined""
-	     && (detailElem = document.getElementById(""fileNameSpan"")))
-		detailElem.innerHTML = upload.fileName;
-	if (typeof( upload.uploadedCount ) != ""undefined""
-	     && (detailElem = document.getElementById(""uploadedCountSpan"")))
-		detailElem.innerHTML = upload.uploadedCount;
-	if (typeof( upload.totalCount ) != ""undefined""
-	     && (detailElem = document.getElementById(""totalCountSpan"")))
-		detailElem.innerHTML = upload.totalCount;
-	if (typeof( upload.countUnits ) != ""undefined""
-	     && (detailElem = document.getElementById(""countUnitsSpan"")))
-		detailElem.innerHTML = upload.countUnits;
-	if (typeof( upload.percentComplete ) != ""undefined""
-	     && (detailElem = document.getElementById(""percentCompleteSpan"")))
-		detailElem.innerHTML = upload.percentComplete;
-	if (typeof( upload.rate ) != ""undefined""
-	     && (detailElem = document.getElementById(""rateSpan"")))
-		detailElem.innerHTML = upload.rate;
-	
-	if (typeof( upload.status ) != ""undefined"" && upload.status == ""inprogress"")
-	{
-		var lastMillis = NeatUploadLastUpdate.getTime();
-		NeatUploadLastUpdate = new Date();
-		var delay = Math.max(lastMillis + 1000 - NeatUploadLastUpdate.getTime(), 1);
-		NeatUploadReloadTimeoutId = setTimeout(NeatUploadRefresh, delay);
-	}
-	else
-	{
-		NeatUploadRefreshPage();
-	}
-}
-
-NeatUploadReloadTimeoutId = window.setTimeout(NeatUploadRefresh, 1000);
 
 window.onunload = NeatUpload_CombineHandlers(window.onunload, function () 
 {
@@ -261,6 +230,7 @@ if (!NeatUploadCanCancel)
 {
 	NeatUploadRemoveCancelLink();
 }
+// -->
 </script>";
 		
 		protected override void OnInit(EventArgs e)
@@ -272,8 +242,132 @@ if (!NeatUploadCanCancel)
 		private void InitializeComponent()
 		{
 			this.PreRender += new EventHandler(this.Page_PreRender);
+			this.Load += new EventHandler(this.Page_Load);
 		}
+		
+		private UploadContext UploadContext;					
+		
+		private void Page_Load(object sender, EventArgs e)
+		{
+			// Find the current upload context
+			string postBackID = Request.Params["postBackID"];
+			this.UploadContext = UploadContext.FindByID(postBackID);
 
+			if (this.UploadContext == null || this.UploadContext.Status == UploadStatus.Unknown)
+			{
+				// Status is unknown, so try to find the last post back based on the lastPostBackID param.
+				// If successful, use the status of the last post back.
+				string lastPostBackID = Page.Request.Params["lastPostBackID"];
+				if (lastPostBackID != null && lastPostBackID.Length > 0 && Page.Request.Params["refresher"] == null)
+				{
+					this.UploadContext = UploadContext.FindByID(lastPostBackID);
+					if (this.UploadContext.NumUploadedFiles == 0)
+					{
+						this.UploadContext = null;
+					}
+				}
+			}
+			
+			if (this.UploadContext != null)
+			{
+				lock (this.UploadContext)
+				{
+					FractionComplete = this.UploadContext.FractionComplete;
+					BytesRead = this.UploadContext.BytesRead;
+					BytesTotal = this.UploadContext.ContentLength;
+					BytesPerSec = this.UploadContext.BytesPerSec;
+					if (this.UploadContext.Exception is UploadException)
+					{
+						Rejection = (UploadException)this.UploadContext.Exception;
+					}
+					else
+					{
+						Failure = this.UploadContext.Exception;
+					}
+					TimeRemaining = this.UploadContext.TimeRemaining;
+					TimeElapsed = this.UploadContext.TimeElapsed;
+					CurrentFileName = this.UploadContext.CurrentFileName;
+				}
+			}
+			this.DataBind();
+		}
+		
+		protected long BytesRead;
+		protected long BytesTotal;
+		protected int BytesPerSec;
+		protected UploadException Rejection;
+		protected Exception Failure;
+		protected TimeSpan TimeRemaining;
+		protected TimeSpan TimeElapsed;
+		protected string CurrentFileName;
+		
+		protected string GetResourceString(string resourceName)
+		{
+			return Config.Current.ResourceManager.GetString(resourceName);
+		}
+		
+		protected string FormatCount(long count)
+		{
+			lock(this)
+			{
+				string format;
+				if (UnitSelector < 1000)
+					format = GetResourceString("ByteCountFormat");
+				else if (UnitSelector < 1000*1000)
+					format = GetResourceString("KBCountFormat");
+				else
+					format = GetResourceString("MBCountFormat");
+				return String.Format(format, count);
+			}
+		}
+		
+		private long UnitSelector
+		{
+			get { return (BytesTotal < 0) ? BytesRead : BytesTotal; }
+		}
+				
+		protected string CountUnits
+		{
+			get
+			{
+				if (UnitSelector < 1000)
+					return GetResourceString("ByteUnits");
+				else if (UnitSelector < 1000*1000)
+					return GetResourceString("KBUnits");
+				else
+					return GetResourceString("MBUnits");
+			}
+		}
+		
+		protected string FormatRate(int rate)
+		{
+			string format;
+			if (rate < 1000)
+				format = GetResourceString("ByteRateFormat");
+			else if (rate < 1000*1000)
+				format = GetResourceString("KBRateFormat");
+			else
+				format = GetResourceString("MBRateFormat");
+			return String.Format(format, rate);
+		}					
+				
+		protected string FormatTimeSpan(TimeSpan ts)
+		{
+			string format;
+			if (ts.TotalSeconds < 60)
+				format = GetResourceString("SecondsFormat");
+			else if (ts.TotalSeconds < 60*60)
+				format = GetResourceString("MinutesFormat");
+			else
+				format = GetResourceString("HoursFormat");
+			return String.Format(format,
+			                          (int)Math.Floor(ts.TotalHours),
+			                          (int)Math.Floor(ts.TotalMinutes),
+			                          ts.Seconds,
+			                          ts.TotalHours,
+			                          ts.TotalMinutes);
+		}
+		
 		private void Page_PreRender(object sender, EventArgs e)
 		{
 			this.RegisterClientScriptBlock("scrNeatUploadNonRefreshFuncs", nonRefreshScriptFuncs);
@@ -296,21 +390,19 @@ if (!NeatUploadCanCancel)
 			refreshLink.Visible = true;
 			refreshLink.HRef = refreshUrl + "&refresher=server";	
 			RegisterStartupScript("scrNeatUpload", @"<script language=""javascript"">
+<!--
 NeatUploadLinkNode = document.getElementById('" + refreshLink.ClientID + @"');
 if (NeatUploadLinkNode) NeatUploadLinkNode.parentNode.removeChild(NeatUploadLinkNode);
+// -->
 </script>");
 
-			// Find the current upload context
-			string postBackID = Request.Params["postBackID"];
-			UploadContext uploadContext = UploadContext.FindByID(postBackID);
-
 			// Set the status to Cancelled if requested.
-			if (uploadContext != null && Request.Params["cancelled"] == "true")
+			if (this.UploadContext != null && Request.Params["cancelled"] == "true")
 			{
-				uploadContext.Status = UploadStatus.Cancelled;
+				this.UploadContext.Status = UploadStatus.Cancelled;
 			}
 			
-			UpdateProgressBar(uploadContext);
+			UpdateProgressBar();
 			
 			string prevStatus = Request.Params["prevStatus"];
 			if (prevStatus == null)
@@ -318,19 +410,20 @@ if (NeatUploadLinkNode) NeatUploadLinkNode.parentNode.removeChild(NeatUploadLink
 				prevStatus = UploadStatus.Unknown.ToString();
 			}
 			string curStatus = UploadStatus.Unknown.ToString();
-			if (uploadContext != null)
+			if (this.UploadContext != null)
 			{
-				curStatus = uploadContext.Status.ToString();
+				curStatus = this.UploadContext.Status.ToString();
 			}
 
-			// If the status is unchanged from the last refresh and it is not Unknown nor InProgress,
+			// If the status is unchanged from the last refresh and it is not Unknown nor *InProgress,
 			// then the page is not refreshed.  Instead, if an UploadException occurred we try to cancel
 			// the upload.  Otherwise, we close the progress display window (if it's a pop-up)  
 			if (curStatus == prevStatus 
-				&& (curStatus != UploadStatus.Unknown.ToString() && curStatus != UploadStatus.InProgress.ToString()))
+			       && (curStatus != UploadStatus.Unknown.ToString()
+			           && curStatus != UploadStatus.NormalInProgress.ToString()
+			           && curStatus != UploadStatus.ChunkedInProgress.ToString()))
 			{
-				if (curStatus == UploadStatus.Rejected.ToString() 
-					&& this.rejectedSpan != null)
+				if (curStatus == UploadStatus.Rejected.ToString())
 				{
 					RegisterStartupScript("scrNeatUploadError", @"
 <script language=""javascript"">
@@ -360,119 +453,59 @@ if (NeatUploadCanCancel())
 			}
 		}
 
-		private void UpdateProgressBar(UploadContext uploadContext)
+		private void UpdateProgressBar()
 		{
-			DynamicStyle = ".UploadDetails { display: none; }";
 			
 			HtmlGenericControl[] spans = new HtmlGenericControl[]
 			{
 				inProgressSpan,
 				completedSpan,
 				cancelledSpan,
-				rejectedSpan,
-				errorSpan,
-				fileNameSpan,
-				uploadedCountSpan,
-				totalCountSpan,
-				countUnitsSpan,
-				percentCompleteSpan,
-				rateSpan
 			};
 			foreach (HtmlGenericControl s in spans)
 			{
 				if (s != null) s.Visible = false;
 			}
 			
-			if (uploadContext == null || uploadContext.Status == UploadStatus.Unknown)
+			if (Request.Params["useXml"] == "true")
 			{
-				// Status is unknown, so try to find the last post back based on the lastPostBackID param.
-				// If successful, use the status of the last post back.
-				string lastPostBackID = Request.Params["lastPostBackID"];
-				if (lastPostBackID != null && lastPostBackID.Length > 0 && Request.Params["refresher"] == null)
-				{
-					uploadContext = UploadContext.FindByID(lastPostBackID);
-					if (uploadContext.NumUploadedFiles == 0)
-					{
-						uploadContext = null;
-					} 
-				}
-			}			
-						
-			if (uploadContext == null)
+				Response.ContentType = "text/xml";
+				Response.Cache.SetCacheability(System.Web.HttpCacheability.NoCache);
+				Response.Write(@"<?xml version=""1.0"" encoding=""utf-8"" ?>");
+			}
+					
+			if (this.UploadContext == null)
 			{
-				barDiv.Style["width"] = "0";
+				if (barDiv != null)
+					barDiv.Style["width"] = "0";
 			}
 			else
 			{
-				barDiv.Style["width"] = Math.Round(uploadContext.FractionComplete * 100) + "%";
-				lock(uploadContext)
-				{
-					SetControlText(fileNameSpan, uploadContext.CurrentFileName);
-					SetControlText(uploadedCountSpan, uploadContext.FormatCount(uploadContext.BytesRead));
-					SetControlText(totalCountSpan, uploadContext.FormatCount(uploadContext.ContentLength));
-					SetControlText(countUnitsSpan, uploadContext.CountUnits);
-					SetControlText(percentCompleteSpan, uploadContext.FormattedPercentComplete);
-					SetControlText(rateSpan, uploadContext.FormattedRate);
-					SetControlText(elapsedTimeSpan, uploadContext.FormattedTimeElapsed);
-					SetControlText(remainingTimeSpan, uploadContext.FormattedTimeRemaining);
-				}
+				if (barDiv != null)
+					barDiv.Style["width"] = Math.Round(this.UploadContext.FractionComplete * 100) + "%";
 				
-				Exception = uploadContext.Exception;
-				if (uploadContext.Status == UploadStatus.Cancelled)
+				SetControlText(remainingTimeSpan, FormatTimeSpan(this.TimeRemaining));
+				
+				if ((this.UploadContext.Status == UploadStatus.Cancelled
+				     || this.UploadContext.Status == UploadStatus.Rejected
+				     || this.UploadContext.Status == UploadStatus.Failed)
+			        && cancelledSpan != null)
 				{
-					DynamicStyle = "";
 					cancelledSpan.Visible = true;
 				}
-				else if (uploadContext.Status == UploadStatus.InProgress)
+				else if ((this.UploadContext.Status == UploadStatus.NormalInProgress
+				          || this.UploadContext.Status == UploadStatus.ChunkedInProgress)
+				         && inProgressSpan != null)
 				{
-					DynamicStyle = "";
 					inProgressSpan.Visible = true;
 				}
-				else if (uploadContext.Status == UploadStatus.Completed)
+				else if (this.UploadContext.Status == UploadStatus.Completed && completedSpan != null)
 				{
-					DynamicStyle = "";
 					completedSpan.Visible = true;
 				}
-				else if (uploadContext.Status == UploadStatus.Rejected)
-				{
-					if (rejectedSpan != null)
-					{
-						rejectedSpan.Visible = true;
-						if (uploadContext.Exception != null && rejectedMessageSpan != null)
-						{
-							rejectedMessageSpan.InnerText = uploadContext.Exception.Message;
-						}
-					}
-					else
-					{
-						cancelledSpan.Visible = true;
-					}
-				}
-				else if (uploadContext.Status == UploadStatus.Error)
-				{
-					if (errorSpan != null)
-					{
-						errorSpan.Visible = true;
-						if (uploadContext.Exception != null && errorMessageSpan != null)
-						{
-							errorMessageSpan.InnerText = uploadContext.Exception.Message;
-						}
-					}
-					else
-					{
-						cancelledSpan.Visible = true;
-					}
-				}
-				if (uploadContext.ContentLength >= 0)
+				if (this.UploadContext.ContentLength >= 0 && remainingTimeSpan != null)
 				{
 					remainingTimeSpan.Visible = true;
-					elapsedTimeSpan.Visible = false;
-				}
-				else
-				{
-					remainingTimeSpan.Visible = false;
-					elapsedTimeSpan.Visible = true;
-					DynamicStyle += ".HaveTotalCount { display: none; }";
 				}
 			}
 		}
@@ -506,9 +539,7 @@ if (NeatUploadCanCancel())
 			cancelLink.Visible = true;
 			cancelLink.HRef = refreshUrl + "&cancelled=true";	
 			cancelLink.Attributes["onclick"] = "javascript: NeatUploadCancel();";
-			string progressScriptUrl = Request.Url.AbsoluteUri;
-			progressScriptUrl = progressScriptUrl.Substring(0, progressScriptUrl.LastIndexOf('/')) + "/ProgressScript.aspx";
-			RegisterStartupScript("scrNeatUploadRefresh", clientRefreshScript.Replace("REFRESHURL", refreshUrl).Replace("PROGRESSSCRIPTURL", progressScriptUrl));
+			RegisterStartupScript("scrNeatUploadRefresh", clientRefreshScript.Replace("REFRESHURL", refreshUrl));
 		}
 		
 		private void RefreshWithServerHeader(string refreshUrl)

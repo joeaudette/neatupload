@@ -19,16 +19,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 using System;
-using System.IO;
 using System.Web;
 using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.HtmlControls;
+using System.Security.Permissions;
 
 namespace Brettle.Web.NeatUpload
 {
-	internal enum UploadStatus : long
+	/// <summary>
+	/// A div that is dynamically filled with upload progress/status information using data-binding expressions.</summary>
+	/// <remarks>
+	/// </remarks>
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[ParseChildren(false)]
+	[PersistChildren(true)]
+	public class DetailsDiv : DetailsControl
 	{
-		Unknown, NormalInProgress, ChunkedInProgress, Completed, Cancelled, Rejected, Failed
+		protected override string TagName { get { return "div"; } }
 	}
 }

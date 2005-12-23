@@ -129,6 +129,21 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "DetailsControl.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "DetailsDiv.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "DetailsSpan.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "FilteringWorkerRequest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -204,18 +219,8 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "NeatUpload\ProgressScript.aspx"
-                    BuildAction = "Content"
-                />
-                <File
                     RelPath = "Progress.aspx.cs"
                     DependentUpon = "NeatUpload\Progress.aspx"
-                    SubType = "ASPXCodeBehind"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ProgressScript.aspx.cs"
-                    DependentUpon = "NeatUpload\ProgressScript.aspx"
                     SubType = "ASPXCodeBehind"
                     BuildAction = "Compile"
                 />

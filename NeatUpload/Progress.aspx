@@ -1,7 +1,8 @@
 <%@ Page language="c#" Codebehind="Progress.aspx.cs" AutoEventWireup="false" Inherits="Brettle.Web.NeatUpload.Progress" %>
-<Html>
-	<Head>
-		<Title>Upload Progress</Title>
+<%@ Register TagPrefix="Upload" Namespace="Brettle.Web.NeatUpload" Assembly="Brettle.Web.NeatUpload" %>
+<html>
+	<head>
+		<title>Upload Progress</title>
 		<link rel="stylesheet" type="text/css" title="default" href="default.css" />		
 		<style type="text/css">
 <!--
@@ -31,7 +32,7 @@
 			z-index: 1; 
 		}
 		
-		#barDiv {
+		#barDiv,#barDetailsDiv {
 			border: 0px none ; 
 			margin: 0px; 
 			padding: 0px; 
@@ -42,32 +43,44 @@
 			height: 100%;
 			width: 75%;
 		}
-		
-		<%= DynamicStyle %>
 -->
 		</style>
-	</Head>
-	<Body>
+	</head>
+	<body>
 		<form id="dummyForm" runat="server">
 		<table class="ProgressDisplay">
 		<tr>
 		<td>
-			<span id="label" runat="server" class="Label">Upload&nbsp;Status:</span>
+			<span id="label" runat="server" class="Label">Upload&#160;Status:</span>
 		</td>
 		<td id="barTd" >
-			<div id="statusDiv" runat="server" class="StatusMessage">&nbsp;
-				<span id="completedSpan" runat="server">Complete: </span>
-				<span id="cancelledSpan" runat="server">Cancelled: </span>
-				<span id="rejectedSpan" runat="server">Rejected: <span id="rejectedMessageSpan" runat="server"></span></span>
-				<span id="errorSpan" runat="server">Error: <span id="errorMessageSpan" runat="server"></span></span>
-				<span class="UploadDetails" style="font-weight: normal; white-space: nowrap;">
-					<span id="uploadedCountSpan" runat="server">0</span><span class="HaveTotalCount">/<span id="totalCountSpan" runat="server">0</span></span>
-					<span id="countUnitsSpan" runat="server">KB</span>
-					<span class="HaveTotalCount">(<span id="percentCompleteSpan" runat="server">0%</span>)</span>
-					at <span id="rateSpan" runat="server">0 KB/s</span>
-					<span id="inProgressSpan" runat="server">- <span id="remainingTimeSpan" runat="server">00:01 left</span><span id="elapsedTimeSpan" runat="server">00:01 elapsed</span></span>
-				</span>
-				<div id="barDiv" runat="server" class="ProgressBar"></div>
+			<div id="statusDiv" runat="server" class="StatusMessage">&#160;
+				<Upload:DetailsSpan id="normalInProgress" runat="server" WhenStatus="NormalInProgress" style="font-weight: normal; white-space: nowrap;">
+					<%# FormatCount(BytesRead) %>/<%# FormatCount(BytesTotal) %> <%# CountUnits %>
+					(<%# String.Format("{0:0%}", FractionComplete) %>) at <%# FormatRate(BytesPerSec) %>
+					- <%# FormatTimeSpan(TimeRemaining) %> left
+				</Upload:DetailsSpan>
+				<Upload:DetailsSpan id="chunkedInProgress" runat="server" WhenStatus="ChunkedInProgress" style="font-weight: normal; white-space: nowrap;">
+					<%# FormatCount(BytesRead) %> <%# CountUnits %>
+					at <%# FormatRate(BytesPerSec) %>
+					- <%# FormatTimeSpan(TimeElapsed) %> elapsed
+				</Upload:DetailsSpan>
+				<Upload:DetailsSpan id="completed" runat="server" WhenStatus="Completed">
+					Complete: <%# FormatCount(BytesRead) %> <%# CountUnits %>
+					at <%# FormatRate(BytesPerSec) %>
+					took <%# FormatTimeSpan(TimeElapsed) %>
+				</Upload:DetailsSpan>
+				<Upload:DetailsSpan id="cancelled" runat="server" WhenStatus="Cancelled">
+					Cancelled!
+				</Upload:DetailsSpan>
+				<Upload:DetailsSpan id="rejected" runat="server" WhenStatus="Rejected">
+					Rejected: <%# Rejection != null ? Rejection.Message : "" %>
+				</Upload:DetailsSpan>
+				<Upload:DetailsSpan id="error" runat="server" WhenStatus="Failed">
+					Error: <%# Failure != null ? Failure.Message : "" %>
+				</Upload:DetailsSpan>
+				<Upload:DetailsDiv id="barDetailsDiv" runat="server" 
+					style='<%# String.Format(@"width: {0:0}%;", 100*FractionComplete) %>' class="ProgressBar"></Upload:DetailsDiv>	
 			</div>
 		</td>
 		<td>
@@ -78,5 +91,5 @@
 		</tr>
 		</table>
 		</form>
-	</Body>
-</Html>
+	</body>
+</html>

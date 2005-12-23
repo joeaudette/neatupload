@@ -336,7 +336,7 @@ namespace Brettle.Web.NeatUpload
 				}
 				else if (uploadContext.Status != UploadStatus.Cancelled)
 				{
-					uploadContext.Status = UploadStatus.Error;
+					uploadContext.Status = UploadStatus.Failed;
 				}
 
 				byte[] buffer = new byte[4096];
@@ -356,6 +356,7 @@ namespace Brettle.Web.NeatUpload
 					LogEntityBodyStream.Close();
 				if (LogEntityBodySizesStream != null)
 					LogEntityBodySizesStream.Close();
+				uploadContext.StopTime = DateTime.Now;
 			}
 		}
 		

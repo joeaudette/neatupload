@@ -73,7 +73,7 @@ namespace Brettle.Web.NeatUpload
 							// this temporary context is not shared between uploaded files.
 							UploadContext ctx = new UploadContext();
 							ctx.SetContentLength(this.Page.Request.ContentLength);
-							ctx.Status = UploadStatus.InProgress;
+							ctx.Status = UploadStatus.NormalInProgress;
 							_file = UploadStorage.CreateUploadedFile(ctx, this.UniqueID, postedFile.FileName, postedFile.ContentType);
 							Stream outStream = null, inStream = null;
  							try
@@ -267,7 +267,7 @@ namespace Brettle.Web.NeatUpload
 		}
 		
 		/// <summary>
-		/// Called by ASP.NET if <see cref="LoadPostData()"/> returns true (i.e. if a file was uploaded to this 
+		/// Called by ASP.NET if <see cref="LoadPostData"/> returns true (i.e. if a file was uploaded to this 
 		/// control).  Fires the <see cref="FileUploaded"/> event.</summary>
 		public virtual void RaisePostDataChangedEvent()
 		{
