@@ -3,6 +3,7 @@
 <html>
 	<head>
 		<title>Upload Progress</title>
+		<script src="Progress.js"></script>
 		<link rel="stylesheet" type="text/css" title="default" href="default.css" />		
 		<style type="text/css">
 <!--

@@ -219,6 +219,10 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "NeatUpload\Progress.js"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "Progress.aspx.cs"
                     DependentUpon = "NeatUpload\Progress.aspx"
                     SubType = "ASPXCodeBehind"
