@@ -27,7 +27,7 @@ using System.Web.UI.HtmlControls;
 
 namespace Brettle.Web.NeatUpload
 {
-	internal enum UploadStatus : long
+	public enum UploadStatus : long
 	{
 		Unknown, NormalInProgress, ChunkedInProgress, Completed, Cancelled, Rejected, Failed
 	}

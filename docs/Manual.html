@@ -211,15 +211,13 @@ NeatUpload-1.1.x should be completely
 backward-compatible with NeatUpload-1.0.x. &nbsp;To upgrade, simply
 replace your
 Brettle.Web.NeatUpload.dll with the copy from NeatUpload-1.1.x and add
-ProgressScript.aspx and Error413.aspx from NeatUpload-1.1.x/NeatUpload/
+Progress.js and Error413.aspx from NeatUpload-1.1.x/NeatUpload/
 to the NeatUpload
 subfolder in your web application.
 &nbsp;If you have not customized your Progress.aspx page, you
 should replace it with NeatUpload-1.1.x/NeatUpload/Progress.aspx.
-&nbsp;If you have customized it, consider updating it to include
-the new <code>&lt;span&gt;</code> elements: <code>errorSpan</code>,
-<code>errorMessageSpan</code>, <code>rejectedSpan</code>,
-and <code>rejectedMessageSpan</code>.&nbsp; See <a href="Manual.html#Customizing_Progress_aspx">Customizing
+&nbsp;If you have customized it, consider changing it to use
+the new <code>&lt;Upload:DetailsSpan&gt;</code> and <code>&lt;Upload:DetailsDiv&gt;</code> elements to take advantage of&nbsp;<a href="http://en.wikipedia.org/wiki/AJAX">AJAX</a> refreshless updates<code></code>.&nbsp; See <a href="Manual.html#Customizing_Progress_aspx">Customizing
 Progress.aspx</a> for details.<br>
 
 
@@ -235,7 +233,7 @@ you
 are
 encouraged to switch to their replacements, but that is not required
 for NeatUpload-1.1.x.
-&nbsp;You might want also want to consider&nbsp; using the new
+&nbsp;You might also want to consider using the new
 custom
 config section instead of the old appSettings, though the appSettings
 will continue to work.<br>
@@ -251,13 +249,19 @@ Features in NeatUpload-1.1</h3>
 
 
 
+  
+
+
+  <li>Added more upload details to the default progress display,
+including total upload size, amount and percent already uploaded, and
+current upload rate.</li>
+  <li>Improved user experience when uploads are
+too large. &nbsp;The progress bar now indicates that the upload was rejected
+and whenever practical the upload is stopped by the browser so that the
+user remains on the original form.</li>
+  <li>Added support for <a href="http://en.wikipedia.org/wiki/AJAX">AJAX</a>
+refreshless updates of the progress bar.</li>
   <li>Added support for <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpgenref/html/cpconlinkbuttonwebcontrol.asp">LinkButtons</a>.</li>
-
-
-
-  <li>Added support for <a href="http://en.wikipedia.org/wiki/AJAX">AJAX</a>-style
-refreshless updates of the progress bar, even on browsers that don't
-support <a href="http://en.wikipedia.org/wiki/XMLHTTP">XMLHttpRequest</a>.</li>
 
 
 
@@ -316,20 +320,13 @@ pages.</li>
 
 
   <li>Added support for custom <code>UploadStorageProvider</code>s.</li>
+  <li>Added support for more flexible progress display customization using new <code>&lt;Upload:DetailsSpan&gt;</code> and <code>&lt;Upload:DetailsDiv&gt;</code> elements.</li>
+  <li>Added <code>Url</code> property to <code>ProgressBar</code> control to specify location of progress display page (defaults to <code>NeatUpload/Progress.aspx</code>).</li>
+  <li>Moved progress display Javascript to <code>Progress.js</code> to reduce bandwidth required to download <code>Progress.aspx</code> repeatedly.</li>
 
 
 
   <li>Added Visual Studio designer support.</li>
-  <li>Added more upload details to the progress display, including
-total upload size, amount and percent already uploaded, and current
-upload rate.</li>
-  <li>Improved user experience when uploads are too large. &nbsp;The
-progress bar now indicates that the upload was rejected and whenever
-practical the upload is stopped by the browser so that the user remains
-on the original form.</li>
-
-
-
 </ul>
 
 
@@ -349,9 +346,8 @@ as well as Microsoft's ASP.NET implementation. </p>
 
 
 
-<p> NeatUpload contains two custom controls (<code>InputFile</code>
-and <code>ProgressBar</code>), an <code>HttpModule</code>
-(<code>UploadHttpModule</code>), and a page (<code>Progress.aspx</code>).
+<p> NeatUpload contains four custom controls (<code>InputFile</code>, <code>ProgressBar</code>, <code>DetailsSpan</code>, and <code>DetailsDiv</code>), an <code>HttpModule</code>
+(<code>UploadHttpModule</code>), and a Page subclass (ProgressPage).
 This section briefly describes what they each do and how they are
 related. The remainder of this manual describes how to install and use
 NeatUpload. </p>
@@ -378,8 +374,7 @@ window) along with some JavaScript which removes the DIV when the page
 loads. This provides a fallback when JavaScript is not available. Note
 that <code>ProgressBar</code> doesn't actually display the
 progress bar itself. It merely provides a site (an IFRAME or popup)
-which loads the <code>Progress.aspx</code> page. <code>Progress.aspx</code>
-(described below) displays the progress bar. </p>
+which loads a page derived from <code>ProgressPage</code> (by default Progress.aspx). &nbsp;The <code>ProgressPage</code> subclass displays the progress bar. </p>
 
 
 
@@ -400,14 +395,10 @@ adopting NeatUpload. </p>
 
 
 
-<p> <code><strong>Progress.aspx</strong></code>
-is the page that is displayed in the site provided by the <code>ProgressBar</code>
-control (i.e. in the IFRAME or popup). The codebehind for <code>Progress.aspx</code>
-is compiled into the NeatUpload assembly. That code retrieves
-the&nbsp;status of the upload from the <code>UploadHttpModule</code>,
-modifies the HTML generated by Progress.aspx (e.g. the width of the
-progress bar itself), and inserts JavaScript which causes the display
-to update. </p>
+<p> <code><strong>ProgressPage</strong></code>
+is a subclass of <code>Page</code> that is used as the base class for pages displayed in the site provided by the <code>ProgressBar</code>
+control (i.e. in the IFRAME or popup). <code>&nbsp;Progress.aspx</code> is the default <code>ProgressPage</code>. &nbsp;<code>ProgressPage </code>retrieves
+the details of the upload process from the <code>UploadHttpModule</code>. and makes them available for subclasses to use in data-binding expressions.&nbsp; <code>ProgressPage</code> subclasses (e.g. <code>Progress.aspx</code>) place such data-binding expressions within <code style="font-weight: bold;">DetailsSpan</code><span style="font-weight: bold;"> </span>and <code style="font-weight: bold;">DetailsDiv</code><span style="font-weight: bold;"> </span>controls so that NeatUpload can use AJAX techniques to update the values without requiring a browser a refresh. </p>
 
 
 
@@ -472,8 +463,7 @@ to your VS.NET project it will say, "There
 is no class file in the project associated with the Web Form
 'Progress.aspx'.&nbsp; Create a new class file now?".
 &nbsp;Answer "No"
-because the class file is compiled into&nbsp;<code>Brettle.Web.NeatUpload.dll</code>.
-Do the same for ProgressScript.aspx. </li>
+because the class file is compiled into&nbsp;<code>Brettle.Web.NeatUpload.dll</code>. </li>
 
 
 
@@ -538,8 +528,6 @@ and verify that the demo functions properly. </li>
 
 
 
-<p> That's it. Now you're ready to start using NeatUpload. Keep
-reading for details. </p>
 
 
 
@@ -587,10 +575,9 @@ uploaded
 file. &nbsp;The client-specified
 name and content type of the uploaded file can be accessed via <code><var>inputFileId</var>.FileName</code>
 and <code><var>inputFileId</var>.ContentType</code>.
-&nbsp;You can also use <code><span style="font-style: italic;">inputFileId</span>.MoveTo()</code>
+&nbsp;<span style="font-weight: bold;">If you want to keep the uploaded file, you must use the </span><code style="font-weight: bold;"><span style="font-style: italic;">inputFileId</span>.MoveTo()</code><span style="font-weight: bold;">
 method to
-move the uploaded file to a permanent location. &nbsp;So something
-like the following will put the uploaded file in the
+move the uploaded file to a permanent location. &nbsp;If you do not, NeatUpload will automatically remove the uploaded file at the end of the request</span> to ensure that unwanted files do not fill up the filesystem. &nbsp;The following code will put the uploaded file in the
 application's root directory (assuming
 sufficient permissions):
     
@@ -692,10 +679,11 @@ uploaded
 file. &nbsp;The client-specified
 name and content type of the uploaded file can be accessed via <code><var>inputFileId</var>.FileName</code>
 and <code><var>inputFileId</var>.ContentType</code>.
-&nbsp;You can also use <code><span style="font-style: italic;">inputFileId</span>.MoveTo()</code>
-method to
-move the uploaded file to a permanent location. &nbsp;So something
-like the following will put the uploaded file in the
+&nbsp;<span style="font-weight: bold;">If you want to keep the uploaded file, you must use the </span><code style="font-weight: bold;"><span style="font-style: italic;">inputFileId</span>.MoveTo()</code><span style="font-weight: bold;">method
+to
+move the uploaded file to a permanent location. &nbsp;If you do not,
+NeatUpload will automatically remove the uploaded file at the end of
+the request</span> to ensure that unwanted files do not fill up the filesystem. &nbsp;The following code will put the uploaded file in the
 application's root directory (assuming
 sufficient permissions):
     
@@ -1324,15 +1312,18 @@ only difference is that for non-upload requests that exceed the <code>maxNormalR
 
 <p> The <code>Progress.aspx</code> page that comes
 with NeatUpload is just an
-example. You can modify it to suit your needs. For example, you
+example. You can modify it to suit your needs. &nbsp;For example, you
 could change the color scheme with minor modification to the
 <code>default.css</code> stylesheet that is included, or
 you could change the text
 or images that are used by modifying <code>Progress.aspx</code>
-itself. You could
-even rearrange the layout entirely. The only restriction is that you
-must continue to include elements with the following id attributes and
-tag names, each with the runat attribute set to "server": </p>
+itself. &nbsp;You could
+even rearrange the layout entirely or create a new page derived from <code>ProgressPage</code> and use the <code>Url</code> property of the <code>ProgressBar</code> to refer to it. &nbsp;To allow AJAX refreshless updates, you must include at least one <code>DetailsSpan</code> or <code>DetailsDiv</code>
+control. Use data-binding expressions within those controls (either the
+in the content or properties) to access the details of the upload at
+runtime.&nbsp; Below is a list of the properties and methods that
+NeatUpload provides for use in data-binding expressions. &nbsp; Refer to the sample <code>Progress.aspx</code>
+to see how each of these is used. </p>
 
 
 
@@ -1344,11 +1335,11 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
-    <td><strong>ID</strong></td>
+    <td><strong>Name</strong></td>
 
 
 
-    <td><strong>Tag Name</strong></td>
+    <td><strong>Description</strong></td>
 
 
 
@@ -1361,14 +1352,28 @@ tag names, each with the runat attribute set to "server": </p>
 
 
     <tr>
+      <td><code>Status</code></td>
+      <td>A value from the <code>UploadStatus</code> enumeration, as follows:<br>
+      <code>Unknown</code> - NeatUpload has not yet started receiving the upload<br>
+      <code>NormalInProgress</code> - a normal (non-chunked) upload had started but not yet finished<br>
+      <code>ChunkedInProgress</code> - an upload which uses chunked transfer coding has started but not yet finished.<br>
+      <code>Completed</code> - the upload has finished successfully<br>
+      <code>Cancelled</code> - the user has cancelled the upload using the cancel link<br>
+      <code>Rejected</code> - the upload has been rejected by the server because it is unacceptable for some reason<br>
+      <code>Failed</code> - an unexpected error occurred while receiving the upload<br>
+      <br>
+If the <code>WhenStatus</code> property of a <code>DetailsSpan</code> and <code>DetailsDiv</code> control is set, the control will only display when the status is one of the space-separated list of statuses in the <code>WhenStatus</code> value. &nbsp;If the <code>WhenStatus</code> property is not set, the control will always display.</td>
+    </tr>
+    <tr>
 
 
 
-      <td><code>barDiv</code></td>
+      <td><code>BytesRead</code></td>
 
 
 
-      <td>any</td>
+      <td>Number of bytes received by the server so far. &nbsp;Pass this to <code>FormatCount()</code> to get a more readable value.<br>
+      </td>
 
 
 
@@ -1380,11 +1385,46 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
-      <td><code>statusDiv</code></td>
+      <td><code>BytesTotal</code></td>
 
 
 
-      <td>any</td>
+      <td>Total number of bytes in the upload. &nbsp;Pass this to <code>FormatCount()</code> to get a more readable value. &nbsp;For chunked uploads, <code>BytesTotal</code> is -1.</td>
+
+
+
+    </tr>
+
+
+
+    
+
+
+    <tr>
+      <td><code>CountUnits</code></td>
+      <td>The units associated with the result of a call to <code>FormatCount()</code>. &nbsp;&nbsp;If the value is greater that 1 million returns the value of the <code>MBUnits</code> resource. &nbsp;Otherwise, if the value is greater than 1
+thousand,&nbsp;returns the value of the <code>KBUnits</code> resource.
+&nbsp;Otherwise, returns the value of the <code>ByteUnits</code>
+resource.</td>
+    </tr>
+    <tr>
+      <td><code>FormatCount()</code></td>
+      <td>Converts a number of bytes to more readable units. &nbsp;If
+the value is greater that 1 million,it is formatted according to the <code>MBCountFormat</code> resource. &nbsp;Otherwise, if the value is greater than 1 thousand, it is formatted according to the <code>KBCountFormat</code> resource. &nbsp;Otherwise, the value is formatted according of the <code>ByteCountFormat</code> resource.</td>
+    </tr>
+    <tr>
+
+
+
+      <td><code>BytesPerSec</code></td>
+
+
+
+      <td>Rate (in bytes/sec) at which the server has received the
+upload. &nbsp; While the upload is in progress, this is an average over
+the past 1-2 seconds. &nbsp;When the upload has finished, this is an
+average over the entire upload.<br>
+      </td>
 
 
 
@@ -1396,27 +1436,14 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
-      <td><code>inProgressSpan</code></td>
+      <td><code>FormatRate()</code></td>
 
 
 
-      <td>any</td>
-
-
-
-    </tr>
-
-
-
-    <tr>
-
-
-
-      <td><code>remainingTimeSpan</code></td>
-
-
-
-      <td>any</td>
+      <td>Converts a rate to more readable units. &nbsp;If the value is greater than 1 million, it is formatted according to the <code>MBRateFormat</code> resource. &nbsp;Otherwise, if the value is
+greater than 1 thousand, it is formatted according to the <code>KBRateFormat</code>
+resource. &nbsp;Otherwise, the value is formatted according of the
+      <code>ByteRateFormat</code> resource.</td>
 
 
 
@@ -1428,27 +1455,12 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
-      <td><code>completedSpan</code></td>
+      <td><code>FractionComplete</code></td>
 
 
 
-      <td>any</td>
-
-
-
-    </tr>
-
-
-
-    <tr>
-
-
-
-      <td><code>cancelledSpan</code></td>
-
-
-
-      <td>any</td>
+      <td>A double in the range 0.0-1.0. &nbsp;Computed as <code>BytesRead</code>/<code>BytesTotal</code> for normal (ie non-chunked) uploads. &nbsp;Always 0.0 for chunked uploads.<br>
+      </td>
 
 
 
@@ -1460,27 +1472,12 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
-      <td><code>rejectedSpan</code></td>
+      <td><code>TimeElapsed</code></td>
 
 
 
-      <td>any</td>
-
-
-
-    </tr>
-
-
-
-    <tr>
-
-
-
-      <td><code>errorSpan</code></td>
-
-
-
-      <td>any</td>
+      <td><code>TimeSpan</code> representing the time that has elapsed since the upload began.<br>
+      </td>
 
 
 
@@ -1492,27 +1489,13 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
-      <td><code>refreshLink</code></td>
+      <td><code>TimeRemaining</code></td>
 
 
 
-      <td>A</td>
-
-
-
-    </tr>
-
-
-
-    <tr>
-
-
-
-      <td><code>stopRefreshLink</code></td>
-
-
-
-      <td>A</td>
+      <td><code>TimeSpan</code> estimating the time left until the
+upload completes. &nbsp;This is projected based on the elapsed time and
+the fraction complete. &nbsp;This is <code>TimeSpan</code>.<code>MaxValue</code> if <code>BytesRead</code> is 0 or this is a chunked upload. </td>
 
 
 
@@ -1524,14 +1507,101 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
-      <td><code>cancelLink</code></td>
+      <td><code>FormatTimeSpan()</code></td>
 
 
 
-      <td>A</td>
+      <td>Formats a <code>TimeSpan</code> for readability using the following code, given a <code>TimeSpan</code> ts:<br>
+      <code>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;string format;<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; if (ts.TotalSeconds &lt; 60)<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; format = GetResourceString("SecondsFormat");<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; else if (ts.TotalSeconds &lt; 60*60)<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; format = GetResourceString("MinutesFormat");<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; else<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; format = GetResourceString("HoursFormat");<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; return String.Format(format,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(int)Math.Floor(ts.TotalHours),<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(int)Math.Floor(ts.TotalMinutes),<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ts.Seconds,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ts.TotalHours,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ts.TotalMinutes);</code></td>
 
 
 
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td><code>Rejection</code></td>
+
+
+
+      <td>An <code>UploadException</code> (eg <code>UploadTooLargeException</code>) when <code>Status</code> is <code>Rejected</code>. &nbsp;Otherwise, null. &nbsp;It can be useful to display <code>Rejection.Message</code> to the user when a rejection occurs. &nbsp;NeatUpload throws an <code>UploadTooLargeException</code>
+if the total request size is more than the size specified with the <code>maxRequestLength</code>
+attribute of the <code>&lt;neatUpload&gt;</code>
+element. &nbsp;The value of the <code>UploadTooLargeException</code>'s
+Message field is based on the <code>UploadTooLargeMessageFormat</code>
+resource in Progress.aspx.resx.</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td><code>Failure</code></td>
+
+
+
+      <td>An&nbsp;<code>Exception</code>&nbsp; when <code>Status</code> is <code>Failed</code>. &nbsp;Otherwise, null. &nbsp;It can be useful to display <code>Failure.Message</code> to the user when a failure occurs.</td>
+
+
+
+    </tr>
+    <tr>
+      <td><code>CurrentFileName</code></td>
+      <td>The client-specified name of the file currently being received by the server. &nbsp;</td>
+    </tr>
+    <tr>
+      <td><code>CancelVisible</code></td>
+      <td>Whether the 'cancel' link should be visible. &nbsp;This is
+only 'true' when an upload is in progress and NeatUpload can use
+Javascript to cancel an upload.</td>
+    </tr>
+    <tr>
+      <td><code>StartRefreshVisible</code></td>
+      <td>Whether the 'start refresh' link should be visible.
+&nbsp;This is only 'true' when the progress display is not refreshing
+and NeatUpload can't use Javascript to automatically start refreshing
+it when the upload starts. &nbsp;</td>
+    </tr>
+    <tr>
+      <td><code>StopRefreshVisible</code></td>
+      <td>Whether the 'stop refresh' link should be visible. &nbsp;This is only
+'true' when the upload is in progress, the progress display is refreshing, and NeatUpload can't
+use Javascript to cancel the upload.</td>
+    </tr>
+    <tr>
+      <td><code>CancelUrl, </code><code>StartRefreshUrl.&nbsp;</code><code>StopRefreshUrl</code></td>
+      <td>The URLs for the 'cancel', 'start refresh', and 'stop refresh' links, respectively.</td>
     </tr>
 
 
@@ -1543,51 +1613,21 @@ tag names, each with the runat attribute set to "server": </p>
 
 
 
-<p> Refer to the sample <code>Progress.aspx</code>
-to see how each of these
-elements is used. Note that the codebehind will hide the link
-elements (and their contents) when appropriate. For example, the
-<code>refreshLink</code> and <code>stopRefreshLink</code>
-elements are hidden whenever JavaScript
-is available because they are used to manually start and stop
-refreshing the progress display.</p>
-
-
-
-<p>If an exception derived from <code>UploadException</code>
-is thrown during an upload, the <code>rejectedSpan</code><code></code>
-will be displayed, and if an element with an ID of <code>rejectedMessageSpan</code>
-is present, its contents will be replaced with the value of the
-exception's <code>Message</code> field. &nbsp;For
-example, NeatUpload throws an <code>UploadTooLargeException</code>
-if the total request size is more than the size specified with the <code>maxRequestLength</code>
-attribute of the <code>&lt;neatUpload&gt;</code>
-element. &nbsp;The value of the <code>UploadTooLargeException</code>'s
-Message field is based on the <code>UploadTooLargeMessageFormat</code>
-resource in Progress.aspx.resx. &nbsp;You can override that value
-by modifying Progress.aspx.resx and rebuilding NeatUpload, or by
-creating a resx file for the culture(s) you are using. &nbsp;You
-can also leave out the <code>rejectedMessageSpan</code>
-entirely and replace it with inline code or an inline expression that
-determines what should be displayed. &nbsp;That code can use the
-page's <code>Exception</code> field to get the exception
-that was thrown.</p>
-
-
-
-<p>If an exception that is <span style="font-style: italic;">not</span>
-derived from <code>UploadException</code> is thrown during
-an upload, the <code>errorSpan</code> will be displayed
-and if an element with an ID of <code>errorMessageSpan</code>
-is present, its contents will be replaced with the value of the
-exception's <code>Message</code> field. &nbsp;You can
-leave out the <code>errorMessageSpan</code> entirely
-and replace it with inline code or an inline expression that determines
-what should be displayed. &nbsp;That code can use the page's <code>Exception</code>
-field to get the exception that was thrown.</p>
-
-
-
+<br>
+By default, ProgressPage calls&nbsp;<code>GetResourceString()</code>
+method to retrieve all of it's resources. &nbsp;The default
+implementation uses the embedded resources compiled from
+Progress.aspx.resx. &nbsp;If you want to use a different source,
+override <code>GetResourceString()</code> in your subclass.
+<p>For AJAX refreshless updates to work, your <code>ProgressPage</code> subclass must render as a well-formed XML document. &nbsp;Here are a few tips to avoid the most common problems:</p>
+<ul>
+  <li>Use all lowercase for HTML element names (ie '<code>&lt;body&gt;</code>' instead of '<code>&lt;BODY&gt;</code>' or '<code>&lt;Body&gt;</code>').</li>
+  <li>If your page contains HTML-specific entities replace them with their numeric equivalents. &nbsp;For example, replace '<code>&amp;nbsp;</code>' with '<code>&amp;#160;</code>'.</li>
+  <li>Use <code>&lt;asp:HyperLink&gt;</code> instead of <code>&lt;a&gt;</code> for links, especially for links that use <code>CancelUrl</code>, <code>StartRefreshUrl</code>, and <code>StopRefreshUrl</code>. &nbsp;Some&nbsp;<code>HtmlAnchor</code>&nbsp;(i.e. <code>&lt;a&gt;</code>)
+implementations, notably Microsoft's ASP.NET 2.0, do not HTML encode
+the value of the href attribute. &nbsp;If the URLs contain ampersands,
+the XML will not be considered well-formed unless they are encoded.</li>
+</ul>
 <h3><a class="mozTocH3" name="mozTocId184279"></a>Creating
 Custom Fallback Content for <code>ProgressBar</code></h3>
 
@@ -1750,14 +1790,11 @@ type, size, or content), by throwing an exception derived from <code>UploadExcep
 
 
   <li>updates the progress bar to indicate that the upload was
-rejected</li>
+rejected (i.e. sets <code>Status</code> to <code>Rejected</code> and <code>Rejection</code> to the <code>UploadException</code> that occured)</li>
 
 
 
-  <li>replaces the contents of Progress.aspx's <code>rejectedMessageSpan</code>
-server control (if present) with the value of the exception's <code>Message</code>
-field</li>
-
+  
 
 
   <li>if the progress bar is in a pop-up window, leaves the
@@ -1806,16 +1843,11 @@ it assumes that it is an unexpected error, so it:<br>
 
 
 
-  <li>updates the progress bar to indicate that an error occurred</li>
+  <li>updates the progress bar to indicate that an error occurred&nbsp;(i.e. sets <code>Status</code> to <code>Failed</code> and <code>Failure</code> to the&nbsp;<code>Exception</code> that occured)</li>
 
 
 
-  <li>replaces
-the contents of Progress.aspx's <code>errorMessageSpan</code>
-server control (if
-present) with the value of the exception's <code>Message</code>
-field</li>
-
+  
 
 
   <li>if the progress bar is in a pop-up window, leaves the

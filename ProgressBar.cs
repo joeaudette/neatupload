@@ -118,7 +118,21 @@ namespace Brettle.Web.NeatUpload
 			base.OnInit(e);
 		}
 		
+		protected override void OnPreRender (EventArgs e)
+		{
+			if (!IsDesignTime && Config.Current.UseHttpModule)
+			{
+				InitializeVars();
+				RegisterScripts();
+			}
+			base.OnPreRender(e);
+		}
+		
 		private void InitializeComponent()
+		{
+		}
+		
+		private void InitializeVars()
 		{
 			if (IsDesignTime || !Config.Current.UseHttpModule)
 				return;
@@ -152,25 +166,29 @@ namespace Brettle.Web.NeatUpload
 			if (Inline)
 			{
 				Tag = HtmlTextWriterTag.Iframe;
-				Attributes["src"] = uploadProgressUrl;
+				Attributes["src"] = uploadProgressUrl + "&canScript=false&canCancel=false";
 				Attributes["frameborder"] = "0";
 				Attributes["scrolling"] = "no";
 				Attributes["name"] = this.ClientID;
 				displayStatement = @"
 setTimeout(function () {
-	frames['" + this.ClientID + @"'].location.href = '" + uploadProgressUrl + @"&refresher=client';
+	frames['" + this.ClientID + @"'].location.href = '" + uploadProgressUrl + @"&refresher=client&canScript=true&canCancel=' + NeatUploadCanCancel();
 }, 0);
 ";
+				this.Page.RegisterStartupScript(this.UniqueID + "UpdateIFrameSrc", @"
+<script language=""javascript"">
+<!--
+NeatUpload_IFrameNode = document.getElementById('" + this.ClientID + @"'); 
+if (NeatUpload_IFrameNode)
+	NeatUpload_IFrameNode.setAttribute('src', '" + uploadProgressUrl + @"&canScript=true&canCancel=' + NeatUploadCanCancel());
+-->
+</script>
+");
 			}
 			else
 			{
 				Tag = HtmlTextWriterTag.Div;
-				string width = GetPopupDimension("Width", Width, 500);
-				string height = GetPopupDimension("Height", Height, 100);
-				displayStatement = @"
-window.open('" + uploadProgressUrl + "&refresher=client', '" + FormContext.Current.PostBackID + @"',
-				'width=" + width + @",height=" + height + @",directories=no,location=no,menubar=no,resizable=yes,scrollbars=auto,status=no,toolbar=no');
-";
+				displayStatement = GetPopupDisplayStatement();
 				this.Page.RegisterStartupScript(this.UniqueID + "RemoveDiv", @"
 <script language=""javascript"">
 <!--
@@ -183,6 +201,15 @@ if (NeatUpload_DivNode)
 			}
 		}
 		
+		private string GetPopupDisplayStatement()
+		{
+			string width = GetPopupDimension("Width", Width, 500);
+			string height = GetPopupDimension("Height", Height, 100);
+			return @"window.open('" + uploadProgressUrl + "&refresher=client&canScript=true&canCancel=' + NeatUploadCanCancel(), '"
+			                        + FormContext.Current.PostBackID + @"','width=" + width + @",height=" + height
+			                        + @",directories=no,location=no,menubar=no,resizable=yes,scrollbars=auto,status=no,toolbar=no');";
+		}
+			
 		private string GetPopupDimension(string name, Unit length, int min)
 		{
 			if (length == Unit.Empty)
@@ -239,11 +266,8 @@ if (NeatUpload_DivNode)
 			otherNonUploadButtons.Add(control);
 		}
 
-		protected override void OnPreRender (EventArgs e)
+		private void RegisterScripts()
 		{
-			if (IsDesignTime || !Config.Current.UseHttpModule)
-				return;
-			
 			HtmlControl formControl = GetFormControl(this);
 			
 			if (!Page.IsClientScriptBlockRegistered("NeatUploadProgressBar"))
@@ -311,7 +335,7 @@ document.getElementById('" + formControl.ClientID + @"').onsubmit
 // -->
 </script>
 ");
-			Page.RegisterStartupScript(this.UniqueID, scriptBuilder.ToString());
+			Page.RegisterStartupScript(this.UniqueID, scriptBuilder.ToString());			
 		}
 
 		protected override void Render(HtmlTextWriter writer)
@@ -336,7 +360,8 @@ document.getElementById('" + formControl.ClientID + @"').onsubmit
 					writer.Write("<i>Pop-up ProgressBar - no-Javascript fallback = {</i>");
 				}
 			}
-			writer.AddAttribute("href", uploadProgressUrl + "&refresher=server");
+			writer.AddAttribute("id", ClientID + "_fallback_link");
+			writer.AddAttribute("href", uploadProgressUrl + "&refresher=server&canScript=false&canCancel=false");
 			string target = IsDesignTime ? "_blank" : FormContext.Current.PostBackID;
 			writer.AddAttribute("target", target);
 			writer.RenderBeginTag(HtmlTextWriterTag.A);
@@ -368,6 +393,10 @@ document.getElementById('" + formControl.ClientID + @"').onsubmit
 		private void AddPerProgressBarScripts(StringBuilder scriptBuilder, Control formControl)
 		{
 			scriptBuilder.Append(@"
+NeatUpload_FallbackLink = document.getElementById('" + this.ClientID + @"_fallback_link');
+if (NeatUpload_FallbackLink)
+	NeatUpload_FallbackLink.setAttribute('href', ""javascript:" + GetPopupDisplayStatement() + @""");
+
 NeatUpload_NonUploadIDs_" + this.ClientID + @" = new Object();
 NeatUpload_NonUploadIDs_" + this.ClientID + @".NeatUpload_length = 0;
 NeatUpload_TriggerIDs_" + this.ClientID + @" = new Object();
@@ -376,6 +405,16 @@ NeatUpload_LastEventSourceId = null;
 NeatUpload_LastEventType = null;
 
 NeatUpload_AddSubmitHandler('" + formControl.ClientID + "'," + (Inline ? "false" : "true") + @", function () {
+	if (NeatUpload_LastEventSourceId && !NeatUpload_TriggerIDs_" + this.ClientID + @"[NeatUpload_LastEventSourceId])
+	{
+		var formElem = document.getElementById('" + formControl.ClientID + @"');
+		if (NeatUpload_NonUploadIDs_" + this.ClientID + @"[NeatUpload_LastEventSourceId]
+		     || NeatUpload_TriggerIDs_" + this.ClientID + @".NeatUpload_length)
+		{
+			NeatUpload_ClearFileInputs(formElem);
+			return true;
+		}
+	}
 	if (NeatUpload_IsFilesToUpload('" + formControl.ClientID + @"'))
 	{
 		" + displayStatement + @"
@@ -394,7 +433,7 @@ for (var i = 0; i < NeatUpload_EventsThatCouldTriggerPostBack.length; i++)
 			return true;
 		}
 		var src = ev.srcElement || ev.target;
-		if (!src)
+		if (!src || src.id == '')
 		{
 			return true;
 		}
@@ -473,6 +512,21 @@ NeatUpload_AddSubmittingHandler('" + formControl.ClientID + @"', function () {
 		private string clientScript = @"
 <script language=""javascript"">
 <!--
+
+function NeatUploadCanCancel()
+{
+	try
+	{
+		if (window.stop || window.document.execCommand)
+			return true;
+		else
+			return false;
+	}
+	catch (ex)
+	{
+		return false;
+	}
+}
 function NeatUpload_CombineHandlers(origHandler, newHandler) 
 {
 	if (!origHandler || typeof(origHandler) == 'undefined') return newHandler;

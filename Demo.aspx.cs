@@ -30,8 +30,9 @@ namespace Brettle.Web.NeatUpload
 	public class Demo : System.Web.UI.Page
 	{	
 		protected HtmlForm form;
-		protected DropDownList progressBarTypeDropDown;
+		protected DropDownList progressBarLocationDropDown;
 		protected DropDownList buttonTypeDropDown;
+		protected DropDownList progressBarUrlDropDown;
 		protected InputFile inputFile;
 		protected InputFile inputFile2;
 		protected HtmlGenericControl submitButtonSpan;
@@ -66,8 +67,11 @@ namespace Brettle.Web.NeatUpload
 			linkButtonSpan.Visible = (buttonTypeDropDown.SelectedValue == "LinkButton");
 			commandButtonSpan.Visible = (buttonTypeDropDown.SelectedValue == "CommandButton");
 			
-			inlineProgressBarDiv.Visible = (progressBarTypeDropDown.SelectedValue == "Inline");
-			popupProgressBarDiv.Visible = (progressBarTypeDropDown.SelectedValue == "Popup");
+			inlineProgressBarDiv.Visible = (progressBarLocationDropDown.SelectedValue == "Inline");
+			popupProgressBarDiv.Visible = (progressBarLocationDropDown.SelectedValue == "Popup");
+			
+			inlineProgressBar.Url = progressBarUrlDropDown.SelectedValue;
+			progressBar.Url = progressBarUrlDropDown.SelectedValue;
 			
 			submitButton.Click += new System.EventHandler(this.Button_Clicked);
 			linkButton.Click += new System.EventHandler(this.Button_Clicked);

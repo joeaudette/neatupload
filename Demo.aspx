@@ -21,11 +21,11 @@
 			<h1>NeatUpload Demo</h1>
 			<p>
 			This page demonstrates the basic functionality of <a href="http://www.brettle.com/neatupload">NeatUpload</a>.
-			Start by selecting the type of progress bar and submit button you'd like to see demostrated.
+			Start by selecting the progress bar location and submit button you'd like to see demostrated.
 			</p>
 			<p>
-			Progress bar type: 
-			<asp:DropDownList id="progressBarTypeDropDown" runat="server" AutoPostBack="True" CausesValidation="False">
+			Progress bar location: 
+			<asp:DropDownList id="progressBarLocationDropDown" runat="server" AutoPostBack="True" CausesValidation="False">
 				<asp:ListItem Value="Popup" Selected="True">Popup</asp:ListItem>
 				<asp:ListItem Value="Inline">Inline</asp:ListItem>
 			</asp:DropDownList>
@@ -34,6 +34,11 @@
 				<asp:ListItem Value="Button" Selected="True">Button</asp:ListItem>
 				<asp:ListItem Value="LinkButton">LinkButton</asp:ListItem>
 				<asp:ListItem Value="CommandButton">CommandButton</asp:ListItem>
+			</asp:DropDownList>
+			Progress bar style:
+			<asp:DropDownList id="progressBarUrlDropDown" runat="server" AutoPostBack="True" CausesValidation="False">
+				<asp:ListItem Value="~/NeatUpload/Progress.aspx" Selected="True">Default (includes AJAX support)</asp:ListItem>
+				<asp:ListItem Value="~/NeatUpload/Progress-1.0.aspx">NeatUpload-1.0.x (no AJAX support, obsolete)</asp:ListItem>
 			</asp:DropDownList>
 			</p>
 			<p>

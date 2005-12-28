@@ -223,8 +223,18 @@
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "Progress.aspx.cs"
+                    RelPath = "ProgressPage.cs"
                     DependentUpon = "NeatUpload\Progress.aspx"
+                    SubType = "ASPXCodeBehind"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "NeatUpload\Progress-1.0.aspx"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "Progress-1.0.aspx.cs"
+                    DependentUpon = "NeatUpload\Progress-1.0.aspx"
                     SubType = "ASPXCodeBehind"
                     BuildAction = "Compile"
                 />

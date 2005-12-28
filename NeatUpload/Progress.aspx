@@ -1,9 +1,26 @@
-<%@ Page language="c#" Codebehind="Progress.aspx.cs" AutoEventWireup="false" Inherits="Brettle.Web.NeatUpload.Progress" %>
+<%@ Page language="c#" Codebehind="ProgressPage.cs" AutoEventWireup="false" Inherits="Brettle.Web.NeatUpload.ProgressPage" %>
 <%@ Register TagPrefix="Upload" Namespace="Brettle.Web.NeatUpload" Assembly="Brettle.Web.NeatUpload" %>
+<%--
+NeatUpload - an HttpModule and User Controls for uploading large files
+Copyright (C) 2005  Dean Brettle
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+--%>
 <html>
 	<head>
 		<title>Upload Progress</title>
-		<script src="Progress.js"></script>
 		<link rel="stylesheet" type="text/css" title="default" href="default.css" />		
 		<style type="text/css">
 <!--
@@ -85,9 +102,9 @@
 			</div>
 		</td>
 		<td>
-			<a id="cancelLink" runat="server" title="Cancel Upload" class="ImageButton"><img id="cancelImage" runat="server" src="cancel.png" alt="Cancel Upload" /></a>
-			<a id="refreshLink" runat="server" title="Refresh" class="ImageButton"><img id="refreshImage" runat="server" src="refresh.png" alt="Refresh" /></a>
-			<a id="stopRefreshLink" runat="server" title="Stop Refreshing" class="ImageButton"><img id="stopRefreshImage" runat="server" src="stop_refresh.png" alt="Stop Refreshing" /></a>
+			<asp:HyperLink id="cancel" runat="server" Visible='<%# CancelVisible %>' NavigateUrl='<%# CancelUrl %>' title="Cancel Upload" class="ImageButton" ><img id="cancelImage" runat="server" src="cancel.png" alt="Cancel Upload" /></asp:HyperLink>
+			<asp:HyperLink id="refresh" runat="server" Visible='<%# StartRefreshVisible %>' NavigateUrl='<%# StartRefreshUrl %>' title="Refresh" class="ImageButton" ><img id="refreshImage" runat="server" src="refresh.png" alt="Refresh" /></asp:HyperLink>
+			<asp:HyperLink id="stopRefresh" runat="server" Visible='<%# StopRefreshVisible %>' NavigateUrl='<%# StopRefreshUrl %>' title="Stop Refreshing" class="ImageButton"><img id="stopRefreshImage" runat="server" src="stop_refresh.png" alt="Stop Refreshing" /></asp:HyperLink>
 		</td>
 		</tr>
 		</table>
