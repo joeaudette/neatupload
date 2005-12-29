@@ -1,4 +1,4 @@
-<%@ Page language="c#" Codebehind="Progress-1.0.aspx.cs" AutoEventWireup="false" Inherits="Brettle.Web.NeatUpload.Progress" %>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="Brettle.Web.NeatUpload.Progress" %>
 <Html>
 	<Head>
 		<Title>Upload Progress</Title>
