@@ -19,180 +19,63 @@ Manual</h1>
 
 
 <ul id="mozToc">
-
-
-
 <!--mozToc h2 1 h3 2 h4 3 h5 4 h5 5 h6 6--><li><a href="#mozTocId859773">Release
 Notes for NeatUpload-1.1.0</a>
-    
-    
     <ul>
-
-
-
       <li><a href="#mozTocId432734">Upgrading
 from NeatUpload-1.0.x</a></li>
-
-
-
       <li><a href="#mozTocId953432">New
 Features in NeatUpload-1.1</a></li>
-
-
-
-    
-    
     </ul>
-
-
-
   </li>
-
-
-
   <li><a href="#mozTocId903858">Introduction</a></li>
-
-
-
   <li><a href="#mozTocId304923">Installation</a></li>
-
-
-
   <li><a href="#mozTocId50790">Usage</a>
-    
-    
     <ul>
-
-
-
-      <li><a href="#mozTocId879490">Using NeatUpload
-with the Visual Studio Web Form Designer</a></li>
-
-
-
-      <li><a href="#mozTocId170882">Using NeatUpload
-without the Visual Studio Web Form Designer</a></li>
-
-
-
+      <li><a href="#mozTocId879490">Using
+NeatUpload with the Visual Studio Web Form Designer</a></li>
+      <li><a href="#mozTocId170882">Using
+NeatUpload without
+the Visual Studio Web Form Designer</a></li>
       <li><a href="#mozTocId900479">Avoiding
 Unnecessary Uploads and Progress Displays</a></li>
-
-
-
-    
-    
     </ul>
-
-
-
   </li>
-
-
-
   <li><a href="#mozTocId221000">Configuration</a>
-    
-    
     <ul>
-
-
-
       <li><a href="#mozTocId576312">Using
 the &lt;neatUpload&gt;
 Configuration Section</a></li>
-
-
-
       <li><a href="#mozTocId905959">Changing
 the Temporary Directory Used by the FilesystemUploadStorageProvider</a></li>
-
-
-
-      <li><a href="#mozTocId134915">Using Location
-Filtering to Restrict/Modify NeatUpload's Request
+      <li><a href="#mozTocId134915">Using
+Location Filtering to Restrict/Modify NeatUpload's Request
 Processing</a></li>
-
-
-
       <li><a href="#mozTocId970185">Limiting
 the Size of Upload Requests</a></li>
-
-
-
       <li><a href="#mozTocId358727">Changing
 the Maximum Size of Normal Requests</a></li>
-
-
-
-    
-    
     </ul>
-
-
-
   </li>
-
-
-
   <li><a href="#mozTocId250326">Customization</a>
-    
-    
     <ul>
-
-
-
       <li><a href="#mozTocId628349">Customizing
 Progress.aspx</a></li>
-
-
-
       <li><a href="#mozTocId184279">Creating
 Custom Fallback Content for ProgressBar</a></li>
-
-
-
-      <li><a href="#mozTocId759939">Creating a
-Custom UploadStorageProvider</a></li>
-
-
-
-    
-    
+      <li><a href="#mozTocId759939">Creating
+a Custom UploadStorageProvider</a></li>
     </ul>
-
-
-
   </li>
-
-
-
   <li><a href="#mozTocId580088">Known
 Issues</a>
-    
-    
     <ul>
-
-
-
       <li><a href="#mozTocId766780">HttpResponse.AppendToLog()
 does nothing when UploadHttpModule is used</a></li>
-
-
-
-    
-    
+      <li><a href="#mozTocId752771">Inline ProgressBars don't work with Opera</a></li>
     </ul>
-
-
-
   </li>
-
-
-
   <li><a href="#mozTocId405545">Troubleshooting</a></li>
-
-
-
 </ul>
 
 
@@ -1869,7 +1752,7 @@ however NeatUpload does provide a workaround. &nbsp;Simply replace <code>Respons
 with <code>Brettle.Web.NeatUpload.UploadHttpModule.AppendToLog()</code>.
 &nbsp;That will work whether the <code>UploadHttpModule</code>
 is used or not.</p>
-<h4>Inline <code>ProgressBars </code>don't work with Opera</h4>
+<h3><a class="mozTocH4" name="mozTocId752771"></a>Inline <code>ProgressBars </code>don't work with Opera</h3>
 <p>Opera does not seem to allow an <code>IFRAME</code> to be updated during form submission. &nbsp;Currently, the only known workaround is to use a popup <code>ProgressBar</code>.</p>
 
 
