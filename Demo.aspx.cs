@@ -94,7 +94,7 @@ namespace Brettle.Web.NeatUpload
 				bodyPre.InnerText = "Page is not valid!";
 				return;
 			}
-			bodyPre.InnerText = Request.PhysicalApplicationPath + "\n";
+			bodyPre.InnerText = "";
 			if (inputFile.HasFile)
 			{
 				/* 

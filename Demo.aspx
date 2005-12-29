@@ -21,7 +21,7 @@
 			<h1>NeatUpload Demo</h1>
 			<p>
 			This page demonstrates the basic functionality of <a href="http://www.brettle.com/neatupload">NeatUpload</a>.
-			Start by selecting the progress bar location and submit button you'd like to see demostrated.
+			Start by selecting the progress bar location, submit button, and progress bar style you'd like to see demostrated.
 			</p>
 			<p>
 			Progress bar location: 
