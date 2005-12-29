@@ -1,4 +1,4 @@
-<%@ Page language="c#" Codebehind="ProgressPage.cs" AutoEventWireup="false" Inherits="Brettle.Web.NeatUpload.ProgressPage" %>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="Brettle.Web.NeatUpload.ProgressPage" %>
 <%@ Register TagPrefix="Upload" Namespace="Brettle.Web.NeatUpload" Assembly="Brettle.Web.NeatUpload" %>
 <%--
 NeatUpload - an HttpModule and User Controls for uploading large files
