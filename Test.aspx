@@ -1,20 +1,9 @@
-<%@ Page language="c#" Codebehind="Test.aspx.cs" AutoEventWireup="false" Inherits="Brettle.Web.NeatUpload.Test" %>
+<%@ Page language="c#" Src="Test.aspx.cs" AutoEventWireup="false" Inherits="Brettle.Web.NeatUpload.Test" %>
 <%@ Register TagPrefix="Upload" TagName="TestControl" Src="~/TestControl.ascx" %>
 
 <Html>
 	<Head>
-		<Title>NeatUpload Demo</Title>
-		<style type="text/css">
-<!--
-		.ProgressBar {
-			margin: 0px;
-			border: 0px;
-			padding: 0px;
-			width: 100%;
-			height: 2em;
-		}
--->
-		</style>
+		<Title>NeatUpload User Control Test</Title>
 	</Head>
 	<Body>
 		<form id="uploadForm" runat="server">
