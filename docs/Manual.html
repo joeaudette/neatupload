@@ -457,9 +457,7 @@ under
 
 
 <pre>	&lt;add key="NeatUpload.MaxNormalRequestLength" value="<em>sizeInKBytes</em>" /&gt;<br></pre>
-The behavior when this value is exceeded is the same as when the
-NeatUpload.MaxRequestLength is exceeded. &nbsp;See the preceding
-section for details.
+()ar
 
 <h3><a class="mozTocH3" name="mozTocId390633"></a>Customizing
 <code>Progress.aspx</code></h3>
@@ -647,8 +645,8 @@ however NeatUpload does provide a workaround. &nbsp;Simply replace <code>Respons
 with <code>Brettle.Web.NeatUpload.UploadHttpModule.AppendToLog()</code>.
 &nbsp;That will work whether the <code>UploadHttpModule</code>
 is used or not.</p>
-
-
+<h4>Inline <code>ProgressBars </code>don't work with Opera</h4>
+<p>Opera does not seem to allow an <code>IFRAME</code> to be updated during form submission. &nbsp;Currently, the only known workaround is to use a popup <code>ProgressBar</code>.</p>
 <h2><a class="mozTocH2" name="mozTocId405545"></a>Troubleshooting</h2>
 
 
