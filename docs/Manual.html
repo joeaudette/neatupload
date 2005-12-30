@@ -2136,7 +2136,10 @@ is used or not.</p>
 
 <h3><a class="mozTocH4" name="mozTocId752771"></a>Inline <code>ProgressBars </code>don't work with Opera</h3>
 
-<p>Opera does not seem to allow an <code>IFRAME</code> to be updated during form submission. &nbsp;Currently, the only known workaround is to use a popup <code>ProgressBar</code>.</p>
+<p>Opera does not seem to allow an <code>IFRAME</code> to be updated
+during form submission. &nbsp;NeatUpload works around this by using a
+popup progress bar whenever the User-Agent header contains "Opera"
+(case-insensitive).</p>
 
 
 

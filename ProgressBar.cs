@@ -61,7 +61,17 @@ namespace Brettle.Web.NeatUpload
 		[DefaultValue(false)]
 		public bool Inline
 		{
-			get { return (ViewState["inline"] != null && (bool)ViewState["inline"]); }
+			get
+			{
+				// Return false when browser is Opera because Opera won't refresh the iframe until the upload completes.
+				if (!IsDesignTime)
+				{
+					string userAgent = HttpContext.Current.Request.UserAgent;
+					if (userAgent != null && userAgent.ToLower().IndexOf("opera") != -1)
+						return false;
+				}
+				return (ViewState["inline"] != null && (bool)ViewState["inline"]);
+			}
 			set { ViewState["inline"] = value; }
 		}
 		
