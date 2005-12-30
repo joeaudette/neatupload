@@ -119,9 +119,7 @@
                 />
                 <File
                     RelPath = "Demo.aspx.cs"
-                    DependentUpon = "Demo.aspx"
-                    SubType = "ASPXCodeBehind"
-                    BuildAction = "Compile"
+                    BuildAction = "Content"
                 />
                 <File
                     RelPath = "DecoratedWorkerRequest.cs"
@@ -180,14 +178,7 @@
                 />
                 <File
                     RelPath = "Global.asax.cs"
-                    DependentUpon = "Global.asax"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Global.asax.resx"
-                    DependentUpon = "Global.asax.cs"
-                    BuildAction = "EmbeddedResource"
+                    BuildAction = "Content"
                 />
                 <File
                     RelPath = "InputFile.cs"
@@ -234,8 +225,6 @@
                 />
                 <File
                     RelPath = "Progress-1.0.aspx.cs"
-                    DependentUpon = "NeatUpload\Progress-1.0.aspx"
-                    SubType = "ASPXCodeBehind"
                     BuildAction = "Compile"
                 />
                 <File
