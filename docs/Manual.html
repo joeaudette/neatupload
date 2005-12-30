@@ -264,6 +264,7 @@ to result in code which is browser-specific and not portable.</li>
 &nbsp;The dependency was removed to simplify installation/usage.</li>
 
   <li>Moved progress display Javascript to <code>Progress.js</code> to reduce bandwidth required to download <code>Progress.aspx</code> repeatedly.</li>
+  <li>Removed <code>Demo.aspx.cs</code> from <code>Brettle.Web.NeatUpload.dll</code>. &nbsp;It is now compiled on the fly when <code>Demo.aspx</code> is requested.</li>
 
 
 
@@ -466,7 +467,7 @@ the Size of Upload Requests</a> below.<br>
 
 
 
-  <li>(Optional) Copy <code>Demo.aspx</code> from <code>NeatUpload-1.</code><code>1.<span style="font-style: italic;">x</span></code><code>/</code>
+  <li>(Optional) Copy <code>Demo.aspx</code> and <code>Demo.aspx.cs</code> from <code>NeatUpload-1.</code><code>1.<span style="font-style: italic;">x</span></code><code>/</code>
 into your application. Point your browser at <code>Demo.aspx</code>
 and verify that the demo functions properly. </li>
 
