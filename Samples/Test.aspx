@@ -1,5 +1,6 @@
+<%@ Reference Control="TestControl.ascx" %>
 <%@ Page language="c#" Src="Test.aspx.cs" AutoEventWireup="false" Inherits="Brettle.Web.NeatUpload.Test" %>
-<%@ Register TagPrefix="Upload" TagName="TestControl" Src="~/TestControl.ascx" %>
+<%@ Register TagPrefix="Upload" TagName="TestControl" Src="TestControl.ascx" %>
 
 <Html>
 	<Head>

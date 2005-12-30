@@ -4,12 +4,6 @@ using System.ComponentModel;
 using System.Web;
 using System.Web.SessionState;
 
-#if USE_LOG4NET
-[assembly: log4net.Config.XmlConfigurator(ConfigFile="log4net.config", Watch=true)]
-#else
-#warning LOGGING DISABLED.  To enable logging, add a reference to log4net and define USE_LOG4NET.
-#endif
-
 namespace Brettle.Web.NeatUpload 
 {
 	public class Global : System.Web.HttpApplication
@@ -21,10 +15,6 @@ namespace Brettle.Web.NeatUpload
 //#if __MonoCS__ 
 //#pragma warning restore 169
 //#endif
-
-		// Create a logger for use in this class
-		private static readonly log4net.ILog log 
-			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
 		public Global()
 		{
@@ -58,8 +48,6 @@ namespace Brettle.Web.NeatUpload
 
 		protected void Application_Error(Object sender, EventArgs e)
 		{
-			if (log.IsDebugEnabled) log.DebugFormat("In Global.Application_Error(): {0}", Server.GetLastError());
-
 		}
 
 		protected void Session_End(Object sender, EventArgs e)

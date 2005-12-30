@@ -1,4 +1,4 @@
-<%@ Page language="c#" Src="Demo.aspx.cs" AutoEventWireup="false" Inherits="Brettle.Web.NeatUpload.Demo" %>
+<%@ Page language="c#" Src="~/Samples/Demo.aspx.cs" AutoEventWireup="false" Inherits="Brettle.Web.NeatUpload.Demo" %>
 <%@ Register TagPrefix="Upload" Namespace="Brettle.Web.NeatUpload" Assembly="Brettle.Web.NeatUpload" %>
 
 <Html>
