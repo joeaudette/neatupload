@@ -69,7 +69,6 @@
     <File name="./NeatUpload/Progress.js" subtype="Code" buildaction="Compile" />
     <File name="./ProgressPage.cs" subtype="Code" buildaction="Compile" />
     <File name="./Progress-1.0.aspx.cs" subtype="Code" buildaction="Compile" />
-    <File name="./NeatUpload/Progress-1.0.aspx" subtype="Code" buildaction="Nothing" />
     <File name="./Strings.resx" subtype="Code" buildaction="Nothing" />
     <File name="./NeatUpload.Strings.resources" subtype="Code" buildaction="EmbedAsResource" />
   </Contents>
