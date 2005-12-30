@@ -322,7 +322,12 @@ your web application by copying<span style="font-style: italic;"></span>
 and its contents. &nbsp;Don't copy the whole <code>NeatUpload-1.</code><code>1.<span style="font-style: italic;">x</span></code><code>/
     </code>directory, just the <code>NeatUpload-1.</code><code>1.<span style="font-style: italic;">x</span></code><code>/NeatUpload/
     </code>subdirectory. &nbsp;That subdirectory contains <code>Progress.aspx</code>
-and associated files. </li>
+and associated files. Note: If you add <code>Progress.aspx</code>
+to your VS.NET project it will say, "There
+is no class file in the project associated with the Web Form
+'Progress.aspx'.&nbsp; Create a new class file now?".
+&nbsp;Answer "No"
+because the class file is compiled into&nbsp;<code>Brettle.Web.NeatUpload.dll</code>. </li>
 
 
 
@@ -369,7 +374,7 @@ the Size of Upload Requests</a> below.<br>
 
 
 
-  <li>(Optional) Copy <code>Demo.aspx</code> and <code>Demo.aspx.cs</code> from <code>NeatUpload-1.</code><code>1.<span style="font-style: italic;">x</span></code><code>/</code>
+  <li>(Optional) Copy <code>Demo.aspx</code> from <code>NeatUpload-1.</code><code>1.<span style="font-style: italic;">x</span></code><code>/</code>
 into your application. Point your browser at <code>Demo.aspx</code>
 and verify that the demo functions properly. </li>
 
