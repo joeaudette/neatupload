@@ -184,7 +184,65 @@ namespace Brettle.Web.NeatUpload
 				return fileContent;
 			}
 		}
-
+		
+		public string Accept
+		{
+			get
+			{
+				string val = Attributes["accept"];
+				if (val == null)
+					return String.Empty;
+				else
+					return val;
+			}
+			set
+			{
+				if (value == null || value == String.Empty)
+					Attributes.Remove("accept");
+				else
+					Attributes["accept"] = value;
+			}
+		}
+		
+		public int MaxLength
+		{
+			get
+			{
+				string val = Attributes["maxlength"];
+				if (val == null)
+					return -1;
+				else
+					return Convert.ToInt32(val);
+			}
+			set
+			{
+				if (value == -1)
+					Attributes.Remove("maxlength");
+				else
+					Attributes["maxlength"] = value.ToString();
+			}
+		}
+				
+		public int Size
+		{
+			get
+			{
+				string val = Attributes["size"];
+				if (val == null)
+					return -1;
+				else
+					return Convert.ToInt32(val);
+			}
+			set
+			{
+				if (value == -1)
+					Attributes.Remove("size");
+				else
+					Attributes["size"] = value.ToString();
+			}
+		}
+				
+		
 		/// <summary>
 		/// Moves an uploaded file to a permanent location.</summary>
 		/// <param name="path">the permanent location to move the uploaded file to.</param>

@@ -188,10 +188,10 @@ setTimeout(function () {
 				this.Page.RegisterStartupScript(this.UniqueID + "UpdateIFrameSrc", @"
 <script language=""javascript"">
 <!--
-NeatUpload_IFrameNode = document.getElementById('" + this.ClientID + @"'); 
+NeatUpload_IFrameNode = document.getElementById ? document.getElementById('" + this.ClientID + @"') : null; 
 if (NeatUpload_IFrameNode)
 	NeatUpload_IFrameNode.setAttribute('src', '" + uploadProgressUrl + @"&canScript=true&canCancel=' + NeatUploadCanCancel());
--->
+// -->
 </script>
 ");
 			}
@@ -202,10 +202,10 @@ if (NeatUpload_IFrameNode)
 				this.Page.RegisterStartupScript(this.UniqueID + "RemoveDiv", @"
 <script language=""javascript"">
 <!--
-NeatUpload_DivNode = document.getElementById('" + this.ClientID + @"'); 
+NeatUpload_DivNode = document.getElementById ? document.getElementById('" + this.ClientID + @"') : null; 
 if (NeatUpload_DivNode)
 	NeatUpload_DivNode.parentNode.removeChild(NeatUpload_DivNode);
--->
+// -->
 </script>
 ");
 			}
@@ -294,9 +294,10 @@ function NeatUpload_OnSubmitForm_" + formControl.ClientID + @"()
 	elem.NeatUpload_OnSubmit();
 }
 
-document.getElementById('" + formControl.ClientID + @"').onsubmit 
-	= NeatUpload_CombineHandlers(document.getElementById('" + formControl.ClientID + @"').onsubmit, NeatUpload_OnSubmitForm_" + formControl.ClientID + @");
--->
+if (document.getElementById)
+	document.getElementById('" + formControl.ClientID + @"').onsubmit 
+		= NeatUpload_CombineHandlers(document.getElementById('" + formControl.ClientID + @"').onsubmit, NeatUpload_OnSubmitForm_" + formControl.ClientID + @");
+// -->
 </script>
 ");
 
@@ -403,7 +404,7 @@ document.getElementById('" + formControl.ClientID + @"').onsubmit
 		private void AddPerProgressBarScripts(StringBuilder scriptBuilder, Control formControl)
 		{
 			scriptBuilder.Append(@"
-NeatUpload_FallbackLink = document.getElementById('" + this.ClientID + @"_fallback_link');
+NeatUpload_FallbackLink = document.getElementById ? document.getElementById('" + this.ClientID + @"_fallback_link') : null;
 if (NeatUpload_FallbackLink)
 	NeatUpload_FallbackLink.setAttribute('href', ""javascript:" + GetPopupDisplayStatement() + @""");
 
@@ -468,7 +469,7 @@ for (var i = 0; i < NeatUpload_EventsThatCouldTriggerPostBack.length; i++)
 		{
 			var inputType = src.getAttribute('type');
 			if (inputType) inputType = inputType.toLowerCase();
-			if (!inputType || inputType == 'submit' || inputType == 'image')
+			if (document.getElementById && (!inputType || inputType == 'submit' || inputType == 'image'))
 			{
 				var formElem = document.getElementById('" + formControl.ClientID + @"');
 				NeatUpload_ClearFileInputs(formElem);
@@ -546,6 +547,8 @@ function NeatUpload_AddHandler(id, eventName, handler, useCapture)
 {
 	if (typeof(useCapture) == 'undefined')
 		useCapture = false;
+	if (!document.getElementById)
+		return;
 	var elem = document.getElementById(id);
 	if (elem.addEventListener)
 	{
@@ -562,6 +565,8 @@ function NeatUpload_AddHandler(id, eventName, handler, useCapture)
 }
 function NeatUpload_IsFilesToUpload(id)
 {
+	if (!document.getElementById)
+		return false;
 	var formElem = document.getElementById(id);
 	while (formElem && formElem.tagName.toLowerCase() != ""form"")
 	{
@@ -614,7 +619,12 @@ function NeatUpload_ClearFileInputs(elem)
 			{
 				var attr = inputFile.attributes.item(a); 
 				if (attr.specified && attr.name != 'type' && attr.name != 'value')
-					newInputFile.setAttribute(attr.name, attr.value);
+				{
+					if (attr.name == 'style' && newInputFile.style && newInputFile.style.cssText)
+						newInputFile.style.cssText = attr.value;
+					else
+						newInputFile.setAttribute(attr.name, attr.value);
+				}
 			}
 			newInputFile.setAttribute('type', 'file');
 			inputFile.parentNode.replaceChild(newInputFile, inputFile);
@@ -624,6 +634,8 @@ function NeatUpload_ClearFileInputs(elem)
 
 function NeatUpload_AddSubmitHandler(formID, isPopup, handler)
 {
+	if (!document.getElementById)
+		return;
 	var elem = document.getElementById(formID);
 	if (!elem.NeatUpload_OnSubmitHandlers) 
 	{
@@ -648,6 +660,8 @@ function NeatUpload_AddSubmitHandler(formID, isPopup, handler)
 
 function NeatUpload_AddSubmittingHandler(formID, handler)
 {
+	if (!document.getElementById)
+		return;
 	var elem = document.getElementById(formID);
 	if (!elem.NeatUpload_OnSubmittingHandlers) 
 	{
@@ -674,7 +688,7 @@ function NeatUpload_OnSubmit()
 	}
 	return true;
 }
--->
+// -->
 </script>
 ";
 	}
