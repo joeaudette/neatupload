@@ -619,7 +619,12 @@ function NeatUpload_ClearFileInputs(elem)
 			{
 				var attr = inputFile.attributes.item(a); 
 				if (attr.specified && attr.name != 'type' && attr.name != 'value')
-					newInputFile.setAttribute(attr.name, attr.value);
+				{
+					if (attr.name == 'style' && newInputFile.style && newInputFile.style.cssText)
+						newInputFile.style.cssText = attr.value;
+					else
+						newInputFile.setAttribute(attr.name, attr.value);
+				}
 			}
 			newInputFile.setAttribute('type', 'file');
 			inputFile.parentNode.replaceChild(newInputFile, inputFile);
