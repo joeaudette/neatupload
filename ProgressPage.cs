@@ -26,11 +26,11 @@ namespace Brettle.Web.NeatUpload
 {
 	public class ProgressPage : Page
 	{
-/*
+/*		
 		// Create a logger for use in this class
 		private static readonly log4net.ILog log 
 			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-*/
+		*/
 		protected override void OnInit(EventArgs e)
 		{
 			InitializeComponent();
@@ -268,7 +268,7 @@ window.close();
 		                    && (CurrentStatus == UploadStatus.NormalInProgress || CurrentStatus == UploadStatus.ChunkedInProgress));
 			
 			// The base refresh url contains just the postBackID (which is the first parameter)
-			RefreshUrl = Request.Url.AbsoluteUri;
+			RefreshUrl = Request.Url.PathAndQuery;
 			int ampIndex = RefreshUrl.IndexOf("&");
 			if (ampIndex != -1)
 			{
@@ -277,7 +277,7 @@ window.close();
 			RefreshUrl += "&canScript=" + CanScript + "&canCancel=" + CanCancel;
 			StartRefreshUrl = RefreshUrl + "&refresher=server";	
 			StopRefreshUrl = RefreshUrl + "&refresh=false";	
-			CancelUrl = "javascript:NeatUploadCancel();window.location.replace('" + RefreshUrl + "&refresher=client&cancelled=true" + "')";
+			CancelUrl = "javascript:NeatUpload_CancelClicked()";
 			
 			DataBind();			
 		}

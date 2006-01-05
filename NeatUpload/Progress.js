@@ -26,8 +26,11 @@ function NeatUploadGetMainWindow()
 	return mainWindow;
 };
 
+NeatUploadCancelled = false;
+
 function NeatUploadCancel() 
 {
+	NeatUploadCancelled = true;
 	var mainWindow = NeatUploadGetMainWindow();
 	if (mainWindow && mainWindow.stop)
 		mainWindow.stop();
@@ -127,13 +130,13 @@ function NeatUploadUpdateHtml()
 		}
 		catch (ex)
 		{
-//			window.alert(ex);
 			NeatUploadRefreshPage();
 		}
 	}
 }
 
 NeatUploadLastUpdate = new Date(); 
+NeatUploadReloadTimeoutId = null;
 
 window.onunload = NeatUpload_CombineHandlers(window.onunload, function () 
 {
@@ -143,6 +146,8 @@ window.onunload = NeatUpload_CombineHandlers(window.onunload, function ()
 		NeatUploadReq.abort();
 	}
 	NeatUploadReq = null;
+	if (NeatUploadReloadTimeoutId)
+		clearTimeout(NeatUploadReloadTimeoutId);
 });
 
 NeatUploadMainWindow = NeatUploadGetMainWindow();
@@ -157,6 +162,14 @@ function NeatUploadRefresh()
 
 function NeatUploadRefreshPage() 
 {
-	window.location.replace(NeatUploadRefreshUrl);
+	if (!NeatUploadCancelled)
+	{
+		window.location.replace(NeatUploadRefreshUrl);
+	}
 }
 
+function NeatUpload_CancelClicked()
+{
+	NeatUploadCancel();
+	window.location.replace(NeatUploadRefreshUrl + '&cancelled=true');
+}
