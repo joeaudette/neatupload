@@ -204,7 +204,7 @@ namespace Brettle.Web.NeatUpload
 			{
 				byte[] localBuffer = new byte[count];
 				int read = OrigWorker.ReadEntityBody(localBuffer, count);
-				if (log.IsDebugEnabled)
+				if (Config.Current.DebugDirectory != null)
 				{
 					LogEntityBodyStream.Write(localBuffer, 0, read);
 					LogEntityBodySizesStream.WriteLine(read);
@@ -372,9 +372,10 @@ namespace Brettle.Web.NeatUpload
 				origContentLength = Int64.Parse(contentLengthHeader);
 			}
 
-			if (log.IsDebugEnabled)
+			if (Config.Current.DebugDirectory != null)
 			{
-				string logEntityBodyBaseName = Path.GetTempFileName();
+				string logEntityBodyBaseName = Path.Combine(Config.Current.DebugDirectory.FullName,
+			                                                DateTime.Now.Ticks.ToString());
 				LogEntityBodyStream = File.Create(logEntityBodyBaseName + ".body");
 				LogEntityBodySizesStream = File.CreateText(logEntityBodyBaseName + ".sizes");
 				LogEntityBodySizesStream.WriteLine(contentTypeHeader);
@@ -497,7 +498,7 @@ namespace Brettle.Web.NeatUpload
 			{
 				if (log.IsDebugEnabled) log.Debug("Interrupted.  Throwing exception.");
 				uploadContext.Status = UploadStatus.Cancelled;
-				throw new HttpException (400, "Data length is shorter than Content-Length.");
+				throw new HttpException (400, String.Format("Data length ({0}) is shorter than Content-Length ({1}).", grandTotalBytesRead, origContentLength));
 			}
 			uploadContext.Status = UploadStatus.Completed;
 		}
