@@ -162,7 +162,7 @@ namespace Brettle.Web.NeatUpload
 
 			// If the status is unchanged from the last refresh and it is not Unknown nor *InProgress,
 			// then the page is not refreshed.  Instead, if an UploadException occurred we try to cancel
-			// the upload.  Otherwise, we close the progress display window (if it's a pop-up)  
+			// the upload.  Otherwise, no exception occurred we close the progress display window (if it's a pop-up)  
 			if (curStatus == prevStatus 
 			       && (curStatus != UploadStatus.Unknown.ToString()
 			           && curStatus != UploadStatus.NormalInProgress.ToString()
@@ -182,7 +182,7 @@ window.onload = function() {
 </script>");
 					}
 				}
-				else
+				else if (curStatus != UploadStatus.Failed.ToString())
 				{
 					RegisterStartupScript("scrNeatUploadClose", @"<script language='javascript'>
 <!--

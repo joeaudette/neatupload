@@ -126,6 +126,7 @@ namespace Brettle.Web.NeatUpload
 				config.Providers = parent.Providers.Clone();
 				config.DefaultProviderName = parent.DefaultProviderName;
 				config.ResourceManager = parent.ResourceManager;
+				config.DebugDirectory = parent.DebugDirectory;
 			}
 			foreach (XmlAttribute attr in section.Attributes)
 			{
@@ -147,6 +148,19 @@ namespace Brettle.Web.NeatUpload
 				else if (name == "defaultProvider")
 				{
 					config.DefaultProviderName = val;
+				}
+				else if (name == "debugDirectory")
+				{
+					if (HttpContext.Current != null)
+					{
+						val = Path.Combine(HttpContext.Current.Request.PhysicalApplicationPath, 
+												val);
+					}
+					config.DebugDirectory = new DirectoryInfo(val);
+					if (!config.DebugDirectory.Exists)
+					{
+						config.DebugDirectory.Create();
+					}
 				}
 				else
 				{
@@ -187,5 +201,6 @@ namespace Brettle.Web.NeatUpload
 		internal long MaxRequestLength = 2097151 * 1024;
 		internal bool UseHttpModule = UploadHttpModule.IsInited;
 		internal ResourceManager ResourceManager = null;
+		internal DirectoryInfo DebugDirectory = null;
 	}
 }
