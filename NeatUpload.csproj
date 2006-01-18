@@ -205,8 +205,7 @@
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "NeatUpload\Progress.aspx.resx"
-                    DependentUpon = "Global.asax.cs"
+                    RelPath = "Strings.resx"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
@@ -218,10 +217,6 @@
                     DependentUpon = "NeatUpload\Progress.aspx"
                     SubType = "ASPXCodeBehind"
                     BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "NeatUpload\Progress-1.0.aspx"
-                    BuildAction = "Content"
                 />
                 <File
                     RelPath = "Progress-1.0.aspx.cs"
