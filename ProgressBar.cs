@@ -222,21 +222,17 @@ if (NeatUpload_DivNode)
 			
 		private string GetPopupDimension(string name, Unit length, int min)
 		{
-			if (length == Unit.Empty)
+			if (length.Type == UnitType.Pixel && length.Value >= min)
+			{
+				return length.ToString();
+			}
+			else if (Inline || length == Unit.Empty)
 			{
 				return min.ToString();
 			}
-			else if (length.Type != UnitType.Pixel)
-			{
-				throw new System.ArgumentOutOfRangeException(name, "must use pixel(px) units");
-			}
-			else if (length.Value < min)
-			{
-				throw new System.ArgumentOutOfRangeException(name, "must be at least " + min + " pixels");
-			}
 			else
 			{
-				return length.ToString();
+				throw new System.ArgumentOutOfRangeException(name, "must be at least " + min + " pixels and must use pixel(px) units");
 			}
 		}
 		
