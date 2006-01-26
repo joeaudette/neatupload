@@ -40,10 +40,11 @@ namespace Brettle.Web.NeatUpload
 		private string ContentTypeHeader;
 		private string ContentLengthHeader;
 		private byte[] PreloadedBody = null;
-		public MockWorkerRequest (string logEntityBodyBaseName) : base(null)
+		
+		public MockWorkerRequest (Stream logEntityBodyStream, StreamReader logEntityBodySizesStream) : base(null)
 		{
-			LogEntityBodyStream = File.Open(logEntityBodyBaseName + ".body", FileMode.Open);
-			LogEntityBodySizesStream = File.OpenText(logEntityBodyBaseName + ".sizes");
+			LogEntityBodyStream = logEntityBodyStream;
+			LogEntityBodySizesStream = logEntityBodySizesStream;
 			ContentTypeHeader = LogEntityBodySizesStream.ReadLine();
 			ContentLengthHeader = LogEntityBodySizesStream.ReadLine();
 			long preloadedBodyLength = long.Parse(LogEntityBodySizesStream.ReadLine());
@@ -52,6 +53,12 @@ namespace Brettle.Web.NeatUpload
 				PreloadedBody = new byte[preloadedBodyLength];
 				LogEntityBodyStream.Read(PreloadedBody, 0, PreloadedBody.Length);
 			}
+		}
+		
+		public MockWorkerRequest (string logEntityBodyBaseName)
+			: this(File.Open(logEntityBodyBaseName + ".body", FileMode.Open),
+		    	   File.OpenText(logEntityBodyBaseName + ".sizes"))
+		{
 		}
 		
 		private int bytesRemainingInBlock = 0;

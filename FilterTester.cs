@@ -25,47 +25,36 @@ namespace Brettle.Web.NeatUpload
 {
 	public class FilterTester
 	{
-		public static int Main(string[] args)
+		public abstract class ResultAccumulator
 		{
-			if (args.Length < 1)
-			{
-				Console.WriteLine(Environment.GetCommandLineArgs()[0] + " base_name_of_entity_body_file");
-				return -1;
-			}
-			string entityBodyBaseName = args[0];
-			MockWorkerRequest mockWorkerRequest = new MockWorkerRequest(entityBodyBaseName);
+			abstract public Stream FilteredBodyStream { get; }
+			abstract public void AddFile(string id, FileInfo tmpFile, string contentType, string fileName);
+		}
+		
+		public static void Run(Stream entityBodyStream,
+		                      StreamReader entityBodySizesStream,
+		                      ResultAccumulator results)
+		{
+			MockWorkerRequest mockWorkerRequest = new MockWorkerRequest(entityBodyStream, entityBodySizesStream);
 			FilteringWorkerRequest filteringWorkerRequest = new FilteringWorkerRequest(mockWorkerRequest);
-			Stream filteredBodyStream = File.Create(entityBodyBaseName + ".body.filtered");
 			byte[] preloadedBody = filteringWorkerRequest.GetPreloadedEntityBody();
-			filteredBodyStream.Write(preloadedBody, 0, preloadedBody.Length);
+			results.FilteredBodyStream.Write(preloadedBody, 0, preloadedBody.Length);
 			int read = 0;
 			byte[] buffer = new byte[8192*1024];
 			while (0 < (read = filteringWorkerRequest.ReadEntityBody(buffer, buffer.Length)))
 			{
-				filteredBodyStream.Write(buffer, 0, read);
+				results.FilteredBodyStream.Write(buffer, 0, read);
 			}
 			mockWorkerRequest.EndOfRequest();
-			filteredBodyStream.Close();
+			results.FilteredBodyStream.Close();
 			Hashtable uploadedFiles = filteringWorkerRequest.GetUploadContext().uploadedFiles;
 			foreach (string id in uploadedFiles.Keys)
 			{
-				System.Console.WriteLine("Control ID = " + id);
 				UploadedFile uploadedFile = uploadedFiles[id] as UploadedFile;
-				System.Console.WriteLine("  ContentType = " + uploadedFile.ContentType);
-				System.Console.WriteLine("  FileName = " + uploadedFile.FileName);
-				if (uploadedFile.TmpFile != null)
-				{
-					FileInfo destFile = new FileInfo(entityBodyBaseName + ".file." + id);
-					if (destFile.Exists)
-					{
-						destFile.Delete();
-					}
-					uploadedFile.TmpFile.MoveTo(destFile.FullName);
-					System.Console.WriteLine("  TmpFile.FullName = " + uploadedFile.TmpFile.FullName);
-					System.Console.WriteLine("  TmpFile.Length = " + uploadedFile.TmpFile.Length);
-				}
+				results.AddFile(id, uploadedFile.TmpFile, uploadedFile.ContentType, uploadedFile.FileName);
 			}
-			return 0;
+			return;
+				
 		}
 	}
 }
