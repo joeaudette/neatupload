@@ -8,7 +8,7 @@
     <Configuration name="Release" ctype="CombineConfiguration">
       <Entry configuration="Release" build="True" name="NeatUpload" />
       <Entry configuration="Release" build="True" name="TestFilter" />
-      <Entry configuration="Debug" build="True" name="HashedInputFile" />
+      <Entry configuration="Release" build="True" name="HashedInputFile" />
     </Configuration>
   </Configurations>
   <StartMode startupentry="NeatUpload" single="True">
