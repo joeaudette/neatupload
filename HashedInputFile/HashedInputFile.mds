@@ -1,0 +1,16 @@
+<Combine name="HashedInputFile" fileversion="2.0">
+  <Configurations active="Debug">
+    <Configuration name="Debug" ctype="CombineConfiguration">
+      <Entry configuration="Debug" build="True" name="HashedInputFile" />
+    </Configuration>
+    <Configuration name="Release" ctype="CombineConfiguration">
+      <Entry configuration="Debug" build="True" name="HashedInputFile" />
+    </Configuration>
+  </Configurations>
+  <StartMode startupentry="HashedInputFile" single="True">
+    <Execute type="None" entry="HashedInputFile" />
+  </StartMode>
+  <Entries>
+    <Entry filename="./HashedInputFile.mdp" />
+  </Entries>
+</Combine>
