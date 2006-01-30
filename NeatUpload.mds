@@ -3,18 +3,22 @@
     <Configuration name="Debug" ctype="CombineConfiguration">
       <Entry configuration="Debug" build="True" name="NeatUpload" />
       <Entry configuration="Debug" build="True" name="TestFilter" />
+      <Entry configuration="Debug" build="True" name="HashedInputFile" />
     </Configuration>
     <Configuration name="Release" ctype="CombineConfiguration">
       <Entry configuration="Release" build="True" name="NeatUpload" />
       <Entry configuration="Release" build="True" name="TestFilter" />
+      <Entry configuration="Debug" build="True" name="HashedInputFile" />
     </Configuration>
   </Configurations>
   <StartMode startupentry="NeatUpload" single="True">
     <Execute type="None" entry="NeatUpload" />
     <Execute type="None" entry="TestFilter" />
+    <Execute type="None" entry="HashedInputFile" />
   </StartMode>
   <Entries>
     <Entry filename="./NeatUpload.mdp" />
     <Entry filename="./TestFilter/TestFilter.mdp" />
+    <Entry filename="./HashedInputFile/HashedInputFile.mdp" />
   </Entries>
 </Combine>

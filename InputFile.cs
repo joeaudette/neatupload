@@ -103,6 +103,13 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 		
+		/// <summary>
+		/// The <see cref="UploadedFile"/> corresponding to the file uploaded to this control. </summary>
+		/// <remarks>
+		/// Derived classes can use this to access the <see cref="UploadedFile"/> object that was created by the
+		/// UploadStorageProvider.</remarks>
+		protected UploadedFile File { get { return file; } }
+		
 		[Obsolete("This property is obsolete and will be removed in a future version.  Instead use other members like InputFile.MoveTo(), InputFile.HasFile, and InputFile.ContentLength.")]
 		[Browsable(false)]
 		public FileInfo TmpFile {
