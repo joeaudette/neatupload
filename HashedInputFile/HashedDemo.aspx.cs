@@ -116,7 +116,7 @@ namespace Brettle.Web.NeatUpload
 				bodyPre.InnerText += "  Name: " + inputFile2.FileName + "\n";
 				bodyPre.InnerText += "  Size: " + inputFile2.ContentLength + "\n";
 				bodyPre.InnerText += "  Content type: " + inputFile2.ContentType + "\n";
-				bodyPre.InnerText += "  Hash: " + inputFile2.Hash + "\n";
+				bodyPre.InnerText += "  Hash: " + ToHex(inputFile2.Hash) + "\n";
 				bodyPre.InnerText += "  HashSize: " + inputFile2.HashSize + "\n";
 			}
 		}
