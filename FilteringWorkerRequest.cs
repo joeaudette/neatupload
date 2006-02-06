@@ -333,6 +333,10 @@ namespace Brettle.Web.NeatUpload
 				if (ex is UploadException)
 				{
 					uploadContext.Status = UploadStatus.Rejected;
+					// Wait 5 seconds to give the client a chance to stop the request.  If the client
+                    // stops the request, the user will see the original form instead of an error page.
+                    // Regardless, the progress display will show the error so the user knows what went wrong.
+					System.Threading.Thread.Sleep(5000);
 				}
 				else if (uploadContext.Status != UploadStatus.Cancelled)
 				{
