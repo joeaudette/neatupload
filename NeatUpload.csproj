@@ -214,12 +214,12 @@
                 />
                 <File
                     RelPath = "ProgressPage.cs"
-                    DependentUpon = "NeatUpload\Progress.aspx"
-                    SubType = "ASPXCodeBehind"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Progress-1.0.aspx.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
