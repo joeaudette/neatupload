@@ -2880,8 +2880,7 @@ could change the color scheme with minor modification to the
 you could change the text
 or images that are used by modifying <code>Progress.aspx</code>
 itself. &nbsp;You could
-even rearrange the layout entirely or create a new page derived from <code>ProgressPage</code> and use the <code>Url</code> property of the <code>ProgressBar</code> to refer to it. &nbsp;To allow AJAX refreshless updates, you must include at least one <code>DetailsSpan</code> or <code>DetailsDiv</code> control. &nbsp;Those controls render as HTML <code>div</code> and <code>span</code>
-elements, respectively. &nbsp;Use data-binding expressions within those
+even rearrange the layout entirely or create a new page derived from <code>ProgressPage</code> and use the <code>Url</code> property of the <code>ProgressBar</code> to refer to it. &nbsp;To allow AJAX refreshless updates, you must include at least one <code>DetailsSpan</code> or <code>DetailsDiv</code> control. &nbsp;Those controls render as like <code>div</code> and <code>span</code> controls, respectively. &nbsp;Use data-binding expressions within those
 controls (either the in the content or properties) to access the
 details of the upload at runtime.&nbsp; Below is a list of the
 properties and methods that NeatUpload provides for use in data-binding
@@ -3823,6 +3822,11 @@ By default, <code>ProgressPage</code> calls it's <code>GetResourceString()</code
 
 
   <li>Use <code>&lt;asp:HyperLink&gt;</code> instead of <code>&lt;a&gt;</code> for links, especially for links that use <code>CancelUrl</code>, <code>StartRefreshUrl</code>, and <code>StopRefreshUrl</code>. &nbsp;Some&nbsp;<code>HtmlAnchor</code>&nbsp;(i.e. <code>&lt;a&gt;</code>) implementations, notably Microsoft's ASP.NET 2.0, do not HTML encode the value of the <code>href</code> attribute. &nbsp;If the URLs contain ampersands, the XML will not be considered well-formed unless they are encoded.</li>
+</ul>
+One final note: By default,&nbsp;<code>DetailsDiv</code> and <code>DetailsSpan</code> controls (like regular <code>div</code> and <code>span</code> controls) will not render as simple <code>&lt;div&gt;</code> and <code>&lt;span&gt;</code> elements in browsers that ASP.NET considers "downlevel". &nbsp;Instead, <code>div</code> controls are rendered as tables and <code>span</code> controls may render with extra font tags, etc. &nbsp;The <code>Machine.config</code> shipped with ASP.NET 1.1 contains a <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpgenref/html/gngrfbrowsercapssection.asp"><code>&lt;browserCaps&gt;</code></a>
+section that causes all non-IE browsers to be considered downlevel,
+including Netscape, Firefox, Opera, Safari, etc. &nbsp;To force the <code>DetailsDiv</code> and <code>DetailsSpan</code> controls to render as simple <code>&lt;div&gt;</code> and <code>&lt;span&gt;</code> elements even in supposedly downlevel browsers, set the control's <code>UseHtml4</code> property to "true". &nbsp;The default <code>Progress.aspx</code> does that for the <code>DetailsDiv</code> control with an id of "barDetailsDiv" that is used to draw the gray progress bar. &nbsp;Note that even with the <code>UseHtml4</code> property it is still a good idea to <a href="http://slingfive.com/pages/code/browserCaps/">update or supplement the default ASP.NET 1.1 <code>&lt;browserCaps&gt;</code> section</a> to make the rest of your web application render more cleanly in modern non-IE browsers.
+<ul>
 
 
 

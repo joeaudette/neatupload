@@ -97,7 +97,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				<Upload:DetailsSpan id="error" runat="server" WhenStatus="Failed">
 					Error: <%# Failure != null ? Failure.Message : "" %>
 				</Upload:DetailsSpan>
-				<Upload:DetailsDiv id="barDetailsDiv" runat="server" 
+				<Upload:DetailsDiv id="barDetailsDiv" runat="server" UseHtml4="true"
 					 Width='<%# Unit.Percentage(Math.Floor(100*FractionComplete)) %>' class="ProgressBar"></Upload:DetailsDiv>	
 			</div>
 		</td>

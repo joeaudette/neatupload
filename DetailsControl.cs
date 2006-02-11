@@ -99,22 +99,53 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 		
-		private UploadStatus Status = UploadStatus.Unknown;
+		/// <summary>
+		/// Whether to display the control using HtmlTextWriter even on downlevel browsers.</summary>
+		[DefaultValue(false)]
+		public bool UseHtml4
+		{
+			get
+			{
+				return (ViewState["UseHtml4"] != null && (bool)ViewState["UseHtml4"]);
+			}
+			set { ViewState["UseHtml4"] = value; }
+		}
 		
+		private UploadStatus Status = UploadStatus.Unknown;
+				
 		protected override void Render(HtmlTextWriter writer)
 		{
 			EnsureChildControls();
-			base.AddAttributesToRender(writer);
+			string tagName = TagName;
 			if (!IsDesignTime && Page.Request.Params["useXml"] == "true")
 			{
-				writer.RenderBeginTag("neatUploadDetails"); // Ignored by browser.  Children are displayed.
+				tagName = "neatUploadDetails"; // Ignored by browser.  Children are displayed.
+			}
+			if (writer is Html32TextWriter && UseHtml4)
+			{
+				// Since we are given an Html32TextWriter, ASP.NET must think the browser is downlevel.  The
+				// Html32TextWriter would cause divs to be rendered as tables, and other sometimes undesirable
+				// behavior.  ASP.NET 1.1 incorrectly thinks that anything other than IE is downlevel, which is wrong.
+				// For situations where using Html32TextWriter would be problematic, we allow the page author to
+				// set the UseHtml4 property to true.  That triggers this code block which is a workaround that
+				// uses a normal HtmlTextWriter to write the control and its content to a string and then writes the
+				// string to the original Html32TextWriter.  
+				StringWriter sw = new StringWriter();
+				HtmlTextWriter htw = new HtmlTextWriter(sw);
+				base.AddAttributesToRender(htw);
+				htw.RenderBeginTag(tagName);
+				base.RenderChildren(htw);
+				htw.RenderEndTag();
+				htw.Close();
+				writer.Write(sw.ToString());
 			}
 			else
 			{
-				writer.RenderBeginTag(TagName);
+				base.AddAttributesToRender(writer);
+				writer.RenderBeginTag(tagName);
+				base.RenderChildren(writer);
+				writer.RenderEndTag();
 			}
-			base.RenderChildren(writer);
-			writer.RenderEndTag();
 		}		
 	}
 }
