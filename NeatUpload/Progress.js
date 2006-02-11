@@ -102,6 +102,8 @@ function NeatUploadUpdateHtml()
 					var xml = childNode.xml;
 					if (xml == null)
 						xml = new XMLSerializer().serializeToString(childNode);
+					if (typeof(xml) == 'undefined')
+						throw "serializeToString() returned 'undefined' (probably due to a Safari bug) so no AJAX.";  
 					innerXml += xml;
 				}
 				var id = srcElem.getAttribute('id');
