@@ -32,6 +32,33 @@ namespace Brettle.Web.NeatUpload
 		public override void Initialize(string providerName, NameValueCollection attrs)
 		{
 			this._name = providerName;
+			TempDirectory = GetTempDirectory(attrs);
+		}
+
+		public override string Description { get { return "Streams uploads to disk."; } }
+
+		private string _name = null;
+		public override string Name { get { return _name; } }
+
+		public override UploadedFile CreateUploadedFile(UploadContext context, string controlUniqueID, string fileName, string contentType)
+		{
+			return this.CreateUploadedFile(context, controlUniqueID, fileName, contentType, null);
+		}
+
+		public override UploadedFile CreateUploadedFile(UploadContext context, string controlUniqueID, string fileName, string contentType, NameValueCollection storageConfig)
+		{
+			return new FilesystemUploadedFile(this, controlUniqueID, fileName, contentType, storageConfig);
+		}
+		
+		public DirectoryInfo TempDirectory = new DirectoryInfo(Path.GetTempPath());
+		
+		internal DirectoryInfo GetTempDirectory(NameValueCollection attrs)
+		{
+			DirectoryInfo tempDirectory = TempDirectory;
+			if (attrs == null)
+			{
+				return tempDirectory;
+			}
 			foreach (string name in attrs.Keys)
 			{
 				string val = attrs[name];
@@ -42,25 +69,14 @@ namespace Brettle.Web.NeatUpload
 						val = Path.Combine(HttpContext.Current.Request.PhysicalApplicationPath, 
 												val);
 					}
-					TempDirectory = new DirectoryInfo(val);
+					tempDirectory = new DirectoryInfo(val);
 				}
 				else
 				{
 					throw new System.Xml.XmlException("Unrecognized attribute: " + name);
 				}
 			}
+			return tempDirectory;
 		}
-
-		public override string Description { get { return "Streams uploads to disk."; } }
-
-		private string _name = null;
-		public override string Name { get { return _name; } }
-
-		public override UploadedFile CreateUploadedFile(UploadContext context, string controlUniqueID, string fileName, string contentType)
-		{
-			return new FilesystemUploadedFile(this, controlUniqueID, fileName, contentType);
-		}
-
-		public DirectoryInfo TempDirectory = new DirectoryInfo(Path.GetTempPath());
 	}
 }

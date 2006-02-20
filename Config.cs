@@ -25,6 +25,7 @@ using System.Web;
 using System.IO;
 using System.Xml;
 using System.Resources;
+using System.Security.Cryptography;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -162,6 +163,20 @@ namespace Brettle.Web.NeatUpload
 						config.DebugDirectory.Create();
 					}
 				}
+				else if (name == "validationKey")
+				{
+					if (val != "AutoGenerate")
+					{
+						config.ValidationKey = FromHexString(val);
+					}
+				}
+				else if (name == "encryptionKey")
+				{
+					if (val != "AutoGenerate")
+					{
+						config.EncryptionKey = FromHexString(val);
+					}
+				}
 				else
 				{
 					throw new XmlException("Unrecognized attribute: " + name);
@@ -195,6 +210,16 @@ namespace Brettle.Web.NeatUpload
 			return config;
 		}
 
+		private static byte[] FromHexString(string s)
+		{
+			byte[] result = new byte[s.Length/2];
+			for (int i = 0; i < result.Length; i++)
+			{
+				result[i] = byte.Parse(s.Substring(i*2, 2), System.Globalization.NumberStyles.HexNumber);
+			}
+			return result;
+		}
+		
 		internal string DefaultProviderName = null;
 		internal UploadStorageProviderCollection Providers = new UploadStorageProviderCollection();
 		internal long MaxNormalRequestLength = 4096 * 1024;
@@ -202,5 +227,26 @@ namespace Brettle.Web.NeatUpload
 		internal bool UseHttpModule = UploadHttpModule.IsInited;
 		internal ResourceManager ResourceManager = null;
 		internal DirectoryInfo DebugDirectory = null;
+		internal byte[] ValidationKey = Config.DefaultValidationKey;
+		internal byte[] EncryptionKey = Config.DefaultEncryptionKey;
+		
+		private static byte[] DefaultValidationKey = null;
+		private static byte[] DefaultEncryptionKey = null;
+		
+		static Config()
+		{
+			using (KeyedHashAlgorithm macAlg = KeyedHashAlgorithm.Create())
+			{
+				DefaultValidationKey = new byte[(macAlg.HashSize+7)/8];
+				RandomNumberGenerator rng = RandomNumberGenerator.Create();
+				rng.GetBytes(DefaultValidationKey);
+			}
+			
+			using (SymmetricAlgorithm cipher = SymmetricAlgorithm.Create())
+			{
+				cipher.GenerateKey();
+				DefaultEncryptionKey = cipher.Key;
+			}
+		}
 	}
 }

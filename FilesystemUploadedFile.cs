@@ -22,6 +22,7 @@ using System;
 using System.IO;
 using System.Web;
 using System.Configuration;
+using System.Collections.Specialized;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -32,10 +33,25 @@ namespace Brettle.Web.NeatUpload
 			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
 		public FilesystemUploadedFile(FilesystemUploadStorageProvider provider, 
-									  string controlUniqueID, string fileName, string contentType) 
+		                                string controlUniqueID, string fileName, string contentType)
+		                                : base(controlUniqueID, fileName, contentType)
+		{
+			Initialize(provider, controlUniqueID, fileName, contentType, null);
+		}
+		                                
+		public FilesystemUploadedFile(FilesystemUploadStorageProvider provider, 
+		                                string controlUniqueID, string fileName, string contentType,
+		                                NameValueCollection storageConfig)
 			: base(controlUniqueID, fileName, contentType)
 		{
-			DirectoryInfo tmpDirInfo = provider.TempDirectory;
+			Initialize(provider, controlUniqueID, fileName, contentType, storageConfig);
+		}
+		
+		private void Initialize(FilesystemUploadStorageProvider provider, 
+		                                string controlUniqueID, string fileName, string contentType,
+		                                NameValueCollection storageConfig)
+		{
+			DirectoryInfo tmpDirInfo = provider.GetTempDirectory(storageConfig);
 			if (!tmpDirInfo.Exists)
 			{
 				tmpDirInfo.Create();

@@ -32,6 +32,17 @@ namespace Brettle.Web.NeatUpload
 
 		public abstract string Name { get; }
 
-		public abstract UploadedFile CreateUploadedFile(UploadContext context, string controlUniqueID, string fileName, string contentType);
+		public abstract UploadedFile CreateUploadedFile(UploadContext context, string controlUniqueID, string fileName,
+		                                                string contentType);
+		
+		public virtual UploadedFile CreateUploadedFile(UploadContext context, string controlUniqueID, string fileName,
+		                                       		   string contentType, NameValueCollection storageConfig)
+		{
+	      	if (storageConfig != null && storageConfig.Count != 0)
+	      	{
+	      		throw new ApplicationException(this.Name + " doesn't understand InputFile.StorageConfig.");
+	      	}
+	      	return this.CreateUploadedFile(context, controlUniqueID, fileName, contentType);
+		}                                               
 	}
 }

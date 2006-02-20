@@ -22,6 +22,7 @@ using System;
 using System.IO;
 using System.Web;
 using System.Collections;
+using System.Collections.Specialized;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -79,14 +80,14 @@ namespace Brettle.Web.NeatUpload
 			return uploadedFiles[controlUniqueID] as UploadedFile; 
 		}
 		
-		internal UploadedFile CreateUploadedFile(string fileID, string fileName, string contentType)
+		internal UploadedFile CreateUploadedFile(string fileID, string fileName, string contentType, NameValueCollection storageConfig)
 		{
 			// Get the control's unique ID from the fileID
 			int dashIndex = fileID.IndexOf('-');
 			string controlUniqueID = fileID.Substring(dashIndex + 1);
 			if (log.IsDebugEnabled) log.Debug("In CreateUploadedFile() controlUniqueID=" + controlUniqueID);
 			UploadedFile uploadedFile 
-				= UploadStorage.CreateUploadedFile(this, controlUniqueID, fileName, contentType);			
+				= UploadStorage.CreateUploadedFile(this, controlUniqueID, fileName, contentType, storageConfig);			
 				uploadedFiles[controlUniqueID] = uploadedFile;
 			
 			if (fileName != null && fileName != string.Empty)

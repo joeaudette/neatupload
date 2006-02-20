@@ -24,6 +24,8 @@ using System.Globalization;
 using System.Web;
 using System.Web.Configuration;
 using System.IO;
+using System.Collections.Specialized;
+using System.Security.Cryptography;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -415,6 +417,8 @@ namespace Brettle.Web.NeatUpload
 			}
 
 			preloadedEntityBodyStream = new MemoryStream();
+			string storageConfigName = null;
+			MemoryStream storageConfigStream = null;
 			outputStream = preloadedEntityBodyStream;
 			readPos = writePos = parsePos = 0;
 			while (CopyUntilBoundary())
@@ -426,7 +430,7 @@ namespace Brettle.Web.NeatUpload
 				}
 				
 				// parse the headers
-				string fileID = null, fileName = null, contentType = null;
+				string name = null, fileName = null, contentType = null;
 				if (boundary[0] != (byte)'\r')
 				{
 					byte[] newBoundary = new byte[boundary.Length + 2];
@@ -452,7 +456,7 @@ namespace Brettle.Web.NeatUpload
 					string headerName = header.Substring(0, colonPos);
 					if (String.Compare(headerName, "Content-Disposition", true) == 0)
 					{
-						fileID = GetAttribute(header, "name");
+						name = GetAttribute(header, "name");
 						fileName = GetAttribute(header, "filename");
 					}
 					else if (String.Compare(headerName, "Content-Type", true) == 0)
@@ -460,12 +464,88 @@ namespace Brettle.Web.NeatUpload
 						contentType = header.Substring(colonPos + 1).Trim();
 					}
 				}
-				if (log.IsDebugEnabled) log.Debug("fileID = " + fileID);
+				if (log.IsDebugEnabled) log.Debug("name = " + name);
 				if (log.IsDebugEnabled) log.Debug("fileName = " + fileName);
-				if (fileName != null && fileID.StartsWith(UploadContext.NamePrefix))
+				if (name != null && name.StartsWith("Config_" + UploadContext.NamePrefix))
 				{
+					outputStream = storageConfigStream = new System.IO.MemoryStream();
+					storageConfigName = name;
+					readPos = parsePos; // Skip past the boundary and headers
+				}
+				else if (fileName != null && name != null && name.StartsWith(UploadContext.NamePrefix))
+				{
+					NameValueCollection storageConfig = null;
+					if (storageConfigName == "Config_" + name && storageConfigStream != null)
+					{
+						storageConfigStream.Seek(0, System.IO.SeekOrigin.Begin);
+						StreamReader sr = new System.IO.StreamReader(storageConfigStream);
+						string secureStorageConfigString = sr.ReadToEnd();
+						if (log.IsDebugEnabled)
+						{
+							log.Debug("storageConfigStream = " + secureStorageConfigString);
+						}
+						byte[] secureStorageConfig = Convert.FromBase64String(secureStorageConfigString);
+						
+						byte[] actualHash = new byte[ secureStorageConfig[0] ];
+						System.Array.Copy(secureStorageConfig, 1, actualHash, 0, actualHash.Length);
+						byte[] iv = new byte[ secureStorageConfig[1 + actualHash.Length] ];
+						System.Array.Copy(secureStorageConfig, 1 + actualHash.Length + 1, iv, 0, iv.Length);						
+						byte[] cipherText = new byte[secureStorageConfig.Length - (1 + actualHash.Length + 1 + iv.Length)];
+						System.Array.Copy(secureStorageConfig, 1 + actualHash.Length + 1 + iv.Length, cipherText, 0, cipherText.Length);						
+						
+						// Verify the hash
+						KeyedHashAlgorithm macAlgorithm = KeyedHashAlgorithm.Create();
+						macAlgorithm.Key = Config.Current.ValidationKey;
+						byte[] expectedHash = macAlgorithm.ComputeHash(cipherText);
+						if (actualHash.Length != expectedHash.Length)
+						{
+							throw new CryptographicException("actualHash.Length (" + actualHash.Length + ")" +
+							                                        " != expectedHash.Length (" + expectedHash.Length + ")");
+						}
+						for (int i = 0; i < expectedHash.Length; i++)
+						{
+							if (actualHash[i] != expectedHash[i])
+							{
+								throw new CryptographicException("actualHash[" + i + "] (" + (int)actualHash[i] + ")" +
+								                                         " != expectedHash[" + i + "] (" + (int)expectedHash[i] + ")");
+							}
+						}
+						
+						// Decrypt the ciphertext
+						MemoryStream cipherTextStream = new MemoryStream(cipherText);
+						SymmetricAlgorithm cipher = SymmetricAlgorithm.Create();
+						cipher.Mode = CipherMode.CBC;
+						cipher.Padding = PaddingMode.PKCS7;
+						cipher.Key = Config.Current.EncryptionKey;
+						cipher.IV = iv;
+						CryptoStream cryptoStream = new CryptoStream(cipherTextStream, cipher.CreateDecryptor(), CryptoStreamMode.Read);
+						StreamReader streamReader = new StreamReader(cryptoStream, System.Text.Encoding.UTF8);
+						string storageConfigString = streamReader.ReadToEnd();
+						streamReader.Close();
+						if (log.IsDebugEnabled)
+						{
+							log.Debug("storageConfigString = " + storageConfigString);
+						}
+						
+						// Deserialize the storageConfig
+						System.Web.UI.LosFormatter scFormatter = new System.Web.UI.LosFormatter();
+						Hashtable ht = (Hashtable)scFormatter.Deserialize(storageConfigString);
+						
+						// Convert to a NameValueCollection.  We only use Hashtable for serialization because
+						// LosFormatter can serialize it efficiently.
+						if (ht != null)
+						{
+							storageConfig = new NameValueCollection();								
+							foreach (string key in ht.Keys)
+							{
+								storageConfig[key] = (string)ht[key];
+							}
+						}
+					}
+					
+					string fileID = name;
 					if (log.IsDebugEnabled) log.Debug("Calling UploadContext.Current.CreateUploadedFile(" + fileID + "...)");
-					UploadedFile uploadedFile = uploadContext.CreateUploadedFile(fileID, fileName, contentType);
+					UploadedFile uploadedFile = uploadContext.CreateUploadedFile(fileID, fileName, contentType, storageConfig);
 					outputStream = fileStream = uploadedFile.CreateStream();
 					readPos = parsePos; // Skip past the boundary and headers
 
