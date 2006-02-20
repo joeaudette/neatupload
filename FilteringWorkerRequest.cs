@@ -474,6 +474,9 @@ namespace Brettle.Web.NeatUpload
 				}
 				else if (fileName != null && name != null && name.StartsWith(UploadContext.NamePrefix))
 				{
+					string fileID = name;
+					uploadContext.RegisterPostback(fileID); // Do this first so that progress display sees errors
+					
 					NameValueCollection storageConfig = null;
 					if (storageConfigName == "Config_" + name && storageConfigStream != null)
 					{
@@ -543,7 +546,6 @@ namespace Brettle.Web.NeatUpload
 						}
 					}
 					
-					string fileID = name;
 					if (log.IsDebugEnabled) log.Debug("Calling UploadContext.Current.CreateUploadedFile(" + fileID + "...)");
 					UploadedFile uploadedFile = uploadContext.CreateUploadedFile(fileID, fileName, contentType, storageConfig);
 					outputStream = fileStream = uploadedFile.CreateStream();
