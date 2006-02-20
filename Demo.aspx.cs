@@ -87,8 +87,7 @@ namespace Brettle.Web.NeatUpload
 			// per-control basis like this (see documentation for details):
 			inputFile.StorageConfig["tempDirectory"] = "file1temp";
 			inputFile2.StorageConfig["tempDirectory"] = "file2temp";
-*/
-			
+*/			
 		}
 
 		private void Button_Clicked(object sender, EventArgs e)

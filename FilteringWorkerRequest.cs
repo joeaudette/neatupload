@@ -502,14 +502,14 @@ namespace Brettle.Web.NeatUpload
 						byte[] expectedHash = macAlgorithm.ComputeHash(cipherText);
 						if (actualHash.Length != expectedHash.Length)
 						{
-							throw new CryptographicException("actualHash.Length (" + actualHash.Length + ")" +
+							throw new InvalidStorageConfigException("actualHash.Length (" + actualHash.Length + ")" +
 							                                        " != expectedHash.Length (" + expectedHash.Length + ")");
 						}
 						for (int i = 0; i < expectedHash.Length; i++)
 						{
 							if (actualHash[i] != expectedHash[i])
 							{
-								throw new CryptographicException("actualHash[" + i + "] (" + (int)actualHash[i] + ")" +
+								throw new InvalidStorageConfigException("actualHash[" + i + "] (" + (int)actualHash[i] + ")" +
 								                                         " != expectedHash[" + i + "] (" + (int)expectedHash[i] + ")");
 							}
 						}
