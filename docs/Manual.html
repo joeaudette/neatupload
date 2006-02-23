@@ -4376,18 +4376,7 @@ name, NameValueCollection attrs);<br>
 
 
 <br>
-
-
-
-
-
-
-
-
-
-
-&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; public
-abstract UploadedFile CreateUploadedFile(UploadContext ctx, <br>
+</code><code>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; public virtual&nbsp; UploadedFile CreateUploadedFile(UploadContext ctx, <br>
 
 
 
@@ -4441,7 +4430,11 @@ fileName,<br>
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
-&nbsp;string contentType);<br>
+&nbsp;string contentType,<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+NameValueCollection storageConfig);<br>
 
 
 
@@ -4493,15 +4486,15 @@ to pass provider-specific configuration information to your provider.<br>
 
 
 Whenever NeatUpload encounters a file upload associated with an
-<code>InputFile</code> control, it calls the<code></code>
+<code>InputFile</code> control, it calls the<code></code> second
 <code>CreateUploadedFile()</code>
 method of the provider that is configured as the <code>defaultProvider</code>
 for the requested page. &nbsp;When NeatUpload calls your provider's
 <code>CreateUploadedFile()</code> method, it passes the <code>UploadContext</code>
 associated with the current request, the ID of the <code>InputFile</code>
 control
-associated with the upload, along with browser-specified name and MIME
-type of the file. &nbsp;<code>CreateUploadedFile()</code>
+associated with the upload, the browser-specified name and MIME
+type of the file, and the value of the InputFile control's <code>StorageConfig</code> property. &nbsp;<code>CreateUploadedFile()</code>
 is responsible for
 returning an instance of a class derived from <code>UploadedFile</code>.
 &nbsp;NeatUpload will stream the file to that object, and delegate
