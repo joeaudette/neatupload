@@ -29,7 +29,7 @@ using System.ComponentModel;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 using System.Security.Permissions;
-using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 
 namespace Brettle.Web.NeatUpload
 {	
@@ -51,8 +51,10 @@ namespace Brettle.Web.NeatUpload
 	{
 
 		// Create a logger for use in this class
-		private static readonly log4net.ILog log 
+		/*
+		private static readonly log4net.ILog log
 			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+		*/
 		
 		private bool IsDesignTime = (HttpContext.Current == null);
 
@@ -66,7 +68,10 @@ namespace Brettle.Web.NeatUpload
 					if (IsDesignTime) return null;
 					if (Config.Current.UseHttpModule)
 					{
-						_file = UploadContext.Current.GetUploadedFile(this.UniqueID);
+						if (UploadContext.Current != null)
+						{
+							_file = UploadContext.Current.GetUploadedFile(this.UniqueID);
+						}
 					}
 					else
 					{
@@ -80,7 +85,13 @@ namespace Brettle.Web.NeatUpload
 							UploadContext ctx = new UploadContext();
 							ctx.SetContentLength(this.Page.Request.ContentLength);
 							ctx.Status = UploadStatus.NormalInProgress;
-							_file = UploadStorage.CreateUploadedFile(ctx, this.UniqueID, postedFile.FileName, postedFile.ContentType);
+							UploadStorageConfig storageConfig = UploadStorage.CreateUploadStorageConfig();
+							string storageConfigString = this.Page.Request.Form[UploadContext.ConfigNamePrefix + "-" + this.UniqueID];
+							if (storageConfigString != null && storageConfigString != string.Empty)
+							{
+								storageConfig.Unprotect(storageConfigString);
+							}
+							_file = UploadStorage.CreateUploadedFile(ctx, this.UniqueID, postedFile.FileName, postedFile.ContentType, storageConfig);
 							Stream outStream = null, inStream = null;
  							try
 							{
@@ -256,7 +267,35 @@ namespace Brettle.Web.NeatUpload
 		}
 		
 		
-		public NameValueCollection StorageConfig = new NameValueCollection();
+		private UploadStorageConfig _StorageConfig;
+		public UploadStorageConfig StorageConfig
+		{
+			get
+			{
+				if (_StorageConfig == null)
+				{
+					// Keep the storage config associated with the previous upload, if any
+					if (file != null && !IsDesignTime && HttpContext.Current != null)
+					{
+						string secureStorageConfig = HttpContext.Current.Request.Form[UploadContext.ConfigNamePrefix + "-" + UniqueID];
+						if (secureStorageConfig != null)
+						{
+							_StorageConfig = UploadStorage.CreateUploadStorageConfig();
+							_StorageConfig.Unprotect(secureStorageConfig);
+						}
+					}
+					else
+					{
+						_StorageConfig = UploadStorage.CreateUploadStorageConfig();
+					}
+				}
+				return _StorageConfig;
+			}
+		}
+		
+			
+			
+					
 		
 		/// <summary>
 		/// Moves an uploaded file to a permanent location.</summary>
@@ -302,6 +341,7 @@ namespace Brettle.Web.NeatUpload
 		{
 			if (IsDesignTime)
 				return;
+			
 			// Find the containing <form> tag and set enctype="multipart/form-data" method="Post"
 			Control c = Parent;
 			while (c != null && !(c is HtmlForm))
@@ -315,70 +355,29 @@ namespace Brettle.Web.NeatUpload
 				
 		protected override void Render(HtmlTextWriter writer)
 		{
-			string name; 
+			string name;
+			string storageConfigName;
 			if (!IsDesignTime && Config.Current.UseHttpModule)
 			{
 				// Generate a special name recognized by the UploadHttpModule
 				name = FormContext.Current.GenerateFileID(this.UniqueID);
-				
-				// Store the StorageConfig in a hidden form field with a related name
-				if (StorageConfig.Count > 0)
-				{
-					writer.AddAttribute(HtmlTextWriterAttribute.Type, "hidden");
-					writer.AddAttribute(HtmlTextWriterAttribute.Name, "Config_" + name);
-					// Convert the StorageConfig to a Hashtable because LosFormatter can serialize Hashtables very
-					// efficiently.
-					Hashtable ht = new Hashtable();
-					foreach (string key in StorageConfig.Keys)
-					{
-						ht[key] = StorageConfig[key];
-					}
-					LosFormatter scFormatter = new LosFormatter();
-					StringWriter sw = new StringWriter();
-					scFormatter.Serialize(sw, ht);
-					sw.Flush();
-					string storageConfigString = sw.ToString();
-					sw.Close();
-					if (log.IsDebugEnabled)
-					{
-						log.Debug("storageConfigString = " + storageConfigString);
-					}
-					
-					// Encrypt it
-					MemoryStream cipherTextStream = new MemoryStream();
-					SymmetricAlgorithm cipher = SymmetricAlgorithm.Create();
-					cipher.Mode = CipherMode.CBC;
-					cipher.Padding = PaddingMode.PKCS7;
-					cipher.Key = Config.Current.EncryptionKey;
-					CryptoStream cryptoStream = new CryptoStream(cipherTextStream, cipher.CreateEncryptor(), CryptoStreamMode.Write);
-					StreamWriter streamWriter = new StreamWriter(cryptoStream, System.Text.Encoding.UTF8);
-					streamWriter.Write(storageConfigString);
-					streamWriter.Close();
-					byte[] cipherText = cipherTextStream.ToArray();
-					
-					// MAC the ciphertext
-					KeyedHashAlgorithm macAlgorithm = KeyedHashAlgorithm.Create();
-					macAlgorithm.Key = Config.Current.ValidationKey;
-					byte[] hash = macAlgorithm.ComputeHash(cipherText);
-					
-					// Concatenate MAC length, MAC, and ciphertext into an array.
-					byte[] secureStorageConfig = new byte[1 + hash.Length + 1 + cipher.IV.Length + cipherText.Length];
-					secureStorageConfig[0] = (byte)hash.Length;
-					Array.Copy(hash, 0, secureStorageConfig, 1, hash.Length);
-					secureStorageConfig[1 + hash.Length] = (byte)cipher.IV.Length;
-					Array.Copy(cipher.IV, 0, secureStorageConfig, 1 + hash.Length + 1, cipher.IV.Length);
-					Array.Copy(cipherText, 0, secureStorageConfig, 1 + hash.Length + 1 + cipher.IV.Length, cipherText.Length);
-					
-					// Put Base64-encoded array in hidden field
-					string secureStorageConfigString = Convert.ToBase64String(secureStorageConfig);
-					writer.AddAttribute(HtmlTextWriterAttribute.Value, secureStorageConfigString);				
-					writer.RenderBeginTag(HtmlTextWriterTag.Input);
-					writer.RenderEndTag();
-				}
+				storageConfigName = FormContext.Current.GenerateStorageConfigID(this.UniqueID);
 			}
 			else
 			{
 				name = this.UniqueID;
+				storageConfigName = UploadContext.ConfigNamePrefix + "-" + this.UniqueID;
+				
+			}
+			// Store the StorageConfig in a hidden form field with a related name
+			if (StorageConfig != null && StorageConfig.Count > 0)
+			{
+				writer.AddAttribute(HtmlTextWriterAttribute.Type, "hidden");
+				writer.AddAttribute(HtmlTextWriterAttribute.Name, storageConfigName);
+				
+				writer.AddAttribute(HtmlTextWriterAttribute.Value, StorageConfig.Protect());				
+				writer.RenderBeginTag(HtmlTextWriterTag.Input);
+				writer.RenderEndTag();
 			}
 			writer.AddAttribute(HtmlTextWriterAttribute.Type, "file");
 			writer.AddAttribute(HtmlTextWriterAttribute.Name, name);

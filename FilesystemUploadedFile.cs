@@ -41,7 +41,7 @@ namespace Brettle.Web.NeatUpload
 		                                
 		public FilesystemUploadedFile(FilesystemUploadStorageProvider provider, 
 		                                string controlUniqueID, string fileName, string contentType,
-		                                NameValueCollection storageConfig)
+		                                UploadStorageConfig storageConfig)
 			: base(controlUniqueID, fileName, contentType)
 		{
 			Initialize(provider, controlUniqueID, fileName, contentType, storageConfig);
@@ -49,7 +49,7 @@ namespace Brettle.Web.NeatUpload
 		
 		private void Initialize(FilesystemUploadStorageProvider provider, 
 		                                string controlUniqueID, string fileName, string contentType,
-		                                NameValueCollection storageConfig)
+		                                UploadStorageConfig storageConfig)
 		{
 			DirectoryInfo tmpDirInfo = provider.GetTempDirectory(storageConfig);
 			if (!tmpDirInfo.Exists)

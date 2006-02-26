@@ -39,7 +39,20 @@ namespace Brettle.Web.NeatUpload
 		// Note: Must not include a "." because it confuses IE's javascript) and must not include a "-" 
 		// because we use that separate the postback id from the control id.
 		internal const string NamePrefix = "NeatUpload_";
-
+		
+		// The hidden form fields that contain per-control StorageConfig info have names which start with:
+		internal const string ConfigNamePrefix = "NeatUploadConfig_";
+		
+		internal static string NameToConfigName(string name)
+		{
+			if (!name.StartsWith(NamePrefix))
+			{
+				throw new ApplicationException(name + " does not start with " + NamePrefix);
+			}
+			
+			return ConfigNamePrefix + name.Substring(NamePrefix.Length);
+		}
+		
 		internal static UploadContext Current
 		{
 			get {
@@ -96,7 +109,7 @@ namespace Brettle.Web.NeatUpload
 		}
 		
 		
-		internal UploadedFile CreateUploadedFile(string fileID, string fileName, string contentType, NameValueCollection storageConfig)
+		internal UploadedFile CreateUploadedFile(string fileID, string fileName, string contentType, UploadStorageConfig storageConfig)
 		{
 			// Get the control's unique ID from the fileID
 			int dashIndex = fileID.IndexOf('-');
@@ -105,7 +118,7 @@ namespace Brettle.Web.NeatUpload
 			if (log.IsDebugEnabled) log.Debug("In CreateUploadedFile() controlUniqueID=" + controlUniqueID);
 			UploadedFile uploadedFile 
 				= UploadStorage.CreateUploadedFile(this, controlUniqueID, fileName, contentType, storageConfig);			
-				uploadedFiles[controlUniqueID] = uploadedFile;
+			uploadedFiles[controlUniqueID] = uploadedFile;
 			
 			if (fileName != null && fileName != string.Empty)
 				CurrentFileName = fileName;

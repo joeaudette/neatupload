@@ -45,7 +45,7 @@ namespace Brettle.Web.NeatUpload
 			return this.CreateUploadedFile(context, controlUniqueID, fileName, contentType, null);
 		}
 
-		public override UploadedFile CreateUploadedFile(UploadContext context, string controlUniqueID, string fileName, string contentType, NameValueCollection storageConfig)
+		public override UploadedFile CreateUploadedFile(UploadContext context, string controlUniqueID, string fileName, string contentType, UploadStorageConfig storageConfig)
 		{
 			return new FilesystemUploadedFile(this, controlUniqueID, fileName, contentType, storageConfig);
 		}

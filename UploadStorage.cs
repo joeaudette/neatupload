@@ -28,7 +28,7 @@ namespace Brettle.Web.NeatUpload
 	public class UploadStorage
 	{
 		public static UploadedFile CreateUploadedFile(UploadContext context, string controlUniqueID, string fileName,
-		                                              string contentType, NameValueCollection storageConfig)
+		                                              string contentType, UploadStorageConfig storageConfig)
 		{
 			
 			if (storageConfig == null || storageConfig.Count == 0)
@@ -36,7 +36,9 @@ namespace Brettle.Web.NeatUpload
 				return Provider.CreateUploadedFile(context, controlUniqueID, fileName, contentType);
 			}
 		                                              		
-			return Provider.CreateUploadedFile(context, controlUniqueID, fileName, contentType, storageConfig);
+		    UploadedFile file = Provider.CreateUploadedFile(context, controlUniqueID, fileName, contentType, storageConfig);
+			
+			return file;
 		}
 
 		public static UploadedFile CreateUploadedFile(UploadContext context, string controlUniqueID, string fileName,
@@ -45,6 +47,11 @@ namespace Brettle.Web.NeatUpload
 			return Provider.CreateUploadedFile(context, controlUniqueID, fileName, contentType);
 		}
 
+		public static UploadStorageConfig CreateUploadStorageConfig()
+		{
+			return Provider.CreateUploadStorageConfig();
+		}
+		
 		public static UploadStorageProvider Provider
 		{
 			get

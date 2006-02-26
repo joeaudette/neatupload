@@ -42,7 +42,7 @@ namespace Brettle.Web.NeatUpload
 		}                                               
 		
 		public virtual UploadedFile CreateUploadedFile(UploadContext context, string controlUniqueID, string fileName,
-		                                                  string contentType, NameValueCollection storageConfig)
+		                                                  string contentType, UploadStorageConfig storageConfig)
 		{
 	      	if (storageConfig != null && storageConfig.Count != 0)
 	      	{
@@ -51,5 +51,9 @@ namespace Brettle.Web.NeatUpload
 	      	return this.CreateUploadedFile(context, controlUniqueID, fileName, contentType);
 		}
 		
+		public virtual UploadStorageConfig CreateUploadStorageConfig()
+		{
+			return new UploadStorageConfig();
+		}
 	}
 }

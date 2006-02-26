@@ -47,289 +47,65 @@ Manual</h1>
 
 
 <ul id="mozToc">
-
-
-
-
-
 <!--mozToc h2 1 h3 2 h4 3 h5 4 h5 5 h6 6--><li><a href="#mozTocId859773">Release
 Notes for NeatUpload-1.1.x</a>
-    
-    
-    
-    
-    
     <ul>
-
-
-
-
-
       <li><a href="#mozTocId432734">Upgrading
 from NeatUpload-1.0.x</a></li>
-
-
-
-
-
       <li><a href="#mozTocId953432">New
 Features in NeatUpload-1.1</a></li>
-
-
-
-
-
-    
-    
-    
-    
-    
     </ul>
-
-
-
-
-
   </li>
-
-
-
-
-
   <li><a href="#mozTocId903858">Introduction</a></li>
-
-
-
-
-
   <li><a href="#mozTocId304923">Installation</a></li>
-
-
-
-
-
   <li><a href="#mozTocId50790">Usage</a>
-    
-    
-    
-    
-    
     <ul>
-
-
-
-
-
       <li><a href="#mozTocId879490">Using
 NeatUpload with the Visual Studio Web Form Designer</a></li>
-
-
-
-
-
       <li><a href="#mozTocId170882">Using
 NeatUpload without
 the Visual Studio Web Form Designer</a></li>
-
-
-
-
-
       <li><a href="#mozTocId900479">Avoiding
 Unnecessary Uploads and Progress Displays</a></li>
-
-
-
-
-
-    
-    
-    
-    
-    
     </ul>
-
-
-
-
-
   </li>
-
-
-
-
-
   <li><a href="#mozTocId221000">Configuration</a>
-    
-    
-    
-    
-    
     <ul>
-
-
-
-
-
       <li><a href="#mozTocId576312">Using
 the &lt;neatUpload&gt;
 Configuration Section</a></li>
-
-
-
-
-
       <li><a href="#mozTocId905959">Changing
 the Temporary Directory Used by the FilesystemUploadStorageProvider</a></li>
-
-
-
-
-
       <li><a href="#mozTocId134915">Using
 Location Filtering to Restrict/Modify NeatUpload's Request
 Processing</a></li>
-
-
-
-
-
       <li><a href="#mozTocId970185">Limiting
 the Size of Upload Requests</a></li>
-
-
-
-
-
       <li><a href="#mozTocId358727">Changing
 the Maximum Size of Normal Requests</a></li>
-
-
-
-
-
-    
-    
-    
-    
-    
+      <li><a href="#mozTocId652103">Configuring Individual InputFile Controls Programmatically</a></li>
     </ul>
-
-
-
-
-
   </li>
-
-
-
-
-
   <li><a href="#mozTocId831551">The HashedInputFile Extension</a></li>
-
-
-
-
-
   <li><a href="#mozTocId250326">Customization</a>
-    
-    
-    
-    
-    
     <ul>
-
-
-
-
-
       <li><a href="#mozTocId628349">Customizing
 Progress.aspx</a></li>
-
-
-
-
-
       <li><a href="#mozTocId184279">Creating
 Custom Fallback Content for ProgressBar</a></li>
-
-
-
-
-
       <li><a href="#mozTocId759939">Creating
 a Custom UploadStorageProvider</a></li>
-
-
-
-
-
-    
-    
-    
-    
-    
     </ul>
-
-
-
-
-
   </li>
-
-
-
-
-
   <li><a href="#mozTocId580088">Known
 Issues</a>
-    
-    
-    
-    
-    
     <ul>
-
-
-
-
-
       <li><a href="#mozTocId766780">HttpResponse.AppendToLog()
 does nothing when UploadHttpModule is used</a></li>
-
-
-
-
-
       <li><a href="#mozTocId752771">Inline ProgressBars don't work with Opera</a></li>
-
-
-
-
-
-    
-    
-    
-    
-    
     </ul>
-
-
-
-
-
   </li>
-
-
-
-
-
   <li><a href="#mozTocId405545">Troubleshooting</a></li>
-
-
-
-
-
 </ul>
 
 
@@ -2719,36 +2495,34 @@ The behavior when this value is exceeded is similar to the behavior when the <co
 is exceeded. &nbsp;See the preceding section for details. &nbsp;The
 only difference is that for non-upload requests that exceed the <code>maxNormalRequestLength</code> limit, NeatUpload does not attempt to use JavaScript to interrupt the browser and the exception that is thrown is an <code>HttpException(413, "Request Entity Too Large")</code> instead of an <code>UploadTooLargeException()</code>.<br>
 <br>
-<h3>Configuring Individual InputFile Controls Programmatically</h3>
-You can use the <code>StorageConfig</code> property of each <code>InputFile</code> control to change way the <code>UploadStorageProvider</code> handles the file uploaded to that control. &nbsp; &nbsp;<code>InputFile.StorageConfig</code> is a <code>NameValueCollection</code> whose interpretation depends on which <code>UploadStorageProvider</code> is used. &nbsp;The default <code>FilesystemUploadStorageProvider</code> only allows the temporary directory to be set via the <code>StorageConfig</code> property. &nbsp;To programmatically set the temporary directory place a line like this in&nbsp;<code>Page_Load()</code>:<br>
+<h3><a class="mozTocH3" name="mozTocId652103"></a>Configuring Individual InputFile Controls Programmatically</h3>
+You can use the <code>StorageConfig</code> property of each <code>InputFile</code> control to change the way the <code>UploadStorageProvider</code> handles the file uploaded to that control. &nbsp;The interpretation of&nbsp;<code>InputFile.StorageConfig</code> depends on which <code>UploadStorageProvider</code> is used. &nbsp;The default <code>FilesystemUploadStorageProvider</code> only allows the temporary directory to be set via the <code>StorageConfig</code> property. &nbsp;To programmatically set the temporary directory place a line like this in&nbsp;<code>Page_Load()</code>:<br>
 <br>
 <code><span style="font-style: italic;">inputFileId</span>.StorageConfig["tempDirectory"] = "<span style="font-style: italic;">path_to_temp_directory</span>";</code><br>
 <br>
 Before using the <code>StorageConfig</code> property, it is critical to understand how the <code>StorageConfig</code> is communicated to the UploadStorageProvider to avoid some possible pitfalls. &nbsp;When the <code>InputFile</code> control is rendered, NeatUpload encrypts the <code>StorageConfig</code>
-an encryption key, signs it with a validation key and then renders the
-ciphertext and signature in a hidden form field. &nbsp;When NeatUpload
-receives the upload request, it retrieves the form field value,
-verifies the signature, and decrypts the ciphertext to get the <code>StorageConfig</code>.
+with an encryption key, signs it with a validation key and then renders
+the ciphertext and signature in a hidden form field. &nbsp;When
+NeatUpload receives the upload request, it retrieves the form field
+value, verifies the signature, and decrypts the ciphertext to get the <code>StorageConfig</code>.
 &nbsp;By default, NeatUpload automatically generates random encryption
 and validation keys when they are first needed during the application
 lifetime. &nbsp;However, you can set them explicitly by setting the <code>encryptionKey</code> and <code>validationKey</code> attributes of the <code>&lt;neatUpload&gt;</code> element to random 32 and 40 digit hexadecimal strings, respectively.<br>
 <br>
-Encrypting and signing the <code>StorageConfig</code> prevents an
-attacker from examining and modifying it. &nbsp;However, it does not
-prevent replay attacks and it will cause uploads to be rejected if the
-server uses different keys for validation/decryption than it did for
-signing/encryption. &nbsp;Follow the following rules to avoid these
-problems:<br>
+Encrypting and signing the <code>StorageConfig</code> prevents an attacker from examining and modifying it. &nbsp;However, <span style="font-weight: bold;">it
+does not prevent replay attacks and it will cause uploads to be
+rejected if the server uses different keys for validation/decryption
+than it did for signing/encryption</span>. &nbsp;Follow the following rules to avoid these problems:<br>
 <ul>
-  <li>Only use <code>StorageConfig</code> to configure an <code>InputFile</code> control if you don't mind&nbsp;an attacker associating that <code>StorageConfig</code> with other <code>InputFile</code> controls&nbsp;while the same validation key is in use. &nbsp;This is not typically a problem for <code>StorageConfig["tempDirectory"]</code>
+  <li>Only use <code>StorageConfig</code> to configure an <code>InputFile</code> control if you don't mind&nbsp;an attacker associating that <code>StorageConfig</code> with other <code>InputFile</code> controls&nbsp;while the same validation key is being used. &nbsp;This is not typically a problem for <code>StorageConfig["tempDirectory"]</code>
 because it is mostly used to specify a temporary directory on the same
 drive as the final location of the file to improve performance.
 &nbsp;If an attacker used a&nbsp; <code>StorageConfig</code> from a
 different control, they would typically just get poor performance.
 &nbsp;Note, however, that if you decide to stop using a temporary
 directory, you should either change the validation key or use some
-other mechanism (e.g. change the ACL) to ensure that an upload that
-uses an old <code>StorageConfig</code> can not write to the old directory.</li>
+other mechanism (e.g. change the permissions on the directory) to
+ensure that an upload that uses an old <code>StorageConfig</code> can not write to the old directory.</li>
   <li>Only use <code>StorageConfig</code> to configure an <code>InputFile</code>
 control if you don't mind having uploads rejected while transitioning
 from old to new keys. &nbsp;NeatUpload will reject any uploads from
@@ -4434,17 +4208,7 @@ fileName,<br>
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-NameValueCollection storageConfig);<br>
-
-
-
-
-
-
-
-
-
-
+UploadStorageConfig storageConfig);<br>
 </code><br>
 
 
@@ -4758,6 +4522,8 @@ event and use custom error pages if they are configured.<br>
 
 
 
+<br>
+If the <code>NameValueCollection</code> provided by <code>UploadStorageConfig</code> is not sufficient for your provider, you can override <code>UploadStorageProvider.CreateUploadStorageConfig()</code> to return your own <code>UploadStorageConfig</code> subclass. &nbsp;Your subclass can override the <code>UploadStorageConfig.Serialize(Stream)</code> and <code>UploadStorageConfig.Deserialize(Stream)</code> methods to serialize itself to the provided <code>Stream</code> and deserialize itself from the provided <code>Stream</code>. &nbsp;The base class implementations of these methods use <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemWebUILosFormatterClassTopic.asp"><code>LosFormatter</code></a> to provide a concise serialization of the <code>NameValueCollection</code> as a <code>Hashtable</code>.<br>
 <br>
 
 

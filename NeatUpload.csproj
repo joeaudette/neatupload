@@ -279,6 +279,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "UploadStorageConfig.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "UploadStorageProvider.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

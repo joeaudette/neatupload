@@ -46,6 +46,7 @@ namespace Brettle.Web.NeatUpload
 		}
 		
 		internal string PostBackID;
+		private string StorageConfigID;
 		
 		internal FormContext()
 		{
@@ -61,6 +62,7 @@ namespace Brettle.Web.NeatUpload
 			}			
 			string guid = sb.ToString();
 			PostBackID = UploadContext.NamePrefix + guid;
+			StorageConfigID = UploadContext.ConfigNamePrefix + guid;
 			log.Debug("PostBackID=" + PostBackID);
 		}
 		
@@ -69,5 +71,9 @@ namespace Brettle.Web.NeatUpload
 			return PostBackID + "-" + controlUniqueID;
 		}
 		
+		internal string GenerateStorageConfigID(string controlUniqueID)
+		{
+			return StorageConfigID + "-" + controlUniqueID;
+		}
 	}
 }

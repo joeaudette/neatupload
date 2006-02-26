@@ -84,10 +84,13 @@ namespace Brettle.Web.NeatUpload
 
 /*
 			// The temp directory used by the default FilesystemUploadStorageProvider can be configured on a
-			// per-control basis like this (see documentation for details):
-			inputFile.StorageConfig["tempDirectory"] = "file1temp";
-			inputFile2.StorageConfig["tempDirectory"] = "file2temp";
-*/			
+			// per-control basis like this (see documentation for details)
+			if (!IsPostBack)
+			{
+				inputFile.StorageConfig["tempDirectory"] = "file1temp";
+				inputFile2.StorageConfig["tempDirectory"] = "file2temp";
+			}
+*/
 		}
 
 		private void Button_Clicked(object sender, EventArgs e)

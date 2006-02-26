@@ -25,7 +25,6 @@ using System.Web;
 using System.Web.Configuration;
 using System.IO;
 using System.Collections.Specialized;
-using System.Security.Cryptography;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -417,8 +416,7 @@ namespace Brettle.Web.NeatUpload
 			}
 
 			preloadedEntityBodyStream = new MemoryStream();
-			string storageConfigName = null;
-			MemoryStream storageConfigStream = null;
+			Hashtable storageConfigStreamTable = new Hashtable();
 			outputStream = preloadedEntityBodyStream;
 			readPos = writePos = parsePos = 0;
 			while (CopyUntilBoundary())
@@ -466,10 +464,9 @@ namespace Brettle.Web.NeatUpload
 				}
 				if (log.IsDebugEnabled) log.Debug("name = " + name);
 				if (log.IsDebugEnabled) log.Debug("fileName = " + fileName);
-				if (name != null && name.StartsWith("Config_" + UploadContext.NamePrefix))
+				if (name != null && name.StartsWith(UploadContext.ConfigNamePrefix))
 				{
-					outputStream = storageConfigStream = new System.IO.MemoryStream();
-					storageConfigName = name;
+					storageConfigStreamTable[name] = outputStream = new System.IO.MemoryStream();
 					readPos = parsePos; // Skip past the boundary and headers
 				}
 				else if (fileName != null && name != null && name.StartsWith(UploadContext.NamePrefix))
@@ -477,8 +474,10 @@ namespace Brettle.Web.NeatUpload
 					string fileID = name;
 					uploadContext.RegisterPostback(fileID); // Do this first so that progress display sees errors
 					
-					NameValueCollection storageConfig = null;
-					if (storageConfigName == "Config_" + name && storageConfigStream != null)
+					UploadStorageConfig storageConfig = null;
+					string storageConfigName = UploadContext.NameToConfigName(name);
+					MemoryStream storageConfigStream = storageConfigStreamTable[storageConfigName] as MemoryStream;
+					if (storageConfigStream != null)
 					{
 						storageConfigStream.Seek(0, System.IO.SeekOrigin.Begin);
 						StreamReader sr = new System.IO.StreamReader(storageConfigStream);
@@ -487,63 +486,13 @@ namespace Brettle.Web.NeatUpload
 						{
 							log.Debug("storageConfigStream = " + secureStorageConfigString);
 						}
-						byte[] secureStorageConfig = Convert.FromBase64String(secureStorageConfigString);
+						storageConfig = UploadStorage.CreateUploadStorageConfig();
+						storageConfig.Unprotect(secureStorageConfigString);
 						
-						byte[] actualHash = new byte[ secureStorageConfig[0] ];
-						System.Array.Copy(secureStorageConfig, 1, actualHash, 0, actualHash.Length);
-						byte[] iv = new byte[ secureStorageConfig[1 + actualHash.Length] ];
-						System.Array.Copy(secureStorageConfig, 1 + actualHash.Length + 1, iv, 0, iv.Length);						
-						byte[] cipherText = new byte[secureStorageConfig.Length - (1 + actualHash.Length + 1 + iv.Length)];
-						System.Array.Copy(secureStorageConfig, 1 + actualHash.Length + 1 + iv.Length, cipherText, 0, cipherText.Length);						
-						
-						// Verify the hash
-						KeyedHashAlgorithm macAlgorithm = KeyedHashAlgorithm.Create();
-						macAlgorithm.Key = Config.Current.ValidationKey;
-						byte[] expectedHash = macAlgorithm.ComputeHash(cipherText);
-						if (actualHash.Length != expectedHash.Length)
-						{
-							throw new InvalidStorageConfigException("actualHash.Length (" + actualHash.Length + ")" +
-							                                        " != expectedHash.Length (" + expectedHash.Length + ")");
-						}
-						for (int i = 0; i < expectedHash.Length; i++)
-						{
-							if (actualHash[i] != expectedHash[i])
-							{
-								throw new InvalidStorageConfigException("actualHash[" + i + "] (" + (int)actualHash[i] + ")" +
-								                                         " != expectedHash[" + i + "] (" + (int)expectedHash[i] + ")");
-							}
-						}
-						
-						// Decrypt the ciphertext
-						MemoryStream cipherTextStream = new MemoryStream(cipherText);
-						SymmetricAlgorithm cipher = SymmetricAlgorithm.Create();
-						cipher.Mode = CipherMode.CBC;
-						cipher.Padding = PaddingMode.PKCS7;
-						cipher.Key = Config.Current.EncryptionKey;
-						cipher.IV = iv;
-						CryptoStream cryptoStream = new CryptoStream(cipherTextStream, cipher.CreateDecryptor(), CryptoStreamMode.Read);
-						StreamReader streamReader = new StreamReader(cryptoStream, System.Text.Encoding.UTF8);
-						string storageConfigString = streamReader.ReadToEnd();
-						streamReader.Close();
-						if (log.IsDebugEnabled)
-						{
-							log.Debug("storageConfigString = " + storageConfigString);
-						}
-						
-						// Deserialize the storageConfig
-						System.Web.UI.LosFormatter scFormatter = new System.Web.UI.LosFormatter();
-						Hashtable ht = (Hashtable)scFormatter.Deserialize(storageConfigString);
-						
-						// Convert to a NameValueCollection.  We only use Hashtable for serialization because
-						// LosFormatter can serialize it efficiently.
-						if (ht != null)
-						{
-							storageConfig = new NameValueCollection();								
-							foreach (string key in ht.Keys)
-							{
-								storageConfig[key] = (string)ht[key];
-							}
-						}
+						// Write out a part for the config hidden field
+						string uniqueId = storageConfigName.Substring(storageConfigName.IndexOf("-"));
+						string configFieldName = UploadContext.ConfigNamePrefix + uniqueId;
+						WriteReplacementFormField(configFieldName, secureStorageConfigString);
 					}
 					
 					if (log.IsDebugEnabled) log.Debug("Calling UploadContext.Current.CreateUploadedFile(" + fileID + "...)");
@@ -563,12 +512,7 @@ namespace Brettle.Web.NeatUpload
 					}
 
 					// Write out a replacement part that just contains the filename as the value.
-					preloadedEntityBodyStream.Write(boundary, 0, boundary.Length);
-					System.Text.StringBuilder replacementPart = new System.Text.StringBuilder();
-					replacementPart.Append("\r\nContent-Disposition: form-data; name=\"" + uploadedFile.ControlUniqueID + "\"\r\n\r\n");
-					replacementPart.Append(fileName);
-					byte[] replacementPartBytes = System.Text.Encoding.ASCII.GetBytes(replacementPart.ToString());
-					preloadedEntityBodyStream.Write(replacementPartBytes, 0, replacementPartBytes.Length);
+					WriteReplacementFormField(uploadedFile.ControlUniqueID, fileName);
 				}
 				else
 				{
@@ -588,6 +532,17 @@ namespace Brettle.Web.NeatUpload
 			}
 			uploadContext.Status = UploadStatus.Completed;
 		}
+		
+		private void WriteReplacementFormField(string name, string val)
+		{
+			preloadedEntityBodyStream.Write(boundary, 0, boundary.Length);
+			System.Text.StringBuilder replacementPart = new System.Text.StringBuilder();
+			replacementPart.Append("\r\nContent-Disposition: form-data; name=\"" + name + "\"\r\n\r\n");
+			replacementPart.Append(val);
+			byte[] replacementPartBytes = System.Text.Encoding.ASCII.GetBytes(replacementPart.ToString());
+			preloadedEntityBodyStream.Write(replacementPartBytes, 0, replacementPartBytes.Length);
+		}
+		
 		
 		public override int ReadEntityBody (byte[] buffer, int size)
 		{
