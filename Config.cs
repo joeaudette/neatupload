@@ -81,9 +81,15 @@ namespace Brettle.Web.NeatUpload
 
 		private Config() 
 		{
+#if VS2005
+//Fix Strings file for Visual Studio 2005.
+            this.ResourceManager = new ResourceManager("Brettle.Web.NeatUpload.Strings",
+                                                        System.Reflection.Assembly.GetExecutingAssembly());
+#else
 			this.ResourceManager = new ResourceManager("NeatUpload.Strings",
-			                                            System.Reflection.Assembly.GetExecutingAssembly());
-		}
+ 		                                            System.Reflection.Assembly.GetExecutingAssembly());
+#endif
+        }
 
 		private static Config CreateFromAppSettings(System.Collections.Specialized.NameValueCollection appSettings)
 		{
