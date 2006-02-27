@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
 function NeatUploadGetMainWindow() 
 {
 	var mainWindow;
@@ -128,7 +129,7 @@ function NeatUploadUpdateHtml()
 			var lastMillis = NeatUploadLastUpdate.getTime();
 			NeatUploadLastUpdate = new Date();
 			var delay = Math.max(lastMillis + 1000 - NeatUploadLastUpdate.getTime(), 1);
-			NeatUploadReloadTimeoutId = setTimeout(NeatUploadRefresh, delay);
+			NeatUploadReloadTimeoutId = setTimeout('NeatUploadRefresh()', delay);
 		}
 		catch (ex)
 		{

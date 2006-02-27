@@ -302,9 +302,8 @@ window.close();
 NeatUploadRefreshUrl = '" + refreshUrl + @"';
 window.onload = NeatUpload_CombineHandlers(window.onload, function () 
 {
-	NeatUploadReloadTimeoutId = setTimeout(NeatUploadRefresh, 1000);
+	NeatUploadReloadTimeoutId = setTimeout('NeatUploadRefresh()', 1000);
 });
-
 // -->
 </script>");
 		}
