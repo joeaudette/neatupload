@@ -285,7 +285,7 @@ if (NeatUpload_DivNode)
 function NeatUpload_OnSubmitForm_" + formControl.ClientID + @"()
 {
 	var elem = document.getElementById('" + formControl.ClientID + @"');
-	elem.NeatUpload_OnSubmit();
+	return elem.NeatUpload_OnSubmit();
 }
 
 if (document.getElementById)
@@ -408,6 +408,7 @@ NeatUpload_TriggerIDs_" + this.ClientID + @" = new Object();
 NeatUpload_TriggerIDs_" + this.ClientID + @".NeatUpload_length = 0;
 NeatUpload_LastEventSourceId = null;
 NeatUpload_LastEventType = null;
+NeatUpload_AlertShown = true;
 
 NeatUpload_AddSubmitHandler('" + formControl.ClientID + "'," + (Inline ? "false" : "true") + @", function () {
 	if (NeatUpload_LastEventSourceId && !NeatUpload_TriggerIDs_" + this.ClientID + @"[NeatUpload_LastEventSourceId])
@@ -416,14 +417,14 @@ NeatUpload_AddSubmitHandler('" + formControl.ClientID + "'," + (Inline ? "false"
 		if (NeatUpload_NonUploadIDs_" + this.ClientID + @"[NeatUpload_LastEventSourceId]
 		     || NeatUpload_TriggerIDs_" + this.ClientID + @".NeatUpload_length)
 		{
-			NeatUpload_ClearFileInputs(formElem);
-			return true;
+			return NeatUpload_ClearFileInputs(formElem);
 		}
 	}
 	if (NeatUpload_IsFilesToUpload('" + formControl.ClientID + @"'))
 	{
 		" + displayStatement + @"
 	}
+	return true;
 });
 						
 NeatUpload_EventsThatCouldTriggerPostBack = ['click', 'keypress', 'change', 'drop', 'mousedown', 'keydown'];
@@ -444,6 +445,7 @@ for (var i = 0; i < NeatUpload_EventsThatCouldTriggerPostBack.length; i++)
 		}
 		NeatUpload_LastEventType = ev.type;
 		NeatUpload_LastEventSourceId = src.id;
+		NeatUpload_AlertShown = false;
 		if (ev.type != 'click' && ev.type != 'keypress')
 		{
 			return true;
@@ -668,11 +670,20 @@ function NeatUpload_ClearFileInputs(elem)
 			catch (ex)
 			{
 				// I don't know of any other way to clear the file inputs, so on browser where we get an error
-				// (eg Mac IE), we'll just give up.
-				return;
+				// (eg Mac IE), we just give the user a warning.
+				if (inputFile.value != null && inputFile.value != '')
+				{
+					if (!NeatUpload_AlertShown)
+					{
+						window.alert('Please clear the file names and try again.');
+						NeatUpload_AlertShown = true;
+					}
+					return false;
+				}
 			}
 		}
 	}
+	return true;
 }
 
 function NeatUpload_AddSubmitHandler(formID, isPopup, handler)
@@ -735,7 +746,8 @@ function NeatUpload_OnSubmit()
 {
 	for (var i=0; i < this.NeatUpload_OnSubmitHandlers.length; i++)
 	{
-		this.NeatUpload_OnSubmitHandlers[i].call(this);
+		if (!this.NeatUpload_OnSubmitHandlers[i].call(this))
+			return false;
 	}
 	return true;
 }
