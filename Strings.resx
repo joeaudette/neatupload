@@ -40,6 +40,7 @@
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
 	<data name="UploadTooLargeMessageFormat"><value>Total size &gt; {0} bytes</value></data>
+	<data name="ClearFileNamesAlert"><value>Please clear the file names and try again.</value></data>
 	<data name="ByteCountFormat"><value>{0:0,.0}</value></data>
 	<data name="KBCountFormat"><value>{0:0,.0}</value></data>
 	<data name="MBCountFormat"><value>{0:0,,.00}</value></data>

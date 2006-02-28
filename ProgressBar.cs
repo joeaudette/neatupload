@@ -675,7 +675,7 @@ function NeatUpload_ClearFileInputs(elem)
 				{
 					if (!NeatUpload_AlertShown)
 					{
-						window.alert('Please clear the file names and try again.');
+						window.alert('" + Config.Current.ResourceManager.GetString("ClearFileNamesAlert") + @"');
 						NeatUpload_AlertShown = true;
 					}
 					return false;
