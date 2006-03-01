@@ -24,16 +24,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		<link rel="stylesheet" type="text/css" title="default" href="default.css" />		
 		<style type="text/css">
 <!--
-		body, form, table {
+		body, form, table, tr, td {
 			margin: 0px;
 			border: 0px none;
 			padding: 0px;
 		}
 
-		table {
+		#progressDisplayCenterer {
 			vertical-align: middle;
 			width: 100%;
 			height: 100%;
+		}
+		
+		#progressDisplay {
+			vertical-align: middle;
+			width: 100%;
 		}
 		
 		#barTd {
@@ -66,7 +71,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	</head>
 	<body>
 		<form id="dummyForm" runat="server">
-		<table class="ProgressDisplay">
+		<table id="progressDisplayCenterer">
+		<tr>
+		<td>
+		<table id="progressDisplay" class="ProgressDisplay">
 		<tr>
 		<td>
 			<span id="label" runat="server" class="Label">Upload&#160;Status:</span>
@@ -105,6 +113,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			<asp:HyperLink id="cancel" runat="server" Visible='<%# CancelVisible %>' NavigateUrl='<%# CancelUrl %>' title="Cancel Upload" class="ImageButton" ><img id="cancelImage" runat="server" src="cancel.png" alt="Cancel Upload" /></asp:HyperLink>
 			<asp:HyperLink id="refresh" runat="server" Visible='<%# StartRefreshVisible %>' NavigateUrl='<%# StartRefreshUrl %>' title="Refresh" class="ImageButton" ><img id="refreshImage" runat="server" src="refresh.png" alt="Refresh" /></asp:HyperLink>
 			<asp:HyperLink id="stopRefresh" runat="server" Visible='<%# StopRefreshVisible %>' NavigateUrl='<%# StopRefreshUrl %>' title="Stop Refreshing" class="ImageButton"><img id="stopRefreshImage" runat="server" src="stop_refresh.png" alt="Stop Refreshing" /></asp:HyperLink>
+		</td>
+		</tr>
+		</table>
 		</td>
 		</tr>
 		</table>

@@ -41,6 +41,7 @@
 	</resheader>
 	<data name="UploadTooLargeMessageFormat"><value>Total size &gt; {0} bytes</value></data>
 	<data name="InvalidStorageConfigMessageFormat"><value>Please refresh the page and try again.</value></data>
+	<data name="ClearFileNamesAlert"><value>Please clear the file names and try again.</value></data>
 	<data name="ByteCountFormat"><value>{0:0,.0}</value></data>
 	<data name="KBCountFormat"><value>{0:0,.0}</value></data>
 	<data name="MBCountFormat"><value>{0:0,,.00}</value></data>

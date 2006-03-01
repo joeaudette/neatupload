@@ -181,9 +181,7 @@ namespace Brettle.Web.NeatUpload
 				Attributes["scrolling"] = "no";
 				Attributes["name"] = this.ClientID;
 				displayStatement = @"
-setTimeout(function () {
-	frames['" + this.ClientID + @"'].location.href = '" + uploadProgressUrl + @"&refresher=client&canScript=true&canCancel=' + NeatUploadCanCancel();
-}, 0);
+setTimeout(""frames['" + this.ClientID + @"'].location.href = '" + uploadProgressUrl + @"&refresher=client&canScript=true&canCancel=' + NeatUploadCanCancel();"", 0);
 ";
 				this.Page.RegisterStartupScript(this.UniqueID + "UpdateIFrameSrc", @"
 <script language=""javascript"">
@@ -287,7 +285,7 @@ if (NeatUpload_DivNode)
 function NeatUpload_OnSubmitForm_" + formControl.ClientID + @"()
 {
 	var elem = document.getElementById('" + formControl.ClientID + @"');
-	elem.NeatUpload_OnSubmit();
+	return elem.NeatUpload_OnSubmit();
 }
 
 if (document.getElementById)
@@ -410,6 +408,7 @@ NeatUpload_TriggerIDs_" + this.ClientID + @" = new Object();
 NeatUpload_TriggerIDs_" + this.ClientID + @".NeatUpload_length = 0;
 NeatUpload_LastEventSourceId = null;
 NeatUpload_LastEventType = null;
+NeatUpload_AlertShown = true;
 
 NeatUpload_AddSubmitHandler('" + formControl.ClientID + "'," + (Inline ? "false" : "true") + @", function () {
 	if (NeatUpload_LastEventSourceId && !NeatUpload_TriggerIDs_" + this.ClientID + @"[NeatUpload_LastEventSourceId])
@@ -418,14 +417,14 @@ NeatUpload_AddSubmitHandler('" + formControl.ClientID + "'," + (Inline ? "false"
 		if (NeatUpload_NonUploadIDs_" + this.ClientID + @"[NeatUpload_LastEventSourceId]
 		     || NeatUpload_TriggerIDs_" + this.ClientID + @".NeatUpload_length)
 		{
-			NeatUpload_ClearFileInputs(formElem);
-			return true;
+			return NeatUpload_ClearFileInputs(formElem);
 		}
 	}
 	if (NeatUpload_IsFilesToUpload('" + formControl.ClientID + @"'))
 	{
 		" + displayStatement + @"
 	}
+	return true;
 });
 						
 NeatUpload_EventsThatCouldTriggerPostBack = ['click', 'keypress', 'change', 'drop', 'mousedown', 'keydown'];
@@ -446,6 +445,7 @@ for (var i = 0; i < NeatUpload_EventsThatCouldTriggerPostBack.length; i++)
 		}
 		NeatUpload_LastEventType = ev.type;
 		NeatUpload_LastEventSourceId = src.id;
+		NeatUpload_AlertShown = false;
 		if (ev.type != 'click' && ev.type != 'keypress')
 		{
 			return true;
@@ -520,6 +520,45 @@ NeatUpload_AddSubmittingHandler('" + formControl.ClientID + @"', function () {
 <script language=""javascript"">
 <!--
 
+if (!Array.prototype.push)
+{
+	Array.prototype.push = function() {
+		for (var i = 0; i < arguments.length; i++)
+			this[this.length] = arguments[i];
+		return this.length;
+	};
+}
+
+if (!Array.prototype.unshift)
+{
+	Array.prototype.unshift = function() {
+		this.reverse();
+		for (var i = 0; i < arguments.length; i++)
+			this[this.length] = arguments[i];
+		this.reverse();
+		return this.length;
+	};
+}
+
+if (!Function.prototype.call)
+{
+	Function.prototype.call = function() {
+		var obj = arguments[0];
+		obj._NeatUpload_tmpFunc = this;
+		var argList = '';
+		for (var i = 1; i < arguments.length; i++)
+		{
+			argList += 'arguments[' + i + ']';
+			if (i < arguments.length - 1)
+				argList += ',';
+		}
+		var result = eval('obj._NeatUpload_tmpFunc(' + argList + ')');
+		obj._NeatUpload_tmpFunc = null;
+		return result;
+	};
+}
+
+
 function NeatUploadCanCancel()
 {
 	try
@@ -589,7 +628,8 @@ function NeatUpload_IsFilesToUpload(id)
 				// IE will not actually submit the form if any file value is not an absolute path.  If IE doesn't
 				// submit the form, any progress bars we start will never finish.  
 				if (navigator && navigator.userAgent
-					&& navigator.userAgent.toLowerCase().indexOf('msie') != -1 && typeof(ActiveXObject) != 'undefined') 
+				    && navigator.userAgent.toLowerCase().indexOf('msie') != -1 && typeof(ActiveXObject) != 'undefined'
+				    && navigator.userAgent.toLowerCase().indexOf('mac') == -1)
 				{
 					var re = new RegExp('^(\\\\\\\\[^\\\\]|([a-zA-Z]:)?\\\\).*');
 					var match = re.exec(inputElem.value);
@@ -610,22 +650,40 @@ function NeatUpload_ClearFileInputs(elem)
 		var inputFile = inputFiles.item(i);
 		if (inputFile.type == 'file')
 		{
-			var newInputFile = document.createElement('input');
-			for (var a=0; a < inputFile.attributes.length; a++)
+			try
 			{
-				var attr = inputFile.attributes.item(a); 
-				if (attr.specified && attr.name != 'type' && attr.name != 'value')
+				var newInputFile = document.createElement('input');
+				for (var a=0; a < inputFile.attributes.length; a++)
 				{
-					if (attr.name == 'style' && newInputFile.style && newInputFile.style.cssText)
-						newInputFile.style.cssText = attr.value;
-					else
-						newInputFile.setAttribute(attr.name, attr.value);
+					var attr = inputFile.attributes.item(a); 
+					if (attr.specified && attr.name != 'type' && attr.name != 'value')
+					{
+						if (attr.name == 'style' && newInputFile.style && newInputFile.style.cssText)
+							newInputFile.style.cssText = attr.value;
+						else
+							newInputFile.setAttribute(attr.name, attr.value);
+					}
+				}
+				newInputFile.setAttribute('type', 'file');
+				inputFile.parentNode.replaceChild(newInputFile, inputFile);
+			}
+			catch (ex)
+			{
+				// I don't know of any other way to clear the file inputs, so on browser where we get an error
+				// (eg Mac IE), we just give the user a warning.
+				if (inputFile.value != null && inputFile.value != '')
+				{
+					if (!NeatUpload_AlertShown)
+					{
+						window.alert('" + Config.Current.ResourceManager.GetString("ClearFileNamesAlert") + @"');
+						NeatUpload_AlertShown = true;
+					}
+					return false;
 				}
 			}
-			newInputFile.setAttribute('type', 'file');
-			inputFile.parentNode.replaceChild(newInputFile, inputFile);
 		}
 	}
+	return true;
 }
 
 function NeatUpload_AddSubmitHandler(formID, isPopup, handler)
@@ -638,11 +696,19 @@ function NeatUpload_AddSubmitHandler(formID, isPopup, handler)
 		elem.NeatUpload_OnSubmitHandlers = new Array();
 		elem.NeatUpload_OrigSubmit = elem.submit;
 		elem.NeatUpload_OnSubmit = NeatUpload_OnSubmit;
-		elem.submit = function () {
-			elem.NeatUpload_OnSubmitting();
-			elem.NeatUpload_OrigSubmit();
-			elem.NeatUpload_OnSubmit();
-		};
+		try
+		{
+			elem.submit = function () {
+				elem.NeatUpload_OnSubmitting();
+				elem.NeatUpload_OrigSubmit();
+				elem.NeatUpload_OnSubmit();
+			};
+		}
+		catch (ex)
+		{
+			// We can't override the submit method.  That means NeatUpload won't work 
+			// when the form is submitted programmatically.  This occurs in Mac IE.
+		}			
 	}
 	if (isPopup)
 	{
@@ -680,7 +746,8 @@ function NeatUpload_OnSubmit()
 {
 	for (var i=0; i < this.NeatUpload_OnSubmitHandlers.length; i++)
 	{
-		this.NeatUpload_OnSubmitHandlers[i].call(this);
+		if (!this.NeatUpload_OnSubmitHandlers[i].call(this))
+			return false;
 	}
 	return true;
 }

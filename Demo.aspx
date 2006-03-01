@@ -43,7 +43,7 @@
 			Pick file #1: <Upload:InputFile id="inputFile" runat="server" />
 			<asp:RegularExpressionValidator id="RegularExpressionValidator1" 
 				ControlToValidate="inputFile"
-				ValidationExpression="^(?!.*\.exe$).*"
+				ValidationExpression=".*([^e]|[^x]e|[^e]xe|[^.]exe)$"
 				Display="Static"
 				ErrorMessage="No EXEs allowed"
 				EnableClientScript="True" 

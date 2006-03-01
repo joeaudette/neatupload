@@ -3,7 +3,7 @@
         ProjectType = "Local"
         ProductVersion = "7.10.3077"
         SchemaVersion = "2.0"
-        ProjectGuid = "{4E824611-D1BC-4DC1-A048-C43E78F184C9}"
+        ProjectGuid = "{1C35B162-7797-47C8-B515-D3C2E13F4C34}"
     >
         <Build>
             <Settings
@@ -18,7 +18,7 @@
                 OutputType = "Library"
                 PreBuildEvent = ""
                 PostBuildEvent = ""
-                RootNamespace = "NeatUpload"
+                RootNamespace = "Brettle.Web.NeatUpload"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
             >
@@ -67,32 +67,27 @@
                 <Reference
                     Name = "System"
                     AssemblyName = "System"
-                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.dll"
-                />
-                <Reference
-                    Name = "System.Drawing"
-                    AssemblyName = "System.Drawing"
-                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Drawing.dll"
+                    HintPath = "..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.dll"
                 />
                 <Reference
                     Name = "System.Data"
                     AssemblyName = "System.Data"
-                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"
-                />
-                <Reference
-                    Name = "System.Web"
-                    AssemblyName = "System.Web"
-                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Web.dll"
+                    HintPath = "..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"
                 />
                 <Reference
                     Name = "System.XML"
                     AssemblyName = "System.Xml"
-                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
+                    HintPath = "..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
+                />
+                <Reference
+                    Name = "System.Web"
+                    AssemblyName = "System.Web"
+                    HintPath = "..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Web.dll"
                 />
                 <Reference
                     Name = "System.Design"
                     AssemblyName = "System.Design"
-                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Design.dll"
+                    HintPath = "..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Design.dll"
                 />
             </References>
         </Build>
@@ -112,14 +107,6 @@
                     RelPath = "ConfigSectionHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Demo.aspx"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Demo.aspx.cs"
-                    BuildAction = "Content"
                 />
                 <File
                     RelPath = "DecoratedWorkerRequest.cs"
@@ -142,21 +129,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "FilteringWorkerRequest.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FilterTester.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "SizeLimitingWorkerRequest.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "FilesystemUploadedFile.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -167,26 +139,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "FilteringWorkerRequest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "FilterTester.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "FormContext.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Global.asax"
-                    SubType = "Component"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Global.asax.cs"
-                    BuildAction = "Content"
-                />
-                <File
                     RelPath = "InputFile.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "MyLog4net.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -201,19 +169,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "NeatUpload\Progress.aspx"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Strings.resx"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "NeatUpload\Progress.js"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "ProgressPage.cs"
+                    RelPath = "MyLog4net.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -223,25 +179,23 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "NeatUpload\Error413.aspx"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "NeatUpload\cancel.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "NeatUpload\refresh.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "NeatUpload\stop_refresh.png"
-                    BuildAction = "Content"
-                />
-                <File
                     RelPath = "ProgressBar.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ProgressPage.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "SizeLimitingWorkerRequest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Strings.resx"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "UploadContext.cs"
@@ -249,17 +203,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "UploadException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "UploadTooLargeException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "UploadedFile.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "UploadException.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -279,11 +228,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "UploadStorageConfig.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "UploadStorageProvider.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -294,8 +238,9 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Web.config"
-                    BuildAction = "Content"
+                    RelPath = "UploadTooLargeException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
             </Include>
         </Files>
