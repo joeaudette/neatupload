@@ -101,7 +101,7 @@
                 />
                 <Reference
                     Name = "NeatUpload"
-                    Project = "{4E824611-D1BC-4DC1-A048-C43E78F184C9}"
+                    Project = "{1C35B162-7797-47C8-B515-D3C2E13F4C34}"
                     Package = "{91E2FAE0-916F-11DA-A72B-0800200C9A66}"
                 />
             </References>
@@ -120,10 +120,11 @@
                 />
                 <File
                     RelPath = "HashingFilesystemUploadedFile.cs"
-                    BuildAction = "Content"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "HashingFilesystemUploadStrorageProvider.cs"
+                    RelPath = "HashingFilesystemUploadStorageProvider.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
