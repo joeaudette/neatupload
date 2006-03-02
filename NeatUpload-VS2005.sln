@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual C# Express 2005
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeatUpload-VS2005", "NeatUpload-VS2005.csproj", "{44A9EFD1-9FD3-467C-A254-2E4C32D13843}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HashedInputFile-VS2005", "HashedInputFile\HashedInputFile-VS2005.csproj", "{B761E580-916D-11DA-A72B-080000000000}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|.NET = Debug|.NET
@@ -23,6 +25,16 @@ Global
 		{44A9EFD1-9FD3-467C-A254-2E4C32D13843}.Release|Any CPU.Build.0 = Release|Any CPU
 		{44A9EFD1-9FD3-467C-A254-2E4C32D13843}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{44A9EFD1-9FD3-467C-A254-2E4C32D13843}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{B761E580-916D-11DA-A72B-080000000000}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{B761E580-916D-11DA-A72B-080000000000}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B761E580-916D-11DA-A72B-080000000000}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B761E580-916D-11DA-A72B-080000000000}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{B761E580-916D-11DA-A72B-080000000000}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{B761E580-916D-11DA-A72B-080000000000}.Release|.NET.ActiveCfg = Release|Any CPU
+		{B761E580-916D-11DA-A72B-080000000000}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B761E580-916D-11DA-A72B-080000000000}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B761E580-916D-11DA-A72B-080000000000}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{B761E580-916D-11DA-A72B-080000000000}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

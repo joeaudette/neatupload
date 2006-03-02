@@ -43,6 +43,9 @@
     </Compile>
     <Compile Include="DecoratedWorkerRequest.cs">
     </Compile>
+    <Content Include="Demo.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
     <Compile Include="DetailsControl.cs">
     </Compile>
     <Compile Include="DetailsDiv.cs">
@@ -59,6 +62,7 @@
     </Compile>
     <Compile Include="FormContext.cs">
     </Compile>
+    <Content Include="Global.asax.cs" />
     <Compile Include="InputFile.cs">
     </Compile>
     <Compile Include="MockWorkerRequest.cs">
@@ -100,6 +104,16 @@
     <EmbeddedResource Include="Strings.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="COPYING-LIB.txt" />
+    <Content Include="Demo.aspx" />
+    <Content Include="Global.asax" />
+    <Content Include="LICENSE.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="log4net.config" />
+    <None Include="Web.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

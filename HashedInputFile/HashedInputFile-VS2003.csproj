@@ -120,10 +120,11 @@
                 />
                 <File
                     RelPath = "HashingFilesystemUploadedFile.cs"
-                    BuildAction = "Content"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "HashingFilesystemUploadStrorageProvider.cs"
+                    RelPath = "HashingFilesystemUploadStorageProvider.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
