@@ -46,7 +46,7 @@ namespace Brettle.Web.NeatUpload
 		}
 		
 		internal string PostBackID;
-		private string StorageConfigID;
+		internal FieldNameTranslator Translator;
 		
 		internal FormContext()
 		{
@@ -61,19 +61,19 @@ namespace Brettle.Web.NeatUpload
 				sb.AppendFormat("{0:X2}", randomBytes[i]);
 			}			
 			string guid = sb.ToString();
-			PostBackID = UploadContext.NamePrefix + guid;
-			StorageConfigID = UploadContext.ConfigNamePrefix + guid;
+			PostBackID = guid;
 			log.Debug("PostBackID=" + PostBackID);
+			Translator = UploadStorage.CreateFieldNameTranslator();
 		}
 		
 		internal string GenerateFileID(string controlUniqueID)
 		{
-			return PostBackID + "-" + controlUniqueID;
+			return Translator.FormatFileFieldName(PostBackID, controlUniqueID);
 		}
 		
 		internal string GenerateStorageConfigID(string controlUniqueID)
 		{
-			return StorageConfigID + "-" + controlUniqueID;
+			return Translator.FormatConfigFieldName(PostBackID, controlUniqueID);
 		}
 	}
 }

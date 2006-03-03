@@ -395,6 +395,8 @@ namespace Brettle.Web.NeatUpload
 					LogEntityBodySizesStream.WriteLine(0);
 				}
 			}
+			
+			FieldNameTranslator translator = UploadStorage.CreateFieldNameTranslator();
 			uploadContext.SetContentLength(origContentLength);
 			if (log.IsDebugEnabled) log.Debug("=" + contentLengthHeader + " -> " + origContentLength);
 			
@@ -464,19 +466,21 @@ namespace Brettle.Web.NeatUpload
 				}
 				if (log.IsDebugEnabled) log.Debug("name = " + name);
 				if (log.IsDebugEnabled) log.Debug("fileName = " + fileName);
-				if (name != null && name.StartsWith(UploadContext.ConfigNamePrefix))
+				string controlID = null;
+				if (name != null
+				    && null != (controlID = translator.ConfigFieldNameToControlID(name)))
 				{
-					storageConfigStreamTable[name] = outputStream = new System.IO.MemoryStream();
+					storageConfigStreamTable[controlID] = outputStream = new System.IO.MemoryStream();
 					readPos = parsePos; // Skip past the boundary and headers
 				}
-				else if (fileName != null && name != null && name.StartsWith(UploadContext.NamePrefix))
+				else if (fileName != null && name != null
+				         && null != (controlID = translator.FileFieldNameToControlID(name)))
 				{
-					string fileID = name;
-					uploadContext.RegisterPostback(fileID); // Do this first so that progress display sees errors
+					uploadContext.RegisterPostBack(translator.FileFieldNameToPostBackID(name)); // Do this first so that progress display sees errors
 					
 					UploadStorageConfig storageConfig = null;
-					string storageConfigName = UploadContext.NameToConfigName(name);
-					MemoryStream storageConfigStream = storageConfigStreamTable[storageConfigName] as MemoryStream;
+					string configID = translator.FileIDToConfigID(controlID);
+					MemoryStream storageConfigStream = storageConfigStreamTable[configID] as MemoryStream;
 					if (storageConfigStream != null)
 					{
 						storageConfigStream.Seek(0, System.IO.SeekOrigin.Begin);
@@ -490,13 +494,11 @@ namespace Brettle.Web.NeatUpload
 						storageConfig.Unprotect(secureStorageConfigString);
 						
 						// Write out a part for the config hidden field
-						string uniqueId = storageConfigName.Substring(storageConfigName.IndexOf("-"));
-						string configFieldName = UploadContext.ConfigNamePrefix + uniqueId;
-						WriteReplacementFormField(configFieldName, secureStorageConfigString);
+						WriteReplacementFormField(configID, secureStorageConfigString);
 					}
 					
-					if (log.IsDebugEnabled) log.Debug("Calling UploadContext.Current.CreateUploadedFile(" + fileID + "...)");
-					UploadedFile uploadedFile = uploadContext.CreateUploadedFile(fileID, fileName, contentType, storageConfig);
+					if (log.IsDebugEnabled) log.Debug("Calling UploadContext.Current.CreateUploadedFile(" + controlID + "...)");
+					UploadedFile uploadedFile = uploadContext.CreateUploadedFile(controlID, fileName, contentType, storageConfig);
 					outputStream = fileStream = uploadedFile.CreateStream();
 					readPos = parsePos; // Skip past the boundary and headers
 
@@ -512,7 +514,7 @@ namespace Brettle.Web.NeatUpload
 					}
 
 					// Write out a replacement part that just contains the filename as the value.
-					WriteReplacementFormField(uploadedFile.ControlUniqueID, fileName);
+					WriteReplacementFormField(controlID, fileName);
 				}
 				else
 				{

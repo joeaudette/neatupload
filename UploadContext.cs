@@ -66,8 +66,8 @@ namespace Brettle.Web.NeatUpload
 		
 		internal static UploadContext FindByID(string postBackID)
 		{
-			UploadContext uploadContext = HttpContext.Current.Application[postBackID] as UploadContext;
-			if (log.IsDebugEnabled) log.Debug("Application[" + postBackID + "] = " + uploadContext);
+			UploadContext uploadContext = HttpContext.Current.Application[UploadContext.NamePrefix + postBackID] as UploadContext;
+			if (log.IsDebugEnabled) log.Debug("Application[" + UploadContext.NamePrefix + postBackID + "] = " + uploadContext);
 			return uploadContext;
 		}
 		
@@ -93,28 +93,22 @@ namespace Brettle.Web.NeatUpload
 			return uploadedFiles[controlUniqueID] as UploadedFile; 
 		}
 		
-		internal void RegisterPostback(string fileID)
+		internal void RegisterPostBack(string postBackID)
 		{
-			// Set the PostBackID from the fileID
-			int dashIndex = fileID.IndexOf('-');
-			PostBackID = fileID.Substring(0, dashIndex);
+			PostBackID = postBackID;
 			
 			// Add a reference to this UploadContext to the Application so that it can be accessed
 			// by the ProgressBar in a separate request.
-			if (log.IsDebugEnabled) log.Debug("Storing UploadContext in Application[" + PostBackID + "]");
+			if (log.IsDebugEnabled) log.Debug("Storing UploadContext in Application[" + UploadContext.NamePrefix + PostBackID + "]");
 			if (HttpContext.Current != null)
 			{
-				HttpContext.Current.Application[PostBackID] = this;
+				HttpContext.Current.Application[UploadContext.NamePrefix + PostBackID] = this;
 			}
 		}
 		
 		
-		internal UploadedFile CreateUploadedFile(string fileID, string fileName, string contentType, UploadStorageConfig storageConfig)
+		internal UploadedFile CreateUploadedFile(string controlUniqueID, string fileName, string contentType, UploadStorageConfig storageConfig)
 		{
-			// Get the control's unique ID from the fileID
-			int dashIndex = fileID.IndexOf('-');
-			
-			string controlUniqueID = fileID.Substring(dashIndex + 1);
 			if (log.IsDebugEnabled) log.Debug("In CreateUploadedFile() controlUniqueID=" + controlUniqueID);
 			UploadedFile uploadedFile 
 				= UploadStorage.CreateUploadedFile(this, controlUniqueID, fileName, contentType, storageConfig);			

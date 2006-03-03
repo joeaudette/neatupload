@@ -129,6 +129,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "FieldNameTranslator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "FilesystemUploadedFile.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

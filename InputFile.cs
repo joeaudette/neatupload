@@ -277,7 +277,7 @@ namespace Brettle.Web.NeatUpload
 					// Keep the storage config associated with the previous upload, if any
 					if (file != null && !IsDesignTime && HttpContext.Current != null)
 					{
-						string secureStorageConfig = HttpContext.Current.Request.Form[UploadContext.ConfigNamePrefix + "-" + UniqueID];
+						string secureStorageConfig = HttpContext.Current.Request.Form[FormContext.Current.Translator.FileIDToConfigID(UniqueID)];
 						if (secureStorageConfig != null)
 						{
 							_StorageConfig = UploadStorage.CreateUploadStorageConfig();
