@@ -71,6 +71,8 @@ namespace Brettle.Web.NeatUpload
 			
 			submitButton.Click += new System.EventHandler(this.Button_Clicked);
 			linkButton.Click += new System.EventHandler(this.Button_Clicked);
+			
+			this.Button_Clicked(null, null);
 
 /*
 			// Instead of setting the Triggers property of the 
@@ -82,7 +84,6 @@ namespace Brettle.Web.NeatUpload
 			inlineProgressBar.AddTrigger(linkButton);
 */
 
-/*
 			// The temp directory used by the default FilesystemUploadStorageProvider can be configured on a
 			// per-control basis like this (see documentation for details)
 			if (!IsPostBack)
@@ -90,16 +91,17 @@ namespace Brettle.Web.NeatUpload
 				inputFile.StorageConfig["tempDirectory"] = "file1temp";
 				inputFile2.StorageConfig["tempDirectory"] = "file2temp";
 			}
-*/
 		}
 
 		private void Button_Clicked(object sender, EventArgs e)
 		{
+			/*
 			if (!this.IsValid)
 			{
 				bodyPre.InnerText = "Page is not valid!";
 				return;
 			}
+			*/
 			bodyPre.InnerText = "";
 			if (inputFile.HasFile)
 			{

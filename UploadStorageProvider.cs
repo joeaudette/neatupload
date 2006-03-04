@@ -56,7 +56,7 @@ namespace Brettle.Web.NeatUpload
 			return new UploadStorageConfig();
 		}
 		
-		public virtual FieldNameTranslator CreateFieldNameTranslator()
+		internal virtual FieldNameTranslator CreateFieldNameTranslator()
 		{
 			return new FieldNameTranslator();
 		}

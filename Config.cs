@@ -134,6 +134,9 @@ namespace Brettle.Web.NeatUpload
 				config.DefaultProviderName = parent.DefaultProviderName;
 				config.ResourceManager = parent.ResourceManager;
 				config.DebugDirectory = parent.DebugDirectory;
+				config.ValidationKey = parent.ValidationKey;
+				config.EncryptionKey = parent.EncryptionKey;
+				config.PostBackIDQueryParam = parent.PostBackIDQueryParam;
 			}
 			foreach (XmlAttribute attr in section.Attributes)
 			{
@@ -182,6 +185,10 @@ namespace Brettle.Web.NeatUpload
 					{
 						config.EncryptionKey = FromHexString(val);
 					}
+				}
+				else if (name == "postBackIDQueryParam")
+				{
+					config.PostBackIDQueryParam = val;
 				}
 				else
 				{
@@ -235,6 +242,7 @@ namespace Brettle.Web.NeatUpload
 		internal DirectoryInfo DebugDirectory = null;
 		internal byte[] ValidationKey = Config.DefaultValidationKey;
 		internal byte[] EncryptionKey = Config.DefaultEncryptionKey;
+		internal string PostBackIDQueryParam = "NeatUpload_PostBackID";
 		
 		private static byte[] DefaultValidationKey = null;
 		private static byte[] DefaultEncryptionKey = null;

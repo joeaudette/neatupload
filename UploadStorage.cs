@@ -52,7 +52,7 @@ namespace Brettle.Web.NeatUpload
 			return Provider.CreateUploadStorageConfig();
 		}
 		
-		public static FieldNameTranslator CreateFieldNameTranslator()
+		internal static FieldNameTranslator CreateFieldNameTranslator()
 		{
 			return Provider.CreateFieldNameTranslator();
 		}
