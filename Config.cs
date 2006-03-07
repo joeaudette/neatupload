@@ -82,14 +82,20 @@ namespace Brettle.Web.NeatUpload
 
 		private Config() 
 		{
-#if VS2005
-//Fix Strings file for Visual Studio 2005.
-            this.ResourceManager = new ResourceManager("Brettle.Web.NeatUpload.Strings",
-                                                        System.Reflection.Assembly.GetExecutingAssembly());
-#else
-			this.ResourceManager = new ResourceManager("NeatUpload.Strings",
- 		                                            System.Reflection.Assembly.GetExecutingAssembly());
-#endif
+            try
+            {
+                this.ResourceManager = new ResourceManager("Brettle.Web.NeatUpload.Strings",
+                                                            System.Reflection.Assembly.GetExecutingAssembly());
+                // Force an exception if the resources aren't there because...
+                string test = this.ResourceManager.GetString("UploadTooLargeMessageFormat");
+            }
+            catch (MissingManifestResourceException)
+            {
+                // ...the namespace qualifier was not used until VS2005, and the assembly might have been built
+                // with VS2003.
+                this.ResourceManager = new ResourceManager("NeatUpload.Strings",
+                                                            System.Reflection.Assembly.GetExecutingAssembly());
+            }
         }
 
 		private static Config CreateFromAppSettings(System.Collections.Specialized.NameValueCollection appSettings)
