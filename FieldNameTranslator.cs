@@ -43,14 +43,15 @@ namespace Brettle.Web.NeatUpload
 				return;
 			string postBackIDQueryParam = Config.Current.PostBackIDQueryParam;
 			HttpWorkerRequest worker = UploadHttpModule.GetCurrentWorkerRequest();
-			if (postBackIDQueryParam != null && worker != null)
+            if (postBackIDQueryParam == null || worker == null)
+                return;
+			string qs = worker.GetQueryString();
+            if (qs == null)
+                return;
+			Match match = Regex.Match(qs, @"(^|\?|&)" + Regex.Escape(postBackIDQueryParam) + @"=([^&]+)");
+			if (match.Success)
 			{
-				string qs = worker.GetQueryString();
-				Match match = Regex.Match(qs, @"(^|\?|&)" + Regex.Escape(postBackIDQueryParam) + @"=([^&]+)");
-				if (match.Success)
-				{
-					PostBackID = HttpUtility.UrlDecode(match.Groups[2].Value);
-				}
+				PostBackID = HttpUtility.UrlDecode(match.Groups[2].Value);
 			}
 		}
 		
