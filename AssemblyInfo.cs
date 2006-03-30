@@ -13,7 +13,7 @@ using System.Web.UI;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Dean Brettle")]
 [assembly: AssemblyProduct("NeatUpload")]
-[assembly: AssemblyCopyright("Copyright 2005 Dean Brettle.  Licensed under the Lesser General Public License.")]
+[assembly: AssemblyCopyright("Copyright 2005, 2006 Dean Brettle.  Licensed under the Lesser General Public License.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -24,7 +24,7 @@ using System.Web.UI;
 // You can specify all values by your own or you can build default build and revision
 // numbers with the '*' character (the default):
 
-[assembly: AssemblyVersion("1.1.*")]
+[assembly: AssemblyVersion("1.2.*")]
 
 [assembly: AssemblyInformationalVersion("trunk")]
 

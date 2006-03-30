@@ -12,6 +12,8 @@
 
 
 
+
+  
   
   
   
@@ -40,6 +42,7 @@
 
 
 
+
 <h1><a class="mozTocH1" name="mozTocId101532"></a>NeatUpload
 Manual</h1>
 
@@ -54,12 +57,14 @@ Manual</h1>
 
 
 
+
 <ul id="mozToc">
-<!--mozToc h2 1 h3 2 h4 3 h5 4 h5 5 h6 6--><li><a href="#mozTocId859773">Release
-Notes for NeatUpload-1.1.x</a>
+<!--mozToc h2 1 h3 2 h4 3 h5 4 h5 5 h6 6--><li><a href="#mozTocId469429">Release Notes for NeatUpload-1.2.x</a>
     <ul>
+      <li><a href="#mozTocId44439">Upgrading from NeatUpload-1.1.x</a></li>
       <li><a href="#mozTocId432734">Upgrading
 from NeatUpload-1.0.x</a></li>
+      <li><a href="#mozTocId432817">New Features in NeatUpload-1.2</a></li>
       <li><a href="#mozTocId953432">New
 Features in NeatUpload-1.1</a></li>
     </ul>
@@ -129,9 +134,12 @@ does nothing when UploadHttpModule is used</a></li>
 
 
 
-<h2>Release Notes for NeatUpload-1.2.x</h2>
-<h3>Upgrading from NeatUpload-1.1.x</h3>
-<br>
+
+<h2><a class="mozTocH2" name="mozTocId469429"></a>Release Notes for NeatUpload-1.2.x</h2>
+
+<h3><a class="mozTocH3" name="mozTocId44439"></a>Upgrading from NeatUpload-1.1.x</h3>
+
+
 
 
 
@@ -140,7 +148,9 @@ does nothing when UploadHttpModule is used</a></li>
 
 NeatUpload-1.2.x is intended to be
 completely&nbsp;backward-compatible with NeatUpload-1.1.x.<br>
+
 <br>
+
 
 
 
@@ -175,6 +185,7 @@ from NeatUpload-1.0.x</h3>
 
 
 
+
 NeatUpload-1.1.x is intended to be almost
 completely&nbsp;backward-compatible with NeatUpload-1.0.x. &nbsp;The
 only exception is that <code>ProgressBar</code>s must now be placed somewhere inside a <code>&lt;form&gt;</code> element. &nbsp;In almost all cases that will already be the case so this should not be a major issue. &nbsp;<br>
@@ -184,7 +195,9 @@ only exception is that <code>ProgressBar</code>s must now be placed somewhere in
 
 
 
+
 <br>
+
 
 
 
@@ -214,7 +227,9 @@ Progress.aspx</a> for details.<br>
 
 
 
+
 <br>
+
 
 
 
@@ -239,11 +254,17 @@ still work in NeatUpload-1.1.x, but the new custom configuration
 section provides much more flexibility, including the ability to use
 location filtering to restrict the requests that NeatUpload touches.
 &nbsp;See <a href="Manual.html#mozTocId221000">Configuration</a> for details.<br>
-<h3>New Features in NeatUpload-1.2</h3>
+
+<h3><a class="mozTocH3" name="mozTocId432817"></a>New Features in NeatUpload-1.2</h3>
+
 <ul>
+
   <li>Added support for <a href="Manual.html#mozTocId652103">Configuring Individual InputFile Controls Programmatically</a>.</li>
+
   <li>Added support for <a href="Manual.html#mozTocId483750">Uploading from a Client Application</a>.</li>
+
 </ul>
+
 
 
 
@@ -258,10 +279,12 @@ Features in NeatUpload-1.1</h3>
 
 
 
+
 New features for end-users:
 
 
 <ul>
+
 
 
 
@@ -288,10 +311,12 @@ including total upload size, amount and percent already uploaded, and upload rat
 
 
 
+
   <li>Improved user experience when uploads are
 too large. &nbsp;The progress bar now indicates that the upload was rejected
 and whenever practical the upload is stopped by the browser so that the
 user remains on the original form.</li>
+
 
 
 
@@ -312,8 +337,10 @@ refreshless updates of the progress bar.</li>
 
 
 
+
   <li>Prevented file upload and progress display when
 client-side validation fails.</li>
+
 
 
 
@@ -336,7 +363,9 @@ work.</li>
 
 
 
+
   <li>Added support for <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpgenref/html/cpconlinkbuttonwebcontrol.asp">LinkButtons</a>.</li>
+
 
 
 
@@ -356,6 +385,7 @@ work.</li>
 
 
 
+
 New features for developers:<br>
 
 
@@ -366,7 +396,9 @@ New features for developers:<br>
 
 
 
+
 <ul>
+
 
 
 
@@ -397,7 +429,9 @@ pages.</li>
 
 
 
+
   <li>Added support for custom <code>UploadStorageProvider</code>s.</li>
+
 
 
 
@@ -417,6 +451,7 @@ pages.</li>
 
 
 
+
   <li>Added <code>Url</code> property to <code>ProgressBar</code> control to specify location of progress display page (defaults to <code>NeatUpload/Progress.aspx</code>).</li>
 
 
@@ -427,7 +462,9 @@ pages.</li>
 
 
 
+
   <li>Added Visual Studio designer support.</li>
+
 
 
 
@@ -451,9 +488,11 @@ event handlers (e.g. <code>Button.Click</code> handlers).</li>
 
 
 
+
   <li>Added&nbsp;<code>Triggers</code> property
 to <code>ProgressBar</code> which can be used instead of
 the <code>ProgressBar.AddTrigger()</code> method.</li>
+
 
 
 
@@ -482,9 +521,11 @@ to result in code which is browser-specific and not portable.</li>
 
 
 
+
   <li>Removed dependency on <a href="http://logging.apache.org/log4net/">log4net</a>.
 &nbsp;NeatUpload can still be built to use log4net if you want.
 &nbsp;The dependency was removed to simplify installation/usage.</li>
+
 
 
 
@@ -503,7 +544,9 @@ to result in code which is browser-specific and not portable.</li>
 
 
 
+
   <li>Removed <code>Demo.aspx.cs</code> from <code>Brettle.Web.NeatUpload.dll</code>. &nbsp;It is now compiled on the fly when <code>Demo.aspx</code> is requested.</li>
+
 
 
 
@@ -530,7 +573,9 @@ to result in code which is browser-specific and not portable.</li>
 
 
 
+
 <h2><a class="mozTocH2" name="mozTocId903858"></a>Introduction</h2>
+
 
 
 
@@ -563,6 +608,7 @@ as well as Microsoft's ASP.NET implementation. </p>
 
 
 
+
 <p> NeatUpload contains four custom controls (<code>InputFile</code>, <code>ProgressBar</code>, <code>DetailsSpan</code>, and <code>DetailsDiv</code>), an <code>HttpModule</code>
 (<code>UploadHttpModule</code>), and a Page subclass (<code>ProgressPage</code>).
 This section briefly describes what they each do and how they are
@@ -580,11 +626,13 @@ NeatUpload. </p>
 
 
 
+
 <p> <code><strong>InputFile</strong></code>
 is a custom control that renders like <code>HtmlInputFile</code>,
 but provides properties to access the
 uploaded file's client-specified name, content, and MIME type, and a method to
 move the file to a permanent location. </p>
+
 
 
 
@@ -622,6 +670,7 @@ which loads a page derived from <code>ProgressPage</code> (by default <code>Prog
 
 
 
+
 <p> <code><strong>UploadHttpModule</strong></code>
 is an <code>HttpModule</code> that intercepts HTTP
 requests, streams <code>InputFile</code> uploads to
@@ -634,6 +683,7 @@ property instead of intercepting the request. That means that <code>InputFile</c
 will function like an <code>HtmlInputFile</code> control,
 but no progress bar will be displayed. This greatly reduces the risk of
 adopting NeatUpload. </p>
+
 
 
 
@@ -662,7 +712,9 @@ the details of the upload process from the <code>UploadHttpModule</code>. and ma
 
 
 
+
 <h2><a class="mozTocH2" name="mozTocId304923"></a>Installation</h2>
+
 
 
 
@@ -691,7 +743,9 @@ modifications to your <code>Web.config</code>. &nbsp;Specifically: </p>
 
 
 
+
 <ol>
+
 
 
 
@@ -719,12 +773,14 @@ subdirectory named <code>NeatUpload-1.1.<span style="font-style: italic;">x</spa
 
 
 
+
   <li>(Optional) To see the demo running on your local machine,
 configure IIS, mod_mono, or XSP so that <code>NeatUpload-1.1.<span style="font-style: italic;">x</span>/</code>
 is a web application. Then point your browser at the <code>Demo.aspx</code>
 on that
 website. To use NeatUpload in your own web application, continue with
 the remaining installation steps. </li>
+
 
 
 
@@ -756,10 +812,12 @@ designer to add one of the NeatUpload controls to a form.</li>
 
 
 
+
   <li>If you won't be using the Visual Studio Web Form Designer,
 add a reference to your web application that refers to the <code>Brettle.Web.NeatUpload.dll</code>
 in the <code>NeatUpload-1.</code><code>1.<span style="font-style: italic;">x</span></code><code>/bin
     </code>directory. </li>
+
 
 
 
@@ -792,8 +850,10 @@ and associated files. </li>
 
 
 
+
   <li>Add the following line to your <code>Web.config</code>
 under <code>configuration/system.web/httpModules</code>:
+    
     
     
     
@@ -818,7 +878,9 @@ under <code>configuration/system.web/httpModules</code>:
 
 
 
+
   </li>
+
 
 
 
@@ -847,7 +909,9 @@ under <code>configuration/system.web</code>:
     
     
     
+    
     <pre>&lt;httpRuntime maxRequestLength="<var>size_in_kbytes</var>" /&gt;<br></pre>
+
 
 
 
@@ -885,7 +949,9 @@ the Size of Upload Requests</a> below.<br>
 
 
 
+
   </li>
+
 
 
 
@@ -913,7 +979,9 @@ and verify that the demo functions properly. </li>
 
 
 
+
 </ol>
+
 
 
 
@@ -939,6 +1007,7 @@ and verify that the demo functions properly. </li>
 
 
 
+
 </ol>
 
 
@@ -955,7 +1024,9 @@ and verify that the demo functions properly. </li>
 
 
 
+
 <h2><a class="mozTocH2" name="mozTocId50790"></a>Usage</h2>
+
 
 
 
@@ -985,6 +1056,7 @@ NeatUpload with the Visual Studio Web Form Designer</h3>
 
 
 
+
 <p>To use the Visual Studio web form designer to add NeatUpload
 to a web form, follow these steps: </p>
 
@@ -999,7 +1071,9 @@ to a web form, follow these steps: </p>
 
 
 
+
 <ol>
+
 
 
 
@@ -1027,9 +1101,11 @@ and <code>Button</code>.</li>
 
 
 
+
   <li>(Optional) If you want an inline progress bar, set the <code>ProgressBar</code>'s
     <code>Inline</code> property to <code>true</code>.
   </li>
+
 
 
 
@@ -1048,6 +1124,7 @@ fallback onto the <code>ProgressBar</code> control.
 &nbsp;For example, to just change the fallback text, you could drag
 a <code>Label</code> control onto the ProgressBar and edit
 its contents.</li>
+
 
 
 
@@ -1082,7 +1159,9 @@ sufficient permissions):
     
     
     
+    
     <pre>using Brettle.Web.NeatUpload;<br>...<br>using System.IO;<br>...<br>public class YourPage : System.Web.UI.Page<br>{<br>	private void Page_Load(object sender, EventArgs e)<br>	{<br>		...<span style="font-style: italic;"><br>		submitButtonId.Click</span> += new System.EventHandler(this.Button_Clicked);<br>		...<br>	}<br>	...<br>	private void Button_Clicked(object sender, EventArgs e)<br>	{<br>		...<br>		if (IsValid &amp;&amp; <var>inputFileId</var>.HasFile)<br>		{<br>			...<br>		<var>	inputFileId</var>.MoveTo(Path.Combine(Request.PhysicalApplicationPath,&nbsp;<var>inputFileId</var>.FileName),&nbsp;<br>						MoveToOptions.Overwrite);</pre>
+
 
 
 
@@ -1108,7 +1187,9 @@ sufficient permissions):
 
 
 
+
 </ol>
+
 
 
 
@@ -1136,8 +1217,10 @@ the Visual Studio Web Form Designer</h3>
 
 
 
+
 <p> To use NeatUpload on a web form <span style="font-style: italic;">without</span> using the
 Visual Studio designer, follow these steps: </p>
+
 
 
 
@@ -1163,7 +1246,9 @@ Visual Studio designer, follow these steps: </p>
 
 
 
+
   <li>Add the following to the top of your page:
+    
     
     
     
@@ -1188,7 +1273,9 @@ Visual Studio designer, follow these steps: </p>
 
 
 
+
   </li>
+
 
 
 
@@ -1215,7 +1302,9 @@ want the user to choose a file, using something like this:
     
     
     
+    
     <pre>&lt;Upload:InputFile id="<var>inputFileId</var>" runat="server" /&gt;<br>	</pre>
+
 
 
 
@@ -1230,6 +1319,7 @@ want the user to choose a file, using something like this:
 
 Feel free to add any attributes that you would normally add to an <code>HtmlInputFile</code>
 tag. </li>
+
 
 
 
@@ -1258,7 +1348,9 @@ displayed. &nbsp;Use something like this:
     
     
     
+    
     <pre>&lt;Upload:ProgressBar id="<var>progressBarId</var>" runat="server" inline="<var>true|false</var>" /&gt;<br>	</pre>
+
 
 
 
@@ -1284,7 +1376,9 @@ The inline attribute defaults to false. </li>
 
 
 
+
   <li>Add a submit button to your aspx page. For example:
+    
     
     
     
@@ -1309,7 +1403,9 @@ The inline attribute defaults to false. </li>
 
 
 
+
     <span style="font-weight: bold;"></span></li>
+
 
 
 
@@ -1337,6 +1433,7 @@ control using code like this:
     
     
     
+    
     <pre>using Brettle.Web.NeatUpload;<br>...<br>using System.Web.UI.WebControls;<br>...<br>public class YourPage : System.Web.UI.Page<br>{<br>	...<br>	protected InputFile <var>inputFileId</var>;<br>	protected ProgressBar <var>progressBarId</var>; <br>	protected Button <span style="font-style: italic;">submitButtonId</span>;</pre>
 
 
@@ -1350,7 +1447,9 @@ control using code like this:
 
 
 
+
   </li>
+
 
 
 
@@ -1385,7 +1484,9 @@ sufficient permissions):
     
     
     
+    
     <pre>using Brettle.Web.NeatUpload;<br>...<br>using System.IO;<br>...<br>public class YourPage : System.Web.UI.Page<br>{<br>	private void Page_Load(object sender, EventArgs e)<br>	{<br>		...<br style="font-style: italic;"><span style="font-style: italic;">		submitButtonId.Click</span> += new System.EventHandler(this.Button_Clicked);<br>		...<br>	}<br>	...<br>	private void Button_Clicked(object sender, EventArgs e)<br>	{<br>		...<br>		if (IsValid &amp;&amp; <var>inputFileId</var>.HasFile)<br>		{<br>			...<br>	<var>		inputFileId</var>.MoveTo(Path.Combine(Request.PhysicalApplicationPath,&nbsp;<var>inputFileId</var>.FileName),&nbsp;<br>						MoveToOptions.Overwrite);<br></pre>
+
 
 
 
@@ -1411,7 +1512,9 @@ sufficient permissions):
 
 
 
+
 </ol>
+
 
 
 
@@ -1426,6 +1529,7 @@ sufficient permissions):
 
 <h3><a class="mozTocH3" name="mozTocId900479"></a>Avoiding
 Unnecessary Uploads and Progress Displays</h3>
+
 
 
 
@@ -1457,7 +1561,9 @@ display.<br>
 
 
 
+
 <br>
+
 
 
 
@@ -1496,7 +1602,9 @@ for that dialog can be customized via the <code>ClearFileNamesAlert</code> resou
 
 
 
+
 <br>
+
 
 
 
@@ -1529,13 +1637,18 @@ is not maintained in the page's <code>ViewState</code>.<br>
 
 
 
+
 <br>
+
 <h3><a class="mozTocH3" name="mozTocId483750"></a>Uploading from a Client Application</h3>
+
 If your users are uploading using their web browser, you don't need to
 read this section. &nbsp;This section is for environments where a
 separate client application uses HTTP POST requests to uploads files to
 a form containing an <code>InputFile</code> control. &nbsp;You should read the earlier sections before reading this one.<br>
+
 <br>
+
 In order for NeatUpload to process requests from non-browser client
 applications, the query string of each request needs to contain a
 unique ID&nbsp;called a post-back ID. &nbsp;NeatUpload looks for the
@@ -1545,23 +1658,37 @@ post-back ID in a query string parameter. &nbsp;The parameter name is <a href="#
 be in any particular format, but it needs to be unique for each
 request. &nbsp;So, for example, if the client application uploads the
 file to :<br>
+
 <br>
+
 <div style="margin-left: 40px;"><code>http://www.tempuri.org/path/to/MyUploadPage.aspx?NeatUpload_PostBackID=afa02a6999e54541bb6873151d1dfbfc</code><br>
+
 </div>
+
 <br>
+
 then NeatUpload will use "afa02a6999e54541bb6873151d1dfbfc" as the post-back ID.<br>
+
 <br>
+
 If NeatUpload finds the post-back ID in the query string it will assume that all files in the request are destined for <code>InputFile</code>
 controls and will stream them all to storage. &nbsp;To ensure that you
 can access the uploaded files from your page, make sure that the name
 of the form field(s) used by the client application match the control
 IDs of your <code>InputFile</code> control(s). &nbsp;So, if your client application uses a field name of "FILE001", you should use put the following in your page:<br>
+
 <br>
+
 <div style="margin-left: 40px;"><code>...<br>
+
 &lt;Upload:InputFile id="FILE001" runat="server" /&gt;<br>
+
 ...<br>
+
 </code></div>
+
 <br>
+
 
 
 
@@ -1575,6 +1702,7 @@ IDs of your <code>InputFile</code> control(s). &nbsp;So, if your client applicat
 
 
 <h2><a class="mozTocH2" name="mozTocId221000"></a>Configuration</h2>
+
 
 
 
@@ -1602,8 +1730,10 @@ Configuration Section</h3>
 
 
 
+
 To configure NeatUpload, you need to add the NeatUpload configuration
 section handler to your <code>Web.config</code>:<br>
+
 
 
 
@@ -1629,6 +1759,7 @@ section handler to your <code>Web.config</code>:<br>
 
 
 
+
 <code>&lt;configuration&gt;<br>
 
 
@@ -1642,7 +1773,9 @@ section handler to your <code>Web.config</code>:<br>
 
 
 
+
 &nbsp;&nbsp;&nbsp; &lt;configSections&gt;<br>
+
 
 
 
@@ -1669,9 +1802,11 @@ section handler to your <code>Web.config</code>:<br>
 
 
 
+
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp; &lt;remove name="neatUpload"
 /&gt;<br>
+
 
 
 
@@ -1700,8 +1835,10 @@ Brettle.Web.NeatUpload" allowLocation="true" /&gt;<br>
 
 
 
+
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
 &lt;/sectionGroup&gt;<br>
+
 
 
 
@@ -1727,6 +1864,7 @@ Brettle.Web.NeatUpload" allowLocation="true" /&gt;<br>
 
 
 
+
 ...</code><br>
 
 
@@ -1740,7 +1878,9 @@ Brettle.Web.NeatUpload" allowLocation="true" /&gt;<br>
 
 
 
+
 <br>
+
 
 
 
@@ -1773,7 +1913,9 @@ using "system.web".<br>
 
 
 
+
 <br>
+
 
 
 
@@ -1801,7 +1943,9 @@ Once you've added the configuration section handler, you can add the
 
 
 
+
 <code><br>
+
 
 
 
@@ -1827,7 +1971,9 @@ Once you've added the configuration section handler, you can add the
 
 
 
+
 &nbsp;&nbsp;&nbsp; ...<br>
+
 
 
 
@@ -1853,7 +1999,9 @@ Once you've added the configuration section handler, you can add the
 
 
 
+
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ...<br>
+
 
 
 
@@ -1880,8 +2028,10 @@ Once you've added the configuration section handler, you can add the
 
 
 
+
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp; useHttpModule="<span style="font-style: italic;">true or false, defaults to true</span>"<br>
+
 
 
 
@@ -1909,9 +2059,12 @@ Once you've added the configuration section handler, you can add the
 
 
 
+
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp; maxRequestLength="</code><code style="font-style: italic;">up to 2097151</code><code style="font-style: italic;"> in KBytes</code><code><span style="font-style: italic;">, defaults to </span></code><code style="font-style: italic;">2097151</code><code style="font-style: italic;"></code><code><span style="font-style: italic;"></span>" <br>
+
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; postBackIDQueryParam="<span style="font-style: italic;">parameter name, defaults to NeatUpload_PostBackID</span>"<br>
+
 
 
 
@@ -1939,8 +2092,10 @@ FilesystemUploadStorageProvider using the system temp dir</span>"&gt;<br>
 
 
 
+
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp; &nbsp;&lt;providers&gt;<br>
+
 
 
 
@@ -1969,10 +2124,12 @@ name</span>" <br>
 
 
 
+
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp; &nbsp; type="<span style="font-style: italic;">type derived from
 Brettle.Web.NeatUpload.UploadStorageProvider</span>" <br>
+
 
 
 
@@ -2001,10 +2158,12 @@ Brettle.Web.NeatUpload.UploadStorageProvider</span>" <br>
 
 
 
+
 </code><code>&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp; &nbsp;&lt;remove name="<span style="font-style: italic;">friendly name of provider</span>"
 /&gt;<br>
+
 
 
 
@@ -2032,9 +2191,11 @@ Brettle.Web.NeatUpload.UploadStorageProvider</span>" <br>
 
 
 
+
 </code><code></code><code>&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
 &nbsp;&lt;/providers&gt;<br>
+
 
 
 
@@ -2061,7 +2222,9 @@ Brettle.Web.NeatUpload.UploadStorageProvider</span>" <br>
 
 
 
+
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ...<br>
+
 
 
 
@@ -2087,7 +2250,9 @@ Brettle.Web.NeatUpload.UploadStorageProvider</span>" <br>
 
 
 
+
 &nbsp;&nbsp;&nbsp; ...<br>
+
 
 
 
@@ -2113,7 +2278,9 @@ Brettle.Web.NeatUpload.UploadStorageProvider</span>" <br>
 
 
 
+
 </code><br>
+
 
 
 
@@ -2154,7 +2321,9 @@ Web.config files in subdirectories.<br>
 
 
 
+
 <br>
+
 
 
 
@@ -2198,12 +2367,14 @@ the Temporary Directory Used by the FilesystemUploadStorageProvider</h3>
 
 
 
+
 <p> By default, NeatUpload puts uploaded files in temporary files
 in the <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfsystemiopathclassgettemppathtopic.asp">system's
 temporary directory</a>. You can specify a different directory
 using the <code>tempDirectory</code> attribute of the <code>FilesystemUploadStorageProvider</code>,
 like this:
 </p>
+
 
 
 
@@ -2229,11 +2400,13 @@ like this:
 
 
 
+
 If you specify a relative path, it will be relative to your
 application root directory.
 <h3><a class="mozTocH3" name="mozTocId134915"></a>Using
 Location Filtering to Restrict/Modify NeatUpload's Request
 Processing</h3>
+
 
 
 
@@ -2271,7 +2444,9 @@ kilobytes of non-file data.<br>
 
 
 
+
 <br>
+
 
 
 
@@ -2308,7 +2483,9 @@ consider the following configuration:<br>
 
 
 
+
 <br>
+
 
 
 
@@ -2334,7 +2511,9 @@ consider the following configuration:<br>
 
 
 
+
 &nbsp;&nbsp;&nbsp; ...<br>
+
 
 
 
@@ -2360,7 +2539,9 @@ consider the following configuration:<br>
 
 
 
+
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ...<br>
+
 
 
 
@@ -2387,7 +2568,9 @@ consider the following configuration:<br>
 
 
 
+
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ...<br>
+
 
 
 
@@ -2415,6 +2598,7 @@ maxRequestLength="2097151"&gt;<br>
 
 
 
+
 </code><code>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &lt;providers&gt;<br>
@@ -2430,9 +2614,11 @@ maxRequestLength="2097151"&gt;<br>
 
 
 
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &lt;add name="special"
 type="Brettle.Web.NeatUpload.FilesystemUploadStorageProvider" <br>
+
 
 
 
@@ -2462,8 +2648,10 @@ tempDirectory="SpecialTempDirectory"
 
 
 
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &lt;/providers&gt;<br>
+
 
 
 
@@ -2490,7 +2678,9 @@ tempDirectory="SpecialTempDirectory"
 
 
 
+
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ...<br>
+
 
 
 
@@ -2516,7 +2706,9 @@ tempDirectory="SpecialTempDirectory"
 
 
 
+
 &nbsp;&nbsp;&nbsp; ...<br>
+
 
 
 
@@ -2542,8 +2734,10 @@ tempDirectory="SpecialTempDirectory"
 
 
 
+
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
 &lt;system.web&gt;<br>
+
 
 
 
@@ -2571,9 +2765,11 @@ tempDirectory="SpecialTempDirectory"
 
 
 
+
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp; &lt;httpRuntime
 maxRequestLength="2097151" executionTimeout="3600" /&gt;<br>
+
 
 
 
@@ -2600,7 +2796,9 @@ maxRequestLength="2097151" executionTimeout="3600" /&gt;<br>
 
 
 
+
 &nbsp;&nbsp;&nbsp; &lt;/location&gt;<br>
+
 
 
 
@@ -2628,8 +2826,10 @@ path="Special.aspx"&gt;<br>
 
 
 
+
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
 &lt;system.web&gt;<br>
+
 
 
 
@@ -2657,9 +2857,11 @@ defaultProvider="special" /&gt;<br>
 
 
 
+
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp; &lt;httpRuntime
 maxRequestLength="2097151" executionTimeout="3600" /&gt;<br>
+
 
 
 
@@ -2686,7 +2888,9 @@ maxRequestLength="2097151" executionTimeout="3600" /&gt;<br>
 
 
 
+
 &nbsp;&nbsp;&nbsp; &lt;/location&gt;<br>
+
 
 
 
@@ -2713,6 +2917,7 @@ maxRequestLength="2097151" executionTimeout="3600" /&gt;<br>
 
 
 
+
 &lt;/configuration&gt;<br>
 
 
@@ -2726,7 +2931,9 @@ maxRequestLength="2097151" executionTimeout="3600" /&gt;<br>
 
 
 
+
 <br>
+
 
 
 
@@ -2762,7 +2969,9 @@ use the default provider which uses the system temporary directory.<br>
 
 
 
+
 <br>
+
 
 
 
@@ -2777,6 +2986,7 @@ use the default provider which uses the system temporary directory.<br>
 
 <h3><a class="mozTocH3" name="mozTocId970185"></a><a class="mozTocH3" name="Limiting_the_Size_of_Upload_Requests"></a>Limiting
 the Size of Upload Requests</h3>
+
 
 
 
@@ -2806,7 +3016,9 @@ element's <code>maxRequestLength </code>attribute<code></code><code></code>:
 
 
 
+
 <pre>	&lt;neatUpload ... maxRequestLength="<em>sizeInKBytes</em>" ... /&gt;<br></pre>
+
 
 
 
@@ -2832,6 +3044,7 @@ able to stop the upload and the user will simply see the original form
 along with the progress bar displaying the reason the upload was
 rejected. &nbsp;The remainder of this section only affects the user
 when the browser is <span style="font-style: italic;">not</span> able to stop the upload.</p>
+
 
 
 
@@ -2868,7 +3081,9 @@ under
 
 
 
+
 <pre>	&lt;customErrors mode="On"&gt;<br>	&lt;error statusCode="413" redirect="~/NeatUpload/Error413.aspx" /&gt;<br>	&lt;/customErrors&gt;<br></pre>
+
 
 
 
@@ -2898,8 +3113,10 @@ saying "Document contains no data". &nbsp;The default <code>executionTimeout</co
 
 
 
+
 <h3><a class="mozTocH3" name="mozTocId358727"></a>Changing
 the Maximum Size of Normal Requests</h3>
+
 
 
 
@@ -2931,7 +3148,9 @@ element's <code>maxNormalRequestLength </code>attribute<code></code>:
 
 
 
+
 <pre>	&lt;neatUpload ... maxNormalRequestLength="<em>sizeInKBytes</em>" ... /&gt;<br></pre>
+
 
 
 
@@ -2944,29 +3163,39 @@ element's <code>maxNormalRequestLength </code>attribute<code></code>:
 The behavior when this value is exceeded is similar to the behavior when the <code>maxRequestLength</code>
 is exceeded. &nbsp;See the preceding section for details. &nbsp;The
 only difference is that for non-upload requests that exceed the <code>maxNormalRequestLength</code> limit, NeatUpload does not attempt to use JavaScript to interrupt the browser and the exception that is thrown is an <code>HttpException(413, "Request Entity Too Large")</code> instead of an <code>UploadTooLargeException()</code>.<br>
+
 <h3><a class="mozTocH3" name="mozTocId991184"></a>Changing the Query String Parameter Used When Uploading From Client Applications</h3>
+
 If you are <a href="#mozTocId483750">uploading from a client application</a>&nbsp;other
 than a browser, you might not have control over the name of the query
 string parameter that the application uses to identify each upload.
 &nbsp;To configure NeatUpload to look for a query string parameter with
 a particular name, the <code>&lt;neatUpload&gt;</code> element's <code>postBackIDQueryParam</code> attribute:<br>
+
 <pre>	&lt;neatUpload ... postBackIDQueryParam="<em><span style="font-family: monospace;">parameterName</span></em>" ... /&gt;<br></pre>
+
 The default value is "NeatUpload_PostBackID".<br>
+
 
 
 <h3><a class="mozTocH3" name="mozTocId652103"></a>Configuring Individual InputFile Controls Programmatically</h3>
 
 
+
 You can use the <code>StorageConfig</code> property of each <code>InputFile</code> control to change the way the <code>UploadStorageProvider</code> handles the file uploaded to that control. &nbsp;The interpretation of&nbsp;<code>InputFile.StorageConfig</code> depends on which <code>UploadStorageProvider</code> is used. &nbsp;The default <code>FilesystemUploadStorageProvider</code> only allows the temporary directory to be set via the <code>StorageConfig</code> property. &nbsp;To programmatically set the temporary directory place a line like this in&nbsp;<code>Page_Load()</code>:<br>
 
 
+
 <br>
+
 
 
 <code><span style="font-style: italic;">inputFileId</span>.StorageConfig["tempDirectory"] = "<span style="font-style: italic;">path_to_temp_directory</span>";</code><br>
 
 
+
 <br>
+
 
 
 Before using the <code>StorageConfig</code> property, it is critical to understand how the <code>StorageConfig</code> is communicated to the UploadStorageProvider to avoid some possible pitfalls. &nbsp;When the <code>InputFile</code> control is rendered, NeatUpload encrypts the <code>StorageConfig</code>
@@ -2979,7 +3208,9 @@ and validation keys when they are first needed during the application
 lifetime. &nbsp;However, you can set them explicitly by setting the <code>encryptionKey</code> and <code>validationKey</code> attributes of the <code>&lt;neatUpload&gt;</code> element to random 32 and 40 digit hexadecimal strings, respectively.<br>
 
 
+
 <br>
+
 
 
 Encrypting and signing the <code>StorageConfig</code> prevents an attacker from examining and modifying it. &nbsp;However, <span style="font-weight: bold;">it
@@ -2988,7 +3219,9 @@ rejected if the server uses different keys for validation/decryption
 than it did for signing/encryption</span>. &nbsp;Follow the following rules to avoid these problems:<br>
 
 
+
 <ul>
+
 
 
   <li>Only use <code>StorageConfig</code> to configure an <code>InputFile</code> control if you don't mind&nbsp;an attacker associating that <code>StorageConfig</code> with other <code>InputFile</code> controls&nbsp;while the same validation key is being used. &nbsp;This is not typically a problem for <code>StorageConfig["tempDirectory"]</code>
@@ -3002,6 +3235,7 @@ other mechanism (e.g. change the permissions on the directory) to
 ensure that an upload that uses an old <code>StorageConfig</code> can not write to the old directory.</li>
 
 
+
   <li>Only use <code>StorageConfig</code> to configure an <code>InputFile</code>
 control if you don't mind having uploads rejected while transitioning
 from old to new keys. &nbsp;NeatUpload will reject any uploads from
@@ -3009,10 +3243,12 @@ forms rendered with the old key. &nbsp;The default rejection message is
 the value of the <code>InvalidStorageConfigMessageFormat</code> resource in <code>Strings.resx</code>. &nbsp;It defaults to "Please refresh the page and try again."</li>
 
 
+
   <li>Don't use <code>StorageConfig</code> in an environment (e.g. a
 web farm) where the server rendering the form could be different from
 the server that receives the upload request, unless you manually
 configure all servers to use the same keys.</li>
+
 
 
 </ul>
@@ -3023,7 +3259,9 @@ configure all servers to use the same keys.</li>
 
 
 
+
 <h2><a class="mozTocH2" name="mozTocId831551"></a>The HashedInputFile Extension</h2>
+
 
 
 
@@ -3041,7 +3279,9 @@ progress.&nbsp; &nbsp;It consists of the <code>HashedInputFile</code> web contro
 
 
 
+
 <ol>
+
 
 
 
@@ -3057,6 +3297,8 @@ progress.&nbsp; &nbsp;It consists of the <code>HashedInputFile</code> web contro
 
 
 
+
+    
     
     
     
@@ -3078,10 +3320,12 @@ designer to a HashedInputFile to a form.<br>
 
 
 
+
     <span style="text-decoration: underline;">If you won't be using the Visual Studio Web Form Designer</span>,
 add a reference to your web application that refers to the <code>Brettle.Web.NeatUpload.HashedInputFile.dll</code>
 in the <code>NeatUpload-1.</code><code>1.<span style="font-style: italic;">x</span></code><code>/HashedInputFile/bin
     </code>directory.</div>
+
 
 
 
@@ -3097,6 +3341,7 @@ in the <code>NeatUpload-1.</code><code>1.<span style="font-style: italic;">x</sp
 
 
 
+
   <li>Configure your web application to use the <code>HashingFilesystemUploadStorageProvider</code>. &nbsp;The simplest way to do that is to add the following to your <code>Web.config</code> (see&nbsp;<a href="Manual.html#mozTocId221000">Configuration</a> for more options):<code><br>
 
 
@@ -3105,7 +3350,9 @@ in the <code>NeatUpload-1.</code><code>1.<span style="font-style: italic;">x</sp
 
 
 
+
     <br>
+
 
 
 
@@ -3126,7 +3373,9 @@ in the <code>NeatUpload-1.</code><code>1.<span style="font-style: italic;">x</sp
 
 
 
+
 &nbsp;&nbsp;&nbsp; &lt;configSections&gt;<br>
+
 
 
 
@@ -3153,9 +3402,11 @@ in the <code>NeatUpload-1.</code><code>1.<span style="font-style: italic;">x</sp
 
 
 
+
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp; &lt;remove name="neatUpload"
 /&gt;<br>
+
 
 
 
@@ -3169,6 +3420,7 @@ type="Brettle.Web.NeatUpload.ConfigSectionHandler,
 Brettle.Web.NeatUpload" &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 &nbsp; &nbsp;allowLocation="true" /&gt;<br>
+
 
 
 
@@ -3195,6 +3447,7 @@ Brettle.Web.NeatUpload" &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 
 
 
+
 &nbsp;&nbsp;&nbsp; &lt;/configSections&gt;<br>
 
 
@@ -3203,7 +3456,9 @@ Brettle.Web.NeatUpload" &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 
 
 
+
 &nbsp; &nbsp; ...<br>
+
 
 
 
@@ -3229,7 +3484,9 @@ Brettle.Web.NeatUpload" &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 
 
 
+
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ...<br>
+
 
 
 
@@ -3251,6 +3508,7 @@ Brettle.Web.NeatUpload" &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 
 
 
+
     </code><code>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp; &nbsp;defaultProvider="HashingFilesystemUploadStorageProvider"&gt;<br>
 
@@ -3265,8 +3523,10 @@ Brettle.Web.NeatUpload" &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 
 
 
+
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp; &nbsp;&lt;providers&gt;<br>
+
 
 
 
@@ -3294,6 +3554,7 @@ Brettle.Web.NeatUpload" &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 
 
 
+
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
 &nbsp; type="<span style="font-family: monospace;">Brettle.Web.NeatUpload.HashingFilesystemUploadStorageProvider, Brettle.Web.NeatUpload.HashedInputFile</span>"<br>
@@ -3304,7 +3565,9 @@ Brettle.Web.NeatUpload" &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 
 
 
+
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;algorithm="MD5"/&gt;<br>
+
 
 
 
@@ -3332,8 +3595,10 @@ Brettle.Web.NeatUpload" &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 
 
 
+
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
 &lt;/neatUpload&gt;<br>
+
 
 
 
@@ -3359,7 +3624,9 @@ Brettle.Web.NeatUpload" &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 
 
 
+
 &nbsp;&nbsp;&nbsp; &lt;/system.web&gt;<br>
+
 
 
 
@@ -3385,7 +3652,9 @@ Brettle.Web.NeatUpload" &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 
 
 
+
 &lt;/configuration&gt;</code><br>
+
 
 
 
@@ -3401,7 +3670,9 @@ Note: the value of the&nbsp;<code>algorithm</code> attribute above is passed to 
 
 
 
+
   <li>Add the HashedInputFile to your forms:<br>
+
 
 
 
@@ -3417,6 +3688,7 @@ Note: the value of the&nbsp;<code>algorithm</code> attribute above is passed to 
 
 
 
+
     <span style="text-decoration: underline;">If you are not using Visual Studio Web Form Designer</span>, add the following line at the top of your form:<span style="font-family: monospace;"><br>
 
 
@@ -3425,7 +3697,9 @@ Note: the value of the&nbsp;<code>algorithm</code> attribute above is passed to 
 
 
 
+
     <br>
+
 
 
 
@@ -3443,7 +3717,9 @@ Assembly="Brettle.Web.NeatUpload.HashedInputFile"%&gt;<br>
 
 
 
+
     </span><br>
+
 
 
 
@@ -3465,6 +3741,7 @@ want the user to choose a file, using something like this:
     
     
     
+    
     <pre>&lt;HashedUpload:HashedInputFile id="<var>inputFileId</var>" runat="server" /&gt;<br></pre>
 
 
@@ -3473,7 +3750,9 @@ want the user to choose a file, using something like this:
 
 
 
+
   </li>
+
 
 
 
@@ -3489,7 +3768,9 @@ want the user to choose a file, using something like this:
 
 
 
+
   <li>In your code-behind class,&nbsp;use the <code><span style="font-family: monospace;"><span style="font-style: italic;">inputFileId</span>.Hash</span></code> property to get a byte array containing the cryptographic hash. &nbsp;You can also use <span style="font-family: monospace;"><span style="font-style: italic;">inputFileId</span>.HashSize</span> to get the number of bits in the hash (in case it isn't a multiple of 8).<br>
+
 
 
 
@@ -3505,6 +3786,7 @@ want the user to choose a file, using something like this:
 
 
 
+
 </ol>
 
 
@@ -3513,7 +3795,9 @@ want the user to choose a file, using something like this:
 
 
 
+
 For an example of using the HashedInputFile extension, see <code>HashedInputFile/HashedDemo.aspx</code> and <code>HashedInputFile/HashedDemo.aspx.cs</code>. &nbsp;For a more complex configuration example, see <code>HashedInputFile/Web.config</code>. &nbsp;It uses <a href="#mozTocId134915">location filtering</a> and is designed to work in conjuction with the <code>Web.config</code> in parent directory.<br>
+
 
 
 
@@ -3539,8 +3823,10 @@ For an example of using the HashedInputFile extension, see <code>HashedInputFile
 
 
 
+
 <h3><a class="mozTocH3" name="mozTocId628349"></a><a class="mozTocH3" name="Customizing_Progress_aspx"></a>Customizing
 <code>Progress.aspx</code></h3>
+
 
 
 
@@ -3578,7 +3864,9 @@ expressions. &nbsp; Refer to the default <code>Progress.aspx</code> for an examp
 
 
 
+
 <table border="1">
+
 
 
 
@@ -3604,7 +3892,9 @@ expressions. &nbsp; Refer to the default <code>Progress.aspx</code> for an examp
 
 
 
+
     <td><strong>Name</strong></td>
+
 
 
 
@@ -3630,7 +3920,9 @@ expressions. &nbsp; Refer to the default <code>Progress.aspx</code> for an examp
 
 
 
+
   </tr>
+
 
 
 
@@ -3656,7 +3948,9 @@ expressions. &nbsp; Refer to the default <code>Progress.aspx</code> for an examp
 
 
 
+
     <tr>
+
 
 
 
@@ -3676,7 +3970,9 @@ expressions. &nbsp; Refer to the default <code>Progress.aspx</code> for an examp
 
 
 
+
       <td>A value from the <code>UploadStatus</code> enumeration, as follows:<br>
+
 
 
 
@@ -3696,7 +3992,9 @@ expressions. &nbsp; Refer to the default <code>Progress.aspx</code> for an examp
 
 
 
+
       <code>NormalInProgress</code> - a normal (non-chunked) upload had started but not yet finished<br>
+
 
 
 
@@ -3716,7 +4014,9 @@ expressions. &nbsp; Refer to the default <code>Progress.aspx</code> for an examp
 
 
 
+
       <code>Completed</code> - the entire upload was&nbsp;successfully received<br>
+
 
 
 
@@ -3736,7 +4036,9 @@ expressions. &nbsp; Refer to the default <code>Progress.aspx</code> for an examp
 
 
 
+
       <code>Rejected</code> - the upload has been rejected by the server because it is unacceptable for some reason<br>
+
 
 
 
@@ -3756,7 +4058,9 @@ expressions. &nbsp; Refer to the default <code>Progress.aspx</code> for an examp
 
 
 
+
       <br>
+
 
 
 
@@ -3776,6 +4080,7 @@ If the <code>WhenStatus</code> property of a <code>DetailsSpan</code> and <code>
 
 
 
+
     </tr>
 
 
@@ -3786,7 +4091,9 @@ If the <code>WhenStatus</code> property of a <code>DetailsSpan</code> and <code>
 
 
 
+
     <tr>
+
 
 
 
@@ -3812,6 +4119,7 @@ If the <code>WhenStatus</code> property of a <code>DetailsSpan</code> and <code>
 
 
 
+
       <td>Number of bytes received by the server so far. &nbsp;Pass this to <code>FormatCount()</code> to get a more readable value.<br>
 
 
@@ -3822,7 +4130,9 @@ If the <code>WhenStatus</code> property of a <code>DetailsSpan</code> and <code>
 
 
 
+
       </td>
+
 
 
 
@@ -3848,7 +4158,9 @@ If the <code>WhenStatus</code> property of a <code>DetailsSpan</code> and <code>
 
 
 
+
     <tr>
+
 
 
 
@@ -3874,6 +4186,7 @@ If the <code>WhenStatus</code> property of a <code>DetailsSpan</code> and <code>
 
 
 
+
       <td>Total number of bytes in the upload. &nbsp;Pass this to <code>FormatCount()</code> to get a more readable value. &nbsp;For chunked uploads, <code>BytesTotal</code> is -1.</td>
 
 
@@ -3887,7 +4200,9 @@ If the <code>WhenStatus</code> property of a <code>DetailsSpan</code> and <code>
 
 
 
+
     </tr>
+
 
 
 
@@ -3913,7 +4228,9 @@ If the <code>WhenStatus</code> property of a <code>DetailsSpan</code> and <code>
 
 
 
+
       <td><code>CountUnits</code></td>
+
 
 
 
@@ -3936,6 +4253,7 @@ resource. &nbsp;Note: for chunked uploads, <code>BytesRead</code> is used instea
 
 
 
+
     </tr>
 
 
@@ -3946,7 +4264,9 @@ resource. &nbsp;Note: for chunked uploads, <code>BytesRead</code> is used instea
 
 
 
+
     <tr>
+
 
 
 
@@ -3966,7 +4286,9 @@ resource. &nbsp;Note: for chunked uploads, <code>BytesRead</code> is used instea
 
 
 
+
       <td>Converts a number of bytes to units that would make <code>BytesTotal</code> readable. &nbsp;If <code>BytesTotal</code> is greater that 1 million,&nbsp;<code>count</code> is formatted according to the <code>MBCountFormat</code> resource. &nbsp;Otherwise, if&nbsp;<code>BytesTotal</code> greater than 1 thousand,&nbsp;<code>count</code> is formatted according to the <code>KBCountFormat</code> resource. &nbsp;Otherwise, <code>count</code> is formatted according of the <code>ByteCountFormat</code> resource. &nbsp;Note: for chunked uploads, <code>BytesRead</code> is used instead of <code>BytesTotal</code>.</td>
+
 
 
 
@@ -3986,7 +4308,9 @@ resource. &nbsp;Note: for chunked uploads, <code>BytesRead</code> is used instea
 
 
 
+
     <tr>
+
 
 
 
@@ -4012,6 +4336,7 @@ resource. &nbsp;Note: for chunked uploads, <code>BytesRead</code> is used instea
 
 
 
+
       <td>Rate (in bytes/sec) at which the server has received the
 upload. &nbsp; While the upload is in progress, this is an average over
 the past 1-2 seconds. &nbsp;When the upload has finished, this is an
@@ -4025,7 +4350,9 @@ average over the entire upload.<br>
 
 
 
+
       </td>
+
 
 
 
@@ -4051,6 +4378,7 @@ average over the entire upload.<br>
 
 
 
+
     <tr>
 
 
@@ -4064,7 +4392,9 @@ average over the entire upload.<br>
 
 
 
+
       <td><code>FormatRate(int rate)</code></td>
+
 
 
 
@@ -4093,6 +4423,7 @@ resource. &nbsp;Otherwise,&nbsp;<code>rate</code> is formatted according of the
 
 
 
+
     </tr>
 
 
@@ -4106,7 +4437,9 @@ resource. &nbsp;Otherwise,&nbsp;<code>rate</code> is formatted according of the
 
 
 
+
     <tr>
+
 
 
 
@@ -4132,6 +4465,7 @@ resource. &nbsp;Otherwise,&nbsp;<code>rate</code> is formatted according of the
 
 
 
+
       <td>A double in the range 0.0-1.0. &nbsp;Computed as <code>BytesRead</code>/<code>BytesTotal</code> for normal (ie non-chunked) uploads. &nbsp;Always 0.0 for chunked uploads.<br>
 
 
@@ -4142,7 +4476,9 @@ resource. &nbsp;Otherwise,&nbsp;<code>rate</code> is formatted according of the
 
 
 
+
       </td>
+
 
 
 
@@ -4168,7 +4504,9 @@ resource. &nbsp;Otherwise,&nbsp;<code>rate</code> is formatted according of the
 
 
 
+
     <tr>
+
 
 
 
@@ -4194,6 +4532,7 @@ resource. &nbsp;Otherwise,&nbsp;<code>rate</code> is formatted according of the
 
 
 
+
       <td><code>TimeSpan</code> representing the time that has elapsed since the upload began.<br>
 
 
@@ -4204,7 +4543,9 @@ resource. &nbsp;Otherwise,&nbsp;<code>rate</code> is formatted according of the
 
 
 
+
       </td>
+
 
 
 
@@ -4230,6 +4571,7 @@ resource. &nbsp;Otherwise,&nbsp;<code>rate</code> is formatted according of the
 
 
 
+
     <tr>
 
 
@@ -4243,7 +4585,9 @@ resource. &nbsp;Otherwise,&nbsp;<code>rate</code> is formatted according of the
 
 
 
+
       <td><code>TimeRemaining</code></td>
+
 
 
 
@@ -4271,7 +4615,9 @@ the fraction complete. &nbsp;Returns <code>TimeSpan</code>.<code>MaxValue</code>
 
 
 
+
     </tr>
+
 
 
 
@@ -4297,7 +4643,9 @@ the fraction complete. &nbsp;Returns <code>TimeSpan</code>.<code>MaxValue</code>
 
 
 
+
       <td><code>FormatTimeSpan(</code><code>TimeSpan</code> ts<code>)</code></td>
+
 
 
 
@@ -4320,7 +4668,9 @@ the fraction complete. &nbsp;Returns <code>TimeSpan</code>.<code>MaxValue</code>
 
 
 
+
       <code>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;string format;<br>
+
 
 
 
@@ -4340,7 +4690,9 @@ the fraction complete. &nbsp;Returns <code>TimeSpan</code>.<code>MaxValue</code>
 
 
 
+
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; format = GetResourceString("SecondsFormat");<br>
+
 
 
 
@@ -4360,7 +4712,9 @@ the fraction complete. &nbsp;Returns <code>TimeSpan</code>.<code>MaxValue</code>
 
 
 
+
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; format = GetResourceString("MinutesFormat");<br>
+
 
 
 
@@ -4380,7 +4734,9 @@ the fraction complete. &nbsp;Returns <code>TimeSpan</code>.<code>MaxValue</code>
 
 
 
+
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; format = GetResourceString("HoursFormat");<br>
+
 
 
 
@@ -4418,7 +4774,9 @@ ts.TotalMinutes);</code></td>
 
 
 
+
     </tr>
+
 
 
 
@@ -4444,7 +4802,9 @@ ts.TotalMinutes);</code></td>
 
 
 
+
       <td><code>Rejection</code></td>
+
 
 
 
@@ -4475,6 +4835,7 @@ resource in <code>Strings.resx</code>.</td>
 
 
 
+
     </tr>
 
 
@@ -4488,7 +4849,9 @@ resource in <code>Strings.resx</code>.</td>
 
 
 
+
     <tr>
+
 
 
 
@@ -4514,7 +4877,9 @@ resource in <code>Strings.resx</code>.</td>
 
 
 
+
       <td>An&nbsp;<code>Exception</code>&nbsp; when <code>Status</code> is <code>Failed</code>. &nbsp;Otherwise, <code>null</code>. &nbsp;It can be useful to display <code>Failure.Message</code> to the user when a failure occurs.</td>
+
 
 
 
@@ -4537,7 +4902,9 @@ resource in <code>Strings.resx</code>.</td>
 
 
 
+
     <tr>
+
 
 
 
@@ -4557,7 +4924,9 @@ resource in <code>Strings.resx</code>.</td>
 
 
 
+
       <td>The client-specified name of the file currently being received by the server. &nbsp;</td>
+
 
 
 
@@ -4577,6 +4946,7 @@ resource in <code>Strings.resx</code>.</td>
 
 
 
+
     <tr>
 
 
@@ -4587,7 +4957,9 @@ resource in <code>Strings.resx</code>.</td>
 
 
 
+
       <td><code>CancelVisible</code></td>
+
 
 
 
@@ -4609,7 +4981,9 @@ JavaScript to cancel an upload.</td>
 
 
 
+
     </tr>
+
 
 
 
@@ -4629,7 +5003,9 @@ JavaScript to cancel an upload.</td>
 
 
 
+
       <td><code>StartRefreshVisible</code></td>
+
 
 
 
@@ -4652,7 +5028,9 @@ it when the upload starts. &nbsp;</td>
 
 
 
+
     </tr>
+
 
 
 
@@ -4672,7 +5050,9 @@ it when the upload starts. &nbsp;</td>
 
 
 
+
       <td><code>StopRefreshVisible</code></td>
+
 
 
 
@@ -4694,7 +5074,9 @@ use Javascript to cancel the upload.</td>
 
 
 
+
     </tr>
+
 
 
 
@@ -4714,6 +5096,7 @@ use Javascript to cancel the upload.</td>
 
 
 
+
       <td><code>CancelUrl, </code><code>StartRefreshUrl.&nbsp;</code><code>StopRefreshUrl</code></td>
 
 
@@ -4724,7 +5107,9 @@ use Javascript to cancel the upload.</td>
 
 
 
+
       <td>The URLs for the 'cancel', 'start refresh', and 'stop refresh' links, respectively.</td>
+
 
 
 
@@ -4747,6 +5132,8 @@ use Javascript to cancel the upload.</td>
 
 
 
+
+  
   
   
   
@@ -4772,7 +5159,9 @@ use Javascript to cancel the upload.</td>
 
 
 
+
 <br>
+
 
 
 
@@ -4793,7 +5182,9 @@ By default, <code>ProgressPage</code> calls it's <code>GetResourceString()</code
 
 
 
+
 <ul>
+
 
 
 
@@ -4813,7 +5204,9 @@ By default, <code>ProgressPage</code> calls it's <code>GetResourceString()</code
 
 
 
+
   <li>If your page contains HTML-specific entities replace them with their numeric equivalents. &nbsp;For example, replace '<code>&amp;nbsp;</code>' with '<code>&amp;#160;</code>'.</li>
+
 
 
 
@@ -4827,7 +5220,9 @@ By default, <code>ProgressPage</code> calls it's <code>GetResourceString()</code
 
 
 
+
 </ul>
+
 
 
 
@@ -4844,7 +5239,9 @@ including Netscape, Firefox, Opera, Safari, etc. &nbsp;To force the <code>Detail
 
 
 
+
 </ul>
+
 
 
 
@@ -4856,6 +5253,7 @@ including Netscape, Firefox, Opera, Safari, etc. &nbsp;To force the <code>Detail
 
 <h3><a class="mozTocH3" name="mozTocId184279"></a>Creating
 Custom Fallback Content for <code>ProgressBar</code></h3>
+
 
 
 
@@ -4886,7 +5284,9 @@ the desired text (or controls) between the begin and end tags of the
 
 
 
+
 <pre>	&lt;Upload:ProgressBar id="progressBar" runat="server" &gt;<br>	&lt;asp:Label id="label" runat="server" Text="Your Text Here"/&gt;<br>	&lt;/Upload:ProgressBar&gt;</pre>
+
 
 
 
@@ -4901,6 +5301,7 @@ the desired text (or controls) between the begin and end tags of the
 
 <h3><a class="mozTocH3" name="mozTocId759939"></a>Creating
 a Custom UploadStorageProvider</h3>
+
 
 
 
@@ -4940,7 +5341,9 @@ methods:<br>
 
 
 
+
 <br>
+
 
 
 
@@ -4968,10 +5371,13 @@ name, NameValueCollection attrs);<br>
 
 
 
+
 <br>
 
 
+
 </code><code>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; public virtual&nbsp; UploadedFile CreateUploadedFile(UploadContext ctx, <br>
+
 
 
 
@@ -5004,6 +5410,7 @@ controlUniqueID, <br>
 
 
 
+
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
@@ -5012,6 +5419,7 @@ controlUniqueID, <br>
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; string
 fileName,<br>
+
 
 
 
@@ -5034,13 +5442,16 @@ fileName,<br>
 &nbsp;string contentType,<br>
 
 
+
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 UploadStorageConfig storageConfig);<br>
 
 
+
 </code><br>
+
 
 
 
@@ -5073,7 +5484,9 @@ to pass provider-specific configuration information to your provider.<br>
 
 
 
+
 <br>
+
 
 
 
@@ -5114,7 +5527,9 @@ methods of your
 
 
 
+
 <br>
+
 
 
 
@@ -5148,7 +5563,9 @@ UploadContext to pass other similar information to providers.<br>
 
 
 
+
 <br>
+
 
 
 
@@ -5176,7 +5593,9 @@ type, size, or content), by throwing an exception derived from <code>UploadExcep
 
 
 
+
 <ol>
+
 
 
 
@@ -5191,6 +5610,7 @@ type, size, or content), by throwing an exception derived from <code>UploadExcep
 
   <li>updates the progress bar to indicate that the upload was
 rejected (i.e. sets <code>Status</code> to <code>Rejected</code> and <code>Rejection</code> to the <code>UploadException</code> that occured)</li>
+
 
 
 
@@ -5220,6 +5640,7 @@ pop-up open so that the user can see the message</li>
 
 
 
+
   <li>asks the browser to stop the upload using javascript to
 simulate clicking the browser's Stop button</li>
 
@@ -5227,7 +5648,9 @@ simulate clicking the browser's Stop button</li>
 
 
 
+
   <li>waits 5 seconds to give the browser and opportunity to stop the upload</li>
+
 
 
 
@@ -5254,7 +5677,9 @@ the exception</li>
 
 
 
+
 </ol>
+
 
 
 
@@ -5290,7 +5715,9 @@ HTTP error code when you construct your <code>UploadException</code>.<br>
 
 
 
+
 <br>
+
 
 
 
@@ -5317,6 +5744,7 @@ it assumes that it is an unexpected error, so it:<br>
 
 
 
+
 <ol>
 
 
@@ -5330,7 +5758,9 @@ it assumes that it is an unexpected error, so it:<br>
 
 
 
+
   <li>updates the progress bar to indicate that an error occurred&nbsp;(i.e. sets <code>Status</code> to <code>Failed</code> and <code>Failure</code> to the&nbsp;<code>Exception</code> that occured)</li>
+
 
 
 
@@ -5360,6 +5790,7 @@ pop-up open so that the user can see the message</li>
 
 
 
+
   <li>rethrows the exception</li>
 
 
@@ -5373,7 +5804,9 @@ pop-up open so that the user can see the message</li>
 
 
 
+
 </ol>
+
 
 
 
@@ -5401,13 +5834,17 @@ event and use custom error pages if they are configured.<br>
 
 
 
+
 <br>
+
 
 
 If the <code>NameValueCollection</code> provided by <code>UploadStorageConfig</code> is not sufficient for your provider, you can override <code>UploadStorageProvider.CreateUploadStorageConfig()</code> to return your own <code>UploadStorageConfig</code> subclass. &nbsp;Your subclass can override the <code>UploadStorageConfig.Serialize(Stream)</code> and <code>UploadStorageConfig.Deserialize(Stream)</code> methods to serialize itself to the provided <code>Stream</code> and deserialize itself from the provided <code>Stream</code>. &nbsp;The base class implementations of these methods use <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemWebUILosFormatterClassTopic.asp"><code>LosFormatter</code></a> to provide a concise serialization of the <code>NameValueCollection</code> as a <code>Hashtable</code>.<br>
 
 
+
 <br>
+
 
 
 
@@ -5435,8 +5872,10 @@ see <code>FilesystemUploadStorageProvider.cs</code> and <code>FilesystemUploaded
 
 
 
+
 <h2><a class="mozTocH2" name="mozTocId580088"></a>Known
 Issues</h2>
+
 
 
 
@@ -5463,6 +5902,7 @@ does nothing when <code>UploadHttpModule</code> is used</h3>
 
 
 
+
 <p>Due to the design of NeatUpload this bug will not be fixed,
 however NeatUpload does provide a workaround. &nbsp;Simply replace <code>Response.AppendToLog()</code>
 with <code>Brettle.Web.NeatUpload.UploadHttpModule.AppendToLog()</code>.
@@ -5477,7 +5917,9 @@ is used or not.</p>
 
 
 
+
 <h3><a class="mozTocH4" name="mozTocId752771"></a>Inline <code>ProgressBars </code>don't work with Opera</h3>
+
 
 
 
@@ -5503,7 +5945,9 @@ popup progress bar whenever the User-Agent header contains "Opera"
 
 
 
+
 <h2><a class="mozTocH2" name="mozTocId405545"></a>Troubleshooting</h2>
+
 
 
 
@@ -5536,7 +5980,9 @@ the following:</p>
 
 
 
+
 <ol>
+
 
 
 
@@ -5556,7 +6002,9 @@ request bodies it processes. &nbsp;For example,<code> &lt;neatUpload ... debugDi
 
 
 
+
   <li>Reproduce the problem.</li>
+
 
 
 
@@ -5584,7 +6032,9 @@ processed the request and (hopefully) determine exactly what went wrong.</li>
 
 
 
+
 </ol>
+
 
 
 
@@ -5609,7 +6059,9 @@ use of NeatUpload. &nbsp;To enable logging with <a href="http://logging.apache.o
 
 
 
+
 <ol>
+
 
 
 
@@ -5637,6 +6089,8 @@ use of NeatUpload. &nbsp;To enable logging with <a href="http://logging.apache.o
 
 
 
+
+  
   
   
   
@@ -5646,6 +6100,7 @@ use of NeatUpload. &nbsp;To enable logging with <a href="http://logging.apache.o
   
   
   <ol>
+
 
 
 
@@ -5683,8 +6138,10 @@ log4net.</li>
 
 
 
+
       <li>Add a reference to your web application that refers to
 the log4net.dll you built.</li>
+
 
 
 
@@ -5711,6 +6168,7 @@ to the root directory of your web application.</li>
 
 
 
+
       <li>Add the following line to your <code>Global.asax.cs</code>&nbsp;before
 the <code>namespace</code> keyword: <br>
 
@@ -5725,7 +6183,9 @@ the <code>namespace</code> keyword: <br>
 
 
 
+
         <br>
+
 
 
 
@@ -5752,7 +6212,9 @@ log4net.Config.XmlConfigurator(ConfigFile="log4net.config", Watch=true)]</code><
 
 
 
+
         <br>
+
 
 
 
@@ -5776,7 +6238,9 @@ or if you are using VB.NET, add the following to your Global.asax.vb:<br>
 
 
 
+
         <br>
+
 
 
 
@@ -5802,6 +6266,7 @@ Watch:=true)&gt;<br>
 
 
 
+
         </code></li>
 
 
@@ -5815,6 +6280,7 @@ Watch:=true)&gt;<br>
 
 
 
+
     
     
     
@@ -5822,6 +6288,7 @@ Watch:=true)&gt;<br>
 
 
     
+  
   
   
   
@@ -5831,6 +6298,7 @@ Watch:=true)&gt;<br>
   
   
   </ol>
+
 
 
 
@@ -5849,8 +6317,10 @@ log4net.dll.</li>
 
 
 
+
   <li>Change the properties/options for the NeatUpload project
 to define USE_LOG4NET.</li>
+
 
 
 
@@ -5868,6 +6338,8 @@ to define USE_LOG4NET.</li>
 
 
 
+
+  
   
   
   
@@ -5889,14 +6361,16 @@ to define USE_LOG4NET.</li>
 
 
 
-    
-
-
 
     
 
 
 
+    
+
+
+
+  
   
   
   
@@ -5917,7 +6391,9 @@ to define USE_LOG4NET.</li>
 
 
 
+
 </ol>
+
 
 
 
@@ -5943,7 +6419,9 @@ to define USE_LOG4NET.</li>
 
 
 
+
 </ol>
+
 
 
 
