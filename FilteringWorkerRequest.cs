@@ -185,6 +185,16 @@ namespace Brettle.Web.NeatUpload
 		
 		private int ReadOrigEntityBody(byte[] destBuf, int count)
 		{
+			if (uploadContext != null && Config.Current.MaxUploadRate > 0)
+			{
+				double desiredSecs = ((double)uploadContext.BytesRead) / Config.Current.MaxUploadRate;
+				double secsToWait = desiredSecs - uploadContext.TimeElapsed.TotalSeconds;
+				if (secsToWait > 0)
+				{
+					System.Threading.Thread.Sleep((int)(1000 * secsToWait));
+				}
+			}
+			
 			int totalRead = 0;
 			if (origPreloadedBody != null)
 			{

@@ -135,6 +135,7 @@ namespace Brettle.Web.NeatUpload
 			{
 				config.MaxNormalRequestLength = parent.MaxNormalRequestLength;
 				config.MaxRequestLength = parent.MaxRequestLength;
+				config.MaxUploadRate = parent.MaxUploadRate;
 				config.UseHttpModule = parent.UseHttpModule;
 				config.Providers = parent.Providers.Clone();
 				config.DefaultProviderName = parent.DefaultProviderName;
@@ -156,6 +157,10 @@ namespace Brettle.Web.NeatUpload
 				else if (name == "maxRequestLength")
 				{
 					config.MaxRequestLength = Int64.Parse(val) * 1024;
+				}
+				else if (name == "maxUploadRate")
+				{
+					config.MaxUploadRate = Int32.Parse(val) * 1024;
 				}
 				else if (name == "useHttpModule")
 				{
@@ -243,6 +248,7 @@ namespace Brettle.Web.NeatUpload
 		internal UploadStorageProviderCollection Providers = new UploadStorageProviderCollection();
 		internal long MaxNormalRequestLength = 4096 * 1024;
 		internal long MaxRequestLength = 2097151 * 1024;
+		internal int MaxUploadRate = -1;
 		internal bool UseHttpModule = UploadHttpModule.IsInited;
 		internal ResourceManager ResourceManager = null;
 		internal DirectoryInfo DebugDirectory = null;
