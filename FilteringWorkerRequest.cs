@@ -528,9 +528,24 @@ namespace Brettle.Web.NeatUpload
 			preloadedEntityBodyStream = null;
 			if (grandTotalBytesRead < origContentLength)
 			{
-				if (log.IsDebugEnabled) log.Debug("Interrupted.  Throwing exception.");
 				uploadContext.Status = UploadStatus.Cancelled;
-				throw new HttpException (400, String.Format("Data length ({0}) is shorter than Content-Length ({1}).", grandTotalBytesRead, origContentLength));
+				bool isClientConnected = false;
+				try
+				{
+					isClientConnected = OrigWorker.IsClientConnected();
+				}
+				catch (Exception)
+				{
+					// Mono throws an exception if the client is no longer connected.
+				}
+				if (isClientConnected)
+				{
+					throw new HttpException (400, String.Format("Data length ({0}) is shorter than Content-Length ({1}) and client is still connected.", grandTotalBytesRead, origContentLength));
+				}
+				else
+				{
+					throw new HttpException (400, String.Format("Client disconnected after receiving {0} of {1} bytes -- user probably cancelled upload.", grandTotalBytesRead, origContentLength));
+				}
 			}
 			uploadContext.Status = UploadStatus.Completed;
 		}
