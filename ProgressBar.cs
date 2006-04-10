@@ -627,14 +627,23 @@ function NeatUpload_IsFilesToUpload(id)
 				// If the browser really is IE on Windows, return false if the path is not absolute because
 				// IE will not actually submit the form if any file value is not an absolute path.  If IE doesn't
 				// submit the form, any progress bars we start will never finish.  
-				if (navigator && navigator.userAgent
-				    && navigator.userAgent.toLowerCase().indexOf('msie') != -1 && typeof(ActiveXObject) != 'undefined'
-				    && navigator.userAgent.toLowerCase().indexOf('mac') == -1)
+				if (navigator && navigator.userAgent)
 				{
-					var re = new RegExp('^(\\\\\\\\[^\\\\]|([a-zA-Z]:)?\\\\).*');
-					var match = re.exec(inputElem.value);
-					if (match == null || match[0] == '')
-						return false;
+					var ua = navigator.userAgent.toLowerCase();
+					var msiePosition = ua.indexOf('msie');
+					if (msiePosition != -1 && typeof(ActiveXObject) != 'undefined' && ua.indexOf('mac') == -1
+					    && ua.charAt(msiePosition + 5) < 7)
+					{
+						var re = new RegExp('^(\\\\\\\\[^\\\\]|([a-zA-Z]:)?\\\\).*');
+						var match = re.exec(inputElem.value);
+						if (match == null || match[0] == '')
+						{
+							if (typeof(NeatUpload_HandleIE6InvalidPath) != 'undefined'
+							    && NeatUpload_HandleIE6InvalidPath != null)
+								NeatUpload_HandleIE6InvalidPath(inputElem);
+							return false;
+						}
+					}
 				}
 			}
 		}
