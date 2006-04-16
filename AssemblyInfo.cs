@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Web.UI;
@@ -36,6 +37,8 @@ using System.Web.UI;
 
 // This helps with VS designer support.
 [assembly: TagPrefix("Brettle.Web.NeatUpload", "Upload")]
+
+[assembly: CLSCompliant(true)]
 
 #if USE_LOG4NET
 [assembly: log4net.Config.XmlConfigurator(ConfigFile="log4net.config", Watch=true)]
