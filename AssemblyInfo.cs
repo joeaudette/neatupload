@@ -38,6 +38,7 @@ using System.Web.UI;
 // This helps with VS designer support.
 [assembly: TagPrefix("Brettle.Web.NeatUpload", "Upload")]
 
+// This makes it easier to link with code that require CLS compliance.
 [assembly: CLSCompliant(true)]
 
 #if USE_LOG4NET
