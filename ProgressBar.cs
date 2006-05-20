@@ -657,7 +657,10 @@ function NeatUpload_ClearFileInputs(elem)
 	for (var i=0; i < inputFiles.length; i++ )
 	{
 		var inputFile = inputFiles.item(i);
-		if (inputFile.type == 'file')
+		// NOTE: clearing (by removing and recreating) empty file inputs confuses IE6 when the document is
+		// in both the top-level window and in an iframe.  ExpertTree uses such an iframe to do AJAX-style
+		// callbacks.
+		if (inputFile.type == 'file' && inputFile.value && inputFile.value.length > 0)
 		{
 			try
 			{
