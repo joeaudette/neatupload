@@ -401,26 +401,42 @@ if (document.getElementById)
 NeatUpload_FallbackLink = document.getElementById ? document.getElementById('" + this.ClientID + @"_fallback_link') : null;
 if (NeatUpload_FallbackLink)
 	NeatUpload_FallbackLink.setAttribute('href', ""javascript:" + GetPopupDisplayStatement() + @""");
-
+						
+if (typeof(NeatUpload_NonUploadIDs) == 'undefined')
+{
+	NeatUpload_NonUploadIDs = new Object();
+	NeatUpload_NonUploadIDs.NeatUpload_length = 0;
+}
+if (typeof(NeatUpload_TriggerIDs) == 'undefined')
+{
+	NeatUpload_TriggerIDs = new Object();
+	NeatUpload_TriggerIDs.NeatUpload_length = 0;
+}
 NeatUpload_NonUploadIDs_" + this.ClientID + @" = new Object();
 NeatUpload_NonUploadIDs_" + this.ClientID + @".NeatUpload_length = 0;
 NeatUpload_TriggerIDs_" + this.ClientID + @" = new Object();
 NeatUpload_TriggerIDs_" + this.ClientID + @".NeatUpload_length = 0;
+
 NeatUpload_LastEventSourceId = null;
 NeatUpload_LastEventType = null;
 NeatUpload_AlertShown = true;
 
 NeatUpload_AddSubmitHandler('" + formControl.ClientID + "'," + (Inline ? "false" : "true") + @", function () {
-	if (NeatUpload_LastEventSourceId && !NeatUpload_TriggerIDs_" + this.ClientID + @"[NeatUpload_LastEventSourceId])
+	var formElem = document.getElementById('" + formControl.ClientID + @"');
+	// If trigger controls were specified for this progress bar and the trigger is not 
+	// specified for *any* progress bar, then clear the filenames.
+	if (NeatUpload_LastEventSourceId
+	    && (NeatUpload_NonUploadIDs_" + this.ClientID + @"[NeatUpload_LastEventSourceId]
+	      	|| NeatUpload_TriggerIDs_" + this.ClientID + @".NeatUpload_length)
+	    && !NeatUpload_TriggerIDs[NeatUpload_LastEventSourceId])
 	{
-		var formElem = document.getElementById('" + formControl.ClientID + @"');
-		if (NeatUpload_NonUploadIDs_" + this.ClientID + @"[NeatUpload_LastEventSourceId]
-		     || NeatUpload_TriggerIDs_" + this.ClientID + @".NeatUpload_length)
-		{
-			return NeatUpload_ClearFileInputs(formElem);
-		}
+		return NeatUpload_ClearFileInputs(formElem);
 	}
-	if (NeatUpload_IsFilesToUpload('" + formControl.ClientID + @"'))
+	// If there are files to upload and either no trigger controls were specified for this progress bar or
+	// a specified trigger control was triggered, then start the progress display.
+	if (NeatUpload_IsFilesToUpload('" + formControl.ClientID + @"')
+		&& (!NeatUpload_TriggerIDs_" + this.ClientID + @".NeatUpload_length
+		    || NeatUpload_TriggerIDs_" + this.ClientID + @"[NeatUpload_LastEventSourceId]))
 	{
 		" + displayStatement + @"
 	}
@@ -450,8 +466,8 @@ for (var i = 0; i < NeatUpload_EventsThatCouldTriggerPostBack.length; i++)
 		{
 			return true;
 		}
-		if (NeatUpload_TriggerIDs_" + this.ClientID + @"[src.id]
-		      || NeatUpload_TriggerIDs_" + this.ClientID + @".NeatUpload_length == 0)
+		if (NeatUpload_TriggerIDs[src.id]
+		      || NeatUpload_TriggerIDs.NeatUpload_length == 0)
 		{
 			return true;
 		}
@@ -480,13 +496,13 @@ NeatUpload_AddSubmittingHandler('" + formControl.ClientID + @"', function () {
 	{
 		return;
 	}
-	if (NeatUpload_TriggerIDs_" + this.ClientID + @"[NeatUpload_LastEventSourceId])
+	if (NeatUpload_TriggerIDs[NeatUpload_LastEventSourceId])
 	{
 		return;
 	}
 	var formElem = document.getElementById('" + formControl.ClientID + @"');
-	if (NeatUpload_NonUploadIDs_" + this.ClientID + @"[NeatUpload_LastEventSourceId]
-	     || NeatUpload_TriggerIDs_" + this.ClientID + @".NeatUpload_length)
+	if (NeatUpload_NonUploadIDs[NeatUpload_LastEventSourceId]
+	     || NeatUpload_TriggerIDs.NeatUpload_length)
 	{
 		NeatUpload_ClearFileInputs(formElem);
 	}
@@ -501,6 +517,9 @@ NeatUpload_AddSubmittingHandler('" + formControl.ClientID + @"', function () {
 			if (!Config.Current.UseHttpModule)
 				return;
 			
+			scriptBuilder.Append(@"NeatUpload_NonUploadIDs['" + control.ClientID + @"'] 
+	= ++NeatUpload_NonUploadIDs.NeatUpload_length;
+");			
 			scriptBuilder.Append(@"NeatUpload_NonUploadIDs_" + this.ClientID + @"['" + control.ClientID + @"'] 
 	= ++NeatUpload_NonUploadIDs_" + this.ClientID + @".NeatUpload_length;
 ");			
@@ -511,6 +530,9 @@ NeatUpload_AddSubmittingHandler('" + formControl.ClientID + @"', function () {
 			if (!Config.Current.UseHttpModule)
 				return;
 			
+			scriptBuilder.Append(@"NeatUpload_TriggerIDs['" + control.ClientID + @"'] 
+	= ++NeatUpload_TriggerIDs.NeatUpload_length;
+");			
 			scriptBuilder.Append(@"NeatUpload_TriggerIDs_" + this.ClientID + @"['" + control.ClientID + @"'] 
 	= ++NeatUpload_TriggerIDs_" + this.ClientID + @".NeatUpload_length;
 ");			
