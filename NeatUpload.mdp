@@ -72,6 +72,9 @@
     <File name="./NeatUpload.Strings.resources" subtype="Code" buildaction="EmbedAsResource" />
     <File name="./NeatUpload.sln" subtype="Code" buildaction="Nothing" />
     <File name="./NeatUpload.csproj" subtype="Code" buildaction="Nothing" />
+    <File name="./tests/MultipleBars.aspx" subtype="Code" buildaction="Nothing" />
+    <File name="./tests/MultipleBars.aspx.cs" subtype="Code" buildaction="Nothing" />
+    <File name="./tests/Web.config" subtype="Code" buildaction="Nothing" />
   </Contents>
   <References>
     <ProjectReference type="Gac" localcopy="True" refto="System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
