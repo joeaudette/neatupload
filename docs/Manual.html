@@ -29,6 +29,7 @@ Features in NeatUpload-1.1</a></li>
     </ul>
   </li>
   <li><a href="#mozTocId903858">Introduction</a></li>
+  <li><a href="#Requirements">Requirements</a></li>
   <li><a href="#mozTocId304923">Installation</a></li>
   <li><a href="#mozTocId50790">Usage</a>
     <ul>
@@ -79,11 +80,13 @@ a Custom UploadStorageProvider</a></li>
   <li><a href="#mozTocId580088">Known
 Issues</a>
     <ul>
+      <li><a href="#WebGardenIssue">ProgressBar doesn't work with web gardens/farms</a></li>
       <li><a href="#mozTocId766780">HttpResponse.AppendToLog()
 does nothing when UploadHttpModule is used</a></li>
       <li><a href="#mozTocId752771">Inline
 ProgressBars don't work with Opera</a></li>
-      <li><a href="#mozTocId181845">Non-aboslute path in IE7 causes the progress display to start even though no upload occurs</a></li>
+      <li><a href="#mozTocId181845">Non-absolute path in IE7 causes the progress display to start even though no upload occurs</a></li>
+      <li><a href="#OnClickReturnValue">Handler returning false does not block default action in IE6</a></li>
     </ul>
   </li>
   <li><a href="#mozTocId405545">Troubleshooting</a></li>
@@ -382,6 +385,17 @@ data-binding expressions within <code style="font-weight: bold;">DetailsSpan</co
 NeatUpload can use AJAX techniques to update the values without
 requiring a browser a refresh. </p>
 
+
+<h2><a class="mozTocH2" name="Requirements"></a>Requirements</h2>
+
+<p>To use NeatUpload you will need:
+	<ul>
+		<li>.NET Framework 1.1, .NET Framework 2.0, or Mono 1.1.  Mono users that are using the mod_mono Apache
+		module should use mod_mono 1.1.14 or later.</li>
+		<li>A workign web application with "Full" <a href="http://msdn2.microsoft.com/en-us/library/tkscy493.aspx">trust</a>.  
+			That trust level is the default, but some hosting providers	force web applications to run with reduced trust.</li>
+	</ul>
+</p>
 
 <h2><a class="mozTocH2" name="mozTocId304923"></a>Installation</h2>
 
@@ -2407,6 +2421,20 @@ input file form element so that the user knows what the problem is.
 Issues</h2>
 
 
+<h3><a class="mozTocH3" name="WebGardenIssue"></a><code>ProgressBar</code> doesn't work with web gardens/farms</h3>
+
+
+<p>NeatUpload maintains information about the upload in the application state of the web application 
+receiving the upload request.  Since application state is not shared across instances of the web 
+application, the <code>ProgressBar</code> will not be able to determine the state of the upload if the
+requests it makes go to a different instance of the web application.  This can happen if you are running a
+web garden (i.e. multiple worker processes) or a web farm (i.e. multiple web servers).  To ensure that you
+are not running a web garden, see Microsoft's documentation on 
+<a href="http://www.microsoft.com/technet/prodtechnol/WindowsServer2003/Library/IIS/659f2e2c-a58b-4770-833b-df96cabe569e.mspx?mfr=true">Configuring Web Gardens with IIS 6</a>.
+For high volume sites, you might be able to use a web farm if you are able to ensure that all requests from a 
+particular client are routed to the same server (i.e. sticky IP).</p>
+
+
 <h3><a class="mozTocH3" name="mozTocId766780"></a><code>HttpResponse.AppendToLog()</code>
 does nothing when <code>UploadHttpModule</code> is used</h3>
 
@@ -2428,7 +2456,7 @@ during form submission. &nbsp;NeatUpload works around this by using
 a
 popup progress bar whenever the User-Agent header contains "Opera"
 (case-insensitive).</p>
-<h3><a class="mozTocH3" name="mozTocId181845"></a>Non-aboslute path in IE7 causes the progress display to start even though no upload occurs</h3>
+<h3><a class="mozTocH3" name="mozTocId181845"></a>Non-absolute path in IE7 causes the progress display to start even though no upload occurs</h3>
 <p>If instead of selecting a file to upload via the file selection
 dialog, the user types in a non-absolute path (e.g. just "x"), IE6 and
 IE7 will not submit the form and no upload will occur. &nbsp;Under IE6,
@@ -2444,6 +2472,38 @@ whether an absolute path was entered -- the value is "x" whether the
 user entered "x" or "c:\x".</p>
 <p>Since users almost always use the file selection dialog, this issue almost never arises.</p>
 
+<h3<a class="mozTocH3"name="OnClickReturnValue"></a>Handler returning false does not block default action in IE6</h3>
+<p>
+When not using NeatUpload, an event handler returning false will prevent the browser from performing the default action
+for the event.  For example, consider a submit button with <code>onclick="return&nbsp;confirm('Submit?');"</code>.
+If the user clicks the button a dialog will appear asking "Submit?".  When not using NeatUpload, declining will
+prevent submission of the form.  However, when using NeatUpload, the 
+form will be submitted if the user is using IE6.  To workaround this, change such handlers to set 
+<code>window.event.returnValue=false</code> when they return false.  For example, here is the implementation
+of a function that can be used instead of <code>confirm()</code> in the above example:
+
+<pre>
+function confirmSubmit(msg)
+{
+    var confirmed = confirm(msg);
+    if (!confirmed &amp;&amp; window.event)
+        window.event.returnValue = false;
+    return confirmed;
+}
+</pre>
+
+</p>
+<p>
+This problem is caused by a difference in the order IE6 calls event handlers.  In order to prevent non-triggers
+from starting an upload, NeatUpload registers event handlers on the <code>&lt;form&gt;</code> element for a variety
+of events (including onclick).  Those handlers clear the filename if the event is not coming from a trigger.  In 
+standard-conformant browsers (i.e. modern browsers other than IE), it is possible to register those handlers so that
+they run before other handlers registered for controls within the form (e.g. submit buttons).  As a result, the value
+returned by the submit button handler is what determines whether the form actually gets submitted.  In IE, the 
+NeatUpload form event handler runs last and the value it returns (always true) determines whether the form gets 
+submitted.  NeatUpload can't determine the value returned by the submit button handler and return it instead, 
+so the above workaround is needed.  
+</p>
 
 <h2><a class="mozTocH2" name="mozTocId405545"></a>Troubleshooting</h2>
 
