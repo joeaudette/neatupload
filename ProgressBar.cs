@@ -345,12 +345,6 @@ if (document.getElementById)
 
 		protected override void Render(HtmlTextWriter writer)
 		{
-			// Enclose the pop-up fallback div in a <noscript> tag to ensure that it is not visible, even during
-			// page load.
-			if (!Inline && !IsDesignTime)
-			{
-				writer.Write("<noscript>");
-			}
 			if (IsDesignTime)
 			{
 				Tag = HtmlTextWriterTag.Div;
@@ -360,6 +354,12 @@ if (document.getElementById)
 				return;
 			}
 			
+			// Enclose the pop-up fallback div in a <noscript> tag to ensure that it is not visible, even during
+			// page load.
+			if (!Inline && !IsDesignTime)
+			{
+				writer.Write("<noscript>");
+			}
 			EnsureChildControls();
 			base.AddAttributesToRender(writer);
 			writer.RenderBeginTag(Tag);
