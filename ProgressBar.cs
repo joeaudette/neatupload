@@ -345,46 +345,62 @@ if (document.getElementById)
 
 		protected override void Render(HtmlTextWriter writer)
 		{
+			if (IsDesignTime)
+			{
+				Tag = HtmlTextWriterTag.Div;
+			}
+			else if (!Config.Current.UseHttpModule)
+			{
+				return;
+			}
+			
 			// Enclose the pop-up fallback div in a <noscript> tag to ensure that it is not visible, even during
 			// page load.
 			if (!Inline && !IsDesignTime)
 			{
 				writer.Write("<noscript>");
 			}
-			if (IsDesignTime)
-			{
-				Tag = HtmlTextWriterTag.Div;
-			}
-			else if (!Config.Current.UseHttpModule)
-				return;
 			EnsureChildControls();
 			base.AddAttributesToRender(writer);
 			writer.RenderBeginTag(Tag);
-			if (IsDesignTime)
+			
+			bool renderFallback = true;
+			// Don't render the no-iframe fallback if the browser supports frames because there have been reports
+			// that the fallback is briefly visible in some browsers.
+			if (Inline && !IsDesignTime && Context != null && Context.Request != null && Context.Request.Browser != null && Context.Request.Browser.Frames)
 			{
-				if (Inline)
+		    	renderFallback = false;
+		    }
+		    if (renderFallback)
+		    {
+		    	
+			    if (IsDesignTime)
 				{
-					writer.Write("<i>Inline ProgressBar - no-IFRAME fallback = {</i>");
+					if (Inline)
+					{
+						writer.Write("<i>Inline ProgressBar - no-IFRAME fallback = {</i>");
+					}
+					else
+					{
+						writer.Write("<i>Pop-up ProgressBar - no-Javascript fallback = {</i>");
+					}
 				}
-				else
+			    
+				writer.AddAttribute("id", ClientID + "_fallback_link");
+				writer.AddAttribute("href", uploadProgressUrl + "&refresher=server&canScript=false&canCancel=false");
+				string target = IsDesignTime ? "_blank" : FormContext.Current.PostBackID;
+				writer.AddAttribute("target", target);
+				writer.RenderBeginTag(HtmlTextWriterTag.A);
+				if (!HasControls())
 				{
-					writer.Write("<i>Pop-up ProgressBar - no-Javascript fallback = {</i>");
+					writer.Write("Check Upload Progress");
 				}
-			}
-			writer.AddAttribute("id", ClientID + "_fallback_link");
-			writer.AddAttribute("href", uploadProgressUrl + "&refresher=server&canScript=false&canCancel=false");
-			string target = IsDesignTime ? "_blank" : FormContext.Current.PostBackID;
-			writer.AddAttribute("target", target);
-			writer.RenderBeginTag(HtmlTextWriterTag.A);
-			if (!HasControls())
-			{
-				writer.Write("Check Upload Progress");
-			}
-			base.RenderChildren(writer);
-			writer.RenderEndTag();
-			if (IsDesignTime)
-			{
-				writer.Write("<i>}</i>");
+				base.RenderChildren(writer);
+				writer.RenderEndTag();
+				if (IsDesignTime)
+				{
+					writer.Write("<i>}</i>");
+				}
 			}
 			writer.RenderEndTag();
 			if (!Inline && !IsDesignTime)
