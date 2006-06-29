@@ -186,9 +186,8 @@ setTimeout(""frames['" + this.ClientID + @"'].location.href = '" + uploadProgres
 				this.Page.RegisterStartupScript(this.UniqueID + "UpdateIFrameSrc", @"
 <script language=""javascript"">
 <!--
-NeatUpload_IFrameNode = document.getElementById ? document.getElementById('" + this.ClientID + @"') : null; 
-if (NeatUpload_IFrameNode)
-	NeatUpload_IFrameNode.setAttribute('src', '" + uploadProgressUrl + @"&canScript=true&canCancel=' + NeatUploadCanCancel());
+if (frames['" + this.ClientID + @"'])
+	frames['" + this.ClientID + @"'].location.replace('" + uploadProgressUrl + @"&canScript=true&canCancel=' + NeatUploadCanCancel());
 // -->
 </script>
 ");
