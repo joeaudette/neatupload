@@ -579,9 +579,9 @@ namespace Brettle.Web.NeatUpload
 
 		public override string GetKnownRequestHeader (int index)
 		{
-			ParseMultipart();
 			if (index == HttpWorkerRequest.HeaderContentLength)
 			{
+				ParseMultipart();
 				return preloadedEntityBody.Length.ToString();
 			}
 			return OrigWorker.GetKnownRequestHeader (index);
