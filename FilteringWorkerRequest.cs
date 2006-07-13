@@ -184,6 +184,13 @@ namespace Brettle.Web.NeatUpload
 		
 		private int ReadOrigEntityBody(byte[] destBuf, int count)
 		{
+			// If the upload was cancelled, return a 204 error code which tells the client that it
+			// "SHOULD NOT change its document view from that which caused the request to be sent" (RFC 2616 10.2.5)
+			if (uploadContext.Status == UploadStatus.Cancelled)
+			{
+				throw new HttpException(204, "Upload cancelled by user");
+			}
+			
 			int totalRead = 0;
 			if (origPreloadedBody != null)
 			{
@@ -533,9 +540,9 @@ namespace Brettle.Web.NeatUpload
 
 		public override string GetKnownRequestHeader (int index)
 		{
-			ParseMultipart();
 			if (index == HttpWorkerRequest.HeaderContentLength)
 			{
+				ParseMultipart();
 				return preloadedEntityBody.Length.ToString();
 			}
 			return OrigWorker.GetKnownRequestHeader (index);

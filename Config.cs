@@ -86,7 +86,7 @@ namespace Brettle.Web.NeatUpload
                 this.ResourceManager = new ResourceManager("Brettle.Web.NeatUpload.Strings",
                                                             System.Reflection.Assembly.GetExecutingAssembly());
                 // Force an exception if the resources aren't there because...
-                string test = this.ResourceManager.GetString("UploadTooLargeMessageFormat");
+                this.ResourceManager.GetString("UploadTooLargeMessageFormat");
             }
             catch (MissingManifestResourceException)
             {
