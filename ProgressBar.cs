@@ -186,9 +186,8 @@ setTimeout(""frames['" + this.ClientID + @"'].location.href = '" + uploadProgres
 				this.Page.RegisterStartupScript(this.UniqueID + "UpdateIFrameSrc", @"
 <script language=""javascript"">
 <!--
-NeatUpload_IFrameNode = document.getElementById ? document.getElementById('" + this.ClientID + @"') : null; 
-if (NeatUpload_IFrameNode)
-	NeatUpload_IFrameNode.setAttribute('src', '" + uploadProgressUrl + @"&canScript=true&canCancel=' + NeatUploadCanCancel());
+if (frames['" + this.ClientID + @"'])
+	frames['" + this.ClientID + @"'].location.replace('" + uploadProgressUrl + @"&canScript=true&canCancel=' + NeatUploadCanCancel());
 // -->
 </script>
 ");
@@ -443,7 +442,7 @@ NeatUpload_NonUploadIDs_" + this.ClientID + @".NeatUpload_length = 0;
 NeatUpload_TriggerIDs_" + this.ClientID + @" = new Object();
 NeatUpload_TriggerIDs_" + this.ClientID + @".NeatUpload_length = 0;
 
-NeatUpload_LastEventSourceId = null;
+NeatUpload_LastEventSource = null;
 NeatUpload_LastEventType = null;
 NeatUpload_AlertShown = true;
 
@@ -451,10 +450,10 @@ NeatUpload_AddSubmitHandler('" + formControl.ClientID + "'," + (Inline ? "false"
 	var formElem = document.getElementById('" + formControl.ClientID + @"');
 	// If trigger controls were specified for this progress bar and the trigger is not 
 	// specified for *any* progress bar, then clear the filenames.
-	if (NeatUpload_LastEventSourceId
-	    && (NeatUpload_NonUploadIDs_" + this.ClientID + @"[NeatUpload_LastEventSourceId]
+	if (NeatUpload_LastEventSource
+	    && (NeatUpload_IsElemWithin(NeatUpload_LastEventSource, NeatUpload_NonUploadIDs_" + this.ClientID + @")
 	      	|| NeatUpload_TriggerIDs_" + this.ClientID + @".NeatUpload_length)
-	    && !NeatUpload_TriggerIDs[NeatUpload_LastEventSourceId])
+	    && !NeatUpload_IsElemWithin(NeatUpload_LastEventSource, NeatUpload_TriggerIDs))
 	{
 		return NeatUpload_ClearFileInputs(formElem);
 	}
@@ -462,7 +461,7 @@ NeatUpload_AddSubmitHandler('" + formControl.ClientID + "'," + (Inline ? "false"
 	// a specified trigger control was triggered, then start the progress display.
 	if (NeatUpload_IsFilesToUpload('" + formControl.ClientID + @"')
 		&& (!NeatUpload_TriggerIDs_" + this.ClientID + @".NeatUpload_length
-		    || NeatUpload_TriggerIDs_" + this.ClientID + @"[NeatUpload_LastEventSourceId]))
+		    || NeatUpload_IsElemWithin(NeatUpload_LastEventSource, NeatUpload_TriggerIDs_" + this.ClientID + @")))
 	{
 		" + displayStatement + @"
 	}
@@ -481,18 +480,18 @@ for (var i = 0; i < NeatUpload_EventsThatCouldTriggerPostBack.length; i++)
 			return true;
 		}
 		var src = ev.srcElement || ev.target;
-		if (!src || src.id == '')
+		if (!src)
 		{
 			return true;
 		}
 		NeatUpload_LastEventType = ev.type;
-		NeatUpload_LastEventSourceId = src.id;
+		NeatUpload_LastEventSource = src;
 		NeatUpload_AlertShown = false;
 		if (ev.type != 'click' && ev.type != 'keypress')
 		{
 			return true;
 		}
-		if (NeatUpload_TriggerIDs[src.id]
+		if (NeatUpload_IsElemWithin(src, NeatUpload_TriggerIDs)
 		      || NeatUpload_TriggerIDs.NeatUpload_length == 0)
 		{
 			return true;
@@ -518,16 +517,16 @@ for (var i = 0; i < NeatUpload_EventsThatCouldTriggerPostBack.length; i++)
 }
 
 NeatUpload_AddSubmittingHandler('" + formControl.ClientID + @"', function () {
-	if (!NeatUpload_LastEventSourceId)
+	if (!NeatUpload_LastEventSource)
 	{
 		return;
 	}
-	if (NeatUpload_TriggerIDs[NeatUpload_LastEventSourceId])
+	if (NeatUpload_IsElemWithin(NeatUpload_LastEventSource, NeatUpload_TriggerIDs))
 	{
 		return;
 	}
 	var formElem = document.getElementById('" + formControl.ClientID + @"');
-	if (NeatUpload_NonUploadIDs[NeatUpload_LastEventSourceId]
+	if (NeatUpload_IsElemWithin(NeatUpload_LastEventSource, NeatUpload_NonUploadIDs)
 	     || NeatUpload_TriggerIDs.NeatUpload_length)
 	{
 		NeatUpload_ClearFileInputs(formElem);
@@ -606,6 +605,17 @@ if (!Function.prototype.call)
 	};
 }
 
+function NeatUpload_IsElemWithin(elem, assocArray)
+{
+	while (elem)
+	{
+		if (elem.id && assocArray[elem.id])
+		{
+			return true;
+		}
+		elem = elem.parentNode;
+	}
+}
 
 function NeatUploadCanCancel()
 {

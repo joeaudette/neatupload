@@ -135,8 +135,8 @@ does nothing when UploadHttpModule is used</a></li>
 ProgressBars don't work with Opera</a></li>
       <li><a href="#mozTocId181845">Non-absolute path in IE7 causes the progress display to start even though no upload occurs</a></li>
       <li><a href="#OnClickReturnValue">Handler returning false does not block default action in IE6</a></li>
-
-    
+      <li><a href="#MacIELinkButtons"><code>LinkButtons</code> do not start the progress display in Internet Explorer 
+for the Mac</a></li>
     </ul>
 
   </li>
@@ -2977,7 +2977,7 @@ user entered "x" or "c:\x".</p>
 
 <p>Since users almost always use the file selection dialog, this issue almost never arises.</p>
 
-<h3<a class="mozTocH3"name="OnClickReturnValue"></a>Handler returning false does not block default action in IE6</h3>
+<h3><a class="mozTocH3" name="OnClickReturnValue"></a>Handler returning false does not block default action in IE6</h3>
 <p>
 When not using NeatUpload, an event handler returning false will prevent the browser from performing the default action
 for the event.  For example, consider a submit button with <code>onclick="return&nbsp;confirm('Submit?');"</code>.
@@ -3008,6 +3008,15 @@ returned by the submit button handler is what determines whether the form actual
 NeatUpload form event handler runs last and the value it returns (always true) determines whether the form gets 
 submitted.  NeatUpload can't determine the value returned by the submit button handler and return it instead, 
 so the above workaround is needed.  
+</p>
+<h3><a class="mozTocH3" name="MacIELinkButtons"></a><code>LinkButtons</code> do not start the progress display in Internet Explorer 
+for the Mac</h3>
+<p>
+NeatUpload overrides the <code>form.submit()</code> JavaScript method to start the progress display when the 
+form is submitted programmatically (e.g. with a <code>LinkButton</code>).  Mac IE does not support overriding 
+<code>form.submit()</code> so NeatUpload can't start the progress display if a <code>LinkButton</code> is used to
+submit the form.  The upload still occurs though.  Since Mac IE is no longer supported by Microsoft and currently
+has less than 1% of the browser market, there are currently no plans to develop a workaround for this.
 </p>
 
 <h2><a class="mozTocH2" name="mozTocId405545"></a>Troubleshooting</h2>
