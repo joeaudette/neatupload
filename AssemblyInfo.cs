@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Web.UI;
+using System.IO;
 
 // Information about this assembly is defined by the following
 // attributes.
@@ -32,8 +33,8 @@ using System.Web.UI;
 // The following attributes specify the key for the sign of your assembly. See the
 // .NET Framework documentation for more information about signing.
 // This is not required, if you don't want signing let these attributes like they're.
-[assembly: AssemblyDelaySign(false)]
-[assembly: AssemblyKeyFile("")]
+[assembly: AssemblyDelaySign(true)]
+[assembly: AssemblyKeyFile("public.snk")]
 
 // This helps with VS designer support.
 [assembly: TagPrefix("Brettle.Web.NeatUpload", "Upload")]
@@ -41,6 +42,7 @@ using System.Web.UI;
 // This makes it easier to link with code that require CLS compliance.
 [assembly: CLSCompliant(true)]
 
+[assembly: System.Security.AllowPartiallyTrustedCallers]
 #if USE_LOG4NET
 [assembly: log4net.Config.XmlConfigurator(ConfigFile="log4net.config", Watch=true)]
 #else
