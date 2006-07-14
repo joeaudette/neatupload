@@ -49,34 +49,44 @@ namespace Brettle.Web.NeatUpload
 		{
 			return new FilesystemUploadedFile(this, controlUniqueID, fileName, contentType, storageConfig);
 		}
-		
-		public DirectoryInfo TempDirectory = new DirectoryInfo(Path.GetTempPath());
+
+        public DirectoryInfo TempDirectory = null;
 		
 		internal DirectoryInfo GetTempDirectory(NameValueCollection attrs)
 		{
-			DirectoryInfo tempDirectory = TempDirectory;
-			if (attrs == null)
-			{
-				return tempDirectory;
-			}
-			foreach (string name in attrs.Keys)
-			{
-				string val = attrs[name];
-				if (name == "tempDirectory")
-				{
-					if (HttpContext.Current != null)
-					{
-						val = Path.Combine(HttpContext.Current.Request.PhysicalApplicationPath, 
-												val);
-					}
-					tempDirectory = new DirectoryInfo(val);
-				}
-				else
-				{
-					throw new System.Xml.XmlException("Unrecognized attribute: " + name);
-				}
-			}
-			return tempDirectory;
+            string tempPath = null;
+            if (attrs != null)
+            {
+                foreach (string name in attrs.Keys)
+                {
+                    string val = attrs[name];
+                    if (name == "tempDirectory")
+                    {
+                        if (HttpContext.Current != null)
+                        {
+                            val = Path.Combine(HttpContext.Current.Request.PhysicalApplicationPath,
+                                                    val);
+                        }
+                        tempPath = val;
+                    }
+                    else
+                    {
+                        throw new System.Xml.XmlException("Unrecognized attribute: " + name);
+                    }
+                }
+            }
+            if (tempPath != null)
+            {
+                return new DirectoryInfo(tempPath);
+            }
+            else if (TempDirectory != null)
+            {
+                return TempDirectory;
+            }
+            else
+            {
+                return new DirectoryInfo(Path.GetTempPath());
+            }
 		}
 	}
 }

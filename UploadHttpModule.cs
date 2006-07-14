@@ -22,6 +22,7 @@ using System;
 using System.Configuration;
 using System.Web;
 using System.Threading;
+using System.Security.Permissions;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -103,6 +104,7 @@ namespace Brettle.Web.NeatUpload
 		{
 		}
 		
+        [SecurityPermission(SecurityAction.Assert, UnmanagedCode=true)]
 		internal static HttpWorkerRequest GetCurrentWorkerRequest()
 		{
 			HttpContext origContext = HttpContext.Current;
