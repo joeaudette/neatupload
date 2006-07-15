@@ -192,6 +192,9 @@ namespace Brettle.Web.NeatUpload
 				throw new HttpException(204, "Upload cancelled by user");
 			}
 			
+			// Yield to other threads so that the progress bar has a chance to update.
+			System.Threading.Thread.Sleep(0);
+			
 			int totalRead = 0;
 			if (origPreloadedBody != null)
 			{
