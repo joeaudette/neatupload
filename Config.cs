@@ -26,6 +26,7 @@ using System.IO;
 using System.Xml;
 using System.Resources;
 using System.Security.Cryptography;
+using System.Security.Permissions;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -80,6 +81,7 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 
+        [SecurityPermission(SecurityAction.Assert, SerializationFormatter=true)]
 		private Config() 
 		{
             try
@@ -95,6 +97,7 @@ namespace Brettle.Web.NeatUpload
                 // with VS2003.
                 this.ResourceManager = new ResourceManager("NeatUpload.Strings",
                                                             System.Reflection.Assembly.GetExecutingAssembly());
+                this.ResourceManager.GetString("UploadTooLargeMessageFormat");
             }
         }
 
