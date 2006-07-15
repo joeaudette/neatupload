@@ -182,7 +182,6 @@ namespace Brettle.Web.NeatUpload
 		private long grandTotalBytesRead = 0;
 		private int origPreloadedBodyPos = 0;
 		private byte[] origPreloadedBody = null;
-        private DateTime lastYieldTime = DateTime.Now;
 		
 		private int ReadOrigEntityBody(byte[] destBuf, int count)
 		{
@@ -200,18 +199,11 @@ namespace Brettle.Web.NeatUpload
                 secsToWait = Math.Max(0, desiredSecs - uploadContext.TimeElapsed.TotalSeconds);
             }
 
-            // Take a break if necessary to stay within MaxUploadRate or if we haven't given other
-            // threads a chance for 0.5 seconds.  The latter ensures that the progress bar is at least
-            // somewhat responsive.
-            if (secsToWait > 0 || DateTime.Now > lastYieldTime.AddSeconds(0.5))
-            {
-                // NOTE: We always call Sleep(), even if secsToWait == 0.  Sleep(0) will give other threads
-                // (notably threads handling progress page requests) time to work.
-                System.Threading.Thread.Sleep((int)(1000 * secsToWait));
-                lastYieldTime = DateTime.Now;
-            }
-			
-			int totalRead = 0;
+            // NOTE: if secsToWait = 0, this will simply yield to other threads so that the progress bar 
+            // has a chance to update.
+            System.Threading.Thread.Sleep((int)(1000 * secsToWait));
+
+            int totalRead = 0;
 			if (origPreloadedBody != null)
 			{
 				int read = Math.Min(count, origPreloadedBody.Length - origPreloadedBodyPos);
@@ -278,7 +270,7 @@ namespace Brettle.Web.NeatUpload
 
 		private void WriteParsedToOutputStream()
 		{
-			outputStream.Write(buffer, readPos, parsePos-readPos);
+            outputStream.Write(buffer, readPos, parsePos - readPos);
 			readPos = parsePos;
 			
 /*
