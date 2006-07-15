@@ -182,6 +182,7 @@ namespace Brettle.Web.NeatUpload
 		private long grandTotalBytesRead = 0;
 		private int origPreloadedBodyPos = 0;
 		private byte[] origPreloadedBody = null;
+        private DateTime lastYieldTime = DateTime.Now;
 		
 		private int ReadOrigEntityBody(byte[] destBuf, int count)
 		{
@@ -192,15 +193,23 @@ namespace Brettle.Web.NeatUpload
 				throw new HttpException(204, "Upload cancelled by user");
 			}
 
-			if (uploadContext != null && Config.Current.MaxUploadRate > 0)
-			{
-				double desiredSecs = ((double)uploadContext.BytesRead) / Config.Current.MaxUploadRate;
-				double secsToWait = desiredSecs - uploadContext.TimeElapsed.TotalSeconds;
-				if (secsToWait > 0)
-				{
-					System.Threading.Thread.Sleep((int)(1000 * secsToWait));
-				}
-			}
+            double secsToWait = 0;
+            if (uploadContext != null && Config.Current.MaxUploadRate > 0)
+            {
+                double desiredSecs = ((double)uploadContext.BytesRead) / Config.Current.MaxUploadRate;
+                secsToWait = Math.Max(0, desiredSecs - uploadContext.TimeElapsed.TotalSeconds);
+            }
+
+            // Take a break if necessary to stay within MaxUploadRate or if we haven't given other
+            // threads a chance for 0.5 seconds.  The latter ensures that the progress bar is at least
+            // somewhat responsive.
+            if (secsToWait > 0 || DateTime.Now > lastYieldTime.AddSeconds(0.5))
+            {
+                // NOTE: We always call Sleep(), even if secsToWait == 0.  Sleep(0) will give other threads
+                // (notably threads handling progress page requests) time to work.
+                System.Threading.Thread.Sleep((int)(1000 * secsToWait));
+                lastYieldTime = DateTime.Now;
+            }
 			
 			int totalRead = 0;
 			if (origPreloadedBody != null)
