@@ -85,8 +85,36 @@ namespace Brettle.Web.NeatUpload
             }
             else
             {
-                return new DirectoryInfo(Path.GetTempPath());
+                return GetDefaultTempDirectory();
             }
 		}
+		
+		private DirectoryInfo GetDefaultTempDirectory()
+		{
+			// Use "app_data/NeatUpload_Temp" if it exists (or can be created), and is writable.  Otherwise use the
+			// system temp dir.
+			try
+			{
+				DirectoryInfo appDir = new DirectoryInfo(HttpContext.Current.Request.PhysicalApplicationPath);
+				DirectoryInfo tempDir = appDir.CreateSubdirectory(Path.Combine("app_data", "NeatUpload_Temp"));
+				string testFilePath = Path.Combine(tempDir.FullName, "test.config");
+				FileStream s = File.Create(testFilePath);
+				try
+				{
+					s.WriteByte(42);
+				}
+				finally
+				{
+					s.Close();
+				}
+				File.Delete(testFilePath);
+				return tempDir;
+			}
+			catch (Exception)
+			{
+				return new DirectoryInfo(Path.GetTempPath());
+			}
+		}
+		
 	}
 }

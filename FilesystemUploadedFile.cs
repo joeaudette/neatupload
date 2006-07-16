@@ -57,6 +57,7 @@ namespace Brettle.Web.NeatUpload
 				tmpDirInfo.Create();
 			}
 			string name = Guid.NewGuid().ToString("N"); // 32 hex digits
+			name = name + ".config"; // ASP.NET blocks requests for .config files. 
 			tmpFileName = Path.Combine(tmpDirInfo.FullName, name);
 			TmpFile = new FileInfo(tmpFileName);
 		}
