@@ -20,16 +20,22 @@ Manual</h1>
 
 <ul id="mozToc">
 
-<!--mozToc h2 1 h3 2 h4 3 h5 4 h5 5 h6 6--><li><a href="#mozTocId469429">Release
-Notes for NeatUpload-1.2.x</a>
+<!--mozToc h2 1 h3 2 h4 3 h5 4 h5 5 h6 6--><li><a href="#ReleaseNotes">Release
+Notes for NeatUpload-1.3.x</a>
     
     <ul>
+
+      <li><a href="#Upgrading1dot2">Upgrading
+from NeatUpload-1.2.x</a></li>
 
       <li><a href="#mozTocId44439">Upgrading
 from NeatUpload-1.1.x</a></li>
 
       <li><a href="#mozTocId432734">Upgrading
 from NeatUpload-1.0.x</a></li>
+
+      <li><a href="#NewFeatures1dot3">New
+Features in NeatUpload-1.3</a></li>
 
       <li><a href="#mozTocId432817">New
 Features in NeatUpload-1.2</a></li>
@@ -76,7 +82,7 @@ from a Client Application</a></li>
 the &lt;neatUpload&gt;
 Configuration Section</a></li>
 
-      <li><a href="#mozTocId905959">Changing
+      <li><a href="#TempDirectory">Changing
 the Temporary Directory Used by the FilesystemUploadStorageProvider</a></li>
 
       <li><a href="#mozTocId134915">Using
@@ -88,6 +94,9 @@ the Size of Upload Requests</a></li>
 
       <li><a href="#mozTocId358727">Changing
 the Maximum Size of Normal Requests</a></li>
+
+      <li><a href="#MaxUploadRate">Limiting
+the Upload Rate</a></li>
 
       <li><a href="#mozTocId991184">Changing
 the Query String Parameter Used When Uploading From Client Applications</a></li>
@@ -147,41 +156,62 @@ for the Mac</a></li>
 
 
 
-<h2><a class="mozTocH2" name="mozTocId469429"></a>Release
-Notes for NeatUpload-1.2.x</h2>
+<h2><a class="mozTocH2" name="ReleaseNotes"></a>Release
+Notes for NeatUpload-1.3.x</h2>
+
+<h3>About NeatUpload Version Numbering</h3>
+
+NeatUpload release names have the form NeatUpload-<em>major.minor.patch</em>.  When 
+comparing versions, the same major and minor numbers but a higher patch number (e.g. 1.1.4 vs. 1.1.3) means 
+the new version contains 
+only fixes for bugs in existing assemblies or new features implemented in new optional assemblies.  There is 
+very little risk (and sometimes significant reward) in installing the new version.  The same major 
+number but a higher minor number (e.g. 1.2.<em>patch</em> vs. 1.1.<em>patch</em>) means the new version adds new features to existing assemblies
+but any backward
+incompatibilities are extremely minor.  You should not need to modify your application to continue to use the old
+features, but you might need to make modification to use the new features.  However, you should review the release 
+notes and test your application after upgrading to ensure that bugs weren't 
+inadvertently introduced.  A higher major number (e.g. 2.<em>minor.patch</em> vs. 1.<em>minor.patch</em>) means the new version contains significant changes 
+that are not backward-compatible.  Depending on what features your application uses, you might need to modify it
+to work with the new version.  Review the release notes for details.<br>
 
 
+<h3><a class="mozTocH3" name="Upgrading1dot2"></a>Upgrading
+from NeatUpload-1.2.x and NeatUpload-1.1.x</h3>
 
-<h3><a class="mozTocH3" name="mozTocId44439"></a>Upgrading
-from NeatUpload-1.1.x</h3>
-
-
-
-NeatUpload-1.2.x is intended to be
-completely&nbsp;backward-compatible with NeatUpload-1.1.x.<br>
-
-
-
-<br>
-
-
-
+<p>
+NeatUpload-1.3.x is intended to be almost
+completely backward-compatible with NeatUpload-1.2.x and NeatUpload-1.1.x.
 To upgrade, simply
 replace your
 <code>Brettle.Web.NeatUpload.dll</code> with the copy from
-NeatUpload-1.2.x and copy
-<code>Progress.js</code><code></code> from <code>NeatUpload-1.2.x/NeatUpload/</code>
-to the <code>NeatUpload/</code>
-subfolder in your web application.&nbsp;
+NeatUpload-1.3.x.
+</p>
+<p>
+The
+only compatiblity exception is that if you don't specify a temporary directory for use by the default
+<code>FileSystemUploadStorageProvider</code>, it will first try to use the directory
+<code>app_data\NeatUpload_Temp</code> within your
+application directory.  If that directory exists (or can be created) and is writable, NeatUpload will use it.  
+Otherwise, it will revert to the old behavior of using the system-wide temporary directory.   This change was made
+to make it easier to configure NeatUpload in environments which use a Medium trust-level.  In
+such an environment, the server administrator typically doesn't want to give applications access to the system-wide
+directory.  Without this change, you would need to explicitly specify a temporary directory
+for NeatUpload to work in such an environment.  With this change, you at most need to create 
+<code>app_data\NeatUpload_Temp</code> and grant write permissions to the account that your app runs under.
+If you aren't in a Medium trust environment, you don't even need to do that.  NeatUpload will probably be unable to
+create the directory and will fallback to using the system-wide temporary directory. 
+</p>
+
 <h3><a class="mozTocH3" name="mozTocId432734"></a>Upgrading
 from NeatUpload-1.0.x</h3>
 
 
 
-NeatUpload-1.1.x is intended to be almost
+NeatUpload-1.3.x is intended to be almost
 completely&nbsp;backward-compatible with NeatUpload-1.0.x.
 &nbsp;The
-only exception is that <code>ProgressBar</code>s must now
+only exception other than the change to the default temp directory is that <code>ProgressBar</code>s must now
 be placed somewhere inside a <code>&lt;form&gt;</code>
 element. &nbsp;In almost all cases that will already be the case so
 this should not be a major issue. &nbsp;<br>
@@ -195,14 +225,14 @@ this should not be a major issue. &nbsp;<br>
 To upgrade, simply
 replace your
 <code>Brettle.Web.NeatUpload.dll</code> with the copy from
-NeatUpload-1.1.x and add
+NeatUpload-1.3.x and add
 <code>Progress.js</code> and <code>Error413.aspx</code>
-from <code>NeatUpload-1.1.x/NeatUpload/</code>
+from <code>NeatUpload-1.3.x/NeatUpload/</code>
 to the <code>NeatUpload/</code>
 subfolder in your web application.
 &nbsp;If you have not customized your <code>Progress.aspx</code>
 page, you
-should replace it with <code>NeatUpload-1.1.x/NeatUpload/Progress.aspx</code>.
+should replace it with <code>NeatUpload-1.3.x/NeatUpload/Progress.aspx</code>.
 &nbsp;If you have customized it, consider changing it to use
 the new <code>&lt;Upload:DetailsSpan&gt;</code>
 and <code>&lt;Upload:DetailsDiv&gt;</code>
@@ -222,16 +252,36 @@ methods. &nbsp;Those methods may be removed in NeatUpload-2.x.
 &nbsp;You
 are
 encouraged to switch to their replacements, but that is not required
-for NeatUpload-1.1.x.
+for NeatUpload-1.3.x.
 &nbsp;Similarly, you are encouraged to use the new
 custom
 configuration section instead of the NeatUpload-1.0.x appSettings.
 &nbsp;The old appSettings
-still work in NeatUpload-1.1.x, but the new custom configuration
+still work in NeatUpload-1.3.x, but the new custom configuration
 section provides much more flexibility, including the ability to use
 location filtering to restrict the requests that NeatUpload touches.
 &nbsp;See <a href="Manual.html#mozTocId221000">Configuration</a>
 for details.<br>
+
+
+
+<h3><a class="mozTocH3" name="NewFeatures1dot3"></a>New
+Features in NeatUpload-1.3</h3>
+
+
+
+<ul>
+
+
+
+  <li>Added support for <a href="#MediumTrust">Using NeatUpload in a Medium Trust Environment</a> 
+  when installed in the GAC.</li>
+
+  <li>Added support for <a href="#MaxUploadRate">Limiting the Upload Rate</a>.</li>
+
+
+
+</ul>
 
 
 
@@ -490,8 +540,11 @@ requiring a browser a refresh. </p>
 	<ul>
 		<li>.NET Framework 1.1, .NET Framework 2.0, or Mono 1.1.  Mono users that are using the mod_mono Apache
 		module should use mod_mono 1.1.14 or later.</li>
-		<li>A workign web application with "Full" <a href="http://msdn2.microsoft.com/en-us/library/tkscy493.aspx">trust</a>.  
-			That trust level is the default, but some hosting providers	force web applications to run with reduced trust.</li>
+		<li>A working web application.</li>
+		<li>Either "Full" <a href="http://msdn2.microsoft.com/en-us/library/tkscy493.aspx">trust</a>
+		or, if NeatUpload is installed in the GAC, at least "Medium" trust.
+		"Full" trust level is the ASP.NET default, but some hosting providers force web applications to run with "Medium" trust.
+		</li>
 	</ul>
 </p>
 
@@ -499,7 +552,7 @@ requiring a browser a refresh. </p>
 
 
 
-<p> Installing NeatUpload is pretty straightforward. Just copy
+<p>Installing NeatUpload is pretty straightforward. Just copy
 the necessary assemblies and subdirectories into your application and
 make some
 modifications to your <code>Web.config</code>.
@@ -513,12 +566,47 @@ modifications to your <code>Web.config</code>.
 
   <li>If you haven't already, download the release and extract
 it wherever you want. All the files will be extracted into a
-subdirectory named <code>NeatUpload-1.1.<span style="font-style: italic;">x</span>/</code>. </li>
+subdirectory named <code>NeatUpload-<em>version</em>/</code>, where 
+version is the version of the release you are installing.</li>
 
+  <li><a name="MediumTrust"></a>If your application has "Full" trust, you can safely skip this step.
+  If your application does not have "Full" trust, a server administrator (e.g. your hosting provider)
+  needs to install NeatUpload in the
+  GAC.  This is necessary because NeatUpload (and all other similar components) needs to access the underlying 
+  <code>HttpWorkerRequest</code> object.  To install NeatUpload in the GAC, the server administrator should:
+  	<ol>
+  		<li>Use Windows Explorer to open <code>%WINDIR%\assembly</code>.  The window will list the assemblies
+  		currently in the GAC along with their version number, etc.</li>
+  		<li>In another Windows Explorer window, open the <code>NeatUpload-<em>version</em>\bin</code> folder.</li>
+  		<li>Drag and drop <code>Brettle.Web.NeatUpload.dll</code> and (if present)
+  		<code>Policy.<em>major.minor</em>.Brettle.Web.NeatUpload.dll</code> from the 
+  		<code>NeatUpload-<em>version</em>\bin</code> folder into the GAC window to add them to the GAC.</li>
+  		<li>Find the Brettle.Web.NeatUpload assembly that was just added and note the value in the "Version" column.</li>
+  		<li>Tell NeatUpload users that the full strong name for the Brettle.Web.NeatUpload assembly is 
+  		<code>Brettle.Web.NeatUpload,&nbsp;Version=<em><b>value&nbsp;in&nbsp;version&nbsp;column</b></em>,&nbsp;Culture=neutral,&nbsp;PublicKeyToken=C95290D92C5893C8"</code>.
+  	</ol>
+  To use NeatUpload after it has been installed in the GAC, you need to:
+  	<ol>
+  		<li>Use the full strong name wherever the assembly is referenced in your application's <code>Web.config</code>.
+  		For example, if this documentation says to use:<br />
+		  <blockquote>
+		  	<code>type="Brettle.Web.NeatUpload.UploadHttpModule,&nbsp;<b>Brettle.Web.NeatUpload</b>"</code><br/>
+		  </blockquote>
+	  	you would use:<br />
+		  <blockquote>
+			<code>type="Brettle.Web.NeatUpload.UploadHttpModule,&nbsp;<b>Brettle.Web.NeatUpload,&nbsp;Version=<em>value&nbsp;from&nbsp;admin</em>,&nbsp;Culture=neutral,&nbsp;PublicKeyToken=C95290D92C5893C8"</b></code><br />
+		  </blockquote>
+	  	The server administrator will provide the "Version" portion of the strong name.
+	  	</li>
+	  	<li>Either create <code>app_data/NeatUpload_Temp</code> under your application root and make it writable by the 
+	  	account that your application is running as, or <a href="#TempDirectory">change the temporary directory</a>
+	  	used by the default provider.
+	  	</li>
+	</ol>
+  </li>
 
-
-  <li>(Optional) To see the demo running on your local machine,
-configure IIS, mod_mono, or XSP so that <code>NeatUpload-1.1.<span style="font-style: italic;">x</span>/</code>
+  <li>(Optional) To see the demo running on your server,
+configure IIS, mod_mono, or XSP so that <code>NeatUpload-<em>version</em>/</code>
 is a web application. Then point your browser at the <code>Demo.aspx</code>
 on that
 website. To use NeatUpload in your own web application, continue with
@@ -529,7 +617,7 @@ the remaining installation steps. </li>
   <li>If you will be using the Visual Studio Web Form Designer,
 add the NeatUpload controls to your toolbox. &nbsp;To do that,
 right-click
-on the Toolbox, click Add/Remove Items, Browse to&nbsp;&nbsp;<code>NeatUpload-1.1.x/bin/Brettle.Web.NeatUpload.dll</code>,
+on the Toolbox, click Add/Remove Items, Browse to&nbsp;&nbsp;<code>NeatUpload-<em>version</em>/bin/Brettle.Web.NeatUpload.dll</code>,
 click Open, and then click
 OK. &nbsp;A reference to <code>Brettle.Web.NeatUpload.dll</code>
 will
@@ -540,17 +628,16 @@ designer to add one of the NeatUpload controls to a form.</li>
 
   <li>If you won't be using the Visual Studio Web Form Designer,
 add a reference to your web application that refers to the <code>Brettle.Web.NeatUpload.dll</code>
-in the <code>NeatUpload-1.</code><code>1.<span style="font-style: italic;">x</span></code><code>/bin
-    </code>directory. </li>
+in the <code>NeatUpload-<em>version</em>/bin</code> directory. </li>
 
 
 
   <li>Create a <code>NeatUpload/</code>
 subdirectory in
 your web application by copying<span style="font-style: italic;"></span>
-    <code>NeatUpload-1.</code><code>1.<span style="font-style: italic;">x</span></code><code>/NeatUpload/</code>
-and its contents. &nbsp;Don't copy the whole <code>NeatUpload-1.</code><code>1.<span style="font-style: italic;">x</span></code><code>/
-    </code>directory, just the <code>NeatUpload-1.</code><code>1.<span style="font-style: italic;">x</span></code><code>/NeatUpload/
+    <code>NeatUpload-<em>version</em><code>/NeatUpload/</code>
+and its contents. &nbsp;Don't copy the whole <code>NeatUpload-<em>version</em>/</code> directory, 
+just the <code>NeatUpload-<em>version</em>/NeatUpload/
     </code>subdirectory. &nbsp;That subdirectory contains <code>Progress.aspx</code>
 and associated files. </li>
 
@@ -600,7 +687,7 @@ the Size of Upload Requests</a> below.<br>
 
 
   <li>(Optional) Copy <code>Demo.aspx</code> and <code>Demo.aspx.cs</code>
-from <code>NeatUpload-1.</code><code>1.<span style="font-style: italic;">x</span></code><code>/</code>
+from <code>NeatUpload-<em>version</em>/</code>
 into your application. Point your browser at <code>Demo.aspx</code>
 and verify that the demo functions properly. </li>
 
@@ -1104,7 +1191,7 @@ NeatUpload_PostBackID</span>"<br>
 
 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp; &nbsp;defaultProvider="<span style="font-style: italic;">friendly name, defaults to a
-FilesystemUploadStorageProvider using the system temp dir</span>"&gt;<br>
+FilesystemUploadStorageProvider using the <a href="#TempDirectory">default temp dir</a></span>"&gt;<br>
 
 
 
@@ -1219,13 +1306,14 @@ response to a request, but only the one configured as the
 request. &nbsp;The others might be configured as&nbsp;default
 providers
 for other pages.
-<h3><a class="mozTocH3" name="mozTocId905959"></a>Changing
+<h3><a class="mozTocH3" name="TempDirectory"></a>Changing
 the Temporary Directory Used by the FilesystemUploadStorageProvider</h3>
 
 
 
-<p> By default, NeatUpload puts uploaded files in temporary files
-in the <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfsystemiopathclassgettemppathtopic.asp">system's
+<p>By default, NeatUpload puts uploaded files in temporary files
+in <code><span style="font-style: italic;">YOUR_APP_ROOT</span>\app_data\NeatUpload_Temp\</code> if it exists (or can be created) and is writable by your application,
+or failing that, it puts them in the <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfsystemiopathclassgettemppathtopic.asp">system's
 temporary directory</a>. You can specify a different directory
 using the <code>tempDirectory</code> attribute of the <code>FilesystemUploadStorageProvider</code>,
 like this:
@@ -1233,7 +1321,7 @@ like this:
 
 
 
-<pre>	&lt;neatUpload ...<code> defaultProvider="FilesystemUploadStorageProvider" ...</code>&gt;<br><code>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;providers&gt;<br>	...<br>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;add name="<span style="font-style: italic;"></span></code><code>FilesystemUploadStorageProvider</code><code><span style="font-style: italic;"></span>" <br>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; type="Brettle.Web.NeatUpload.</code><code>FilesystemUploadStorageProvider</code><code><span style="font-style: italic;"></span>" <br>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; t</code><code>empDirectory="<span style="font-style: italic;">path, defaults to path returned by System.IO.Path.GetTempPath()</span>"</code><code><span style="font-style: italic;"></span> ... /&gt;<br>	...<br></code><code></code><code>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;/providers&gt;</code><code><br></code>	&lt;/neatUpload&gt;<br>	</pre>
+<pre>	&lt;neatUpload ...<code> defaultProvider="FilesystemUploadStorageProvider" ...</code>&gt;<br><code>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;providers&gt;<br>	...<br>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;add name="<span style="font-style: italic;"></span></code><code>FilesystemUploadStorageProvider</code><code><span style="font-style: italic;"></span>" <br>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; type="Brettle.Web.NeatUpload.</code><code>FilesystemUploadStorageProvider</code><code><span style="font-style: italic;"></span>" <br>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; tempDirectory="<span style="font-style: italic;">path, defaults as described above</span>"</code><code><span style="font-style: italic;"></span> ... /&gt;<br>	...<br></code><code></code><code>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;/providers&gt;</code><code><br></code>	&lt;/neatUpload&gt;<br>	</pre>
 
 
 
@@ -1462,7 +1550,7 @@ is increased to 2 GBytes and the <code>executionTimeout</code>
 is increased to 1 hour. &nbsp;Also, requests for <code>Special.aspx</code>
 use the "special" provider which is configured to use the
 "<code>SpecialTempDirectory</code>", while requests for <code>Demo.aspx</code>
-use the default provider which uses the system temporary directory.<br>
+use the default provider and the default temporary directory.<br>
 
 
 <br>
@@ -1581,7 +1669,8 @@ only difference is that for non-upload requests that exceed the <code>maxNormalR
 limit, NeatUpload does not attempt to use JavaScript to interrupt the
 browser and the exception that is thrown is an <code>HttpException(413,
 "Request Entity Too Large")</code> instead of an <code>UploadTooLargeException()</code>.<br>
-<h3>Limiting the Upload Rate</h3>
+
+<h3><a class="mozTocH3" name="MaxUploadRate">Limiting the Upload Rate</h3>
 By default, NeatUpload receives the upload as fast as it can. &nbsp;To limit the rate at which the upload is received, use the <code>&lt;neatUpload&gt;</code> element's <code>maxUploadRate</code> attribute:<br>
 <pre>	&lt;neatUpload ... maxUploadRate="<em>rateInKBytesPerSec</em>" ... /&gt;<br></pre>
 This is mostly useful when testing on your local machine. &nbsp;By
@@ -1757,7 +1846,7 @@ Visual Studio Web Form Designer</span>,
 add the <code>HashedInputFile</code> control to your
 toolbox. &nbsp;To do that,
 right-click
-on the Toolbox, click Add/Remove Items, Browse to&nbsp; <code>NeatUpload-1.1.x/HashedInputFile/bin/Brettle.Web.NeatUpload.HashedInputFile.dll</code>,
+on the Toolbox, click Add/Remove Items, Browse to&nbsp; <code>NeatUpload-<em>version</em>/HashedInputFile/bin/Brettle.Web.NeatUpload.HashedInputFile.dll</code>,
 click Open, and then click
 OK. &nbsp;A reference to <code>Brettle.Web.NeatUpload.HashedInputFile.dll</code>
 will
@@ -1769,8 +1858,7 @@ designer to a HashedInputFile to a form.<br>
     <span style="text-decoration: underline;">If you won't
 be using the Visual Studio Web Form Designer</span>,
 add a reference to your web application that refers to the <code>Brettle.Web.NeatUpload.HashedInputFile.dll</code>
-in the <code>NeatUpload-1.</code><code>1.<span style="font-style: italic;">x</span></code><code>/HashedInputFile/bin
-    </code>directory.</div>
+in the <code>NeatUpload-<em>version</em>/HashedInputFile/bin</code> directory.</div>
 
 
 
@@ -3107,7 +3195,7 @@ the log4net.dll you built.</li>
 
 
 
-    <li>Copy <code>NeatUpload-1.1.<span style="font-style: italic;">x</span>/log4net.config</code>
+    <li>Copy <code>NeatUpload-<em>version</em>/log4net.config</code>
 to the root directory of your web application.</li>
 
 
