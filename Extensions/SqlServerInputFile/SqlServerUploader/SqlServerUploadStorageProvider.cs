@@ -23,10 +23,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 // Define this if you are compiling under .NET v2.0. If not defined turns of 2.0 specific features
-#define NETv2_0
+// #define NETv2_0
 
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Collections.Specialized;
 using Brettle.Web.NeatUpload;

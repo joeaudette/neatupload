@@ -23,7 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using Brettle.Web.NeatUpload;
 using System.Security.Cryptography;
@@ -130,8 +129,8 @@ namespace Hitone.Web.SqlServerUploader
                 command.CommandText = _provider.StoreHashProcedure;
             } else
                 command.CommandText = string.Format("UPDATE [{0}] Set [{1}]=@Hash Where $IDENTITY=@Identity", _provider.TableName, _provider.HashColumnName);
-            command.Parameters.AddWithValue("@Hash", ToHex(_hashAlgorithm.Hash));
-            command.Parameters.AddWithValue("@Identity", _blobStream.Identity);
+            SqlServerBlobStream.AddWithValue(command.Parameters, "@Hash", ToHex(_hashAlgorithm.Hash));
+            SqlServerBlobStream.AddWithValue(command.Parameters, "@Identity", _blobStream.Identity);
 
             connection.Open();
             try { command.ExecuteNonQuery(); }
@@ -153,8 +152,8 @@ namespace Hitone.Web.SqlServerUploader
             }
             else
                 command.CommandText = string.Format("UPDATE [{0}] Set [{1}]=@FileName Where $IDENTITY=@Identity", _provider.TableName, _provider.FileNameColumnName);
-            command.Parameters.AddWithValue("@FileName", newName);
-            command.Parameters.AddWithValue("@Identity", _blobStream.Identity);
+            SqlServerBlobStream.AddWithValue(command.Parameters, "@FileName", newName);
+            SqlServerBlobStream.AddWithValue(command.Parameters, "@Identity", _blobStream.Identity);
 
             connection.Open();
             try { command.ExecuteNonQuery(); }

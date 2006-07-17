@@ -23,7 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Data;
@@ -112,7 +111,7 @@ namespace Hitone.Web.SqlServerUploader
                     fileNameColumnName != null ? ",@FileName=" + fileNameColumnName : string.Empty,
                     MIMETypeColumnName != null ? ",@MIMEType=" + MIMETypeColumnName : string.Empty);
             }
-            openSqlCommand.Parameters.AddWithValue("@Identity", identity);
+            AddWithValue(openSqlCommand.Parameters, "@Identity", identity);
             openSqlCommand.Parameters.Add("@Pointer", SqlDbType.Binary, 16).Direction = ParameterDirection.Output;
             openSqlCommand.Parameters.Add("@Size", SqlDbType.Int).Direction = ParameterDirection.Output;
 
@@ -165,12 +164,12 @@ namespace Hitone.Web.SqlServerUploader
             if (fileNameColumnName != null)
             {
                 sql.Append(",@FileName");
-                createCommand.Parameters.AddWithValue("@FileName", fileName);
+                AddWithValue(createCommand.Parameters, "@FileName", fileName);
             }
             if (MIMETypeColumnName != null)
             {
                 sql.Append(",@MIMEType");
-                createCommand.Parameters.AddWithValue("@MIMEType", MIMEType);
+                AddWithValue(createCommand.Parameters, "@MIMEType", MIMEType);
             }
 
             // Add zero bytes to this new blob
@@ -213,7 +212,7 @@ namespace Hitone.Web.SqlServerUploader
                     _readCommand.CommandText = string.Format("READTEXT [{0}].[{1}] @Pointer @Offset @Size", tableName, dataColumnName);
 
                 //@Identity is not used by the created code, but may be used by the procedure (if they choose to go with the "SUBSTRING"-approach)
-                _readCommand.Parameters.AddWithValue("@Identity", _identity);
+                AddWithValue(_readCommand.Parameters, "@Identity", _identity);
 
                 //Add required parameters
                 _readCommand.Parameters.Add("@Pointer", SqlDbType.Binary, 16).Value = _pointer;
@@ -234,7 +233,7 @@ namespace Hitone.Web.SqlServerUploader
                     _deleteCommand.CommandText = deleteProcedure;
                 } else
                     _deleteCommand.CommandText = string.Format("DELETE FROM [{0}] WHERE $IDENTITY = @Identity", tableName);
-                _deleteCommand.Parameters.AddWithValue("@Identity", _identity);
+                AddWithValue(_deleteCommand.Parameters, "@Identity", _identity);
             }
         }
 
@@ -255,7 +254,7 @@ namespace Hitone.Web.SqlServerUploader
                     _writeCommand.CommandText = string.Format("UPDATETEXT [{0}].[{1}] @Pointer @Offset @Delete WITH LOG @Bytes", tableName, dataColumnName);
 
                 //@Identity is not used by the created code, but may be used by the procedure (if they choose to go with the ".WRITE"-approach)
-                _writeCommand.Parameters.AddWithValue("@Identity", _identity);
+                AddWithValue(_writeCommand.Parameters, "@Identity", _identity);
 
                 //Add required parameters
                 _writeCommand.Parameters.Add("@Pointer", SqlDbType.Binary, 16).Value = _pointer;
@@ -282,7 +281,7 @@ namespace Hitone.Web.SqlServerUploader
                 else
                     _cleanupCommand.CommandText = string.Format("UPDATE [{0}] SET [{1}]=0 WHERE $Identity=@Identity", tableName, partialFlagColumnName, _identity);
 
-                _cleanupCommand.Parameters.AddWithValue("@Identity", _identity);
+                AddWithValue(_cleanupCommand.Parameters, "@Identity", _identity);
             }
         }
 
@@ -350,8 +349,8 @@ namespace Hitone.Web.SqlServerUploader
                 createCommand.CommandText = createProcedure;
 
                 //Assume the procedure accepts the parameters "FileName" and "MIMEType"
-                createCommand.Parameters.AddWithValue("@FileName", fileName);
-                createCommand.Parameters.AddWithValue("@MIMEType", mimeType);
+                AddWithValue(createCommand.Parameters, "@FileName", fileName);
+                AddWithValue(createCommand.Parameters, "@MIMEType", mimeType);
 
 
 
@@ -563,6 +562,24 @@ namespace Hitone.Web.SqlServerUploader
             finally { _connection.Close(); }
             _isOpen = false;
         }
-
+        
+        internal static SqlParameter AddWithValue(SqlParameterCollection parameters, string paramName, int paramValue)
+        {
+#if NETv2_0
+            return parameters.AddWithValue(paramName, paramValue);
+#else
+            return parameters.Add(paramName, paramValue);
+#endif
+        }
+        
+        internal static SqlParameter AddWithValue(SqlParameterCollection parameters, string paramName, string paramValue)
+        {
+#if NETv2_0
+            return parameters.AddWithValue(paramName, paramValue);
+#else
+            return parameters.Add(paramName, paramValue);
+#endif
+        }
+                                                         
     }
 }
