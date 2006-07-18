@@ -6,14 +6,34 @@ using System.Web;
 using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using Brettle.Web.NeatUpload;
 
 namespace UploaderTest
 {
-    public partial class DBWrite : System.Web.UI.Page
+    public class DBWrite : System.Web.UI.Page
     {
+        protected System.Web.UI.HtmlControls.HtmlForm uploadForm;
+        protected System.Web.UI.WebControls.DropDownList progressBarLocationDropDown;
+        protected System.Web.UI.WebControls.DropDownList buttonTypeDropDown;
+        protected Hitone.Web.SqlServerUploader.SqlServerInputFile inputFile;
+        protected System.Web.UI.WebControls.RegularExpressionValidator RegularExpressionValidator1;
+        protected Hitone.Web.SqlServerUploader.SqlServerInputFile inputFile2;
+        protected System.Web.UI.HtmlControls.HtmlGenericControl submitButtonSpan;
+        protected System.Web.UI.WebControls.Button submitButton;
+        protected System.Web.UI.WebControls.Button cancelButton;
+        protected System.Web.UI.HtmlControls.HtmlGenericControl commandButtonSpan;
+        protected System.Web.UI.WebControls.Button commandButton;
+        protected System.Web.UI.WebControls.Button cancelCommandButton;
+        protected System.Web.UI.HtmlControls.HtmlGenericControl linkButtonSpan;
+        protected System.Web.UI.WebControls.LinkButton linkButton;
+        protected System.Web.UI.WebControls.LinkButton cancelLinkButton;
+        protected System.Web.UI.HtmlControls.HtmlGenericControl bodyPre;
+        protected System.Web.UI.HtmlControls.HtmlGenericControl inlineProgressBarDiv;
+        protected Brettle.Web.NeatUpload.ProgressBar inlineProgressBar;
+        protected System.Web.UI.HtmlControls.HtmlGenericControl popupProgressBarDiv;
+        protected Brettle.Web.NeatUpload.ProgressBar progressBar;
+        protected System.Web.UI.WebControls.Label label;
 
         private void Page_Load(object sender, EventArgs e)
         {

@@ -30,10 +30,10 @@ The examples in this project use a database table that looks like this:
 
 CREATE TABLE [FileTable] (
 	[Id] [int] IDENTITY (1, 1) PRIMARY KEY NOT NULL ,
-	[FileName] [nvarchar] (50) NOT NULL ,
+	[FileName] [nvarchar] (50) NULL,
 	[DataField] [image] NOT NULL ,
 	[Partial] [tinyint] NOT NULL ,
-	[MimeType] [nvarchar] (50) NOT NULL ,
+	[MimeType] [nvarchar] (50) NULL ,
 	[Created] [datetime] NOT NULL CONSTRAINT [DF_FileTable_Created] DEFAULT (getdate()),
 	[FileHash] [nvarchar] (50) NULL ,
 )

@@ -168,13 +168,23 @@ namespace Hitone.Web.SqlServerUploader
             _hashColumnName = safeName(attrs["HashColumnName"]);
 
 
-#if NETv2_0 //In .net v2.0 there is a nice ConfigurationManager and centralized ConnectionStrings. Use it if "ConnectionName" is specified
-            if (attrs["ConnectionName"] != null && attrs["ConnectionName"].Length > 0 && System.Configuration.ConfigurationManager.ConnectionStrings[attrs["ConnectionName"]] != null)
+            //In .net v2.0 there is a nice ConfigurationManager and centralized ConnectionStrings. Use it if "ConnectionName" is specified
+            if (System.Environment.Version.Major >= 2 && attrs["ConnectionName"] != null && attrs["ConnectionName"].Length > 0)
             {
                 _connectionName = attrs["ConnectionName"];
-                _connectionString = System.Configuration.ConfigurationManager.ConnectionStrings[_connectionName].ConnectionString;
+                // Use reflection to do:
+                //   _connectionString = System.Configuration.ConfigurationManager.ConnectionStrings[_connectionName].ConnectionString;
+                // so we don't need a special 2.0 version of the assembly.
+                string configAssembly = "System.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL";
+                Type configManager = Type.GetType("System.Configuration.ConfigurationManager, " + configAssembly, true);
+                System.Reflection.PropertyInfo connStringsPropInfo = configManager.GetProperty("ConnectionStrings");
+                object connStringSettingCollection = connStringsPropInfo.GetGetMethod().Invoke(null, null);
+                System.Reflection.BindingFlags instanceGetPropBindingFlags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.GetProperty | System.Reflection.BindingFlags.Public;
+                object connStringSettings = Type.GetType("System.Configuration.ConnectionStringSettingsCollection, " + configAssembly)
+                    .InvokeMember("", instanceGetPropBindingFlags, null, connStringSettingCollection, new object[] { _connectionName });
+                _connectionString = (string)Type.GetType("System.Configuration.ConnectionStringSettings, " + configAssembly)
+                    .InvokeMember("ConnectionString", instanceGetPropBindingFlags, null, connStringSettings, null);
             }
-#endif
 
             //Make sure we have at least a connenction string, a table name and a dataColumnName. The rest is optional
             string error = string.Empty;

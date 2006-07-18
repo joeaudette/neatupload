@@ -1,21 +1,20 @@
 using System;
 using System.IO;
 using System.Data;
-using System.Configuration;
-using System.Collections;
 using System.Web;
 using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
+using Brettle.Web.NeatUpload;
+using Hitone.Web.SqlServerUploader;
 
 namespace UploaderTest
 {
     /// <summary>
     /// This page demostrates how to use the SqlServerBlobStream to stream data from the database directly to the client browser
     /// </summary>
-    public partial class DBRead : System.Web.UI.Page
+    public class DBRead : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -28,20 +27,22 @@ namespace UploaderTest
             //Get ID of file to load form the database
             int id = int.Parse(Request.QueryString["id"]);
 
-            //Load the connectionstring from the "connectionsstrings"-section in the web.config
-            string ConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["default"].ConnectionString;
+            SqlServerUploadStorageProvider provider = (SqlServerUploadStorageProvider)UploadStorage.Provider;
 
-
-            /*
-            //This code demonstrates how to use the SqlServerUploader WITHOUT stored procedures in the SQL Server
-            Hitone.Web.SqlServerUploader.SqlServerBlobStream blob = new Hitone.Web.SqlServerUploader.SqlServerBlobStream(
-                ConnectionString, "VerboseTable", "dataField", id, "FileName", "MimeType", FileAccess.Read);
-            */
-
-            //This code demonstrates how to use the SqlServerUploader WITH stored procedures on the SQL Server
-            Hitone.Web.SqlServerUploader.SqlServerBlobStream blob = new Hitone.Web.SqlServerUploader.SqlServerBlobStream(
-                ConnectionString, id, "OpenBlob", "ReadBlob", FileAccess.Read);
-
+            // Use the provider attributes to connect to the database and use stored procs or generated sql
+            // to get a stream on the file.
+            SqlServerBlobStream blob = null;
+            if (provider.OpenProcedure != null && provider.ReadProcedure != null)
+            {
+                blob = new SqlServerBlobStream(
+                    provider.ConnectionString, id, provider.OpenProcedure, provider.ReadProcedure, FileAccess.Read);
+            }
+            else
+            {
+                blob = new SqlServerBlobStream(
+                    provider.ConnectionString, provider.TableName, provider.DataColumnName, id,
+                    provider.FileNameColumnName, provider.MIMETypeColumnName, FileAccess.Read);
+            }
 
             // Set the filename and MIME-type of the response to that given by the file
             Response.ContentType = blob.MIMEType;
@@ -49,6 +50,9 @@ namespace UploaderTest
 
             //Pipe the file data to the browser
             DataPipe.Pipe(blob, Response.OutputStream);
+            
+            // Close the stream from the DB.
+            blob.Close();
 
             //Finished!
             Response.End();
