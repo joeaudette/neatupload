@@ -115,7 +115,8 @@
                 />
                 <File
                     RelPath = "SqlServerUploadStorageProvider.cs"
-                    BuildAction = "Content"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
             </Include>
         </Files>
