@@ -1,1 +1,1 @@
-<%@ Page Language="C#" AutoEventWireup="true" Src="DBRead.aspx.cs" Inherits="UploaderTest.DBRead" %>
+<%@ Page Language="C#" AutoEventWireup="false" Src="DBRead.aspx.cs" Inherits="UploaderTest.DBRead" %>

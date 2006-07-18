@@ -1,4 +1,4 @@
-<%@ Page Language="C#" AutoEventWireup="true" Src="DBWrite.aspx.cs" Inherits="UploaderTest.DBWrite" %>
+<%@ Page Language="C#" AutoEventWireup="false" Src="DBWrite.aspx.cs" Inherits="UploaderTest.DBWrite" %>
 <%@ Register TagPrefix="Upload" Namespace="Brettle.Web.NeatUpload" Assembly="Brettle.Web.NeatUpload" %>
 <%@ Register TagPrefix="SqlUpload" Namespace="Hitone.Web.SqlServerUploader" Assembly="Hitone.Web.SqlServerUploader" %>
 

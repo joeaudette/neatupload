@@ -35,6 +35,18 @@ namespace UploaderTest
         protected Brettle.Web.NeatUpload.ProgressBar progressBar;
         protected System.Web.UI.WebControls.Label label;
 
+        protected override void OnInit(EventArgs e)
+        {
+            InitializeComponent();
+            base.OnInit(e);
+        }
+
+        private void InitializeComponent()
+        {
+            this.Load += new System.EventHandler(this.Page_Load);
+        }
+
+
         private void Page_Load(object sender, EventArgs e)
         {
             submitButtonSpan.Visible = (buttonTypeDropDown.SelectedValue == "Button");

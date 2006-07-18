@@ -16,6 +16,17 @@ namespace UploaderTest
     /// </summary>
     public class DBRead : System.Web.UI.Page
     {
+        protected override void OnInit(EventArgs e)
+        {
+            InitializeComponent();
+            base.OnInit(e);
+        }
+
+        private void InitializeComponent()
+        {
+            this.Load += new System.EventHandler(this.Page_Load);
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             //Make sure there is an 'id' in the query string
