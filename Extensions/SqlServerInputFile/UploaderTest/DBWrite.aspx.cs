@@ -133,16 +133,6 @@ namespace UploaderTest
         }
 
         /// <summary>
-        /// Converts an integer value into its hexadecimal counterpart
-        /// </summary>
-        /// <param name="i">Integer value to convert. Is assumed to be less than 16. If i>=16 the behaviour is undefined</param>
-        /// <returns>The hex counterpart of the input value</returns>
-        private static char GetHexValue(int i)
-        {
-            return (char)((ushort)(i + (i < 10 ? '0' : ('a' - 10))));
-        }
-
-        /// <summary>
         /// Converts a byte array to a hexadecimal string
         /// </summary>
         /// <param name="bytes">The byte array to convert</param>
@@ -150,17 +140,8 @@ namespace UploaderTest
         /// <remarks>Mimics the System.BitConverter.ToString behaviour but without the dashes</remarks>
         public static string ToHex(byte[] bytes)
         {
-            if (bytes == null || bytes.Length == 0) return string.Empty;
-            int bi = 0;
-            char[] hex = new char[bytes.Length * 2];
-
-            for (int i = 0; i < hex.Length; i += 2)
-            {
-                byte b = bytes[bi++];
-                hex[i] = GetHexValue(b / 0x10);
-                hex[i + 1] = GetHexValue(b % 0x10);
-            }
-            return new string(hex, 0, hex.Length);
+        	if (bytes == null || bytes.Length == 0) return string.Empty;
+        	return BitConverter.ToString(bytes).Replace("-", "");
         }
     }
 }
