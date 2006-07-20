@@ -64,6 +64,28 @@ namespace Brettle.Web.NeatUpload
 			context.Response.AppendToLog(param);
 		}
 
+		/// <summary>
+		/// Waits for the current upload request to finish.</summary>
+		/// <remarks>
+		/// <para>
+		/// If the UploadHttpModule is being used for the current request, this method will not return until the
+		/// module has received and processed the entire request.  If the UploadHttpModule is not being used for
+		/// the current request, this method will return immediately.  Note: the UploadHttpModule is only used if
+		/// it has been added in the httpModules section of the Web.config, the neatUpload section's
+		/// useHttpModule attribute is "true" for the page being requested (which is the default), and the
+		/// request has a content type of multipart/form-data.</para>
+		/// </remarks>
+		public static void WaitForUploadToComplete()
+		{
+			// If the original request hasn't been parsed (and any upload received) by now,
+			// we force parsing to ensure that the upload is received.
+			FilteringWorkerRequest worker = GetCurrentWorkerRequest() as FilteringWorkerRequest;
+			if (worker != null)
+			{
+				worker.ParseMultipart();
+			}
+		}
+				
 		public static long MaxNormalRequestLength
 		{
 			get
@@ -85,13 +107,14 @@ namespace Brettle.Web.NeatUpload
 		{
 			get { lock (typeof(UploadHttpModule)) { return _isInited;} }
 		}
-		
+				
 		public void Init(HttpApplication app)
 		{
 			app.BeginRequest += new System.EventHandler(Application_BeginRequest);
 			app.Error += new System.EventHandler(Application_Error);
 			app.EndRequest += new System.EventHandler(Application_EndRequest);
 			app.PreSendRequestHeaders += new System.EventHandler(Application_PreSendRequestHeaders);
+			app.ResolveRequestCache += new System.EventHandler(Application_ResolveRequestCache);
 			RememberErrorHandler = new System.EventHandler(RememberError);
 			lock (typeof(UploadHttpModule))
 			{
@@ -229,6 +252,13 @@ namespace Brettle.Web.NeatUpload
 					app.CompleteRequest();
 				}
 			}
+		}
+
+		private void Application_ResolveRequestCache(object sender, EventArgs e)
+		{
+			// Wait for the upload to complete before AcquireRequestState fires.  If we don't then the session
+			// will be locked while the upload completes
+			WaitForUploadToComplete();
 		}
 
 		private void Application_PreSendRequestHeaders(object sender, EventArgs e)

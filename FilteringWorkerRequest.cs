@@ -327,7 +327,7 @@ namespace Brettle.Web.NeatUpload
 			return false;
 		}
 
-		private void ParseMultipart()
+		internal void ParseMultipart()
 		{
 			if (isParsed)
 			{
