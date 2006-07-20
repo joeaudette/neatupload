@@ -4,21 +4,25 @@
       <Entry build="True" name="NeatUpload" configuration="Debug" />
       <Entry build="True" name="TestFilter" configuration="Debug" />
       <Entry build="True" name="HashedInputFile" configuration="Debug" />
+      <Entry build="True" name="SqlServerUploader" configuration="Debug" />
     </Configuration>
     <Configuration name="Release" ctype="CombineConfiguration">
       <Entry build="True" name="NeatUpload" configuration="Release" />
       <Entry build="True" name="TestFilter" configuration="Release" />
       <Entry build="True" name="HashedInputFile" configuration="Release" />
+      <Entry build="True" name="SqlServerUploader" configuration="Debug" />
     </Configuration>
   </Configurations>
   <StartMode startupentry="NeatUpload" single="True">
     <Execute type="None" entry="NeatUpload" />
     <Execute type="None" entry="TestFilter" />
     <Execute type="None" entry="HashedInputFile" />
+    <Execute type="None" entry="SqlServerUploader" />
   </StartMode>
   <Entries>
     <Entry filename="./NeatUpload.mdp" />
     <Entry filename="./TestFilter/TestFilter.mdp" />
     <Entry filename="./HashedInputFile/HashedInputFile.mdp" />
+    <Entry filename="./Extensions/SqlServerInputFile/SqlServerUploader/SqlServerUploader.mdp" />
   </Entries>
 </Combine>

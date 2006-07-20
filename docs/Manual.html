@@ -109,6 +109,15 @@ Individual InputFile Controls Programmatically</a></li>
 
   </li>
 
+  <li><a href="#SqlServerInputFile">The SqlServerInputFile Extension</a>
+    <ul>
+      <li><a href="#SqlServerInputFileInstall">Installation</a></li>
+      <li><a href="#SqlServerInputFileConfigure">Configuration</a></li>
+      <li><a href="#SqlServerInputFileUse">Usage</a></li>
+      <li><a href="#SqlServerInputFileExample">Example</a></li>
+    </ul>
+  </li>
+
   <li><a href="#mozTocId831551">The
 HashedInputFile Extension</a></li>
 
@@ -1810,6 +1819,488 @@ configure all servers to use the same keys.</li>
 
 
 </ul>
+
+
+<h2><a class="mozTocH2" name="SqlServerInputFile"></a>The
+SqlServerInputFile Extension</h2>
+
+<p>
+SqlServerInputFile is a NeatUpload extension generously contributed by 
+Joakim Wennergren (jokedst at gmail dot com).  It streams uploaded files
+to and from an SQL Server database and consists of the <code>SqlServerInputFile</code>
+web control&nbsp;and a custom <code>UploadStorageProvider</code>
+called <code>SqlServerUploadStorageProvider</code>.
+</p>
+
+<h3><a class="mozTocH3" name="SqlServerInputFileInstall"></a>Installation</h3>
+
+To install <code>SqlServerInputFile</code>:<br>
+
+
+    
+    <div style="margin-left: 40px;"><span style="text-decoration: underline;">If you will be using the
+Visual Studio Web Form Designer</span>,
+add the <code>SqlServerInputFile</code> control to your
+toolbox. &nbsp;To do that,
+right-click
+on the Toolbox, click Add/Remove Items, Browse to&nbsp; 
+<code>NeatUpload-<em>version</em>/Extensions/SqlServerInputFile/SqlServerUploader/bin/Hitone.Web.SqlServerUploader.dll</code>,
+click Open, and then click
+OK. &nbsp;A reference to <code>Hitone.Web.SqlServerUploader.dll</code>
+will
+automatically be added to your project the first time you use the
+designer to a SqlServerInputFile to a form.<br>
+
+
+    <span style="text-decoration: underline;">If you won't
+be using the Visual Studio Web Form Designer</span>,
+add a reference to your web application that refers to the <code>Hitone.Web.SqlServerUploader.dll</code>
+in the <code>NeatUpload-1.</code><code>2.<span style="font-style: italic;">x</span>/Extensions/SqlServerInputFile/SqlServerUploader/bin/
+    </code>directory.</div>
+
+<h3><a class="mozTocH3" name="SqlServerInputFileConfigure"></a>Configuration</h3>
+
+To configure your application to use the <code>SqlServerUploadStorageProvider</code>, 
+add the following to your <code>Web.config</code>:<code><br>
+
+
+    <br>
+
+
+&lt;configuration&gt;<br>
+
+
+&nbsp;&nbsp;&nbsp; &lt;configSections&gt;<br>
+
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&lt;sectionGroup name="system.web"&gt;<br>
+
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &lt;remove name="neatUpload"
+/&gt;<br>
+
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &lt;section name="neatUpload"
+type="Brettle.Web.NeatUpload.ConfigSectionHandler,
+Brettle.Web.NeatUpload" allowLocation="true" /&gt;<br>
+
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&lt;/sectionGroup&gt;<br>
+
+
+&nbsp;&nbsp;&nbsp; &lt;/configSections&gt;<br>
+
+
+&nbsp; &nbsp; ...<br>
+
+
+    </code><code>&nbsp;&nbsp;&nbsp;
+&lt;system.web&gt;<br>
+
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ...<br>
+
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&lt;neatUpload ...<br>
+
+
+    </code><code>&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;
+&nbsp;defaultProvider="SqlServerUploadStorageProvider"&gt;<br>
+
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&lt;providers&gt;<br>
+
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&lt;add name="<span style="font-style: italic;"></span></code><code>SqlServerUploadStorageProvider</code><code><span style="font-style: italic;"></span>" <br>
+
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp; type="<span style="font-family: monospace;">Hitone.Web.SqlServerUploader.SqlServerUploadStorageProvider, Hitone.Web.SqlServerUploader</span>"<br>
+
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp;connectionString="<em>connection string (required unless using connectionName to identify named connection in ASP.NET 2.0)</em>"<br>
+
+
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp;<em>options identifying stored procs or table/column names (required)</em><br>
+
+
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp;hashAlgorithm="<em>optional name of hash algorithm supported by .NET (e.g. MD5, SHA1, etc), defaults to no hash</em>"/&gt;<br>
+
+
+    </code><code></code><code>&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&lt;/providers&gt;<br>
+
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&lt;/neatUpload&gt;<br>
+
+
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ...<br>
+
+
+&nbsp;&nbsp;&nbsp; &lt;/system.web&gt;<br>
+
+
+&nbsp;&nbsp;&nbsp; ...<br>
+
+
+&lt;/configuration&gt;</code><br>
+
+
+<br>
+
+<p>
+The <code>SqlServerUploadStorageProvider</code> can either generate SQL itself
+or use stored procedures on the database server for all tasks.  
+This is controlled by the attributes you specify when you add the provider to your <code>Web.config</code>.
+When the provider needs to do something, it first checks to see if you have specified a stored procedure to do it 
+using one of the following attributes:
+  <ul>
+    <li><code>createProcedure</code> - Procedure that takes @FileName and @MIMEType (both varchars) input
+      parameters, and sets @Identity (Numeric) and @Pointer (Binary(16)) output parameters.  The
+      @Identity and @Pointer values that are returned will be passed to the <code>writeProcedure</code> as the file
+      is received.  The @Identity value will also be passed to the <code>deleteProcedure</code>, 
+      <code>cleanupProcedure</code>, <code>renameProcedure</code>, and <code>storeHashProcedure</code>.</li>
+    <li><code>writeProcedure</code> - Procedure that takes @Identity 
+      (Numeric), @Pointer (Binary(16)), @Offset (Int), @Delete (Int), and @Bytes (varbinary) input parameters.
+      It should replace the @Delete bytes at position @Offset in the file identified by @Identity and
+      @Pointer with the bytes in @Bytes.</li>
+    <li><code>cleanupProcedure</code> - The provider calls this procedure with @Identity (Numeric) when an upload is
+      no longer in progress and it will not call <code>writeProcedure</code> anymore.  Note that this procedure is 
+      called even if the upload did not complete successfully for some reason.</li>
+    <li><code>storeHashProcedure</code> - If the <code>hashAlgorithm</code> attribute is set, the provider calls 
+      this procedure with @Identity (Numeric) and @Hash (varchar).  @Hash is the hash value computed for the file
+      identified by @Identity.</li>
+    <li><code>renameProcedure</code> - The provider calls this procedure with @Identity (Numeric) and @FileName 
+      (varchar) to indicate that the application has requested that the name of the file identified by @Identity be
+      changed to @FileName.  This happens when you call <code><em>inputFileId</em>.MoveTo()</code>.</li>
+    <li><code>deleteProcedure</code> - Procedure that takes @Identity (Numeric) input parameter and deletes the 
+      specified file.  This is called at the end of the request if your application called neither 
+      <code><em>inputFileId</em>.MoveTo() nor <code><em>inputFileId</em>.Verify()</code></code></li>
+    <li><code>openProcedure</code> - This procedure is called if you use
+      <code><em>inputFileId</em>.FileContent</code> to access the uploaded file as a stream.  It takes
+      an @Identity (Numeric) input parameter, and sets @Pointer (Binary(16)), @FileName (varchar), and @MIMEType 
+      (varchar) output parameters.  The  @Pointer value that is returned will be passed to the 
+      <code>readProcedure</code> as content is read from the stream.</li>
+    <li><code>readProcedure</code> - This procedure is called if you use
+      <code><em>inputFileId</em>.FileContent</code> to access the uploaded file as a stream.  It takes @Identity 
+      (Numeric), @Pointer (Binary(16)), @Offset (Int), and @Size (Int) input parameters and returns the @Size bytes
+      starting at position @Offset in the file identified by @Identity and @Pointer.</li>
+  </ul>
+</p>
+
+<p>
+If you don't provide a stored procedure for what the provider needs to do, it will generate the SQL to do it.  
+When generating SQL queries, the provider uses the values you specify with the following attributes:
+  <ul>
+    <li><code>tableName</code> - Name of the table to contain the files.  "FileTable" in the example below.</li>
+    <li><code>dataColumnName</code> - Name of an image/varbinary column for the contents of the uploaded file.
+      "DataField" in the example below.</li>
+    <li><code>partialFlagColumnName</code> - Name of a tinyint column that the provider will set to 1 while the upload
+      is being received and set to 0 when the upload is complete.  "Partial" in the example below.</li>
+    <li><code>fileNameColumnName</code> - Name of a nvarchar column for the name of the uploaded file.  While the
+      upload is being received, the provider will set the column to the name (excluding path provided by the browser).
+      If you call <em>inputFileId</em>.MoveTo(), the new name will be stored in this column.  "FileName" in the 
+      example below.</li>
+    <li><code>mimeTypeColumnName</code> - Name of a nvarchar column for the browser-provided MIME content type of the
+      file "MimeType" in the example below.</li>
+    <li><code>hashColumnName</code> - Name of a nvarchar column for the hash of the file contents (as a hex string).
+      "FileHash" in the example below.</li>
+  </ul>
+</p>
+
+<p>
+To generate SQL queries, the provider only requires <code>tableName</code> and <code>dataColumnName</code>.  The 
+remaining attributes are optional.
+</p>
+<p>
+<strong>Note: The 
+generated SQL will not work with SQL Server 2000</strong> because it requires the "$IDENTITY" object
+to reference the IDENTITY column of the table. An <code>identityColumnName</code> attribute might be added in a 
+future release.  Until then, SQL Server 2000 users will need to use stored procedures to workaround around this 
+limitation.  
+</p>
+
+<h3><a class="mozTocH3" name="SqlServerInputFileUse"></a>Usage</h3>
+
+To add the <code>SqlServerInputFile</code> to your forms:<br>
+
+<ol>
+  <li>
+    <span style="text-decoration: underline;">If you are
+using Visual Studio Web Form Designer</span>, simply drag the <code>SqlServerInputFile</code>
+control from your Toolbox and drop it on the form.<br>
+
+
+    <span style="text-decoration: underline;">If you are
+not using Visual Studio Web Form Designer</span>, add the
+following line at the top of your form:<span style="font-family: monospace;"><br>
+    <br>
+
+
+&lt;%@ Register TagPrefix="SqlUpload"
+Namespace="Hitone.Web.SqlServerUploader"
+Assembly="Hitone.Web.SqlServerUploader"%&gt;<br>
+
+
+    </span><br>
+
+
+and add an&nbsp;<code>SqlServerInputFile</code> control to
+your
+aspx page wherever you
+want the user to choose a file, using something like this:
+    
+    <pre>&lt;SqlUpload:SqlServerInputFile id="<var>inputFileId</var>" runat="server" /&gt;<br></pre>
+
+
+  </li>
+
+
+  <li>Set any properties that you would normally set on an <code>InputFile
+or HtmlInputFile</code> control.</li>
+
+
+  <li>In your code-behind class, you can use the methods properties you would normally use on an <code>InputFile</code>
+  object.  In addition, <code>SqlServerInputFile</code> offers a <code>Verify()</code>
+  method that tells the <code>SqlServerUploadStorageProvider</code> not to delete the
+  uploaded file at the end of the request.  <code>Verify()</code> is equivalent to calling
+  <code><em>inputFileId</em>.MoveTo(<em>inputFileId</em>.FileName, MoveToOptions.Overwrite)</code> but doesn't cause the extra
+  database update.
+  <code>SqlServerInputFile</code> also adds <code>Hash</code>, <code>HashSize</code>, and <code>HashAlgorithm</code>
+  properties which return information about the cryptographic hash (if any) computed for the uploaded file.<br>
+  </li>
+</ol>
+
+
+<h3><a class="mozTocH3" name="SqlServerInputFileExample"></a>Example</h3>
+<p>
+There is an example web application in <code>Extensions/SqlServerInputFile/UploaderTest</code>.  To use it:
+  <ol>
+    <li>Make <code>Extensions/SqlServerInputFile/UploaderTest</code> it's own web application.</li>
+    <li>Create a database named FileStorageTest on your local machine, or change the connection strings in the
+    <code>Web.config</code> to point to your database.</li>
+    <li>Run the query for your version of SQL Server to create the table and stored procedures.</li>
+  </ol>
+</p>
+
+<h4>Example Setup Query for SQL Server 2005</h4>
+<pre>
+CREATE TABLE [FileTable] (
+	[Id] [int] IDENTITY (1, 1) PRIMARY KEY NOT NULL ,
+	[FileName] [nvarchar] (50) NULL,
+	[DataField] [image] NOT NULL ,
+	[Partial] [tinyint] NOT NULL ,
+	[MimeType] [nvarchar] (50) NULL ,
+	[Created] [datetime] NOT NULL CONSTRAINT [DF_FileTable_Created] DEFAULT (getdate()),
+	[FileHash] [nvarchar] (50) NULL ,
+)
+GO
+
+Alter Procedure CreateBlob
+	@Identity Numeric Output,
+	@Pointer Binary(16) Output,
+	@FileName VarChar(250) = null,
+	@MIMEType VarChar(250) = null
+As Begin Set NoCount ON;
+	Insert Into FileTable (Datafield,FileName,MimeType,PartiallyUploaded) Values ('',@FileName,@MimeType,1)
+	Select @Identity = SCOPE_IDENTITY()
+	Select @Pointer = TEXTPTR(DataField) From FileTable Where $IDENTITY = @Identity
+End
+
+Go
+
+Alter Procedure OpenBlob
+	@Identity Numeric,
+	@Pointer VarBinary(max) Output,
+	@Size Int Output,
+	@FileName VarChar(250) Output,
+	@MIMEType VarChar(250) Output
+As Begin Set NoCount On
+	Select	@Pointer = TEXTPTR(DataField), 
+			@Size = DATALENGTH(DataField),
+			@FileName = [FileName],
+			@MIMEType = MIMEType
+	From FileTable Where $IDENTITY = @Identity
+End
+
+Go
+
+Alter Procedure ReadBlob
+	@Identity Numeric, --ignored in this implementation, here for reference
+	@Pointer Binary(16),
+	@Offset Int,
+	@Size Int
+As Begin Set NoCount On
+	ReadText FileTable.DataField @Pointer @Offset @Size
+End
+
+Go
+
+Alter Procedure WriteBlob
+	@Identity Numeric, --ignored in this implementation, here for reference
+	@Pointer Binary(16),
+	@Bytes VarBinary(max),
+	@Offset Int,
+	@Delete Int
+As Begin Set NoCount On
+	UpdateText FileTable.DataField @Pointer @Offset @Delete With Log @Bytes
+End
+
+Go
+
+Alter Procedure CleanUpBlob
+	@Identity Numeric
+As Begin Set NoCount On
+	Update FileTable Set PartiallyUploaded=0 Where $Identity=@Identity
+End
+
+Go
+
+Alter Procedure DeleteBlob
+	@Identity Numeric
+As Begin Set NoCount On
+	Delete From FileTable Where $Identity=@Identity
+End
+
+Go
+
+Alter Procedure RenameBlob
+	@Identity Numeric,
+	@FileName VarChar(250)
+As Begin Set NoCount On
+	Update FileTable Set [FileName]=@FileName Where $Identity=@Identity
+End
+
+Go
+
+Alter Procedure FinalizeBlob
+	@Identity Numeric,
+	@Hash VarChar(250)
+As Begin Set NoCount On
+	Update FileTable Set FileHash=@Hash Where $Identity=@Identity
+End
+
+</pre>
+
+<h4>Example Setup Query for SQL Server 2000</h4>
+
+<p>
+The main difference between this version and the version for SQL Server 2005 is the lack of a $IDENTITY object
+and the cap of 8000 bytes in a varbinary
+</p>
+
+<pre>
+CREATE TABLE [FileTable] (
+	[Id] [int] IDENTITY (1, 1) PRIMARY KEY NOT NULL ,
+	[FileName] [nvarchar] (50) NOT NULL ,
+	[DataField] [image] NOT NULL ,
+	[Partial] [tinyint] NOT NULL ,
+	[MimeType] [nvarchar] (50) NOT NULL ,
+	[Created] [datetime] NOT NULL CONSTRAINT [DF_FileTable_Created] DEFAULT (getdate()),
+	[FileHash] [nvarchar] (50) NULL ,
+)
+
+GO
+
+CREATE Procedure CleanUpBlob
+	@Identity Numeric
+As Begin Set NoCount On
+	Update FileTable Set Partial=0 Where Id=@Identity
+End
+
+GO
+
+CREATE Procedure CreateBlob
+	@Identity Numeric Output,
+	@Pointer Binary(16) Output,
+	@FileName VarChar(250) = null,
+	@MIMEType VarChar(250) = null
+As Begin Set NoCount ON;
+	Insert Into FileTable (Datafield,FileName,MimeType,Partial) Values ('',@FileName,@MimeType,1)
+	Select @Identity = SCOPE_IDENTITY()
+	Select @Pointer = TEXTPTR(DataField) From FileTable Where id = @Identity
+End
+
+GO
+
+CREATE Procedure DeleteBlob
+	@Identity Numeric
+As Begin Set NoCount On
+	Delete From FileTable Where id=@Identity
+End
+
+GO
+
+CREATE Procedure FinalizeBlob
+	@Identity Numeric,
+	@Hash VarChar(250)
+As Begin Set NoCount On
+	Update FileTable Set FileHash=@Hash Where id=@Identity
+End
+
+GO
+
+CREATE Procedure OpenBlob
+	@Identity Numeric,
+	@Pointer VarBinary(8000) Output,
+	@Size Int Output,
+	@FileName VarChar(250) Output,
+	@MIMEType VarChar(250) Output
+As Begin Set NoCount On
+	Select	@Pointer = TEXTPTR(DataField), 
+			@Size = DATALENGTH(DataField),
+			@FileName = [FileName],
+			@MIMEType = MIMEType
+	From FileTable Where id = @Identity
+End
+
+GO
+
+CREATE Procedure ReadBlob
+	@Identity Numeric, --ignored in this implementation, here for reference
+	@Pointer Binary(16),
+	@Offset Int,
+	@Size Int
+As Begin Set NoCount On
+	ReadText FileTable.DataField @Pointer @Offset @Size
+End
+
+GO
+
+CREATE Procedure RenameBlob
+	@Identity Numeric,
+	@FileName VarChar(250)
+As Begin Set NoCount On
+	Update FileTable Set [FileName]=@FileName Where id=@Identity
+End
+
+GO
+
+CREATE Procedure WriteBlob
+	@Identity Numeric, --ignored in this implementation, here for reference
+	@Pointer Binary(16),
+	@Bytes VarBinary(8000),
+	@Offset Int,
+	@Delete Int
+As Begin Set NoCount On
+	UpdateText FileTable.DataField @Pointer @Offset @Delete With Log @Bytes
+End
+</pre>
 
 
 

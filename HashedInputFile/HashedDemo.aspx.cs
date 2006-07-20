@@ -102,7 +102,7 @@ namespace Brettle.Web.NeatUpload
 				bodyPre.InnerText += "  Name: " + inputFile.FileName + "\n";
 				bodyPre.InnerText += "  Size: " + inputFile.ContentLength + "\n";
 				bodyPre.InnerText += "  Content type: " + inputFile.ContentType + "\n";				
-				bodyPre.InnerText += "  Hash: " + ToHex(inputFile.Hash) + "\n";
+				bodyPre.InnerText += "  Hash: " + BitConverter.ToString(inputFile.Hash) + "\n";
 				bodyPre.InnerText += "  HashSize: " + inputFile.HashSize + "\n";
 			}
 			if (inputFile2.HasFile)
@@ -116,19 +116,9 @@ namespace Brettle.Web.NeatUpload
 				bodyPre.InnerText += "  Name: " + inputFile2.FileName + "\n";
 				bodyPre.InnerText += "  Size: " + inputFile2.ContentLength + "\n";
 				bodyPre.InnerText += "  Content type: " + inputFile2.ContentType + "\n";
-				bodyPre.InnerText += "  Hash: " + ToHex(inputFile2.Hash) + "\n";
+				bodyPre.InnerText += "  Hash: " + BitConverter.ToString(inputFile2.Hash) + "\n";
 				bodyPre.InnerText += "  HashSize: " + inputFile2.HashSize + "\n";
 			}
 		}
-		
-		public static string ToHex(byte[] bytes)
-		{
-			string hex = "";
-			for (int i = 0; i < bytes.Length; i++)
-			{
-				hex += bytes[i].ToString("x2");
-			}
-			return hex;
-		}		
 	}
 }

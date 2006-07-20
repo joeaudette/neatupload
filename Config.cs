@@ -214,6 +214,10 @@ namespace Brettle.Web.NeatUpload
 			{
 				foreach (XmlNode providerActionElem in providersElem.ChildNodes)
 				{
+                    if (providerActionElem.NodeType != XmlNodeType.Element)
+                    {
+                        continue;
+                    }
 					string tagName = providerActionElem.LocalName;
 					string providerName = providerActionElem.Attributes["name"].Value;
 					if (tagName == "add")
