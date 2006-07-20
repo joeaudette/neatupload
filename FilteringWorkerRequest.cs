@@ -191,6 +191,9 @@ namespace Brettle.Web.NeatUpload
 				throw new HttpException(204, "Upload cancelled by user");
 			}
 			
+			// Yield to other threads so that the progress bar has a chance to update.
+			System.Threading.Thread.Sleep(0);
+			
 			int totalRead = 0;
 			if (origPreloadedBody != null)
 			{
@@ -323,7 +326,7 @@ namespace Brettle.Web.NeatUpload
 			return false;
 		}
 
-		private void ParseMultipart()
+		internal void ParseMultipart()
 		{
 			if (isParsed)
 			{
@@ -349,10 +352,18 @@ namespace Brettle.Web.NeatUpload
 				{
 					uploadContext.Status = UploadStatus.Failed;
 				}
-
-				byte[] buffer = new byte[4096];
-				while (0 < OrigWorker.ReadEntityBody(buffer, buffer.Length))
-					; // Ignore the remaining body
+				
+				try
+				{
+					byte[] buffer = new byte[4096];
+					while (0 < OrigWorker.ReadEntityBody(buffer, buffer.Length))
+						; // Ignore the remaining body
+				}
+				catch (Exception)
+				{
+					// Ignore any errors that occur in the process.
+				}
+				
 				
 				log.Error("Rethrowing exception in ParseMultipart", ex);
 				throw;
