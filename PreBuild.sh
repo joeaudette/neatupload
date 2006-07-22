@@ -7,3 +7,6 @@ for f in `find . -name "*.resources" -print`; do
 	mv -f $f NeatUpload.`echo $f | sed -e 's?^./??' -e 's?/?.?g'`
 done
 
+cp public.snk bin/Release
+cp public.snk bin/Debug
+
