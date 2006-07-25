@@ -342,15 +342,20 @@ namespace Brettle.Web.NeatUpload
 			if (IsDesignTime)
 				return;
 			
-			// Find the containing <form> tag and set enctype="multipart/form-data" method="Post"
+			// If we can find the containing HtmlForm control, set enctype="multipart/form-data" method="Post".
+			// If we can't find it, the page might be using some other form control or not using runat="server",
+			// so we assume the developer has already set the enctype and method attributes correctly.
 			Control c = Parent;
 			while (c != null && !(c is HtmlForm))
 			{
 				c = c.Parent;
 			}
 			HtmlForm form = c as HtmlForm;
-			form.Enctype = "multipart/form-data";
-			form.Method = "Post";
+			if (form != null)
+			{
+				form.Enctype = "multipart/form-data";
+				form.Method = "Post";
+			}
 		}
 				
 		protected override void Render(HtmlTextWriter writer)
