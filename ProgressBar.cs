@@ -181,13 +181,13 @@ namespace Brettle.Web.NeatUpload
 				Attributes["scrolling"] = "no";
 				Attributes["name"] = this.ClientID;
 				displayStatement = @"
-setTimeout(""frames['" + this.ClientID + @"'].location.href = '" + uploadProgressUrl + @"&refresher=client&canScript=true&canCancel=' + NeatUploadCanCancel();"", 0);
+setTimeout(""frames['" + this.ClientID + @"'].location.href = '" + uploadProgressUrl + @"&refresher=client&canScript=true&canCancel=' + NeatUploadPB.prototype.CanCancel();"", 0);
 ";
 				this.Page.RegisterStartupScript(this.UniqueID + "UpdateIFrameSrc", @"
 <script language=""javascript"">
 <!--
 if (frames['" + this.ClientID + @"'])
-	frames['" + this.ClientID + @"'].location.replace('" + uploadProgressUrl + @"&canScript=true&canCancel=' + NeatUploadCanCancel());
+	frames['" + this.ClientID + @"'].location.replace('" + uploadProgressUrl + @"&canScript=true&canCancel=' + NeatUploadPB.prototype.CanCancel());
 // -->
 </script>
 ");
@@ -196,15 +196,6 @@ if (frames['" + this.ClientID + @"'])
 			{
 				Tag = HtmlTextWriterTag.Div;
 				displayStatement = GetPopupDisplayStatement();
-				this.Page.RegisterStartupScript(this.UniqueID + "RemoveDiv", @"
-<script language=""javascript"">
-<!--
-NeatUpload_DivNode = document.getElementById ? document.getElementById('" + this.ClientID + @"') : null; 
-if (NeatUpload_DivNode)
-	NeatUpload_DivNode.parentNode.removeChild(NeatUpload_DivNode);
-// -->
-</script>
-");
 			}
 		}
 		
@@ -212,7 +203,7 @@ if (NeatUpload_DivNode)
 		{
 			string width = GetPopupDimension("Width", Width, 500);
 			string height = GetPopupDimension("Height", Height, 100);
-			return @"window.open('" + uploadProgressUrl + "&refresher=client&canScript=true&canCancel=' + NeatUploadCanCancel(), '"
+			return @"window.open('" + uploadProgressUrl + "&refresher=client&canScript=true&canCancel=' + NeatUploadPB.prototype.CanCancel(), '"
 			                        + FormContext.Current.PostBackID + @"','width=" + width + @",height=" + height
 			                        + @",directories=no,location=no,menubar=no,resizable=yes,scrollbars=auto,status=no,toolbar=no');";
 		}
@@ -271,77 +262,73 @@ if (NeatUpload_DivNode)
 
 		private void RegisterScripts()
 		{
-			HtmlControl formControl = GetFormControl(this);
-			
 			if (!Page.IsClientScriptBlockRegistered("NeatUploadProgressBar"))
 			{
-				Page.RegisterClientScriptBlock("NeatUploadProgressBar", clientScript);
-			}
-			
-			this.Page.RegisterStartupScript(formControl.UniqueID + "-OnSubmit", @"
-<script language=""javascript"">
-<!--
-function NeatUpload_OnSubmitForm_" + formControl.ClientID + @"()
-{
-	var elem = document.getElementById('" + formControl.ClientID + @"');
-	return elem.NeatUpload_OnSubmit();
-}
-
-if (document.getElementById)
-	document.getElementById('" + formControl.ClientID + @"').onsubmit 
-		= NeatUpload_CombineHandlers(document.getElementById('" + formControl.ClientID + @"').onsubmit, NeatUpload_OnSubmitForm_" + formControl.ClientID + @");
+				string appPath = Context.Request.ApplicationPath;
+				if (appPath == "/")
+				{
+					appPath = "";
+				}
+				Page.RegisterClientScriptBlock("NeatUploadProgressBar", @"
+<script src='" + appPath + @"/NeatUpload/ProgressBar.js'></script>
+<script language='javascript'>
+NeatUploadPB.prototype.ClearFileNamesAlert = '" +  Config.Current.ResourceManager.GetString("ClearFileNamesAlert") + @"';
 // -->
 </script>
 ");
-
-			StringBuilder scriptBuilder = new StringBuilder();
-			scriptBuilder.Append(@"
+			}
+			
+			string allTriggerClientIDs = "[]";
+			string allNonUploadButtonClientIDs = "[]";
+			
+			if (Config.Current.UseHttpModule)
+			{
+				allTriggerClientIDs = GetClientIDsAsJSArray(Triggers, otherTriggers);
+				allNonUploadButtonClientIDs = GetClientIDsAsJSArray(NonUploadButtons, otherNonUploadButtons);
+			}
+						
+			this.Page.RegisterStartupScript("NeatUploadProgressBar-" + this.UniqueID, @"
 <script language=""javascript"">
 <!--
-");
-			AddPerProgressBarScripts(scriptBuilder, formControl);
-			
-			ArrayList nonUploadButtonIDs = new ArrayList(); // IDs of buttons refed by NonUploadButtons property
-			if (NonUploadButtons != null)
+NeatUploadPB.prototype.Bars['" + this.ClientID + @"'] 
+	= new NeatUploadPB('" + this.ClientID + @"',
+	                    """ + this.GetPopupDisplayStatement() + @""",
+	                    "  + (Inline ? "true" : "false") + @",
+	                    function() { " + displayStatement + @" },
+	                    " + allTriggerClientIDs + @",
+	                    " + allNonUploadButtonClientIDs + @");
+// -->
+</script>");
+                                                                               
+		}
+		
+		private string GetClientIDsAsJSArray(string idsString, ArrayList controls)
+		{
+			ArrayList ids = new ArrayList(); // IDs of buttons listed in idsString
+			if (idsString != null)
 			{
-				nonUploadButtonIDs.AddRange(NonUploadButtons.Split(' '));
+				ids.AddRange(idsString.Split(' '));
 			}
-			foreach (string buttonID in nonUploadButtonIDs)
+			
+			ArrayList clientIDs = new ArrayList();
+			foreach (string id in ids)
 			{
-				Control c = NamingContainer.FindControl(buttonID);
+				Control c = NamingContainer.FindControl(id);
 				if (c == null)
 					continue;
-				AddNonUploadButtonScripts(scriptBuilder, c);
+				clientIDs.Add(c.ClientID);
 			}
 			foreach (Control c in otherNonUploadButtons)
 			{
-				AddNonUploadButtonScripts(scriptBuilder, c);
+				clientIDs.Add(c.ClientID);
 			}
-			
-			ArrayList triggerIDs = new ArrayList(); // IDs of controls refed by Triggers property
-			if (Triggers != null)
+			if (clientIDs.Count == 0)
 			{
-				triggerIDs.AddRange(Triggers.Split(' '));
+				return "[]";
 			}
-			foreach (string buttonID in triggerIDs)
-			{
-				Control c = NamingContainer.FindControl(buttonID);
-				if (c == null)
-					continue;
-				AddTriggerScripts(scriptBuilder, c);
-			}
-			foreach (Control c in otherTriggers)
-			{
-				AddTriggerScripts(scriptBuilder, c);
-			}
-			
-			scriptBuilder.Append(@"
-// -->
-</script>
-");
-			Page.RegisterStartupScript(this.UniqueID, scriptBuilder.ToString());			
+			return "['" + String.Join("','", (string[])clientIDs.ToArray(typeof(string))) + "']";
 		}
-
+		
 		protected override void Render(HtmlTextWriter writer)
 		{
 			if (IsDesignTime)
@@ -357,7 +344,7 @@ if (document.getElementById)
 			// page load.
 			if (!Inline && !IsDesignTime)
 			{
-				writer.Write("<noscript>");
+				writer.Write("<noscript id='" + ClientID + @"_noscript'>");
 			}
 			EnsureChildControls();
 			base.AddAttributesToRender(writer);
@@ -406,423 +393,6 @@ if (document.getElementById)
 			{
 				writer.Write("</noscript>");
 			}
-		}
-		
-		private HtmlControl GetFormControl(Control control)
-		{
-			HtmlControl formControl = null;
-			for (Control c = control; c != null; c=c.Parent)
-			{
-				formControl = c as HtmlControl;
-				if (formControl != null && String.Compare(formControl.TagName, "FORM", true) == 0)
-					break;
-			}
-			return formControl;
-		}
-
-		private void AddPerProgressBarScripts(StringBuilder scriptBuilder, Control formControl)
-		{
-			scriptBuilder.Append(@"
-NeatUpload_FallbackLink = document.getElementById ? document.getElementById('" + this.ClientID + @"_fallback_link') : null;
-if (NeatUpload_FallbackLink)
-	NeatUpload_FallbackLink.setAttribute('href', ""javascript:" + GetPopupDisplayStatement() + @""");
-						
-if (typeof(NeatUpload_NonUploadIDs) == 'undefined')
-{
-	NeatUpload_NonUploadIDs = new Object();
-	NeatUpload_NonUploadIDs.NeatUpload_length = 0;
-}
-if (typeof(NeatUpload_TriggerIDs) == 'undefined')
-{
-	NeatUpload_TriggerIDs = new Object();
-	NeatUpload_TriggerIDs.NeatUpload_length = 0;
-}
-NeatUpload_NonUploadIDs_" + this.ClientID + @" = new Object();
-NeatUpload_NonUploadIDs_" + this.ClientID + @".NeatUpload_length = 0;
-NeatUpload_TriggerIDs_" + this.ClientID + @" = new Object();
-NeatUpload_TriggerIDs_" + this.ClientID + @".NeatUpload_length = 0;
-
-NeatUpload_LastEventSource = null;
-NeatUpload_LastEventType = null;
-NeatUpload_AlertShown = true;
-
-NeatUpload_AddSubmitHandler('" + formControl.ClientID + "'," + (Inline ? "false" : "true") + @", function () {
-	var formElem = document.getElementById('" + formControl.ClientID + @"');
-	// If trigger controls were specified for this progress bar and the trigger is not 
-	// specified for *any* progress bar, then clear the filenames.
-	if (NeatUpload_LastEventSource
-	    && (NeatUpload_IsElemWithin(NeatUpload_LastEventSource, NeatUpload_NonUploadIDs_" + this.ClientID + @")
-	      	|| NeatUpload_TriggerIDs_" + this.ClientID + @".NeatUpload_length)
-	    && !NeatUpload_IsElemWithin(NeatUpload_LastEventSource, NeatUpload_TriggerIDs))
-	{
-		return NeatUpload_ClearFileInputs(formElem);
-	}
-	// If there are files to upload and either no trigger controls were specified for this progress bar or
-	// a specified trigger control was triggered, then start the progress display.
-	if (NeatUpload_IsFilesToUpload('" + formControl.ClientID + @"')
-		&& (!NeatUpload_TriggerIDs_" + this.ClientID + @".NeatUpload_length
-		    || NeatUpload_IsElemWithin(NeatUpload_LastEventSource, NeatUpload_TriggerIDs_" + this.ClientID + @")))
-	{
-		" + displayStatement + @"
-	}
-	return true;
-});
-						
-NeatUpload_EventsThatCouldTriggerPostBack = ['click', 'keypress', 'change', 'drop', 'mousedown', 'keydown'];
-						
-for (var i = 0; i < NeatUpload_EventsThatCouldTriggerPostBack.length; i++)
-{
-	var eventName = NeatUpload_EventsThatCouldTriggerPostBack[i];
-	NeatUpload_AddHandler('" + formControl.ClientID + @"', eventName, function (ev) {
-		ev = ev || window.event;
-		if (!ev)
-		{
-			return true;
-		}
-		var src = ev.srcElement || ev.target;
-		if (!src)
-		{
-			return true;
-		}
-		NeatUpload_LastEventType = ev.type;
-		NeatUpload_LastEventSource = src;
-		NeatUpload_AlertShown = false;
-		if (ev.type != 'click' && ev.type != 'keypress')
-		{
-			return true;
-		}
-		if (NeatUpload_IsElemWithin(src, NeatUpload_TriggerIDs)
-		      || NeatUpload_TriggerIDs.NeatUpload_length == 0)
-		{
-			return true;
-		}
-		var tagName = src.tagName;
-		if (!tagName)
-		{
-			return true;
-		}
-		tagName = tagName.toLowerCase();
-		if (tagName == 'input' || tagName == 'button')
-		{
-			var inputType = src.getAttribute('type');
-			if (inputType) inputType = inputType.toLowerCase();
-			if (document.getElementById && (!inputType || inputType == 'submit' || inputType == 'image'))
-			{
-				var formElem = document.getElementById('" + formControl.ClientID + @"');
-				NeatUpload_ClearFileInputs(formElem);
-			}
-		}
-		return true;
-	}, true);
-}
-
-NeatUpload_AddSubmittingHandler('" + formControl.ClientID + @"', function () {
-	if (!NeatUpload_LastEventSource)
-	{
-		return;
-	}
-	if (NeatUpload_IsElemWithin(NeatUpload_LastEventSource, NeatUpload_TriggerIDs))
-	{
-		return;
-	}
-	var formElem = document.getElementById('" + formControl.ClientID + @"');
-	if (NeatUpload_IsElemWithin(NeatUpload_LastEventSource, NeatUpload_NonUploadIDs)
-	     || NeatUpload_TriggerIDs.NeatUpload_length)
-	{
-		NeatUpload_ClearFileInputs(formElem);
-	}
-});
-
-");
-		}
-
-		
-		private void AddNonUploadButtonScripts(StringBuilder scriptBuilder, Control control)
-		{
-			if (!Config.Current.UseHttpModule)
-				return;
-			
-			scriptBuilder.Append(@"NeatUpload_NonUploadIDs['" + control.ClientID + @"'] 
-	= ++NeatUpload_NonUploadIDs.NeatUpload_length;
-");			
-			scriptBuilder.Append(@"NeatUpload_NonUploadIDs_" + this.ClientID + @"['" + control.ClientID + @"'] 
-	= ++NeatUpload_NonUploadIDs_" + this.ClientID + @".NeatUpload_length;
-");			
-		}
-
-		private void AddTriggerScripts(StringBuilder scriptBuilder, Control control)
-		{
-			if (!Config.Current.UseHttpModule)
-				return;
-			
-			scriptBuilder.Append(@"NeatUpload_TriggerIDs['" + control.ClientID + @"'] 
-	= ++NeatUpload_TriggerIDs.NeatUpload_length;
-");			
-			scriptBuilder.Append(@"NeatUpload_TriggerIDs_" + this.ClientID + @"['" + control.ClientID + @"'] 
-	= ++NeatUpload_TriggerIDs_" + this.ClientID + @".NeatUpload_length;
-");			
-		}
-
-		private string clientScript = @"
-<script language=""javascript"">
-<!--
-
-if (!Array.prototype.push)
-{
-	Array.prototype.push = function() {
-		for (var i = 0; i < arguments.length; i++)
-			this[this.length] = arguments[i];
-		return this.length;
-	};
-}
-
-if (!Array.prototype.unshift)
-{
-	Array.prototype.unshift = function() {
-		this.reverse();
-		for (var i = 0; i < arguments.length; i++)
-			this[this.length] = arguments[i];
-		this.reverse();
-		return this.length;
-	};
-}
-
-if (!Function.prototype.call)
-{
-	Function.prototype.call = function() {
-		var obj = arguments[0];
-		obj._NeatUpload_tmpFunc = this;
-		var argList = '';
-		for (var i = 1; i < arguments.length; i++)
-		{
-			argList += 'arguments[' + i + ']';
-			if (i < arguments.length - 1)
-				argList += ',';
-		}
-		var result = eval('obj._NeatUpload_tmpFunc(' + argList + ')');
-		obj._NeatUpload_tmpFunc = null;
-		return result;
-	};
-}
-
-function NeatUpload_IsElemWithin(elem, assocArray)
-{
-	while (elem)
-	{
-		if (elem.id && assocArray[elem.id])
-		{
-			return true;
-		}
-		elem = elem.parentNode;
-	}
-}
-
-function NeatUploadCanCancel()
-{
-	try
-	{
-		if (window.stop || window.document.execCommand)
-			return true;
-		else
-			return false;
-	}
-	catch (ex)
-	{
-		return false;
-	}
-}
-function NeatUpload_CombineHandlers(origHandler, newHandler) 
-{
-	if (!origHandler || typeof(origHandler) == 'undefined') return newHandler;
-	return function(e) { if (origHandler(e) == false) return false; return newHandler(e); };
-};
-function NeatUpload_AddHandler(id, eventName, handler, useCapture)
-{
-	if (typeof(useCapture) == 'undefined')
-		useCapture = false;
-	if (!document.getElementById)
-		return;
-	var elem = document.getElementById(id);
-	if (elem.addEventListener)
-	{
-		elem.addEventListener(eventName, handler, useCapture);
-	}
-	else if (elem.attachEvent)
-	{
-		elem.attachEvent(""on"" + eventName, handler);
-	}
-	else
-	{
-		elem[""on"" + eventName] = NeatUpload_CombineHandlers(elem[""on"" + eventName], handler);
-	}
-}
-function NeatUpload_IsFilesToUpload(id)
-{
-	if (!document.getElementById)
-		return false;
-	var formElem = document.getElementById(id);
-	while (formElem && formElem.tagName.toLowerCase() != ""form"")
-	{
-		formElem = formElem.parent;
-	}
-	if (!formElem) 
-	{
-		return false;
-	}
-	var inputElems = formElem.getElementsByTagName(""input"");
-	var foundFileInput = false;
-	var isFilesToUpload = false;
-	for (i = 0; i < inputElems.length; i++)
-	{
-		var inputElem = inputElems.item(i);
-		if (inputElem && inputElem.type && inputElem.type.toLowerCase() == ""file"")
-		{
-			foundFileInput = true;
-			if (inputElem.value && inputElem.value.length > 0)
-			{
-				isFilesToUpload = true;
-
-				// If the browser really is IE on Windows, return false if the path is not absolute because
-				// IE will not actually submit the form if any file value is not an absolute path.  If IE doesn't
-				// submit the form, any progress bars we start will never finish.  
-				if (navigator && navigator.userAgent)
-				{
-					var ua = navigator.userAgent.toLowerCase();
-					var msiePosition = ua.indexOf('msie');
-					if (msiePosition != -1 && typeof(ActiveXObject) != 'undefined' && ua.indexOf('mac') == -1
-					    && ua.charAt(msiePosition + 5) < 7)
-					{
-						var re = new RegExp('^(\\\\\\\\[^\\\\]|([a-zA-Z]:)?\\\\).*');
-						var match = re.exec(inputElem.value);
-						if (match == null || match[0] == '')
-						{
-							if (typeof(NeatUpload_HandleIE6InvalidPath) != 'undefined'
-							    && NeatUpload_HandleIE6InvalidPath != null)
-								NeatUpload_HandleIE6InvalidPath(inputElem);
-							return false;
-						}
-					}
-				}
-			}
-		}
-	}
-	return isFilesToUpload; 
-}
-
-function NeatUpload_ClearFileInputs(elem)
-{
-	var inputFiles = elem.getElementsByTagName('input');
-	for (var i=0; i < inputFiles.length; i++ )
-	{
-		var inputFile = inputFiles.item(i);
-		// NOTE: clearing (by removing and recreating) empty file inputs confuses IE6 when the document is
-		// in both the top-level window and in an iframe.  ExpertTree uses such an iframe to do AJAX-style
-		// callbacks.
-		if (inputFile.type == 'file' && inputFile.value && inputFile.value.length > 0)
-		{
-			try
-			{
-				var newInputFile = document.createElement('input');
-				for (var a=0; a < inputFile.attributes.length; a++)
-				{
-					var attr = inputFile.attributes.item(a); 
-					if (attr.specified && attr.name != 'type' && attr.name != 'value')
-					{
-						if (attr.name == 'style' && newInputFile.style && newInputFile.style.cssText)
-							newInputFile.style.cssText = attr.value;
-						else
-							newInputFile.setAttribute(attr.name, attr.value);
-					}
-				}
-				newInputFile.setAttribute('type', 'file');
-				inputFile.parentNode.replaceChild(newInputFile, inputFile);
-			}
-			catch (ex)
-			{
-				// I don't know of any other way to clear the file inputs, so on browser where we get an error
-				// (eg Mac IE), we just give the user a warning.
-				if (inputFile.value != null && inputFile.value != '')
-				{
-					if (!NeatUpload_AlertShown)
-					{
-						window.alert('" + Config.Current.ResourceManager.GetString("ClearFileNamesAlert") + @"');
-						NeatUpload_AlertShown = true;
-					}
-					return false;
-				}
-			}
-		}
-	}
-	return true;
-}
-
-function NeatUpload_AddSubmitHandler(formID, isPopup, handler)
-{
-	if (!document.getElementById)
-		return;
-	var elem = document.getElementById(formID);
-	if (!elem.NeatUpload_OnSubmitHandlers) 
-	{
-		elem.NeatUpload_OnSubmitHandlers = new Array();
-		elem.NeatUpload_OrigSubmit = elem.submit;
-		elem.NeatUpload_OnSubmit = NeatUpload_OnSubmit;
-		try
-		{
-			elem.submit = function () {
-				elem.NeatUpload_OnSubmitting();
-				elem.NeatUpload_OrigSubmit();
-				elem.NeatUpload_OnSubmit();
-			};
-		}
-		catch (ex)
-		{
-			// We can't override the submit method.  That means NeatUpload won't work 
-			// when the form is submitted programmatically.  This occurs in Mac IE.
-		}			
-	}
-	if (isPopup)
-	{
-		elem.NeatUpload_OnSubmitHandlers.unshift(handler);
-	}
-	else
-	{
-		elem.NeatUpload_OnSubmitHandlers.push(handler);
-	}	
-}
-
-function NeatUpload_AddSubmittingHandler(formID, handler)
-{
-	if (!document.getElementById)
-		return;
-	var elem = document.getElementById(formID);
-	if (!elem.NeatUpload_OnSubmittingHandlers) 
-	{
-		elem.NeatUpload_OnSubmittingHandlers = new Array();
-		elem.NeatUpload_OnSubmitting = NeatUpload_OnSubmitting;
-	}
-	elem.NeatUpload_OnSubmittingHandlers.push(handler);
-}
-
-function NeatUpload_OnSubmitting()
-{
-	for (var i=0; i < this.NeatUpload_OnSubmittingHandlers.length; i++)
-	{
-		this.NeatUpload_OnSubmittingHandlers[i].call(this);
-	}
-	return true;
-}
-
-function NeatUpload_OnSubmit()
-{
-	for (var i=0; i < this.NeatUpload_OnSubmitHandlers.length; i++)
-	{
-		if (!this.NeatUpload_OnSubmitHandlers[i].call(this))
-			return false;
-	}
-	return true;
-}
-// -->
-</script>
-";
+		}				
 	}
 }
