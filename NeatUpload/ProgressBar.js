@@ -59,6 +59,13 @@ function NeatUploadPB(id, popupDisplayStatement, inline, displayFunc, triggerIDs
 {
 	if (!document.getElementById)
 		return;
+	var pb = this;
+
+	this.OnUnloadHandlers = new Array();
+	var origOnUnload = window.onunload;
+	this.OnUnloadHandlers.push(function () { window.onunload = origOnUnload; });
+	window.onunload = this.CombineHandlers(window.onunload, function() { return pb.OnUnload(); });
+
 	var elem = document.getElementById(id);
 	if (!elem)
 		elem = document.getElementById(id + '_noscript');
@@ -71,6 +78,8 @@ function NeatUploadPB(id, popupDisplayStatement, inline, displayFunc, triggerIDs
 	{
 		formElem.NeatUpload_OnSubmit();
 	}
+	var origOnSubmit = formElem.onsubmit;
+	this.OnUnloadHandlers.push(function () { formElem.onsubmit = origOnSubmit; });
 	formElem.onsubmit = this.CombineHandlers(formElem.onsubmit, this.OnSubmitForm);
 	
 	var fallbackLink = document.getElementById(id + '_fallback_link');
@@ -82,7 +91,6 @@ function NeatUploadPB(id, popupDisplayStatement, inline, displayFunc, triggerIDs
 	this.TriggerIDs.length = 0;
 	this.Display = displayFunc;
 	this.FormElem = formElem;
-	var pb = this;
 	this.AddSubmitHandler(pb.FormElem, !inline, function () {
 		// If trigger controls were specified for this progress bar and the trigger is not 
 		// specified for *any* progress bar, then clear the filenames.
@@ -212,8 +220,14 @@ NeatUploadPB.prototype.CanCancel = function()
 
 NeatUploadPB.prototype.CombineHandlers = function(origHandler, newHandler) 
 {
-	if (!origHandler || typeof(origHandler) == 'undefined') return newHandler;
-	return function(e) { if (origHandler(e) == false) return false; return newHandler(e); };
+	if (!origHandler || typeof(origHandler) == 'undefined')
+		return newHandler;
+	return function(e) 
+	{ 
+		if (origHandler(e) == false)
+			return false;
+		return newHandler(e); 
+	};
 };
 
 NeatUploadPB.prototype.AddHandler = function(elem, eventName, handler, useCapture)
@@ -223,14 +237,18 @@ NeatUploadPB.prototype.AddHandler = function(elem, eventName, handler, useCaptur
 	if (elem.addEventListener)
 	{
 		elem.addEventListener(eventName, handler, useCapture);
+		this.OnUnloadHandlers.push(function () { elem.removeEventListener(eventName, handler, useCapture); });
 	}
 	else if (elem.attachEvent)
 	{
 		elem.attachEvent("on" + eventName, handler);
+		this.OnUnloadHandlers.push(function () { elem.detachEvent("on" + eventName, handler); });
 	}
 	else
 	{
+		var origHandler = elem["on" + eventName];
 		elem["on" + eventName] = this.CombineHandlers(elem["on" + eventName], handler);
+		this.OnUnloadHandlers.push(function () { elem["on" + eventName] = origHandler; });
 	}
 };
 
@@ -351,6 +369,12 @@ NeatUploadPB.prototype.AddSubmitHandler = function(elem, isPopup, handler)
 			// We can't override the submit method.  That means NeatUpload won't work 
 			// when the form is submitted programmatically.  This occurs in Mac IE.
 		}			
+		this.OnUnloadHandlers.push(function() 
+		{
+			elem.submit = elem.NeatUpload_OrigSubmit;
+			elem.NeatUpload_OnSubmitHandlers = null;
+			elem.NeatUpload_OnSubmit = null;
+		});
 	}
 	if (isPopup)
 	{
@@ -368,6 +392,11 @@ NeatUploadPB.prototype.AddSubmittingHandler = function(elem, handler)
 	{
 		elem.NeatUpload_OnSubmittingHandlers = new Array();
 		elem.NeatUpload_OnSubmitting = this.OnSubmitting;
+		this.OnUnloadHandlers.push(function() 
+		{
+			elem.NeatUpload_OnSubmittingHandlers = null;
+			elem.NeatUpload_OnSubmitting = null;
+		});
 	}
 	elem.NeatUpload_OnSubmittingHandlers.push(handler);
 };
@@ -387,6 +416,15 @@ NeatUploadPB.prototype.OnSubmit = function()
 	{
 		if (!this.NeatUpload_OnSubmitHandlers[i].call(this))
 			return false;
+	}
+	return true;
+}	
+
+NeatUploadPB.prototype.OnUnload = function()
+{
+	for (var i=0; i < this.OnUnloadHandlers.length; i++)
+	{
+		this.OnUnloadHandlers[i].call();
 	}
 	return true;
 }	
