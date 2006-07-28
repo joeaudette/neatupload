@@ -29,8 +29,6 @@
 			File: <Upload:InputFile id="inputFile1" runat="server" />
 			<asp:Button id="submitButton1" runat="server" Text="Submit" />
 			<Upload:ProgressBar id="popProgressBar" runat="server" inline="false" Triggers="submitButton1"/>
-			<Upload:ProgressBar id="inlineProgressBar" runat="server" inline="true" Triggers="submitButton1"
-				style="display:inline-block;background-color:GhostWhite;height:20px;width:165px;"/>
 			<script language="javascript">
 			
 <!--
@@ -42,7 +40,7 @@ window.alert('Page loading - fallback text should not be visible');
 			<p>
 			Note: For simplicity, this page doesn't display any info about the uploaded file.
 			</p>
-			</p>
+			<p>
 			Page finished loading.
 			</p>
 		</form>
