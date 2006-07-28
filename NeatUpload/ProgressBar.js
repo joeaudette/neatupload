@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
 if (!Array.prototype.push)
 {
 	Array.prototype.push = function() {
@@ -55,7 +54,7 @@ if (!Function.prototype.call)
 	};
 }
 
-function NeatUploadPB(id, popupDisplayStatement, inline, displayFunc, triggerIDs, nonUploadIDs)
+function NeatUploadPB(id, popupDisplayStatement, inline, displayFunc, triggerIDs)
 {
 	if (!document.getElementById)
 		return;
@@ -68,7 +67,7 @@ function NeatUploadPB(id, popupDisplayStatement, inline, displayFunc, triggerIDs
 
 	var elem = document.getElementById(id);
 	if (!elem)
-		elem = document.getElementById(id + '_noscript');
+		elem = document.getElementById(id + '_NeatUpload_dummyspan');
 	var formElem = elem;
 	while (formElem && formElem.tagName.toLowerCase() != "form")
 	{
@@ -76,7 +75,7 @@ function NeatUploadPB(id, popupDisplayStatement, inline, displayFunc, triggerIDs
 	}
 	this.OnSubmitForm = function()
 	{
-		formElem.NeatUpload_OnSubmit();
+		return formElem.NeatUpload_OnSubmit();
 	}
 	var origOnSubmit = formElem.onsubmit;
 	this.OnUnloadHandlers.push(function () { formElem.onsubmit = origOnSubmit; });
@@ -85,8 +84,6 @@ function NeatUploadPB(id, popupDisplayStatement, inline, displayFunc, triggerIDs
 	var fallbackLink = document.getElementById(id + '_fallback_link');
 	if (fallbackLink)
 		fallbackLink.setAttribute('href', 'javascript:' + popupDisplayStatement);
-	this.NonUploadIDs = new Object();
-	this.NonUploadIDs.length = 0;
 	this.TriggerIDs = new Object();
 	this.TriggerIDs.length = 0;
 	this.Display = displayFunc;
@@ -95,9 +92,8 @@ function NeatUploadPB(id, popupDisplayStatement, inline, displayFunc, triggerIDs
 		// If trigger controls were specified for this progress bar and the trigger is not 
 		// specified for *any* progress bar, then clear the filenames.
 		if (NeatUpload_LastEventSource
-		    && (pb.IsElemWithin(NeatUpload_LastEventSource, pb.NonUploadIDs)
-		      	|| pb.TriggerIDs.length)
-		    && !pb.IsElemWithin(NeatUpload_LastEventSource, pb.TriggerIDs))
+		    && pb.TriggerIDs.length
+		    && !pb.IsElemWithin(NeatUpload_LastEventSource, NeatUpload_TriggerIDs))
 		{
 			return pb.ClearFileInputs(pb.FormElem);
 		}
@@ -168,8 +164,7 @@ function NeatUploadPB(id, popupDisplayStatement, inline, displayFunc, triggerIDs
 		{
 			return;
 		}
-		if (pb.IsElemWithin(NeatUpload_LastEventSource, NeatUpload_NonUploadIDs)
-		     || NeatUpload_TriggerIDs.NeatUpload_length)
+		if (NeatUpload_TriggerIDs.NeatUpload_length)
 		{
 			pb.ClearFileInputs(pb.FormElem);
 		}
@@ -180,13 +175,6 @@ function NeatUploadPB(id, popupDisplayStatement, inline, displayFunc, triggerIDs
 		NeatUpload_TriggerIDs[triggerIDs[i]] = ++NeatUpload_TriggerIDs.NeatUpload_length;
 		this.TriggerIDs[triggerIDs[i]] = ++this.TriggerIDs.length;
 	}
-		
-	for (var i = 0; i < nonUploadIDs.length; i++)
-	{
-		NeatUpload_NonUploadIDs[nonUploadIDs[i]] = ++NeatUpload_NonUploadIDs.NeatUpload_length;
-		this.NonUploadIDs[nonUploadIDs[i]] = ++this.NonUploadIDs.length;
-	}
-
 }
 
 NeatUploadPB.prototype.Bars = new Object();
@@ -363,18 +351,18 @@ NeatUploadPB.prototype.AddSubmitHandler = function(elem, isPopup, handler)
 				elem.NeatUpload_OrigSubmit();
 				elem.NeatUpload_OnSubmit();
 			};
+			this.OnUnloadHandlers.push(function() 
+			{
+				elem.submit = elem.NeatUpload_OrigSubmit;
+				elem.NeatUpload_OnSubmitHandlers = null;
+				elem.NeatUpload_OnSubmit = null;
+			});
 		}
 		catch (ex)
 		{
 			// We can't override the submit method.  That means NeatUpload won't work 
 			// when the form is submitted programmatically.  This occurs in Mac IE.
 		}			
-		this.OnUnloadHandlers.push(function() 
-		{
-			elem.submit = elem.NeatUpload_OrigSubmit;
-			elem.NeatUpload_OnSubmitHandlers = null;
-			elem.NeatUpload_OnSubmit = null;
-		});
 	}
 	if (isPopup)
 	{
@@ -415,7 +403,9 @@ NeatUploadPB.prototype.OnSubmit = function()
 	for (var i=0; i < this.NeatUpload_OnSubmitHandlers.length; i++)
 	{
 		if (!this.NeatUpload_OnSubmitHandlers[i].call(this))
+		{
 			return false;
+		}
 	}
 	return true;
 }	
@@ -424,13 +414,11 @@ NeatUploadPB.prototype.OnUnload = function()
 {
 	for (var i=0; i < this.OnUnloadHandlers.length; i++)
 	{
-		this.OnUnloadHandlers[i].call();
+		this.OnUnloadHandlers[i].call(this);
 	}
 	return true;
 }	
 
-NeatUpload_NonUploadIDs = new Object();
-NeatUpload_NonUploadIDs.NeatUpload_length = 0;
 NeatUpload_TriggerIDs = new Object();
 NeatUpload_TriggerIDs.NeatUpload_length = 0;
 NeatUpload_LastEventSource = null;

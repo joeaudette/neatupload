@@ -37,8 +37,8 @@ namespace Brettle.Web.NeatUpload
 	/// For the progress bar to be displayed, the <see cref="UploadHttpModule"/> must be in use.
 	/// For the progress display to be started, the form being submitted must include an <see cref="InputFile"/>
 	/// control that is not empty.  Use the <see cref="Inline"/> property to control how the progress bar is
-	/// displayed.  Use the <see cref="NonUploadButtons"/> property (or the <see cref="AddNonUploadButton"/> method)
-	/// to specify any buttons which should not cause files to be uploaded and should not start the progress
+	/// displayed.  If you use the <see cref="Triggers"/> property (or the <see cref="AddTrigger"/> method)
+	/// to specify which controls should cause files to be uploaded, then other controls will not start the progress
 	/// display (e.g. "Cancel" buttons).
 	/// </remarks>
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
@@ -52,7 +52,6 @@ namespace Brettle.Web.NeatUpload
 
 		private string uploadProgressUrl;
 		private string displayStatement;
-		private ArrayList otherNonUploadButtons = new ArrayList(); // Controls passed to AddNonUploadButton()
 		private ArrayList otherTriggers = new ArrayList(); // Controls passed to AddTrigger()
 		private	HtmlTextWriterTag Tag;
 
@@ -75,26 +74,6 @@ namespace Brettle.Web.NeatUpload
 			set { ViewState["inline"] = value; }
 		}
 		
-		/// <summary>
-		/// Space-separated list of the IDs of controls which should not upload files and start the progress 
-		/// display. </summary>
-		/// <remarks>
-		/// When a user clicks on a non-upload control, Javascript clears all <see cref="InputFile" /> controls. 
-		/// As a result, the progress display does not start and no files are uploaded when the form is submitted.
-		/// If no triggers are listed in <see cref="Triggers"/> or added via <see cref="AddTrigger"/> then any control
-		/// other than those listed in <see cref="NonUploadButtons"/> or added via <see cref="AddNonUploadButton"/>
-		/// will be considered a trigger and will upload files and start the progress display.  If you do specify
-		/// one or more triggers, then all links and submit buttons <i>other</i> than those triggers will be considered
-		/// non-upload controls (in addition to any controls listed in <see cref="NonUploadButtons"/> or added via
-		/// <see cref="AddNonUploadButton"/>).  This means that in most cases you can simply specify one or more
-		/// triggers and not worry about specifying non-upload controls unless you have controls other than links and
-		/// submit buttons that cause the form to submit.</remarks>  
-		private string NonUploadButtons
-		{
-			get { return (string)ViewState["NonUploadButtons"]; }
-			set { ViewState["NonUploadButtons"] = value; }
-		}
-
 		/// <summary>
 		/// Space-separated list of the IDs of controls which should upload files and start the progress 
 		/// display. </summary>
@@ -242,24 +221,6 @@ if (frames['" + this.ClientID + @"'])
 			otherTriggers.Add(control);
 		}
 
-		/// <summary>
-		/// Adds a control (typically a button) to a list non-upload controls.</summary>
-		/// <param name="control">the control to add to the list</param>
-		/// <remarks>
-		/// See the <see cref="NonUploadButtons"/> property for information on what non-upload buttons are.
-		/// This method is primarily for situations where the see cref="NonUploadButtons"/> property can't be used
-		/// because the ID of the non-upload control is not known until runtime (e.g. for
-		/// controls in Repeaters).  Controls added via this method are maintained in a separate list from those
-		/// listed in the <see cref="NonUploadButtons"/> property, and said list is not maintained as part of this
-		/// control's <see cref="ViewState"/>.  That means that if you use this method, you will need to call it
-		/// for each request, not just non-postback requests.  Also, you can use both this method and the
-		/// <see cref="NonUploadButtons"/> property for the same control.
-		/// </remarks>
-		private void AddNonUploadButton(Control control)
-		{
-			otherNonUploadButtons.Add(control);
-		}
-
 		private void RegisterScripts()
 		{
 			if (!Page.IsClientScriptBlockRegistered("NeatUploadProgressBar"))
@@ -279,12 +240,10 @@ NeatUploadPB.prototype.ClearFileNamesAlert = '" +  Config.Current.ResourceManage
 			}
 			
 			string allTriggerClientIDs = "[]";
-			string allNonUploadButtonClientIDs = "[]";
 			
 			if (Config.Current.UseHttpModule)
 			{
 				allTriggerClientIDs = GetClientIDsAsJSArray(Triggers, otherTriggers);
-				allNonUploadButtonClientIDs = GetClientIDsAsJSArray(NonUploadButtons, otherNonUploadButtons);
 			}
 						
 			this.Page.RegisterStartupScript("NeatUploadProgressBar-" + this.UniqueID, @"
@@ -295,8 +254,7 @@ NeatUploadPB.prototype.Bars['" + this.ClientID + @"']
 	                    """ + this.GetPopupDisplayStatement() + @""",
 	                    "  + (Inline ? "true" : "false") + @",
 	                    function() { " + displayStatement + @" },
-	                    " + allTriggerClientIDs + @",
-	                    " + allNonUploadButtonClientIDs + @");
+	                    " + allTriggerClientIDs + @");
 // -->
 </script>");
                                                                                
@@ -314,11 +272,19 @@ NeatUploadPB.prototype.Bars['" + this.ClientID + @"']
 			foreach (string id in ids)
 			{
 				Control c = NamingContainer.FindControl(id);
-				if (c == null)
-					continue;
-				clientIDs.Add(c.ClientID);
+				if (c != null)
+				{
+					clientIDs.Add(c.ClientID);
+				}
+				else
+				{
+					// If we couldn't find a control with that ID, it might be a client-side-only element.
+					// In that case assume that the ID that was specified is already the Client ID.
+					clientIDs.Add(id);
+				}
+				
 			}
-			foreach (Control c in otherNonUploadButtons)
+			foreach (Control c in controls)
 			{
 				clientIDs.Add(c.ClientID);
 			}
@@ -340,11 +306,15 @@ NeatUploadPB.prototype.Bars['" + this.ClientID + @"']
 				return;
 			}
 			
-			// Enclose the pop-up fallback div in a <noscript> tag to ensure that it is not visible, even during
-			// page load.
 			if (!Inline && !IsDesignTime)
 			{
-				writer.Write("<noscript id='" + ClientID + @"_noscript'>");
+				// Add an empty <span> element with an ID, so that the JS will no where to find this ProgressBar
+				// so it know where to start looking for the containing form.
+				writer.Write("<span id='" + ClientID + @"_NeatUpload_dummyspan'/>");
+				// Enclose the pop-up fallback div in a <noscript> tag to ensure that it is not visible, even during
+				// page load.  Note: we can't put the above dummy ID on the noscript element because Safari doesn't
+				// include the noscript element in the DOM.
+				writer.Write("<noscript>");
 			}
 			EnsureChildControls();
 			base.AddAttributesToRender(writer);
