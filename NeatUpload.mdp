@@ -1,5 +1,5 @@
 <Project name="NeatUpload" fileversion="2.0" language="C#" clr-version="Net_1_1" ctype="DotNetProject">
-  <Configurations active="Debug">
+  <Configurations active="Signed Debug">
     <Configuration name="Debug" ctype="DotNetProjectConfiguration">
       <Output directory="./bin/Debug" assembly="Brettle.Web.NeatUpload" />
       <Build executeBeforeBuild="./PreBuild.sh" debugmode="True" target="Library" />
@@ -11,6 +11,18 @@
       <Build executeBeforeBuild="./PreBuild.sh" executeAfterBuild="./PostBuild.sh" debugmode="False" target="Library" />
       <Execution runwithwarnings="True" consolepause="False" runtime="MsNet" clr-version="Net_1_1" />
       <CodeGeneration compiler="Csc" warninglevel="4" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" generatexmldocumentation="True" ctype="CSharpCompilerParameters" />
+    </Configuration>
+    <Configuration name="Signed Debug" ctype="DotNetProjectConfiguration">
+      <Output directory="./bin/Debug" assembly="Brettle.Web.NeatUpload" />
+      <Build executeBeforeBuild="./PreBuild.sh" debugmode="True" target="Library" />
+      <Execution runwithwarnings="True" consolepause="False" runtime="MsNet" clr-version="Net_1_1" />
+      <CodeGeneration compiler="Csc" warninglevel="4" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" definesymbols="NEATUPLOAD_SIGNED" generatexmldocumentation="True" ctype="CSharpCompilerParameters" />
+    </Configuration>
+    <Configuration name="Signed Release" ctype="DotNetProjectConfiguration">
+      <Output directory="./bin/Release" assembly="Brettle.Web.NeatUpload" />
+      <Build executeBeforeBuild="./PreBuild.sh" executeAfterBuild="./PostBuild.sh" debugmode="True" target="Library" />
+      <Execution runwithwarnings="True" consolepause="False" runtime="MsNet" clr-version="Net_1_1" />
+      <CodeGeneration compiler="Csc" warninglevel="4" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" definesymbols="NEATUPLOAD_SIGNED" generatexmldocumentation="True" ctype="CSharpCompilerParameters" />
     </Configuration>
   </Configurations>
   <DeploymentInformation strategy="File">

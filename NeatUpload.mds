@@ -1,5 +1,5 @@
-<Combine name="NeatUpload" fileversion="2.0">
-  <Configurations active="Debug">
+<Combine name="NeatUpload" fileversion="2.0" outputpath="./build/bin/">
+  <Configurations active="Signed Debug">
     <Configuration name="Debug" ctype="CombineConfiguration">
       <Entry build="True" name="NeatUpload" configuration="Debug" />
       <Entry build="True" name="TestFilter" configuration="Debug" />
@@ -10,7 +10,19 @@
       <Entry build="True" name="NeatUpload" configuration="Release" />
       <Entry build="True" name="TestFilter" configuration="Release" />
       <Entry build="True" name="HashedInputFile" configuration="Release" />
+      <Entry build="True" name="SqlServerUploader" configuration="Release" />
+    </Configuration>
+    <Configuration name="Signed Debug" ctype="CombineConfiguration">
+      <Entry build="True" name="NeatUpload" configuration="Signed Debug" />
+      <Entry build="True" name="TestFilter" configuration="Debug" />
+      <Entry build="True" name="HashedInputFile" configuration="Debug" />
       <Entry build="True" name="SqlServerUploader" configuration="Debug" />
+    </Configuration>
+    <Configuration name="Signed Release" ctype="CombineConfiguration">
+      <Entry build="True" name="NeatUpload" configuration="Signed Release" />
+      <Entry build="True" name="TestFilter" configuration="Release" />
+      <Entry build="True" name="HashedInputFile" configuration="Release" />
+      <Entry build="True" name="SqlServerUploader" configuration="Release" />
     </Configuration>
   </Configurations>
   <StartMode startupentry="NeatUpload" single="True">
