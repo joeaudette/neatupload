@@ -132,6 +132,10 @@ namespace Brettle.Web.NeatUpload
 		{
 			HttpContext origContext = HttpContext.Current;
 			IServiceProvider provider = (IServiceProvider)origContext;
+			if (provider == null)
+			{
+				return null;
+			}
 			HttpWorkerRequest origWorker = (HttpWorkerRequest) provider.GetService(typeof(HttpWorkerRequest));
 			return origWorker;
 		}
@@ -140,6 +144,14 @@ namespace Brettle.Web.NeatUpload
 
 		private void Application_BeginRequest(object sender, EventArgs e)
 		{
+			HttpWorkerRequest origWorker = GetCurrentWorkerRequest();
+			if (origWorker == null)
+			{
+				if (log.IsDebugEnabled) log.Debug("origWorker = null");
+				return;
+			}
+				
+			if (log.IsDebugEnabled) log.Debug(origWorker.GetType() + " for " + origWorker.GetRawUrl() + " with AspFilterSessionId = " + origWorker.GetUnknownRequestHeader("AspFilterSessionId"));
 			requestHandledBySubRequest = false;
 			if (!Config.Current.UseHttpModule)
 			{
@@ -147,9 +159,7 @@ namespace Brettle.Web.NeatUpload
 			}
 			HttpApplication app = sender as HttpApplication;
 			log4net.ThreadContext.Properties["url"] = app.Context.Request.RawUrl;
-			
-			HttpWorkerRequest origWorker = GetCurrentWorkerRequest();
-			
+
 			if (origWorker is DecoratedWorkerRequest)
 			{
 				// If an unhandled error occurs, we want to remember it so that we can rethrow it
@@ -246,6 +256,13 @@ namespace Brettle.Web.NeatUpload
 							throw new HttpException(httpException.GetHttpCode(), "Unhandled HttpException while processing NeatUpload child request",
 											httpException);
 						}
+						UploadException uploadException = subWorker.Exception as UploadException;
+						if (uploadException != null)
+						{
+							throw new HttpException(uploadException.HttpCode, "Unhandled UploadException while processing NeatUpload child request",
+											uploadException);
+						}
+						
 						throw new Exception("Unhandled Exception while processing NeatUpload child request",
 											subWorker.Exception);
 					}
@@ -308,7 +325,7 @@ namespace Brettle.Web.NeatUpload
 					app.CompleteRequest();
 				}
 			}
-		}
+		}		
 
 		private void Application_EndRequest(object sender, EventArgs e)
 		{

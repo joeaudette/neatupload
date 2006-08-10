@@ -48,6 +48,6 @@ using System.IO;
 #if USE_LOG4NET
 [assembly: log4net.Config.XmlConfigurator(ConfigFile="log4net.config", Watch=true)]
 #else
-#warning LOGGING DISABLED.  To enable logging, add a reference to log4net and define USE_LOG4NET.
+#warning LOGGING DISABLED.  To use log4net for logging, add a reference to log4net and define USE_LOG4NET.
 #endif
 

@@ -110,9 +110,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			</div>
 		</td>
 		<td>
-			<asp:HyperLink id="cancel" runat="server" Visible='<%# CancelVisible %>' NavigateUrl='<%# CancelUrl %>' title="Cancel Upload" class="ImageButton" ><img id="cancelImage" runat="server" src="cancel.png" alt="Cancel Upload" /></asp:HyperLink>
-			<asp:HyperLink id="refresh" runat="server" Visible='<%# StartRefreshVisible %>' NavigateUrl='<%# StartRefreshUrl %>' title="Refresh" class="ImageButton" ><img id="refreshImage" runat="server" src="refresh.png" alt="Refresh" /></asp:HyperLink>
-			<asp:HyperLink id="stopRefresh" runat="server" Visible='<%# StopRefreshVisible %>' NavigateUrl='<%# StopRefreshUrl %>' title="Stop Refreshing" class="ImageButton"><img id="stopRefreshImage" runat="server" src="stop_refresh.png" alt="Stop Refreshing" /></asp:HyperLink>
+			<asp:HyperLink id="cancel" runat="server" Visible='<%# CancelVisible %>' NavigateUrl='<%# CancelUrl %>' title="Cancel Upload" class="ImageButton" ><img id="cancelImage" src="cancel.png" alt="Cancel Upload" /></asp:HyperLink>
+			<asp:HyperLink id="refresh" runat="server" Visible='<%# StartRefreshVisible %>' NavigateUrl='<%# StartRefreshUrl %>' title="Refresh" class="ImageButton" ><img id="refreshImage" src="refresh.png" alt="Refresh" /></asp:HyperLink>
+			<asp:HyperLink id="stopRefresh" runat="server" Visible='<%# StopRefreshVisible %>' NavigateUrl='<%# StopRefreshUrl %>' title="Stop Refreshing" class="ImageButton"><img id="stopRefreshImage" src="stop_refresh.png" alt="Stop Refreshing" /></asp:HyperLink>
 		</td>
 		</tr>
 		</table>

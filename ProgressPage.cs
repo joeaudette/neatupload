@@ -18,6 +18,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 using System;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using Brettle.Web.NeatUpload;
@@ -26,11 +27,10 @@ namespace Brettle.Web.NeatUpload
 {
 	public class ProgressPage : Page
 	{
-/*		
 		// Create a logger for use in this class
 		private static readonly log4net.ILog log 
 			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-		*/
+
 		protected override void OnInit(EventArgs e)
 		{
 			InitializeComponent();
@@ -206,6 +206,8 @@ window.close();
 			// Find the current upload context
 			string postBackID = Request.Params["postBackID"];
 			this.UploadContext = UploadContext.FindByID(postBackID);
+			if (log.IsDebugEnabled) log.Debug("FindByID() returned " + this.UploadContext + " when SessionID = " 
+				+ (HttpContext.Current.Session != null ? HttpContext.Current.Session.SessionID : null));
 
 			if (this.UploadContext == null || this.UploadContext.Status == UploadStatus.Unknown)
 			{
@@ -224,6 +226,9 @@ window.close();
 			}
 			else
 			{
+				if (log.IsDebugEnabled) log.Debug("In ProgressPage, UploadContext.PostBackID = " + this.UploadContext.PostBackID);
+				if (log.IsDebugEnabled) log.Debug("In ProgressPage, UploadContext.Status = " + this.UploadContext.Status);
+				if (log.IsDebugEnabled) log.Debug("In ProgressPage, UploadContext.Exception = " + this.UploadContext.Exception);
 				CurrentStatus = this.UploadContext.Status;
 			}
 			
@@ -268,12 +273,25 @@ window.close();
 		                    && (CurrentStatus == UploadStatus.NormalInProgress || CurrentStatus == UploadStatus.ChunkedInProgress));
 			
 			// The base refresh url contains just the postBackID (which is the first parameter)
+
 			RefreshUrl = Request.Url.PathAndQuery;
 			int ampIndex = RefreshUrl.IndexOf("&");
 			if (ampIndex != -1)
 			{
 				RefreshUrl = RefreshUrl.Substring(0, ampIndex);
 			}
+			
+			// Workaround Mono XSP bug where ApplyAppPathModifier() removes the session id
+			string appPath = Context.Request.ApplicationPath;
+			if (appPath == "/")
+			{
+				appPath = "";
+			}
+			if (!Context.Request.RawUrl.StartsWith(appPath + "/("))
+			{
+				RefreshUrl = Response.ApplyAppPathModifier(RefreshUrl);
+			}
+
 			RefreshUrl += "&canScript=" + CanScript + "&canCancel=" + CanCancel;
 			StartRefreshUrl = RefreshUrl + "&refresher=server";	
 			StopRefreshUrl = RefreshUrl + "&refresh=false";	

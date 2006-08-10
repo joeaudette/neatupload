@@ -19,15 +19,29 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 using System;
+using System.Runtime.Serialization;
 
 namespace Brettle.Web.NeatUpload
 {
+	[Serializable]
 	public class UploadTooLargeException : UploadException
-	{
+	{			
 		public UploadTooLargeException(long maxRequestLength) 
 			: base(413, String.Format(Config.Current.ResourceManager.GetString("UploadTooLargeMessageFormat"), maxRequestLength))
 		{
 			MaxRequestLength = maxRequestLength;
+		}
+
+		protected UploadTooLargeException(SerializationInfo info, StreamingContext context)
+			: base (info, context) 
+		{
+			MaxRequestLength = info.GetInt64("UploadTooLargeException.MaxRequestLength");
+		}
+
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			base.GetObjectData (info, context);
+			info.AddValue ("UploadTooLargeException.MaxRequestLength", MaxRequestLength);
 		}
 
 		public long MaxRequestLength = 0;

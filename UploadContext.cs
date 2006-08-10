@@ -23,9 +23,11 @@ using System.IO;
 using System.Web;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Net;
 
 namespace Brettle.Web.NeatUpload
 {
+	[Serializable]
 	public class UploadContext
 	{
 		// Create a logger for use in this class
@@ -66,6 +68,17 @@ namespace Brettle.Web.NeatUpload
 		
 		internal static UploadContext FindByID(string postBackID)
 		{
+			if (HttpContext.Current.Session == null)
+			{
+				return FindByIDInAppState(postBackID);
+			}
+			UploadContext uploadContext = HttpContext.Current.Session[UploadContext.NamePrefix + postBackID] as UploadContext;
+			if (log.IsDebugEnabled) log.Debug("Session[" + UploadContext.NamePrefix + postBackID + "] = " + uploadContext);
+			return uploadContext;
+		}
+		
+		internal static UploadContext FindByIDInAppState(string postBackID)
+		{
 			UploadContext uploadContext = HttpContext.Current.Application[UploadContext.NamePrefix + postBackID] as UploadContext;
 			if (log.IsDebugEnabled) log.Debug("Application[" + UploadContext.NamePrefix + postBackID + "] = " + uploadContext);
 			return uploadContext;
@@ -75,6 +88,7 @@ namespace Brettle.Web.NeatUpload
 		{
 			this.startTime = System.DateTime.Now;
 			this.stopTime = System.DateTime.MaxValue;
+			NeverSynced = true;
 		}
 		
 		internal Hashtable uploadedFiles = Hashtable.Synchronized(new Hashtable());
@@ -99,14 +113,68 @@ namespace Brettle.Web.NeatUpload
 			
 			// Add a reference to this UploadContext to the Application so that it can be accessed
 			// by the ProgressBar in a separate request.
-			if (log.IsDebugEnabled) log.Debug("Storing UploadContext in Application[" + UploadContext.NamePrefix + PostBackID + "]");
 			if (HttpContext.Current != null)
 			{
-				HttpContext.Current.Application[UploadContext.NamePrefix + PostBackID] = this;
+				if (HttpContext.Current.Session != null)
+				{
+					if (log.IsDebugEnabled) log.Debug("Storing UploadContext in Session[" + UploadContext.NamePrefix + PostBackID + "] for SessionID=" + HttpContext.Current.Session.SessionID);
+					if (log.IsDebugEnabled) log.Debug("Storing UploadContext in Session[" + UploadContext.NamePrefix + PostBackID + "]");
+					HttpContext.Current.Session[UploadContext.NamePrefix + PostBackID] = this;
+				}
+				else
+				{
+					if (log.IsDebugEnabled) log.Debug("Storing UploadContext in Application[" + UploadContext.NamePrefix + PostBackID + "]");
+					HttpContext.Current.Application[UploadContext.NamePrefix + PostBackID] = this;
+				}
 			}
 		}
+				
+				
+		private bool NeverSynced = true;
 		
+		private bool _IsSessionAvailable = true;
+		public bool IsSessionAvailable { get { lock(this) { return _IsSessionAvailable; } } } 
 		
+		internal void SyncWithSession()
+		{
+			if (HttpContext.Current.Session == null || HttpContext.Current.Session.IsReadOnly 
+				|| HttpContext.Current.Session.Mode == System.Web.SessionState.SessionStateMode.Off)
+			{
+				lock (this)
+				{
+					_IsSessionAvailable = false;
+					NeverSynced = false;
+					return;
+				}
+			}
+			UploadContext ctxInSession = FindByID(PostBackID);
+			// If we've never synced this context to the session before then we ignore any
+			// context in the session because it is from a previous upload attempt 
+			// with the same postbackid.
+			if (ctxInSession == null || NeverSynced)
+			{
+				ctxInSession = new UploadContext();
+			}
+			lock (ctxInSession)
+			{
+				if (ctxInSession.Status != UploadStatus.Cancelled)
+				{
+					ctxInSession.BytesRead = BytesRead;
+					ctxInSession.SetContentLength(ContentLength);
+					ctxInSession.Status = Status;
+					ctxInSession.Exception = Exception;
+					ctxInSession.StartTime = StartTime;
+					ctxInSession.StopTime = StopTime;
+					ctxInSession.RegisterPostBack(PostBackID);
+				}
+				else
+				{
+					Status = ctxInSession.Status;
+				}
+				ctxInSession.NeverSynced = NeverSynced = false;
+			}
+		}
+				
 		internal UploadedFile CreateUploadedFile(string controlUniqueID, string fileName, string contentType, UploadStorageConfig storageConfig)
 		{
 			if (log.IsDebugEnabled) log.Debug("In CreateUploadedFile() controlUniqueID=" + controlUniqueID);
@@ -116,7 +184,6 @@ namespace Brettle.Web.NeatUpload
 			
 			if (fileName != null && fileName != string.Empty)
 				CurrentFileName = fileName;
-			
 			
 			return uploadedFile;
 		}
@@ -188,7 +255,13 @@ namespace Brettle.Web.NeatUpload
 		internal long BytesRead
 		{
 			get { lock(this) { return bytesRead; } }
-			set { lock(this) { bytesRead = value; } }
+			set
+			{
+				lock(this)
+				{
+					bytesRead = value;
+				}
+			}
 		}
 
 		private long contentLength;
@@ -199,21 +272,92 @@ namespace Brettle.Web.NeatUpload
 
 		internal void SetContentLength(long val)
 		{
-			lock(this) { contentLength = val; }
+			lock(this)
+			{
+				contentLength = val;
+			}
 		}
 		
 		private UploadStatus status = UploadStatus.NormalInProgress;
 		internal UploadStatus Status
 		{
 			get { lock(this) { return status; } }
-			set { lock(this) { status = value; } }
+			set
+			{
+				lock(this)
+				{
+					status = value;
+					if (value != UploadStatus.NormalInProgress && value != UploadStatus.ChunkedInProgress)
+					{
+						StopTime = DateTime.Now;
+					}
+				}
+			}
 		}
  
+ 		private Exception serializableException = null;
+ 		
+ 		[NonSerialized]
 		private Exception exception = null;
 		internal Exception Exception
 		{
-			get { lock(this) { return exception; } }
-			set { lock(this) { exception = value; } }
+			get 
+			{
+				lock(this) 
+				{
+					if (exception == null)
+					{
+						return serializableException;
+					}
+					return exception;
+				}
+			}
+			set
+			{
+				lock(this)
+				{
+					exception = value;
+					if (IsSerializable(exception))
+					{
+						serializableException = exception;
+					}
+					else
+					{
+						UploadException uploadException = exception as UploadException;
+						if (uploadException != null)
+						{
+							serializableException = new UploadException(uploadException.HttpCode, uploadException.Message);
+						}
+						else
+						{
+							serializableException = new Exception(exception.Message);
+						}
+						serializableException.HelpLink = exception.HelpLink;
+						serializableException.Source = exception.Source;
+					}
+				}
+			}
+		}
+		
+		private static bool IsSerializable(object obj)
+		{
+			if (obj == null)
+				return true;
+			try
+			{
+				System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
+				System.Runtime.Serialization.Formatters.Binary.BinaryFormatter formatter 
+					= new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+				formatter.Serialize(memoryStream, obj);
+				memoryStream.Flush();
+				memoryStream.Position = 0;
+				formatter.Deserialize(memoryStream);
+				return true;
+			}
+			catch (System.Runtime.Serialization.SerializationException ex)
+			{
+				return false;
+			}
 		}
 		
 		internal TimeSpan TimeRemaining

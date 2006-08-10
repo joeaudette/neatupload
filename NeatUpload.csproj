@@ -199,6 +199,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "SessionPreservingWorkerRequest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "SizeLimitingWorkerRequest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -206,6 +211,11 @@
                 <File
                     RelPath = "Strings.resx"
                     BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "SyncUploadContextPage.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "UploadContext.cs"

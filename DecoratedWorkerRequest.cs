@@ -132,17 +132,20 @@ namespace Brettle.Web.NeatUpload
 
 		public override string GetAppPath ()
 		{
-			return OrigWorker.GetAppPath();
+			string result = OrigWorker.GetAppPath();
+			if (log.IsDebugEnabled) log.Debug("GetAppPath () returns " + result);
+			return result;
 		}
 
 		public override string GetAppPathTranslated ()
 		{
-			return OrigWorker.GetAppPathTranslated ();
+			string result = OrigWorker.GetAppPathTranslated ();
+			if (log.IsDebugEnabled) log.Debug("GetAppPathTranslated () returns " + result);
+			return result;
 		}
 
 		public override string GetAppPoolID ()
 		{
-			if (log.IsDebugEnabled) log.Debug("Calling base.GetAppPoolID()");
 			string result = base.GetAppPoolID ();
 			if (log.IsDebugEnabled) log.Debug("GetAppPoolID() returning " + result);			
 			return result;
@@ -180,7 +183,6 @@ namespace Brettle.Web.NeatUpload
 
 		public override long GetConnectionID ()
 		{
-			if (log.IsDebugEnabled) log.Debug("Calling base.GetConnectionID()");
 			long connID = base.GetConnectionID ();
 			if (log.IsDebugEnabled) log.Debug("GetConnectionID() returning " + connID);
 			return connID;
@@ -188,37 +190,51 @@ namespace Brettle.Web.NeatUpload
 
 		public override string GetFilePath ()
 		{
-			return OrigWorker.GetFilePath ();
+			string result = OrigWorker.GetFilePath ();
+			if (log.IsDebugEnabled) log.Debug("GetFilePath() returning " + result);			
+			return result;
 		}
 
 		public override string GetFilePathTranslated ()
 		{
-			return OrigWorker.GetFilePathTranslated ();
+			string result = OrigWorker.GetFilePathTranslated ();
+			if (log.IsDebugEnabled) log.Debug("GetFilePathTranslated() returning " + result);			
+			return result;
 		}
 
 		public override string GetHttpVerbName ()
 		{
-			return OrigWorker.GetHttpVerbName ();
+			string result = OrigWorker.GetHttpVerbName ();
+			if (log.IsDebugEnabled) log.Debug("GetHttpVerbName() returning " + result);			
+			return result;
 		}
 
 		public override string GetHttpVersion ()
 		{
-			return OrigWorker.GetHttpVersion ();
+			string result = OrigWorker.GetHttpVersion ();
+			if (log.IsDebugEnabled) log.Debug("GetHttpVersion() returning " + result);			
+			return result;
 		}
 
 		public override string GetLocalAddress ()
 		{
-			return OrigWorker.GetLocalAddress ();
+			string result = OrigWorker.GetLocalAddress ();
+			if (log.IsDebugEnabled) log.Debug("GetLocalAddress() returning " + result);			
+			return result;
 		}
 
 		public override int GetLocalPort ()
 		{
-			return OrigWorker.GetLocalPort ();
+			int result = OrigWorker.GetLocalPort ();
+			if (log.IsDebugEnabled) log.Debug("GetLocalPort() returning " + result);			
+			return result;
 		}
 
 		public override string GetPathInfo ()
 		{
-			return OrigWorker.GetPathInfo ();
+			string result = OrigWorker.GetPathInfo ();
+			if (log.IsDebugEnabled) log.Debug("GetPathInfo() returning " + result);			
+			return result;
 		}
 
 		public override byte [] GetPreloadedEntityBody ()
@@ -228,73 +244,108 @@ namespace Brettle.Web.NeatUpload
 
 		public override string GetProtocol ()
 		{
-			return OrigWorker.GetProtocol ();
+			string result = OrigWorker.GetProtocol ();
+			if (log.IsDebugEnabled) log.Debug("GetProtocol() returning " + result);			
+			return result;
 		}
 
 		public override string GetQueryString ()
 		{
-			return OrigWorker.GetQueryString ();
+			string result = OrigWorker.GetQueryString ();
+			if (log.IsDebugEnabled) log.Debug("GetQueryString() returning " + result);			
+			return result;
 		}
 
 		public override byte[] GetQueryStringRawBytes ()
 		{
-			return OrigWorker.GetQueryStringRawBytes ();
+			byte[] result = OrigWorker.GetQueryStringRawBytes ();
+			if (result != null && log.IsDebugEnabled) log.Debug("GetQueryStringRawBytes() returning " + System.Text.Encoding.UTF8.GetString(result));
+			return result;
 		}
 
 		public override string GetRawUrl ()
 		{
-			return OrigWorker.GetRawUrl ();
+			string result = OrigWorker.GetRawUrl ();
+			if (log.IsDebugEnabled) log.Debug("GetRawUrl() returning " + result);			
+			return result;			
 		}
 
 		public override string GetRemoteAddress ()
 		{
-			return OrigWorker.GetRemoteAddress ();
+			string result = OrigWorker.GetRemoteAddress ();
+			if (log.IsDebugEnabled) log.Debug("GetRemoteAddress() returning " + result);			
+			return result;			
 		}
 
 
 		public override string GetRemoteName ()
 		{
-			return OrigWorker.GetRemoteName ();
+			string result = OrigWorker.GetRemoteName ();
+			if (log.IsDebugEnabled) log.Debug("GetRemoteName() returning " + result);			
+			return result;			
 		}
 
 		public override int GetRemotePort ()
 		{
-			return OrigWorker.GetRemotePort ();
+			int result = OrigWorker.GetRemotePort ();
+			if (log.IsDebugEnabled) log.Debug("GetRemotePort() returning " + result);			
+			return result;			
 		}
 
 		public override int GetRequestReason ()
 		{
-			return OrigWorker.GetRequestReason ();
+			int result = OrigWorker.GetRequestReason ();
+			if (log.IsDebugEnabled) log.Debug("GetRequestReason() returning " + result);			
+			return result;			
 		}
 
 		public override string GetServerName ()
 		{
-			return OrigWorker.GetServerName ();  
+			string result = OrigWorker.GetServerName ();  
+			if (log.IsDebugEnabled) log.Debug("GetServerName() returning " + result);			
+			return result;			
 		}
 
 		public override string GetServerVariable (string name)
 		{
-			return OrigWorker.GetServerVariable (name);
+			string result = OrigWorker.GetServerVariable (name);
+			if (log.IsDebugEnabled) log.Debug("GetServerVariable(" + name + ") returning " + result);			
+			return result;
 		}
 
 		public override string GetUnknownRequestHeader (string name)
 		{
-			return OrigWorker.GetUnknownRequestHeader (name);
+			string result = OrigWorker.GetUnknownRequestHeader (name);
+			if (log.IsDebugEnabled) log.Debug("GetUnknownRequestHeader(" + name + ") returning " + result);			
+			return result;
 		}
 
 		public override string [][] GetUnknownRequestHeaders ()
 		{
-			return OrigWorker.GetUnknownRequestHeaders ();
+			if (log.IsDebugEnabled) log.Debug("GetUnknownRequestHeaders() called ");			
+			string[][] result = OrigWorker.GetUnknownRequestHeaders ();
+			if (result != null && log.IsDebugEnabled)
+			{
+				for (int i = 0; i < result.Length; i++)
+				{
+					for (int j = 0; j < result[i].Length; j++)
+					{
+						log.Debug("  UnknownRequestHeader[" + i + "][" + j + "] = " + result[i][j]);
+					}
+				}
+			}
+			return result;
 		}
 
 		public override string GetUriPath ()
 		{
-			return OrigWorker.GetUriPath ();
+			string result = OrigWorker.GetUriPath ();
+			if (log.IsDebugEnabled) log.Debug("GetUriPath() returning " + result);			
+			return result;
 		}
 
 		public override long GetUrlContextID ()
 		{
-			if (log.IsDebugEnabled) log.Debug("Calling base.GetUrlContextID()");
 			long result = base.GetUrlContextID ();
 			if (log.IsDebugEnabled) log.Debug("GetUrlContextID() returning " + result);			
 			return result;
@@ -334,7 +385,9 @@ namespace Brettle.Web.NeatUpload
 
 		public override string MapPath (string virtualPath)
 		{
-			return OrigWorker.MapPath (virtualPath);
+			string result = OrigWorker.MapPath (virtualPath);
+			if (log.IsDebugEnabled) log.Debug("MapPath(" + virtualPath + ") returning " + result);			
+			return result;			
 		}
 
 		public override void SendCalculatedContentLength (int contentLength)

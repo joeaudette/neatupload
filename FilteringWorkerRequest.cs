@@ -53,7 +53,9 @@ namespace Brettle.Web.NeatUpload
 		private Stream outputStream = null;
 		private Stream fileStream = null;
 		MemoryStream preloadedEntityBodyStream = null;		
-		private byte[] preloadedEntityBody = null;
+		// Init preloadedEntityBody to a 0-length array in case an error occurs before we call 
+		// preloadedEntityBodyStream.ToArray().  If init it to null instead we'll get a NullReferenceException
+		private byte[] preloadedEntityBody = new byte[0]; 
 		private int writePos = 0; // Where to put the next byte read from OrigWorker
 		private int readPos = 0; // Where to get the next byte to put in a stream 
 		private int parsePos = 0; // Where to get the next byte to parse
@@ -237,6 +239,8 @@ namespace Brettle.Web.NeatUpload
 			return totalRead;
 		}
 		
+		private DateTime TimeOfLastSync = DateTime.MinValue;
+		
 		private int FillBuffer()
 		{
 			if (doneReading)
@@ -257,6 +261,11 @@ namespace Brettle.Web.NeatUpload
 				totalBytesRead += bytesRead;
 				grandTotalBytesRead += bytesRead;
 				uploadContext.BytesRead = grandTotalBytesRead;
+				if (TimeOfLastSync.AddSeconds(1) < DateTime.Now)
+				{
+					SyncUploadContextWithSession();
+				}
+
 /*
 				if (log.IsDebugEnabled) log.DebugFormat("tmpBuffer.Length = {0}, bufferSize = {1}, writePos = {2}, origContentLength = {3}, grandTotalBytesRead = {4}",
 													tmpBuffer.Length, bufferSize, writePos, origContentLength, grandTotalBytesRead);
@@ -348,20 +357,23 @@ namespace Brettle.Web.NeatUpload
 			}
 			catch (Exception ex)
 			{
+				// Remember the exception.
 				uploadContext.Exception = ex;
 				if (ex is UploadException)
 				{
 					uploadContext.Status = UploadStatus.Rejected;
+					SyncUploadContextWithSession();
 					// Wait 5 seconds to give the client a chance to stop the request.  If the client
-                    // stops the request, the user will see the original form instead of an error page.
-                    // Regardless, the progress display will show the error so the user knows what went wrong.
+					// stops the request, the user will see the original form instead of an error page.
+					// Regardless, the progress display will show the error so the user knows what went wrong.
 					System.Threading.Thread.Sleep(5000);
 				}
 				else if (uploadContext.Status != UploadStatus.Cancelled)
 				{
 					uploadContext.Status = UploadStatus.Failed;
+					SyncUploadContextWithSession();
 				}
-				
+					
 				try
 				{
 					byte[] buffer = new byte[4096];
@@ -372,9 +384,8 @@ namespace Brettle.Web.NeatUpload
 				{
 					// Ignore any errors that occur in the process.
 				}
-				
-				
-				log.Error("Rethrowing exception in ParseMultipart", ex);
+
+				log.Error("Rethrowing exception", ex);
 				throw;
 			}
 			finally
@@ -387,7 +398,6 @@ namespace Brettle.Web.NeatUpload
 					LogEntityBodyStream.Close();
 				if (LogEntityBodySizesStream != null)
 					LogEntityBodySizesStream.Close();
-				uploadContext.StopTime = DateTime.Now;
 			}
 		}
 		
@@ -424,6 +434,7 @@ namespace Brettle.Web.NeatUpload
 			
 			FieldNameTranslator translator = UploadStorage.CreateFieldNameTranslator();
 			uploadContext.SetContentLength(origContentLength);
+			SyncUploadContextWithSession();
 			if (log.IsDebugEnabled) log.Debug("=" + contentLengthHeader + " -> " + origContentLength);
 			
 			boundary = System.Text.Encoding.ASCII.GetBytes("--" + GetAttribute(contentTypeHeader, "boundary"));
@@ -503,6 +514,7 @@ namespace Brettle.Web.NeatUpload
 				         && null != (controlID = translator.FileFieldNameToControlID(name)))
 				{
 					uploadContext.RegisterPostBack(translator.FileFieldNameToPostBackID(name)); // Do this first so that progress display sees errors
+					SyncUploadContextWithSession();
 					
 					UploadStorageConfig storageConfig = null;
 					string configID = translator.FileIDToConfigID(controlID);
@@ -535,7 +547,6 @@ namespace Brettle.Web.NeatUpload
 					if (origContentLength > UploadHttpModule.MaxRequestLength)
 					{
 						if (log.IsDebugEnabled) log.Debug("contentLength > MaxRequestLength");
-						uploadContext.Status = UploadStatus.Cancelled;
 						throw new UploadTooLargeException(UploadHttpModule.MaxRequestLength);
 					}
 
@@ -554,7 +565,6 @@ namespace Brettle.Web.NeatUpload
 			preloadedEntityBodyStream = null;
 			if (grandTotalBytesRead < origContentLength)
 			{
-				uploadContext.Status = UploadStatus.Cancelled;
 				bool isClientConnected = false;
 				try
 				{
@@ -574,6 +584,7 @@ namespace Brettle.Web.NeatUpload
 				}
 			}
 			uploadContext.Status = UploadStatus.Completed;
+			SyncUploadContextWithSession();
 		}
 		
 		private void WriteReplacementFormField(string name, string val)
@@ -585,7 +596,29 @@ namespace Brettle.Web.NeatUpload
 			byte[] replacementPartBytes = System.Text.Encoding.ASCII.GetBytes(replacementPart.ToString());
 			preloadedEntityBodyStream.Write(replacementPartBytes, 0, replacementPartBytes.Length);
 		}
-		
+				
+		private void SyncUploadContextWithSession()
+		{
+			if (!uploadContext.IsSessionAvailable || uploadContext.PostBackID == null)
+			{
+				return;
+			}
+			
+			string page = "NeatUpload/SyncUploadContext.aspx";
+			SessionPreservingWorkerRequest req 
+				= SessionPreservingWorkerRequest.Create(OrigWorker, page, "postBackID=" + uploadContext.PostBackID);
+			HttpContext savedContext = HttpContext.Current;
+			try
+			{
+				req.ProcessRequest(null);
+				req.WaitForEndOfRequest();
+			}
+			finally
+			{
+				HttpContext.Current = savedContext;
+				TimeOfLastSync = DateTime.Now;
+			}			
+		}		
 		
 		public override int ReadEntityBody (byte[] buffer, int size)
 		{

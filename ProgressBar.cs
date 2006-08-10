@@ -130,16 +130,29 @@ namespace Brettle.Web.NeatUpload
 			{
 				appPath = "";
 			}
+			
 			uploadProgressUrl = Url;
 			if (uploadProgressUrl == null)
 			{
-				uploadProgressUrl = appPath + "/NeatUpload/Progress.aspx";
+				uploadProgressUrl = "~/NeatUpload/Progress.aspx";
 			}
-			else if (uploadProgressUrl.StartsWith("~"))
+			// Workaround Mono XSP bug where ApplyAppPathModifier() doesn't add the session id
+			if (Context.Request.RawUrl.StartsWith(appPath + "/("))
 			{
-				uploadProgressUrl = appPath + uploadProgressUrl.Substring(1);
+				if (uploadProgressUrl.StartsWith("/") && uploadProgressUrl.StartsWith(appPath))
+				{
+					uploadProgressUrl = "~" + uploadProgressUrl.Remove(0, appPath.Length);
+				}
+				if (uploadProgressUrl.StartsWith("~/"))
+				{
+					uploadProgressUrl = appPath + "/(" + Context.Session.SessionID + ")/" + uploadProgressUrl.Substring(2);
+				}
 			}
-			
+			else
+			{
+				uploadProgressUrl = Context.Response.ApplyAppPathModifier(uploadProgressUrl);
+			}
+
 			uploadProgressUrl += "?postBackID=" + FormContext.Current.PostBackID;
 
 			if (Attributes["class"] == null)

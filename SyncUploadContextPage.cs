@@ -1,7 +1,6 @@
 /*
-
 NeatUpload - an HttpModule and User Controls for uploading large files
-Copyright (C) 2006  Dean Brettle
+Copyright (C) 2005  Dean Brettle
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -19,31 +18,37 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 using System;
-using System.Runtime.Serialization;
+using System.Web.UI;
+using System.Web.UI.HtmlControls;
+using System.Web.SessionState;
+using Brettle.Web.NeatUpload;
 
 namespace Brettle.Web.NeatUpload
 {
-	[Serializable]
-	public class InvalidStorageConfigException : UploadException
+	public class SyncUploadContextPage : Page
 	{
-		public InvalidStorageConfigException(string details) 
-			: base(500, String.Format(Config.Current.ResourceManager.GetString("InvalidStorageConfigMessageFormat"), details))
-		{
-			Details = details;
-		}
+		// Create a logger for use in this class
+		private static readonly log4net.ILog log 
+			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-		protected InvalidStorageConfigException(SerializationInfo info, StreamingContext context)
-			: base (info, context) 
+		protected override void OnInit(EventArgs e)
 		{
-			Details = info.GetString("InvalidStorageConfigException.Details");
+			InitializeComponent();
+			base.OnInit(e);
 		}
-
-		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		
+		private void InitializeComponent()
 		{
-			base.GetObjectData (info, context);
-			info.AddValue ("InvalidStorageConfigException.Details", Details);
 		}
-
-		public string Details;
+		
+		protected override void OnLoad(EventArgs e)
+		{
+			if (log.IsDebugEnabled) log.Debug("In SyncUploadContextPage.OnLoad()");
+			string postBackID = Request.Params["postBackID"];
+			UploadContext ctx = UploadContext.FindByIDInAppState(postBackID);
+			ctx.SyncWithSession();
+			return;
+		}
+			
 	}
 }

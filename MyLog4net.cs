@@ -20,10 +20,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #if ! USE_LOG4NET
 
-#warning LOGGING DISABLED.  To enable logging, add a reference to log4net and define USE_LOG4NET.
+#warning LOGGING DISABLED.  To use log4net for logging, add a reference to log4net and define USE_LOG4NET.
 
 using System;
 using System.Collections;
+using System.IO;
+using System.Web;
 
 namespace Brettle.Web.NeatUpload.log4net
 {
@@ -44,12 +46,42 @@ namespace Brettle.Web.NeatUpload.log4net
 
 		public void Error(string message, Exception ex) {}
 	}
+	
+	internal class AppStateLogger : ILog
+	{
+		static AppStateLogger()
+		{
+			StringWriter writer = new StringWriter();
+			HttpContext.Current.Application["NeatUpload_AppStateLogger"] = writer;			
+			writer.WriteLine("Log started");
+		}
+		
+		internal AppStateLogger()
+		{
+			Writer = HttpContext.Current.Application["NeatUpload_AppStateLogger"] as TextWriter;
+		}
+		
+		private TextWriter Writer;
+
+		public void Debug(string message) { Writer.WriteLine(message); }
+		public void DebugFormat(string format, params object[] args) { Writer.WriteLine(format, args); }
+		public bool IsDebugEnabled { get { return true; } }
+
+		public void Error(string message, Exception ex) { Writer.WriteLine(message + ": " + ex); }
+	}
 
 	internal class LogManager
 	{
 		internal static ILog GetLogger(Type type)
 		{
-			return new NullLogger();
+			if (Config.Current.DebugDirectory != null)
+			{
+				return new AppStateLogger();
+			}
+			else
+			{
+				return new NullLogger();
+			}
 		}
 	}
 

@@ -1,5 +1,5 @@
-/*
-
+<%@ Page language="c#" AutoEventWireup="false" Inherits="Brettle.Web.NeatUpload.SyncUploadContextPage" %>
+<%--
 NeatUpload - an HttpModule and User Controls for uploading large files
 Copyright (C) 2005  Dean Brettle
 
@@ -16,33 +16,4 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-using System;
-using System.Runtime.Serialization;
-
-namespace Brettle.Web.NeatUpload
-{
-	[Serializable]
-	public class UploadException : Exception
-	{
-		public UploadException(int httpStatusCode, string message) : base(message)
-		{
-			HttpCode = httpStatusCode;
-		}
-		
-		protected UploadException(SerializationInfo info, StreamingContext context)
-			: base (info, context) 
-		{
-			HttpCode = info.GetInt32("UploadException.HttpCode");
-		}
-
-		public override void GetObjectData (SerializationInfo info, StreamingContext context)
-		{
-			base.GetObjectData (info, context);
-			info.AddValue ("UploadException.HttpCode", HttpCode);
-		}
-		
-		public int HttpCode;
-	}
-}
+--%>
