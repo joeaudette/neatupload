@@ -26,6 +26,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Web;
+using System.Configuration;
 
 namespace Brettle.Web.NeatUpload.log4net
 {
@@ -74,7 +75,10 @@ namespace Brettle.Web.NeatUpload.log4net
 	{
 		internal static ILog GetLogger(Type type)
 		{
-			if (Config.Current.DebugDirectory != null)
+			// Don't access Config.Current because doing so will trigger some logging which we don't yet have
+			// a logger.
+			if (ConfigurationSettings.AppSettings != null 
+				&& ConfigurationSettings.AppSettings["NeatUpload.Logger"] == "AppStateLogger")
 			{
 				return new AppStateLogger();
 			}
