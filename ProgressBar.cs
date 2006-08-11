@@ -121,17 +121,18 @@ namespace Brettle.Web.NeatUpload
 		{
 		}
 		
-		private string ApplyAppPathModifier(string url)
+		internal static string ApplyAppPathModifier(string url)
 		{
-			string appPath = Context.Request.ApplicationPath;
+			string appPath = HttpContext.Current.Request.ApplicationPath;
 			if (appPath == "/")
 			{
 				appPath = "";
 			}
-			string result = Context.Response.ApplyAppPathModifier(url);
+			string requestUrl = HttpContext.Current.Request.RawUrl;
+			string result = HttpContext.Current.Response.ApplyAppPathModifier(url);
 			
 			// Workaround Mono XSP bug where ApplyAppPathModifier() doesn't add the session id
-			if (Context.Request.RawUrl.StartsWith(appPath + "/(") && !result.StartsWith(appPath + "/("))
+			if (requestUrl.StartsWith(appPath + "/(") && !result.StartsWith(appPath + "/("))
 			{
 				if (url.StartsWith("/") && url.StartsWith(appPath))
 				{
@@ -139,7 +140,7 @@ namespace Brettle.Web.NeatUpload
 				}
 				if (url.StartsWith("~/"))
 				{
-					string[] compsOfPathWithinApp = Context.Request.RawUrl.Substring(appPath.Length).Split('/');
+					string[] compsOfPathWithinApp = requestUrl.Substring(appPath.Length).Split('/');
 					url = appPath + "/" + compsOfPathWithinApp[1] + "/" + url.Substring(2);
 				}
 				result = url;

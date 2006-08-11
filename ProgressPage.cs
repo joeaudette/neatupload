@@ -282,15 +282,7 @@ window.close();
 			}
 			
 			// Workaround Mono XSP bug where ApplyAppPathModifier() removes the session id
-			string appPath = Context.Request.ApplicationPath;
-			if (appPath == "/")
-			{
-				appPath = "";
-			}
-			if (!Context.Request.RawUrl.StartsWith(appPath + "/("))
-			{
-				RefreshUrl = Response.ApplyAppPathModifier(RefreshUrl);
-			}
+			RefreshUrl = ProgressBar.ApplyAppPathModifier(RefreshUrl);
 
 			RefreshUrl += "&canScript=" + CanScript + "&canCancel=" + CanCancel;
 			StartRefreshUrl = RefreshUrl + "&refresher=server";	
