@@ -121,37 +121,43 @@ namespace Brettle.Web.NeatUpload
 		{
 		}
 		
-		private void InitializeVars()
+		private string ApplyAppPathModifier(string url)
 		{
-			if (IsDesignTime || !Config.Current.UseHttpModule)
-				return;
 			string appPath = Context.Request.ApplicationPath;
 			if (appPath == "/")
 			{
 				appPath = "";
 			}
+			string result = Context.Response.ApplyAppPathModifier(url);
+			
+			// Workaround Mono XSP bug where ApplyAppPathModifier() doesn't add the session id
+			if (Context.Request.RawUrl.StartsWith(appPath + "/(") && !result.StartsWith(appPath + "/("))
+			{
+				if (url.StartsWith("/") && url.StartsWith(appPath))
+				{
+					url = "~" + url.Remove(0, appPath.Length);
+				}
+				if (url.StartsWith("~/"))
+				{
+					string[] compsOfPathWithinApp = Context.Request.RawUrl.Substring(appPath.Length).Split('/');
+					url = appPath + "/" + compsOfPathWithinApp[1] + "/" + url.Substring(2);
+				}
+				result = url;
+			}
+			return result;
+		}
+		
+		private void InitializeVars()
+		{
+			if (IsDesignTime || !Config.Current.UseHttpModule)
+				return;
 			
 			uploadProgressUrl = Url;
 			if (uploadProgressUrl == null)
 			{
 				uploadProgressUrl = "~/NeatUpload/Progress.aspx";
 			}
-			// Workaround Mono XSP bug where ApplyAppPathModifier() doesn't add the session id
-			if (Context.Request.RawUrl.StartsWith(appPath + "/("))
-			{
-				if (uploadProgressUrl.StartsWith("/") && uploadProgressUrl.StartsWith(appPath))
-				{
-					uploadProgressUrl = "~" + uploadProgressUrl.Remove(0, appPath.Length);
-				}
-				if (uploadProgressUrl.StartsWith("~/"))
-				{
-					uploadProgressUrl = appPath + "/(" + Context.Session.SessionID + ")/" + uploadProgressUrl.Substring(2);
-				}
-			}
-			else
-			{
-				uploadProgressUrl = Context.Response.ApplyAppPathModifier(uploadProgressUrl);
-			}
+			uploadProgressUrl = ApplyAppPathModifier(uploadProgressUrl);
 
 			uploadProgressUrl += "?postBackID=" + FormContext.Current.PostBackID;
 
