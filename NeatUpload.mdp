@@ -94,8 +94,6 @@
     <File name="./tests/TriggerChildren.aspx" subtype="Code" buildaction="Nothing" />
     <File name="./tests/TriggerChildren.aspx.cs" subtype="Code" buildaction="Nothing" />
     <File name="./NeatUpload/ProgressBar.js" subtype="Code" buildaction="Nothing" />
-    <File name="./NeatUpload/SetProgress.aspx" subtype="Code" buildaction="Nothing" />
-    <File name="./SetProgressPage.cs" subtype="Code" buildaction="Compile" />
     <File name="./SessionPreservingWorkerRequest.cs" subtype="Code" buildaction="Compile" />
     <File name="./NeatUpload/SyncUploadContext.aspx" subtype="Code" buildaction="Nothing" />
     <File name="./SyncUploadContextPage.cs" subtype="Code" buildaction="Compile" />
