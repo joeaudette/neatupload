@@ -1,6 +1,6 @@
 <%@ Page language="c#" AutoEventWireup="false" %>
 <Html>
-	<Head>
+	<Head runat="server">
 		<Title>Upload Too Large</Title>
 	</Head>
 	<Body>

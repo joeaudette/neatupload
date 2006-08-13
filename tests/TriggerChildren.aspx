@@ -2,7 +2,7 @@
 <%@ Register TagPrefix="Upload" Namespace="Brettle.Web.NeatUpload" Assembly="Brettle.Web.NeatUpload" %>
 
 <Html>
-	<Head>
+	<Head runat="server">
 		<Title>NeatUpload Test of Trigger Children</Title>
 		<style type="text/css">
 <!--

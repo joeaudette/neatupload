@@ -3,7 +3,7 @@
 <%@ Register TagPrefix="SqlUpload" Namespace="Hitone.Web.SqlServerUploader" Assembly="Hitone.Web.SqlServerUploader" %>
 
 <html>
-<head>
+<head runat="server">
     <title>NeatUpload Demo</title>
     <style type="text/css">
 <!--
