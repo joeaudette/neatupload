@@ -3,7 +3,7 @@
 <%@ Register TagPrefix="HashedUpload" Namespace="Brettle.Web.NeatUpload" Assembly="Brettle.Web.NeatUpload.HashedInputFile" %>
 
 <Html>
-	<Head>
+	<Head runat="server">
 		<Title>NeatUpload Demo</Title>
 		<style type="text/css">
 <!--
