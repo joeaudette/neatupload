@@ -108,7 +108,7 @@ function NeatUploadPB(id, popupDisplayStatement, inline, displayFunc, triggerIDs
 		return true;
 	});
 						
-	var eventsThatCouldTriggerPostBack = ['click', 'keypress', 'change', 'drop', 'mousedown', 'keydown'];
+	var eventsThatCouldTriggerPostBack = ['click', 'keypress', 'drop', 'mousedown', 'keydown'];
 							
 	for (var i = 0; i < eventsThatCouldTriggerPostBack.length; i++)
 	{

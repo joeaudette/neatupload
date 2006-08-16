@@ -251,7 +251,8 @@ if (frames['" + this.ClientID + @"'])
 					appPath = "";
 				}
 				Page.RegisterClientScriptBlock("NeatUploadProgressBar", @"
-<script src='" + appPath + @"/NeatUpload/ProgressBar.js'></script>
+<script src='" + appPath + @"/NeatUpload/ProgressBar.js?rev=" 
+	+ System.Reflection.Assembly.GetExecutingAssembly().GetName().Version + @"'></script>
 <script language='javascript'>
 NeatUploadPB.prototype.ClearFileNamesAlert = '" +  Config.Current.ResourceManager.GetString("ClearFileNamesAlert") + @"';
 // -->
@@ -328,7 +329,7 @@ NeatUploadPB.prototype.Bars['" + this.ClientID + @"']
 			
 			if (!Inline && !IsDesignTime)
 			{
-				// Add an empty <span> element with an ID, so that the JS will no where to find this ProgressBar
+				// Add an empty <span> element with an ID, so that the JS will know where to find this ProgressBar
 				// so it know where to start looking for the containing form.
 				writer.Write("<span id='" + ClientID + @"_NeatUpload_dummyspan'/>");
 				// Enclose the pop-up fallback div in a <noscript> tag to ensure that it is not visible, even during
