@@ -37,7 +37,7 @@
 		}
 </script>
 <Html>
-	<Head>
+	<Head runat="server">
 		<Title>NeatUpload Demo</Title>
 		<style type="text/css">
 <!--

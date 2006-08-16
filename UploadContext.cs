@@ -171,6 +171,13 @@ namespace Brettle.Web.NeatUpload
 			set { lock(this) { stopTime = value; } }
 		}
 		
+		private long fileBytesRead;
+		internal long FileBytesRead
+		{
+			get { lock(this) { return fileBytesRead; } }
+			set { lock(this) { fileBytesRead = value; } }
+		}
+
 		private long bytesRead;
 		internal long BytesRead
 		{
