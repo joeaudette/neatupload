@@ -280,6 +280,10 @@ namespace Brettle.Web.NeatUpload
 		private void WriteParsedToOutputStream()
 		{
             outputStream.Write(buffer, readPos, parsePos - readPos);
+			if (outputStream == fileStream)
+			{
+				uploadContext.FileBytesRead += parsePos - readPos;
+			}
 			readPos = parsePos;
 			
 /*

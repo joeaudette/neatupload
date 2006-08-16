@@ -218,7 +218,7 @@ window.close();
 				if (lastPostBackID != null && lastPostBackID.Length > 0 && Page.Request.Params["refresher"] == null)
 				{
 					this.UploadContext = UploadContext.FindByID(lastPostBackID);
-					if (this.UploadContext.NumUploadedFiles == 0)
+					if (this.UploadContext.FileBytesRead == 0)
 					{
 						this.UploadContext = null;
 					}

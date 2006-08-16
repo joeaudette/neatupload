@@ -203,25 +203,6 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 		
-		internal int NumUploadedFiles
-		{
-			get 
-			{
-				int numUploadedFiles = 0;
-				lock(uploadedFiles.SyncRoot) 
-				{
-					foreach (UploadedFile f in uploadedFiles.Values)
-					{
-						if (f.IsUploaded)
-						{
-							numUploadedFiles++;
-						}
-					}
-				}
-				return numUploadedFiles;
-			}
-		}	
-		
 		internal double FractionComplete
 		{
 			get 
@@ -251,6 +232,13 @@ namespace Brettle.Web.NeatUpload
 			set { lock(this) { stopTime = value; } }
 		}
 		
+		private long fileBytesRead;
+		internal long FileBytesRead
+		{
+			get { lock(this) { return fileBytesRead; } }
+			set { lock(this) { fileBytesRead = value; } }
+		}
+
 		private long bytesRead;
 		internal long BytesRead
 		{
