@@ -219,6 +219,10 @@ The only compatiblity exceptions are:
     with the same HTTP status code and throws the <code>HttpException</code>.
     </li>
     
+    <li>For upload requests where the non-file portion exceeds the <code>maxNormalRequestLength</code> limit,
+	NeatUpload now throws a <code>NonfilePortionTooLargeException</code> instead of an
+	<code>UploadTooLargeException</code>.</li>
+    
     <li>If you use ASP.NET 2.0 themes, those themes will now be applied to the default progress display page
     (<code>Progress.aspx</code>) and the sample custom error page (<code>Error413.aspx</code>).</li>
   </ul>
@@ -1687,11 +1691,16 @@ element's <code>maxNormalRequestLength </code>attribute<code></code>:
 The behavior when this value is exceeded is similar to the behavior
 when the <code>maxRequestLength</code>
 is exceeded. &nbsp;See the preceding section for details.
-&nbsp;The
-only difference is that for non-upload requests that exceed the <code>maxNormalRequestLength</code>
-limit, NeatUpload does not attempt to use JavaScript to interrupt the
-browser and the exception that is thrown is an <code>HttpException(413,
-"Request Entity Too Large")</code> instead of an <code>UploadTooLargeException()</code>.<br>
+&nbsp;The only differences are:
+<ol>
+	<li>For upload requests where the non-file portion exceeds the <code>maxNormalRequestLength</code> limit,
+	NeatUpload throws a <code>NonfilePortionTooLargeException</code> instead of an
+	<code>UploadTooLargeException</code>.</li>
+	<li>For non-upload requests that exceed the <code>maxNormalRequestLength</code>
+	limit, NeatUpload does not attempt to use JavaScript to interrupt the
+	browser and the exception that is thrown is an <code>HttpException(413,	"Request Entity Too Large")</code>
+	instead of an <code>UploadTooLargeException()</code>.</li>
+</ol>
 
 <h3><a class="mozTocH3" name="MaxUploadRate">Limiting the Upload Rate</h3>
 By default, NeatUpload receives the upload as fast as it can. &nbsp;To limit the rate at which the upload is received, use the <code>&lt;neatUpload&gt;</code> element's <code>maxUploadRate</code> attribute:<br>
@@ -3003,7 +3012,15 @@ if the total request size is more than the size specified with the <code>maxRequ
 attribute of the <code>&lt;neatUpload&gt;</code>
 element. &nbsp;The value of the <code>UploadTooLargeException</code>'s
       <code>Message</code> property is based on the <code>UploadTooLargeMessageFormat</code>
-resource in <code>Strings.resx</code>.</td>
+resource in <code>Strings.resx</code>.
+&nbsp;NeatUpload throws an <code>NonfilePortionTooLargeException</code>
+if the non-file portion of an upload request is more than the size specified with the 
+<code>maxNormalRequestLength</code>
+attribute of the <code>&lt;neatUpload&gt;</code>
+element. &nbsp;The value of the <code>NonfilePortionTooLargeException</code>'s
+      <code>Message</code> property is based on the <code>NonfilePortionTooLargeMessageFormat</code>
+resource in <code>Strings.resx</code>.
+</td>
 
 
 
