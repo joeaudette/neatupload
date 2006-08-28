@@ -3538,7 +3538,9 @@ to be updated
 during form submission. &nbsp;NeatUpload works around this by using
 a
 popup progress bar whenever the User-Agent header contains "Opera"
-(case-insensitive).</p>
+(case-insensitive).  Most browsers don't allow popups to be smaller that 500x100 pixels.  
+If you specify a smaller width or height or use units other than pixels, NeatUpload will automatically use the
+minimum size in pixels.</p>
 <h3><a class="mozTocH3" name="mozTocId181845"></a>Non-absolute path in IE7 causes the progress display to start even though no upload occurs</h3>
 
 <p>If instead of selecting a file to upload via the file selection
