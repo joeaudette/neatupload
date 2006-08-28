@@ -56,8 +56,16 @@ namespace Brettle.Web.NeatUpload
 		private ArrayList otherTriggers = new ArrayList(); // Controls passed to AddTrigger()
 		private	HtmlTextWriterTag Tag;
 
+		private bool InlineRequested
+		{
+			get { return (ViewState["inline"] != null && (bool)ViewState["inline"]); }
+			set { ViewState["inline"] = value; }
+		}
+			
 		/// <summary>
-		/// Whether to display the progress bar inline or as a pop-up.</summary>
+		/// Whether to display the progress bar inline or as a pop-up.  Under Opera, this property will always 
+		/// return false, even if you set it to true.  Popup progress bars are automatically used under Opera 
+		/// because Opera doesn't refresh the iframe used to display inline progress bars.</summary>
 		[DefaultValue(false)]
 		public bool Inline
 		{
@@ -70,9 +78,9 @@ namespace Brettle.Web.NeatUpload
 					if (userAgent != null && userAgent.ToLower().IndexOf("opera") != -1)
 						return false;
 				}
-				return (ViewState["inline"] != null && (bool)ViewState["inline"]);
+				return InlineRequested;
 			}
-			set { ViewState["inline"] = value; }
+			set { InlineRequested = value; }
 		}
 		
 		/// <summary>
@@ -223,13 +231,13 @@ if (NeatUpload_DivNode)
 			{
 				return length.ToString();
 			}
-			else if (Inline || length == Unit.Empty)
+			else if (InlineRequested || length == Unit.Empty)
 			{
 				return min.ToString();
 			}
 			else
 			{
-				throw new System.ArgumentOutOfRangeException(name, "must be at least " + min + " pixels and must use pixel(px) units");
+				throw new System.ArgumentOutOfRangeException(name, "must be at least " + min + " pixels and must use pixel(px) units when using a popup ProgressBar.");
 			}
 		}
 		
