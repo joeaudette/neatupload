@@ -276,11 +276,16 @@ namespace Brettle.Web.NeatUpload
 							preloadedEntityBodyStream.Length, UploadHttpModule.MaxNormalRequestLength);
 			}
 */
-			// If the file or non-file portion of the request is too large, throw an exception.
-			if (preloadedEntityBodyStream.Length > UploadHttpModule.MaxNormalRequestLength 
-				|| this.grandTotalBytesRead > UploadHttpModule.MaxRequestLength ) {
+			// If the entire request or the non-file portion of the request is too large, throw an exception.
+			if (this.grandTotalBytesRead > UploadHttpModule.MaxRequestLength)
+			{
 				if (log.IsDebugEnabled) log.Debug("Request Entity Too Large");
 				throw new UploadTooLargeException(UploadHttpModule.MaxRequestLength);
+			}
+			if (preloadedEntityBodyStream.Length > UploadHttpModule.MaxNormalRequestLength )
+			{
+				if (log.IsDebugEnabled) log.Debug("Nonfile Portion of Request Entity Too Large");
+				throw new UploadTooLargeException(UploadHttpModule.MaxNormalRequestLength);
 			}
 		}
 
