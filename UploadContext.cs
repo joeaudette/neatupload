@@ -91,7 +91,9 @@ namespace Brettle.Web.NeatUpload
 			NeverSynced = true;
 		}
 		
-		internal Hashtable uploadedFiles = Hashtable.Synchronized(new Hashtable());
+		// internal Hashtable uploadedFiles = Hashtable.Synchronized(new Hashtable());
+		
+		internal UploadedFileCollection Files = new UploadedFileCollection();
 
 		private string postBackID;
 		
@@ -104,7 +106,7 @@ namespace Brettle.Web.NeatUpload
 		internal UploadedFile GetUploadedFile(string controlUniqueID)
 		{
 			if (log.IsDebugEnabled) log.Debug("In GetUploadedFile() controlUniqueID=" + controlUniqueID);
-			return uploadedFiles[controlUniqueID] as UploadedFile; 
+			return Files[controlUniqueID] as UploadedFile; 
 		}
 		
 		internal void RegisterPostBack(string postBackID)
@@ -180,7 +182,7 @@ namespace Brettle.Web.NeatUpload
 			if (log.IsDebugEnabled) log.Debug("In CreateUploadedFile() controlUniqueID=" + controlUniqueID);
 			UploadedFile uploadedFile 
 				= UploadStorage.CreateUploadedFile(this, controlUniqueID, fileName, contentType, storageConfig);			
-			uploadedFiles[controlUniqueID] = uploadedFile;
+			Files.Add(controlUniqueID, uploadedFile);
 			
 			if (fileName != null && fileName != string.Empty)
 				CurrentFileName = fileName;
@@ -191,15 +193,14 @@ namespace Brettle.Web.NeatUpload
 		internal void RemoveUploadedFiles()
 		{
 			if (log.IsDebugEnabled) log.Debug("In RemoveUploadedFiles");
-			lock (uploadedFiles.SyncRoot)
+			lock (Files.SyncRoot)
 			{
-				foreach (UploadedFile f in uploadedFiles.Values)
+				for (int i = 0; i < Files.Count; i++)
 				{
-					f.Dispose();
+					Files[i].Dispose();
 				}
-				// Don't clear the Hashtable, because we use it to determine the number of files uploaded in the
+				// Don't clear the File collection, because we use it to determine the number of files uploaded in the
 				// last postback.
-				// uploadedFiles.Clear();
 			}
 		}
 		

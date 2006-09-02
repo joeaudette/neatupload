@@ -68,10 +68,7 @@ namespace Brettle.Web.NeatUpload
 					if (IsDesignTime) return null;
 					if (Config.Current.UseHttpModule)
 					{
-						if (UploadContext.Current != null)
-						{
-							_file = UploadContext.Current.GetUploadedFile(this.UniqueID);
-						}
+						_file = UploadHttpModule.Files[this.UniqueID];
 					}
 					else
 					{

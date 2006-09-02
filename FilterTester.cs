@@ -47,7 +47,7 @@ namespace Brettle.Web.NeatUpload
 			}
 			mockWorkerRequest.EndOfRequest();
 			results.FilteredBodyStream.Close();
-			Hashtable uploadedFiles = filteringWorkerRequest.GetUploadContext().uploadedFiles;
+			UploadedFileCollection uploadedFiles = filteringWorkerRequest.GetUploadContext().Files;
 			foreach (string id in uploadedFiles.Keys)
 			{
 				UploadedFile uploadedFile = uploadedFiles[id] as UploadedFile;

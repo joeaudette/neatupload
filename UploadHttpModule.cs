@@ -64,7 +64,19 @@ namespace Brettle.Web.NeatUpload
 			}
 			context.Response.AppendToLog(param);
 		}
-
+		
+		public static UploadedFileCollection Files
+		{
+			get 
+			{
+				if (UploadContext.Current == null)
+				{
+					return new UploadedFileCollection();
+				}
+				return UploadContext.Current.Files;
+			}
+		}
+		
 		/// <summary>
 		/// Waits for the current upload request to finish.</summary>
 		/// <remarks>

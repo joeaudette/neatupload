@@ -55,7 +55,7 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 		
-		private string PostBackID = null;
+		internal string PostBackID = null;
 		
 		internal virtual string FileFieldNameToControlID(string name)
 		{
