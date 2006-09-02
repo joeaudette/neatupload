@@ -66,6 +66,8 @@ the Visual Studio Web Form Designer</a></li>
       <li><a href="#mozTocId900479">Avoiding
 Unnecessary Uploads and Progress Displays</a></li>
 
+      <li><a href="#UploadingWithoutInputFile">Uploading without InputFile</a></li>
+
       <li><a href="#mozTocId483750">Uploading
 from a Client Application</a></li>
 
@@ -297,7 +299,7 @@ Features in NeatUpload-1.3</h3>
 
 <ul>
 
-
+  <li>Added support for <a href="#UploadingWithoutInputFile">uploading without using <code>InputFile</code></a>.</li>
 
   <li>Added support for using NeatUpload in a web garden or web farm if you have ASP.NET configured
   to share session state across the servers in your garden/farm.</li>
@@ -991,6 +993,31 @@ is not maintained in the page's <code>ViewState</code>.<br>
 <br>
 
 
+<h3><a class="mozTocH3" name="UploadingWithoutInputFile">Uploading without <code>InputFile</code></a></h3>
+
+<p>
+By default, NeatUpload will stream to storage only those files associated with <code>InputFile</code> controls.&nbsp;
+Other files will be processed by ASP.NET and will only cause any <code>ProgressBar</code>s to update if they
+happen to occur after a file that NeatUpload has streamed.&nbsp; To tell NeatUpload to
+stream the other files, you must put a <code>HiddenPostBackID</code> control in your form before the controls
+used to upload those other files.&nbsp; If you are using the Visual Studio web form designer, just drag-and-drop the
+control at the top of your form.&nbsp; Otherwise, just manually add 
+<code>&lt;Upload:HiddenPostBackID runat="server"/&gt;</code> just inside the <code>&lt;form&gt;</code> element 
+on your page.&nbsp; There are no properties to set.
+</p>
+<p>
+Files that NeatUpload streams to storage are not available via the standard ASP.NET <code>Request.Files</code>
+property.&nbsp; Instead, they must be accessed via the static <code>Brettle.Web.NeatUpload.UploadHttpModule.Files</code>
+property.&nbsp; Since ASP.NET doesn't allow subclassing of the <code>HttpFileCollection</code> returned by
+<code>Request.Files</code> (nor the <code>HttpPostedFile</code> class), NeatUpload attempts to mimic their API
+with new classes called <code>UploadedFileCollection</code> and <code>UploadedFile</code>.&nbsp; In addition, 
+<code>UploadHttpModule.Files</code> always contains an <code>UploadedFile</code> object for every file received,
+even files that NeatUpload didn't stream to storage, and even if the <code>UploadHttpModule</code> is disabled
+or not listed in the <code>&lt;httpModules&gt;</code> section.&nbsp; As a result switching from
+<code>Request.Files</code> to <code>UploadHttpModule.Files</code> should be relatively simple and you don't need
+to switch back if you decide not to stream a file or you decide to disable or uninstall the
+<code>UploadHttpModule</code>.
+</p>
 
 <h3><a class="mozTocH3" name="mozTocId483750"></a>Uploading
 from a Client Application</h3>
@@ -1000,7 +1027,7 @@ from a Client Application</h3>
 If your users are uploading using their web browser, you don't need to
 read this section. &nbsp;This section is for environments where a
 separate client application uses HTTP POST requests to uploads files to
-a form containing an <code>InputFile</code> control.
+your application.
 &nbsp;You should read the earlier sections before reading this one.<br>
 
 
@@ -1010,10 +1037,12 @@ a form containing an <code>InputFile</code> control.
 
 
 In order for NeatUpload to process requests from non-browser client
-applications, the query string of each request needs to contain a
+applications, each request needs to contain a
 unique ID&nbsp;called a post-back ID. &nbsp;NeatUpload looks
 for the
-post-back ID in a query string parameter. &nbsp;The parameter name
+post-back ID in a parameter that is in either the query string or 
+in a form field in the body of the request that occurs before the files to be streamed.
+&nbsp;The parameter name
 is <a href="#mozTocId991184">configurable</a>.
 &nbsp;By default, NeatUpload looks for a parameter named
 "NeatUpload_PostBackID". &nbsp;The post-back ID itself does not
@@ -1050,15 +1079,13 @@ post-back ID.<br>
 
 
 
-If NeatUpload finds the post-back ID in the query string it will assume
-that all files in the request are destined for <code>InputFile</code>
-controls and will stream them all to storage. &nbsp;To ensure that
-you
-can access the uploaded files from your page, make sure that the name
+If NeatUpload finds the post-back ID in the query string it will stream all files in the request to storage.
+&nbsp;You can access the uploaded file via the static <code>Brettle.Web.NeatUpload.UploadHttpModule.Files</code>
+property.&nbsp;Alternatively, you can put <code>InputFile</code> controls on your page and make sure that the name
 of the form field(s) used by the client application match the control
 IDs of your <code>InputFile</code> control(s).
 &nbsp;So, if your client application uses a field name of
-"FILE001", you should use put the following in your page:<br>
+"FILE001", you could put the following in your page:<br>
 
 
 

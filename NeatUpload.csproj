@@ -99,6 +99,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "AspNetUploadedFile.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Config.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -159,7 +164,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "InputFile.cs"
+                    RelPath = "HiddenPostBackID.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -229,6 +234,11 @@
                 />
                 <File
                     RelPath = "UploadedFile.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "UploadedFileCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

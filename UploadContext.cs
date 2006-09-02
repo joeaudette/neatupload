@@ -190,6 +190,11 @@ namespace Brettle.Web.NeatUpload
 			return uploadedFile;
 		}
 		
+		internal void CreateAspNetUploadedFile(string name)
+		{
+			Files.Add(name, new AspNetUploadedFile(name));
+		}
+		
 		internal void RemoveUploadedFiles()
 		{
 			if (log.IsDebugEnabled) log.Debug("In RemoveUploadedFiles");

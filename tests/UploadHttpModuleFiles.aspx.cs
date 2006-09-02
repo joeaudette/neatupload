@@ -30,10 +30,14 @@ namespace Brettle.Web.NeatUpload
 	public class UploadHttpModuleFiles : System.Web.UI.Page
 	{	
 		protected HtmlForm form;
+		protected HiddenPostBackID hiddenPostBackID;
+		protected HtmlAnchor toggleHiddenPostBackIDLink;
 		protected InputFile inputFile2;
 		protected Button submitButton;
 		protected Button cancelButton;
-		protected HtmlGenericControl bodyPre;
+		protected HtmlGenericControl uploadHttpModuleFilesPre;
+		protected HtmlGenericControl requestFilesPre;
+		protected HtmlGenericControl uploadedFilesDiv;
 		protected ProgressBar inlineProgressBar;
 		
 		protected override void OnInit(EventArgs e)
@@ -50,23 +54,34 @@ namespace Brettle.Web.NeatUpload
 		private void Page_Load(object sender, EventArgs e)
 		{
 			submitButton.Click += new System.EventHandler(this.Button_Clicked);
+			toggleHiddenPostBackIDLink.ServerClick += new System.EventHandler(this.ToggleHiddenPostBackID_Clicked);
+			uploadedFilesDiv.Visible = IsPostBack;
 		}
 
+		private void ToggleHiddenPostBackID_Clicked(object sender, EventArgs e)
+		{
+			hiddenPostBackID.Visible = !hiddenPostBackID.Visible;
+		}
+		
 		private void Button_Clicked(object sender, EventArgs e)
 		{
-			if (!this.IsValid)
-			{
-				bodyPre.InnerText = "Page is not valid!";
-				return;
-			}
-			bodyPre.InnerText = "";
+			uploadHttpModuleFilesPre.InnerText = "";
 			for (int i=0; i < UploadHttpModule.Files.Count; i++)
 			{
 				UploadedFile file = UploadHttpModule.Files[i];
-				bodyPre.InnerText += "File #" + i + ":\n"; 
-				bodyPre.InnerText += "  Name: " + file.FileName + "\n";
-				bodyPre.InnerText += "  Size: " + file.ContentLength + "\n";
-				bodyPre.InnerText += "  Content type: " + file.ContentType + "\n";
+				uploadHttpModuleFilesPre.InnerText += "UploadHttpModule.Files[" + i + "]:\n"; 
+				uploadHttpModuleFilesPre.InnerText += "  Name: " + file.FileName + "\n";
+				uploadHttpModuleFilesPre.InnerText += "  Size: " + file.ContentLength + "\n";
+				uploadHttpModuleFilesPre.InnerText += "  Content type: " + file.ContentType + "\n";
+			}
+			requestFilesPre.InnerText = "";
+			for (int i=0; i < Request.Files.Count; i++)
+			{
+				HttpPostedFile file = Request.Files[i];
+				requestFilesPre.InnerText += "Request.Files[" + i + "]:\n"; 
+				requestFilesPre.InnerText += "  Name: " + file.FileName + "\n";
+				requestFilesPre.InnerText += "  Size: " + file.ContentLength + "\n";
+				requestFilesPre.InnerText += "  Content type: " + file.ContentType + "\n";
 			}
 		}
 	}

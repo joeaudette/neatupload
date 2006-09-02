@@ -32,13 +32,18 @@ namespace Brettle.Web.NeatUpload
 		protected UploadedFile(string controlUniqueID, string fileName, string contentType)
 		{
 			// IE sends a full path for the fileName.  We only want the actual filename.
+			FileName = StripPath(fileName);
+			ContentType = contentType;
+			ControlUniqueID = controlUniqueID;
+		}
+		
+		protected static string StripPath(string fileName)
+		{
 			if (System.Text.RegularExpressions.Regex.IsMatch(fileName, @"^(\\\\[^\\]|([a-zA-Z]:)?\\).*"))
 			{
 				fileName = fileName.Substring(fileName.LastIndexOf('\\') + 1);
 			}
-			FileName = fileName;
-			ContentType = contentType;
-			ControlUniqueID = controlUniqueID;
+			return fileName;
 		}
 		
 		public abstract void Dispose();
@@ -60,5 +65,10 @@ namespace Brettle.Web.NeatUpload
 		public string ContentType;
 
 		public string ControlUniqueID;
+
+		// The following 2 utility methods are provided to simplify switching from System.Web.HttpPostedFile.
+		public Stream InputStream { get { return OpenRead(); } }
+		public void SaveAs(string path) { MoveTo(path, MoveToOptions.Overwrite); }
+
 	}
 }
