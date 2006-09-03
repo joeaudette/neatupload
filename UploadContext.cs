@@ -161,6 +161,7 @@ namespace Brettle.Web.NeatUpload
 			{
 				if (ctxInSession.Status != UploadStatus.Cancelled)
 				{
+					ctxInSession.FileBytesRead = FileBytesRead;
 					ctxInSession.BytesRead = BytesRead;
 					ctxInSession.SetContentLength(ContentLength);
 					ctxInSession.Status = Status;
