@@ -66,52 +66,7 @@ namespace Brettle.Web.NeatUpload
 				if (_file == null)
 				{
 					if (IsDesignTime) return null;
-					if (Config.Current.UseHttpModule)
-					{
-						_file = UploadHttpModule.Files[this.UniqueID];
-					}
-					else
-					{
-						HttpPostedFile postedFile = Context.Request.Files[this.UniqueID];
-						if (postedFile != null)
-						{
-							// Copy the posted file to an UploadedFile.
-							// We use a temporary UploadContext so that we have something we can pass to the
-							// UploadStorageProvider.  Note that unlike when the UploadHttpModule is used,
-							// this temporary context is not shared between uploaded files.
-							UploadContext ctx = new UploadContext();
-							ctx.SetContentLength(this.Page.Request.ContentLength);
-							ctx.Status = UploadStatus.NormalInProgress;
-							UploadStorageConfig storageConfig = UploadStorage.CreateUploadStorageConfig();
-							string storageConfigString = this.Page.Request.Form[UploadContext.ConfigNamePrefix + "-" + this.UniqueID];
-							if (storageConfigString != null && storageConfigString != string.Empty)
-							{
-								storageConfig.Unprotect(storageConfigString);
-							}
-							_file = UploadStorage.CreateUploadedFile(ctx, this.UniqueID, postedFile.FileName, postedFile.ContentType, storageConfig);
-							Stream outStream = null, inStream = null;
- 							try
-							{
-								outStream = _file.CreateStream();
-								inStream = postedFile.InputStream;
-								byte[] buf = new byte[4096];
-								int bytesRead = -1;
-								while (outStream.CanWrite && inStream.CanRead 
-									   && (bytesRead = inStream.Read(buf, 0, buf.Length)) > 0)
-								{
-									outStream.Write(buf, 0, bytesRead);
-									ctx.BytesRead += bytesRead;
-								}
-								ctx.BytesRead = ctx.ContentLength;
-								ctx.Status = UploadStatus.Completed;
-							}
-							finally
-							{
-								if (inStream != null) inStream.Close();
-								if (outStream != null) outStream.Close();
-							}
-						}
-					}
+					_file = UploadHttpModule.Files[this.UniqueID];
 				}
 				return _file;
 			}

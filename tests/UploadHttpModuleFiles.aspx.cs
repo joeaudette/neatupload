@@ -32,7 +32,6 @@ namespace Brettle.Web.NeatUpload
 		protected HtmlForm form;
 		protected HiddenPostBackID hiddenPostBackID;
 		protected HtmlAnchor toggleHiddenPostBackIDLink;
-		protected InputFile inputFile2;
 		protected Button submitButton;
 		protected Button cancelButton;
 		protected HtmlGenericControl uploadHttpModuleFilesPre;

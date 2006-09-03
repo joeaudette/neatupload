@@ -71,7 +71,7 @@ namespace Brettle.Web.NeatUpload
 			{
 				// If the upload is being handled by this module, then return the collection that it maintains.
 				if (UploadContext.Current != null) return UploadContext.Current.Files;
-				// Otherwise return a fake one that wraps the HttpPostedFiles in the Request.Files collection.
+				// Otherwise return a fake one that will use the HttpPostedFiles in the Request.Files collection.
 				HttpContext ctx = HttpContext.Current;
 				UploadedFileCollection aspNetFiles = ctx.Items["NeatUpload_AspNetFiles"] as UploadedFileCollection;
 				if (aspNetFiles == null)
@@ -82,7 +82,6 @@ namespace Brettle.Web.NeatUpload
 					for (int i = 0; i < fieldNames.Length; i++)
 					{
 						AspNetUploadedFile aspNetFile = new AspNetUploadedFile(fieldNames[i]);
-						aspNetFile.PostedFile = files[fieldNames[i]];
 						aspNetFiles.Add(fieldNames[i], aspNetFile);
 					}
 				}
@@ -141,7 +140,6 @@ namespace Brettle.Web.NeatUpload
 			app.EndRequest += new System.EventHandler(Application_EndRequest);
 			app.PreSendRequestHeaders += new System.EventHandler(Application_PreSendRequestHeaders);
 			app.ResolveRequestCache += new System.EventHandler(Application_ResolveRequestCache);
-			app.PreRequestHandlerExecute += new System.EventHandler(Application_PreRequestHandlerExecute);
 			RememberErrorHandler = new System.EventHandler(RememberError);
 			lock (typeof(UploadHttpModule))
 			{
@@ -353,20 +351,6 @@ namespace Brettle.Web.NeatUpload
 			}
 		}		
 
-		private void Application_PreRequestHandlerExecute(object sender, EventArgs e)
-		{
-			// Initialize all the AspNetUploadedFiles now that Request.Files is available.
-			HttpContext ctx = HttpContext.Current;
-			HttpFileCollection httpPostedFiles = ctx.Request.Files;
-			UploadedFileCollection uploadedFiles = UploadHttpModule.Files;
-			string[] fieldNames = httpPostedFiles.AllKeys;
-			for (int i = 0; i < fieldNames.Length; i++)
-			{
-				AspNetUploadedFile file = uploadedFiles[fieldNames[i]] as AspNetUploadedFile;
-				file.PostedFile = httpPostedFiles[fieldNames[i]];
-			}
-		}
-		
 		private void Application_EndRequest(object sender, EventArgs e)
 		{
 			if (log.IsDebugEnabled) log.Debug("In Application_EndRequest");

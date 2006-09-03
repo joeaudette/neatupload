@@ -53,6 +53,10 @@
 				<input type="file" name="inputFile"/><br />
 			Pick a file using using NeatUpload's InputFile control:
 				<Upload:InputFile id="inputFile2" runat="server" /><br />
+			Pick a file using a standard &lt;input type="file"&gt; element:
+				<input type="file" name="inputFile3"/><br />
+			Pick a file using using NeatUpload's InputFile control:
+				<Upload:InputFile id="inputFile4" runat="server" /><br />
 
 			<asp:Button id="submitButton" runat="server" Text="Submit" />
 			<asp:Button id="cancelButton" runat="server" Text="Cancel" CausesValidation="False"/><br />
