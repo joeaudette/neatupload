@@ -999,6 +999,14 @@ is not maintained in the page's <code>ViewState</code>.<br>
 
 <h3><a class="mozTocH3" name="ShowingProcessingProgress">Showing Processing Progress</a></h3>
 
+</p>
+NOTE: The feature described in this section is still under development and almost definitely won't work properly
+in some cases.  Frequently updating the progress may result in performance problems.  More importantly, your page
+will probably hang when you attempt to update the progress if your page uses a session state mode other than 
+"InProc" or it has already accessed the session state.  It is likely that when this feature is released in its
+stable form, your page will need to declare <code>EnableSessionState="false"</code> for this feature to work
+properly.
+</p>
 <p>
 By default, the NeatUpload <code>ProgressBar</code> displays "Processing..." if it refreshes while the code
 associated with your page runs.  In most cases your code finishes running before the display refreshes, so you
