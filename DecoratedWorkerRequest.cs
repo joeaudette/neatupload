@@ -107,8 +107,8 @@ namespace Brettle.Web.NeatUpload
 
 		public override void CloseConnection ()
 		{
-			if (log.IsDebugEnabled) log.Debug("Ignoring call to CloseConnection()");
-			// OrigWorker.CloseConnection();
+			if (log.IsDebugEnabled) log.Debug("Calling CloseConnection()");
+			OrigWorker.CloseConnection();
 		}
 		
 		public override void EndOfRequest ()
@@ -126,7 +126,7 @@ namespace Brettle.Web.NeatUpload
 			if (Exception == null)
 			{
 				if (log.IsDebugEnabled) log.Debug("Calling FlushResponse(" + finalFlush + ")");
-				OrigWorker.FlushResponse(false);
+				OrigWorker.FlushResponse(finalFlush);
 			}
 		}
 
