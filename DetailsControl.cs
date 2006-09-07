@@ -86,6 +86,17 @@ namespace Brettle.Web.NeatUpload
 			}
 			
 			Status = (uploadContext == null) ? UploadStatus.Unknown : uploadContext.Status;
+			string barID = Page.Request.Params["barID"];
+			ProgressInfo progress = null;
+			if (barID != null && uploadContext != null)
+			{
+				progress = (ProgressInfo)uploadContext.ProgressInfoByID[barID];
+			}
+			if (progress != null && Status == UploadStatus.Completed)
+			{
+				Status = UploadStatus.ProcessingCompleted;
+			}
+
 			Attributes["status"] = Status.ToString();
 			
 			string whenStatus = Attributes["WhenStatus"];

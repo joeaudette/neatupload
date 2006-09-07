@@ -122,7 +122,7 @@ function NeatUploadUpdateHtml()
 					}
 				}
 			}
-			if (status != 'NormalInProgress' && status != 'ChunkedInProgress' && status != 'Unknown')
+			if (status != 'NormalInProgress' && status != 'ChunkedInProgress' && status != 'ProcessingInProgress' && status != 'Unknown')
 			{
 				NeatUploadRefreshPage();
 			}

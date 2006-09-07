@@ -55,4 +55,6 @@
 	<data name="SecondsFormat"><value>{1:00}:{2:00}</value></data>
 	<data name="MinutesFormat"><value>{1:00}:{2:00}</value></data>
 	<data name="HoursFormat"><value>{3:0.0}h</value></data>
+	<data name="ProcessingMessage"><value>Processing...</value></data>
+	<data name="ProgressInfoFormat"><value>{0}/{1} {2} processed</value></data>
 </root>

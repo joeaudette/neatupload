@@ -71,16 +71,40 @@ namespace Brettle.Web.NeatUpload.log4net
 		public void Error(string message, Exception ex) { Writer.WriteLine(message + ": " + ex); }
 	}
 
+	internal class ConsoleLogger : ILog
+	{
+		internal ConsoleLogger()
+		{
+			Writer = Console.Out;
+		}
+		
+		private TextWriter Writer;
+
+		public void Debug(string message) { Writer.WriteLine(message); }
+		public void DebugFormat(string format, params object[] args) { Writer.WriteLine(format, args); }
+		public bool IsDebugEnabled { get { return true; } }
+
+		public void Error(string message, Exception ex) { Writer.WriteLine(message + ": " + ex); }
+	}
+
 	internal class LogManager
 	{
 		internal static ILog GetLogger(Type type)
 		{
 			// Don't access Config.Current because doing so will trigger some logging which we don't yet have
 			// a logger.
-			if (ConfigurationSettings.AppSettings != null 
-				&& ConfigurationSettings.AppSettings["NeatUpload.Logger"] == "AppStateLogger")
+			string logger = null;
+			if (ConfigurationSettings.AppSettings != null)
+			{
+				logger = ConfigurationSettings.AppSettings["NeatUpload.Logger"];
+			}
+			if (logger == "AppStateLogger")
 			{
 				return new AppStateLogger();
+			}
+			else if (logger == "ConsoleLogger")
+			{
+				return new ConsoleLogger();
 			}
 			else
 			{

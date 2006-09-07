@@ -58,11 +58,23 @@ namespace Brettle.Web.NeatUpload
 		internal static UploadContext Current
 		{
 			get {
-				
-				FilteringWorkerRequest worker = UploadHttpModule.GetCurrentWorkerRequest() as FilteringWorkerRequest;
-				if (worker == null)
-					return null;
-				return worker.GetUploadContext();
+				HttpContext httpContext = HttpContext.Current;
+				if (httpContext != null)
+				{
+					if (httpContext.Items["NeatUpload_UploadContext"] == null)
+					{
+						FilteringWorkerRequest worker = UploadHttpModule.GetCurrentWorkerRequest() as FilteringWorkerRequest;
+						if (worker != null)
+						{
+							httpContext.Items["NeatUpload_UploadContext"] = worker.GetUploadContext();
+						}
+					}
+					return (UploadContext)httpContext.Items["NeatUpload_UploadContext"];
+				}
+				return null;
+			}
+			set {
+				HttpContext.Current.Items["NeatUpload_UploadContext"] = value;
 			}
 		}
 		
@@ -168,6 +180,7 @@ namespace Brettle.Web.NeatUpload
 					ctxInSession.Exception = Exception;
 					ctxInSession.StartTime = StartTime;
 					ctxInSession.StopTime = StopTime;
+					ctxInSession.ProgressInfoByID = ProgressInfoByID;
 					ctxInSession.RegisterPostBack(PostBackID);
 				}
 				else
@@ -426,5 +439,7 @@ namespace Brettle.Web.NeatUpload
 				return _BytesPerSec;
 			}
 		}
+		
+		internal Hashtable ProgressInfoByID = new Hashtable();
 	}
 }

@@ -50,6 +50,7 @@ namespace Brettle.Web.NeatUpload
 		protected TimeSpan TimeRemaining;
 		protected TimeSpan TimeElapsed;
 		protected string CurrentFileName;
+		protected string ProcessingHtml;		
 		
 		protected UploadStatus Status = UploadStatus.Unknown;
 		
@@ -128,6 +129,7 @@ namespace Brettle.Web.NeatUpload
 		}
 		
 		private UploadContext UploadContext;					
+		private string ProgressBarID;					
 		private UploadStatus CurrentStatus = UploadStatus.Unknown;
 		private bool CanScript;
 		private bool CanCancel;
@@ -166,7 +168,9 @@ namespace Brettle.Web.NeatUpload
 			if (curStatus == prevStatus 
 			       && (curStatus != UploadStatus.Unknown.ToString()
 			           && curStatus != UploadStatus.NormalInProgress.ToString()
-			           && curStatus != UploadStatus.ChunkedInProgress.ToString()))
+			           && curStatus != UploadStatus.ChunkedInProgress.ToString()
+			           && curStatus != UploadStatus.ProcessingInProgress.ToString()
+			           ))
 			{
 				if (curStatus == UploadStatus.Rejected.ToString())
 				{
@@ -205,6 +209,7 @@ window.close();
 		{
 			// Find the current upload context
 			string postBackID = Request.Params["postBackID"];
+			ProgressBarID = Request.Params["barID"];
 			this.UploadContext = UploadContext.FindByID(postBackID);
 			if (log.IsDebugEnabled) log.Debug("FindByID() returned " + this.UploadContext + " when SessionID = " 
 				+ (HttpContext.Current.Session != null ? HttpContext.Current.Session.SessionID : null));
@@ -240,7 +245,21 @@ window.close();
 			{
 				lock (this.UploadContext)
 				{
-					FractionComplete = this.UploadContext.FractionComplete;
+					ProgressInfo progress = null;
+					if (ProgressBarID != null)
+					{
+						progress = (ProgressInfo)this.UploadContext.ProgressInfoByID[ProgressBarID];
+					}
+					if (progress != null)
+					{
+						FractionComplete = 1.0 * progress.Value / progress.Maximum;
+						ProcessingHtml = progress.ToHtml();
+					}
+					else
+					{
+						FractionComplete = this.UploadContext.FractionComplete;
+						ProcessingHtml = GetResourceString("ProcessingMessage");
+					}
 					BytesRead = this.UploadContext.BytesRead;
 					BytesTotal = this.UploadContext.ContentLength;
 					BytesPerSec = this.UploadContext.BytesPerSec;
@@ -280,6 +299,9 @@ window.close();
 			{
 				RefreshUrl = RefreshUrl.Substring(0, ampIndex);
 			}
+			
+			// Plus the barID
+			RefreshUrl += "&barID=" + ProgressBarID;
 			
 			// Workaround Mono XSP bug where ApplyAppPathModifier() removes the session id
 			RefreshUrl = ProgressBar.ApplyAppPathModifier(RefreshUrl);

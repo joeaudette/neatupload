@@ -23,6 +23,7 @@ using System.Configuration;
 using System.Web;
 using System.Threading;
 using System.Security.Permissions;
+using System.Collections.Specialized;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -70,7 +71,8 @@ namespace Brettle.Web.NeatUpload
 			get 
 			{
 				// If the upload is being handled by this module, then return the collection that it maintains.
-				if (UploadContext.Current != null) return UploadContext.Current.Files;
+				FilteringWorkerRequest worker = UploadHttpModule.GetCurrentWorkerRequest() as FilteringWorkerRequest;
+				if (worker != null) return worker.GetUploadContext().Files;
 				// Otherwise return a fake one that will use the HttpPostedFiles in the Request.Files collection.
 				HttpContext ctx = HttpContext.Current;
 				UploadedFileCollection aspNetFiles = ctx.Items["NeatUpload_AspNetFiles"] as UploadedFileCollection;
@@ -140,6 +142,7 @@ namespace Brettle.Web.NeatUpload
 			app.EndRequest += new System.EventHandler(Application_EndRequest);
 			app.PreSendRequestHeaders += new System.EventHandler(Application_PreSendRequestHeaders);
 			app.ResolveRequestCache += new System.EventHandler(Application_ResolveRequestCache);
+			app.PreRequestHandlerExecute += new System.EventHandler(Application_PreRequestHandlerExecute);
 			RememberErrorHandler = new System.EventHandler(RememberError);
 			lock (typeof(UploadHttpModule))
 			{
@@ -154,20 +157,32 @@ namespace Brettle.Web.NeatUpload
         [SecurityPermission(SecurityAction.Assert, UnmanagedCode=true)]
 		internal static HttpWorkerRequest GetCurrentWorkerRequest()
 		{
-			HttpContext origContext = HttpContext.Current;
-			IServiceProvider provider = (IServiceProvider)origContext;
+			HttpContext context = HttpContext.Current;
+			IServiceProvider provider = (IServiceProvider)context;
 			if (provider == null)
 			{
 				return null;
 			}
-			HttpWorkerRequest origWorker = (HttpWorkerRequest) provider.GetService(typeof(HttpWorkerRequest));
-			return origWorker;
+			HttpWorkerRequest worker = (HttpWorkerRequest) provider.GetService(typeof(HttpWorkerRequest));
+			return worker;
+		}
+
+		private static HttpWorkerRequest GetOrigWorkerRequest()
+		{
+			HttpWorkerRequest worker = GetCurrentWorkerRequest();
+			DecoratedWorkerRequest decoratedWorker = worker as DecoratedWorkerRequest;
+			if (decoratedWorker != null)
+			{
+				worker = decoratedWorker.OrigWorker;
+			}
+			return worker;
 		}
 
 		bool requestHandledBySubRequest;
 
 		private void Application_BeginRequest(object sender, EventArgs e)
 		{
+			if (log.IsDebugEnabled) log.Debug("In Application_BeginRequest");
 			HttpWorkerRequest origWorker = GetCurrentWorkerRequest();
 			if (origWorker == null)
 			{
@@ -299,6 +314,7 @@ namespace Brettle.Web.NeatUpload
 
 		private void Application_ResolveRequestCache(object sender, EventArgs e)
 		{
+			if (log.IsDebugEnabled) log.Debug("In Application_ResolveRequestCache");
 			// Wait for the upload to complete before AcquireRequestState fires.  If we don't then the session
 			// will be locked while the upload completes
 			WaitForUploadToComplete();
@@ -306,6 +322,7 @@ namespace Brettle.Web.NeatUpload
 
 		private void Application_PreSendRequestHeaders(object sender, EventArgs e)
 		{
+			if (log.IsDebugEnabled) log.Debug("In Application_PreSendRequestHeaders");
 			if (requestHandledBySubRequest)
 			{
 				HttpApplication app = sender as HttpApplication;
@@ -314,9 +331,39 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 
+		private void Application_PreRequestHandlerExecute(object sender, EventArgs e)
+		{
+			if (log.IsDebugEnabled) log.Debug("In Application_PreRequestHandlerExecute");
+			UploadContext uploadContext = UploadContext.Current;
+			if (uploadContext == null)
+			{
+				// If a FilteringWorkerRequest was not used, but the request contains the PostBackIDQueryParam, 
+				// then create and register an UploadContext.  This occurs the module disabled, 
+				// this is not a form/multipart POST request, etc.  This allows ProgressBars
+				// to be used for pages where no upload is occuring.
+				HttpContext httpContext = HttpContext.Current;
+				string postBackID = httpContext.Request.Params[Config.Current.PostBackIDQueryParam];
+				if (postBackID != null)
+				{
+					uploadContext = new UploadContext();
+					uploadContext.SetContentLength(HttpContext.Current.Request.ContentLength);
+					uploadContext.RegisterPostBack(postBackID);
+					UploadContext.Current = uploadContext;
+				}
+			}
+			
+			if (uploadContext != null)
+			{
+				uploadContext.Status = UploadStatus.ProcessingInProgress;
+				SyncUploadContextWithSession(uploadContext, GetOrigWorkerRequest());
+			}
+		}
+
 		private void Application_Error(object sender, EventArgs e)
 		{
 			if (log.IsDebugEnabled) log.Debug("In Application_Error");
+			HttpApplication app = sender as HttpApplication;
+			if (log.IsDebugEnabled) log.DebugFormat("Error is: {0}", app.Server.GetLastError());
 
 			UploadContext uploadContext = UploadContext.Current;
 			if (uploadContext != null)
@@ -364,7 +411,35 @@ namespace Brettle.Web.NeatUpload
 			if (uploadContext != null)
 			{
 				uploadContext.RemoveUploadedFiles();
+				if (uploadContext.Status != UploadStatus.Failed && uploadContext.Status != UploadStatus.Rejected)
+				{
+					uploadContext.Status = UploadStatus.Completed;
+					SyncUploadContextWithSession(uploadContext, GetOrigWorkerRequest());
+				}
 			}
 		}
+		
+		internal static void SyncUploadContextWithSession(UploadContext uploadContext, HttpWorkerRequest origWorker)
+		{
+			if (log.IsDebugEnabled) log.Debug("In SyncUploadContextWithSession");
+			if (!uploadContext.IsSessionAvailable || uploadContext.PostBackID == null)
+			{
+				return;
+			}
+			
+			string page = "NeatUpload/SyncUploadContext.aspx";
+			SessionPreservingWorkerRequest req 
+				= SessionPreservingWorkerRequest.Create(origWorker, page, "postBackID=" + uploadContext.PostBackID);
+			HttpContext savedContext = HttpContext.Current;
+			try
+			{
+				req.ProcessRequest(null);
+				req.WaitForEndOfRequest();
+			}
+			finally
+			{
+				HttpContext.Current = savedContext;
+			}			
+		}		
 	}
 }

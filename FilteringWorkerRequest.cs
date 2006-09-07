@@ -611,8 +611,6 @@ namespace Brettle.Web.NeatUpload
 					throw new HttpException (400, String.Format("Client disconnected after receiving {0} of {1} bytes -- user probably cancelled upload.", grandTotalBytesRead, origContentLength));
 				}
 			}
-			uploadContext.Status = UploadStatus.Completed;
-			SyncUploadContextWithSession();
 		}
 		
 		private void WriteReplacementFormField(string name, string val)
@@ -627,26 +625,15 @@ namespace Brettle.Web.NeatUpload
 				
 		private void SyncUploadContextWithSession()
 		{
-			if (!uploadContext.IsSessionAvailable || uploadContext.PostBackID == null)
-			{
-				return;
-			}
-			
-			string page = "NeatUpload/SyncUploadContext.aspx";
-			SessionPreservingWorkerRequest req 
-				= SessionPreservingWorkerRequest.Create(OrigWorker, page, "postBackID=" + uploadContext.PostBackID);
-			HttpContext savedContext = HttpContext.Current;
 			try
 			{
-				req.ProcessRequest(null);
-				req.WaitForEndOfRequest();
+				UploadHttpModule.SyncUploadContextWithSession(uploadContext, OrigWorker);
 			}
 			finally
 			{
-				HttpContext.Current = savedContext;
 				TimeOfLastSync = DateTime.Now;
-			}			
-		}		
+			}
+		}
 		
 		public override int ReadEntityBody (byte[] buffer, int size)
 		{

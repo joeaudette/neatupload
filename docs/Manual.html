@@ -66,7 +66,9 @@ the Visual Studio Web Form Designer</a></li>
       <li><a href="#mozTocId900479">Avoiding
 Unnecessary Uploads and Progress Displays</a></li>
 
-      <li><a href="#UploadingWithoutInputFile">Uploading without InputFile</a></li>
+      <li><a href="#ShowingProcessingProgress">Showing Processing Progress</a></li>
+
+      <li><a href="#UploadingWithoutInputFile">Uploading without <code>InputFile</code></a></li>
 
       <li><a href="#mozTocId483750">Uploading
 from a Client Application</a></li>
@@ -298,6 +300,9 @@ Features in NeatUpload-1.3</h3>
 
 
 <ul>
+
+  <li>Added support for <a href="#ShowingProcessingProgress">using a <code>ProgressBar</code> to show
+  processing progress</a> after an upload has been received.</li>
 
   <li>Added support for <a href="#UploadingWithoutInputFile">uploading without using <code>InputFile</code></a>.</li>
 
@@ -992,6 +997,40 @@ is not maintained in the page's <code>ViewState</code>.<br>
 
 <br>
 
+<h3><a class="mozTocH3" name="ShowingProcessingProgress">Showing Processing Progress</a></h3>
+
+<p>
+By default, the NeatUpload <code>ProgressBar</code> displays "Processing..." if it refreshes while the code
+associated with your page runs.  In most cases your code finishes running before the display refreshes, so you
+never see that text.  However, if you perform some long-running task (e.g. converting large images to a different 
+format) you can use the <code>ProgressBar</code> to display how that task is progressing.  To do that:
+<ol>
+  <li>Set the <code>ProgressBar</code>'s <code>ProcessingProgress</code>
+  property to a new <code>ProgressInfo</code> object, passing to the constructor the maximum number of work units
+  that will be performed and a string describing those units.</li>
+  <li>Update the <code>ProgressInfo</code>'s <code>Value</code> property as the
+  task progresses.  The <code>Value</code> property will control the position of the bar.  If <code>Value</code> 
+  is 0, no bar will be shown.  If it is equal to the <code>Maximum</code> property (initialized via the 
+  constructor), a full bar will be shown.</li>
+  <li>Optionally, update the <code>ProgressInfo</code>'s <code>Text</code> property.  By default, when a 
+  <code>ProgressBar</code>'s <code>ProcessingProgress</code> property has been set, it will display 
+  "<i>Value</i>/<i>Maximum</i> <i>Units</i> processed" where <i>Value</i>, <i>Maximum</i>, and <i>Units</i> 
+  are the corresponding properties of the <code>ProgressInfo</code> object.  However, you can replace that
+  text by setting the <code>ProgressInfo</code>'s <code>Text</code> property.</li>
+</ol>
+Here's an example:
+</p>
+<pre>
+...
+myProgressBar.ProcessingProgress = new ProgressInfo(5, "images");
+for (int i = 1; i <= 5; i++)
+{
+	ConvertImage(i);
+	myProgressBar.ProgressInfo.Value = i;
+}
+myProgressBar.ProgressInfo.Text = "Image conversion complete";
+...
+</pre>
 
 <h3><a class="mozTocH3" name="UploadingWithoutInputFile">Uploading without <code>InputFile</code></a></h3>
 

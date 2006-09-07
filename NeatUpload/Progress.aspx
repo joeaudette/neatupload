@@ -91,6 +91,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					at <%# FormatRate(BytesPerSec) %>
 					- <%# FormatTimeSpan(TimeElapsed) %> elapsed
 				</Upload:DetailsSpan>
+				<Upload:DetailsSpan id="processing" runat="server" WhenStatus="ProcessingInProgress ProcessingCompleted" style="font-weight: normal; white-space: nowrap;">
+					<%# ProcessingHtml %>
+				</Upload:DetailsSpan>
 				<Upload:DetailsSpan id="completed" runat="server" WhenStatus="Completed">
 					Complete: <%# FormatCount(BytesRead) %> <%# CountUnits %>
 					at <%# FormatRate(BytesPerSec) %>

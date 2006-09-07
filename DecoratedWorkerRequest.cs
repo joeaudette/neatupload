@@ -49,7 +49,7 @@ namespace Brettle.Web.NeatUpload
 
 		internal int StatusCode = 200;
 		internal string StatusDescription = null;
-		protected HttpWorkerRequest OrigWorker;
+		internal HttpWorkerRequest OrigWorker;
 		private object sync = new object();
 		private bool isEndOfRequest = false;
 		internal HttpContext OrigContext;

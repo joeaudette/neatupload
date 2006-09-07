@@ -180,6 +180,7 @@ namespace Brettle.Web.NeatUpload
 				uploadProgressUrl += "&lastPostBackID=" + UploadContext.Current.PostBackID;
 			}
 			
+			uploadProgressUrl += "&barID=" + this.ClientID;
 			if (Inline)
 			{
 				Tag = HtmlTextWriterTag.Iframe;
@@ -392,6 +393,22 @@ NeatUploadPB.prototype.Bars['" + this.ClientID + @"']
 			{
 				writer.Write("</noscript>");
 			}
-		}				
+		}
+		
+		private ProgressInfo _ProcessingProgress;
+		public ProgressInfo ProcessingProgress
+		{
+			get { return _ProcessingProgress; }
+			set 
+			{ 
+				_ProcessingProgress = value;
+				UploadContext ctx = UploadContext.Current;
+				if (ctx != null)
+				{
+					ctx.ProgressInfoByID[UniqueID] = _ProcessingProgress; 
+					ctx.SyncWithSession();
+				}
+			}
+		}
 	}
 }
