@@ -167,7 +167,7 @@ namespace Brettle.Web.NeatUpload
 			return worker;
 		}
 
-		private static HttpWorkerRequest GetOrigWorkerRequest()
+		internal static HttpWorkerRequest GetOrigWorkerRequest()
 		{
 			HttpWorkerRequest worker = GetCurrentWorkerRequest();
 			DecoratedWorkerRequest decoratedWorker = worker as DecoratedWorkerRequest;
@@ -424,6 +424,8 @@ namespace Brettle.Web.NeatUpload
 			if (log.IsDebugEnabled) log.Debug("In SyncUploadContextWithSession");
 			if (!uploadContext.IsSessionAvailable || uploadContext.PostBackID == null)
 			{
+				if (log.IsDebugEnabled) log.Debug("Not syncing because uploadContext.IsSessionAvailable = " 
+					+ uploadContext.IsSessionAvailable + " and uploadContext.PostBackID = " + uploadContext.PostBackID);
 				return;
 			}
 			

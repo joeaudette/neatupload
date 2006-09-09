@@ -71,7 +71,7 @@ namespace Brettle.Web.NeatUpload
 			UploadContext ctx = UploadContext.Current;
 			if (ctx != null)
 			{
-				ctx.SyncWithSession();
+				UploadHttpModule.SyncUploadContextWithSession(ctx, UploadHttpModule.GetOrigWorkerRequest());
 			}
 		}
 	}

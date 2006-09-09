@@ -1,9 +1,9 @@
-<%@ Page language="c#" Src="Processing.aspx.cs" AutoEventWireup="false" Inherits="Brettle.Web.NeatUpload.Processing" %>
+<%@ Page language="c#" EnableSessionState="false" Src="Processing.aspx.cs" AutoEventWireup="false" Inherits="Brettle.Web.NeatUpload.Processing" %>
 <%@ Register TagPrefix="Upload" Namespace="Brettle.Web.NeatUpload" Assembly="Brettle.Web.NeatUpload" %>
 
 <Html>
 	<Head runat="server">
-		<Title>Test of the Processing UploadStatus</Title>
+		<Title>Test of the ProcessingInProgress UploadStatus</Title>
 		<style type="text/css">
 <!--
 		.ProgressBar {
@@ -18,9 +18,10 @@
 	</Head>
 	<Body>
 		<form id="uploadForm" runat="server">
+			<Upload:HiddenPostBackID />
 			<h1>Test of the Processing UploadStatus</h1>
 			<p>
-			This page tests the "Processing" UploadStatus which is the status used while the page handler is 
+			This page tests the "ProcessingInProgress" UploadStatus which is the status used while the page handler is 
 			being executed.  This page simulates doing some processing and updates the progress bar periodically.
 			</p>
 			<p>

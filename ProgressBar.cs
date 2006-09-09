@@ -406,7 +406,7 @@ NeatUploadPB.prototype.Bars['" + this.ClientID + @"']
 				if (ctx != null)
 				{
 					ctx.ProgressInfoByID[UniqueID] = _ProcessingProgress; 
-					ctx.SyncWithSession();
+					UploadHttpModule.SyncUploadContextWithSession(ctx, UploadHttpModule.GetOrigWorkerRequest());
 				}
 			}
 		}
