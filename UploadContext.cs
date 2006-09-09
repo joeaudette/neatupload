@@ -102,9 +102,8 @@ namespace Brettle.Web.NeatUpload
 			this.stopTime = System.DateTime.MaxValue;
 			NeverSynced = true;
 		}
-		
-		// internal Hashtable uploadedFiles = Hashtable.Synchronized(new Hashtable());
-		
+				
+ 		[NonSerialized]
 		internal UploadedFileCollection Files = new UploadedFileCollection();
 
 		private string postBackID;
