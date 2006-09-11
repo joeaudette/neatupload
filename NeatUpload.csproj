@@ -169,6 +169,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "InputFile.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "InvalidStorageConfigException.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
