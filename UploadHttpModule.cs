@@ -142,6 +142,8 @@ namespace Brettle.Web.NeatUpload
 			app.EndRequest += new System.EventHandler(Application_EndRequest);
 			app.PreSendRequestHeaders += new System.EventHandler(Application_PreSendRequestHeaders);
 			app.ResolveRequestCache += new System.EventHandler(Application_ResolveRequestCache);
+			app.AcquireRequestState += new System.EventHandler(Application_AcquireRequestState);
+			app.ReleaseRequestState += new System.EventHandler(Application_ReleaseRequestState);
 			app.PreRequestHandlerExecute += new System.EventHandler(Application_PreRequestHandlerExecute);
 			RememberErrorHandler = new System.EventHandler(RememberError);
 			lock (typeof(UploadHttpModule))
@@ -354,6 +356,18 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 
+		private void Application_AcquireRequestState(object sender, EventArgs e)
+		{
+			if (log.IsDebugEnabled) log.Debug("In Application_AcquireRequestState");
+			HttpContext.Current.Items["NeatUpload_RequestStateAcquired"] = true;
+		}
+
+		private void Application_ReleaseRequestState(object sender, EventArgs e)
+		{
+			if (log.IsDebugEnabled) log.Debug("In Application_ReleaseRequestState");
+			HttpContext.Current.Items.Remove("NeatUpload_RequestStateAcquired");
+		}
+
 		private void Application_PreRequestHandlerExecute(object sender, EventArgs e)
 		{
 			if (log.IsDebugEnabled) log.Debug("In Application_PreRequestHandlerExecute");
@@ -427,7 +441,7 @@ namespace Brettle.Web.NeatUpload
             {
                 return;
             }
-            if (savedContext.Session != null)
+            if (savedContext.Session != null && savedContext.Items["NeatUpload_RequestStateAcquired"] != null)
             {
                 throw new NotSupportedException("Can't synchronize with session because it is locked.  Your"
                     + " page must use EnableSessionState='false' to call this method.  See the NeatUpload"
