@@ -422,6 +422,17 @@ namespace Brettle.Web.NeatUpload
 		internal static void SyncUploadContextWithSession(UploadContext uploadContext, HttpWorkerRequest origWorker)
 		{
 			if (log.IsDebugEnabled) log.Debug("In SyncUploadContextWithSession");
+			HttpContext savedContext = HttpContext.Current;
+            if (savedContext == null)
+            {
+                return;
+            }
+            if (savedContext.Session != null)
+            {
+                throw new NotSupportedException("Can't synchronize with session because it is locked.  Your"
+                    + " page must use EnableSessionState='false' to call this method.  See the NeatUpload"
+                    + " documentation for details.");
+            }
 			if (!uploadContext.IsSessionAvailable || uploadContext.PostBackID == null)
 			{
 				if (log.IsDebugEnabled) log.Debug("Not syncing because uploadContext.IsSessionAvailable = " 
@@ -432,7 +443,6 @@ namespace Brettle.Web.NeatUpload
 			string page = "NeatUpload/SyncUploadContext.aspx";
 			SessionPreservingWorkerRequest req 
 				= SessionPreservingWorkerRequest.Create(origWorker, page, "postBackID=" + uploadContext.PostBackID);
-			HttpContext savedContext = HttpContext.Current;
 			try
 			{
 				req.ProcessRequest(null);
