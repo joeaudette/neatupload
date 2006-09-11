@@ -318,7 +318,30 @@ namespace Brettle.Web.NeatUpload
 			// Wait for the upload to complete before AcquireRequestState fires.  If we don't then the session
 			// will be locked while the upload completes
 			WaitForUploadToComplete();
-		}
+            UploadContext uploadContext = UploadContext.Current;
+            if (uploadContext == null)
+            {
+                // If a FilteringWorkerRequest was not used, but the request contains the PostBackIDQueryParam, 
+                // then create and register an UploadContext.  This occurs the module disabled, 
+                // this is not a form/multipart POST request, etc.  This allows ProgressBars
+                // to be used for pages where no upload is occuring.
+                HttpContext httpContext = HttpContext.Current;
+                string postBackID = httpContext.Request.Params[Config.Current.PostBackIDQueryParam];
+                if (postBackID != null)
+                {
+                    uploadContext = new UploadContext();
+                    uploadContext.SetContentLength(HttpContext.Current.Request.ContentLength);
+                    uploadContext.RegisterPostBack(postBackID);
+                    UploadContext.Current = uploadContext;
+                }
+            }
+
+            if (uploadContext != null)
+            {
+                uploadContext.Status = UploadStatus.ProcessingInProgress;
+                SyncUploadContextWithSession(uploadContext, GetOrigWorkerRequest());
+            }
+        }
 
 		private void Application_PreSendRequestHeaders(object sender, EventArgs e)
 		{
@@ -334,29 +357,6 @@ namespace Brettle.Web.NeatUpload
 		private void Application_PreRequestHandlerExecute(object sender, EventArgs e)
 		{
 			if (log.IsDebugEnabled) log.Debug("In Application_PreRequestHandlerExecute");
-			UploadContext uploadContext = UploadContext.Current;
-			if (uploadContext == null)
-			{
-				// If a FilteringWorkerRequest was not used, but the request contains the PostBackIDQueryParam, 
-				// then create and register an UploadContext.  This occurs the module disabled, 
-				// this is not a form/multipart POST request, etc.  This allows ProgressBars
-				// to be used for pages where no upload is occuring.
-				HttpContext httpContext = HttpContext.Current;
-				string postBackID = httpContext.Request.Params[Config.Current.PostBackIDQueryParam];
-				if (postBackID != null)
-				{
-					uploadContext = new UploadContext();
-					uploadContext.SetContentLength(HttpContext.Current.Request.ContentLength);
-					uploadContext.RegisterPostBack(postBackID);
-					UploadContext.Current = uploadContext;
-				}
-			}
-			
-			if (uploadContext != null)
-			{
-				uploadContext.Status = UploadStatus.ProcessingInProgress;
-				SyncUploadContextWithSession(uploadContext, GetOrigWorkerRequest());
-			}
 		}
 
 		private void Application_Error(object sender, EventArgs e)
