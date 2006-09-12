@@ -433,6 +433,35 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 		
+		public static void AccessSession(SessionAccessor accessor)
+		{
+			if (log.IsDebugEnabled) log.Debug("In AccessSession");
+			HttpContext savedContext = HttpContext.Current;
+            if (savedContext == null)
+            {
+                return;
+            }
+            if (savedContext.Session != null && savedContext.Items["NeatUpload_RequestStateAcquired"] != null)
+            {
+                throw new NotSupportedException("Can't access the session because it is locked.  Your"
+                    + " page must use EnableSessionState='false' to call this method.  See the NeatUpload"
+                    + " documentation for details.");
+            }
+			
+			string page = "NeatUpload/AccessSession.aspx";
+			SessionAccessingWorkerRequest req 
+				= SessionAccessingWorkerRequest.Create(GetOrigWorkerRequest(), page, accessor);
+			try
+			{
+				req.ProcessRequest(null);
+				req.WaitForEndOfRequest();
+			}
+			finally
+			{
+				HttpContext.Current = savedContext;
+			}		
+		}
+		
 		internal static void SyncUploadContextWithSession(UploadContext uploadContext, HttpWorkerRequest origWorker)
 		{
 			if (log.IsDebugEnabled) log.Debug("In SyncUploadContextWithSession");

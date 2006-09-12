@@ -94,6 +94,11 @@
         <Files>
             <Include>
                 <File
+                    RelPath = "AccessSessionPage.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "AssemblyInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -215,6 +220,16 @@
                 />
                 <File
                     RelPath = "ProgressPage.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "SessionAccessingWorkerRequest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "SessionAccessor.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

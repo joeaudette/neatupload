@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Web;
+using System.Web.SessionState;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
@@ -35,6 +36,7 @@ namespace Brettle.Web.NeatUpload
 		protected Button cancelButton;
 		protected ProgressBar inlineProgressBar;
 		protected HtmlGenericControl uploadedFilePre;
+		protected HtmlGenericControl sessionPre;
 		
 		protected override void OnInit(EventArgs e)
 		{
@@ -45,6 +47,7 @@ namespace Brettle.Web.NeatUpload
 		private void InitializeComponent()
 		{
 			this.Load += new System.EventHandler(this.Page_Load);
+			this.PreRender += new System.EventHandler(this.Page_PreRender);
 		}
 		
 		private void Page_Load(object sender, EventArgs e)
@@ -52,6 +55,11 @@ namespace Brettle.Web.NeatUpload
 			submitButton.Click += new System.EventHandler(this.Button_Clicked);
 		}
 		
+		private void Page_PreRender(object sender, EventArgs e)
+		{
+			UploadHttpModule.AccessSession(new SessionAccessor(InitializeSessionPre));
+		}
+
 		private void Button_Clicked(object sender, EventArgs e)
 		{
 			ProgressInfo progress = inlineProgressBar.ProcessingProgress = new ProgressInfo(5, "Units");
@@ -68,7 +76,19 @@ namespace Brettle.Web.NeatUpload
 				uploadedFilePre.InnerText += "  Name: " + inputFile.FileName + "\n";
 				uploadedFilePre.InnerText += "  Size: " + inputFile.ContentLength + "\n";
 				uploadedFilePre.InnerText += "  Content type: " + inputFile.ContentType + "\n";
+				UploadHttpModule.AccessSession(new SessionAccessor(AddFileNameToSession));
 			}
 		}
+		
+		private void AddFileNameToSession(HttpSessionState session)
+		{
+			session["myUploadedFiles"] += inputFile.FileName + "\n";
+		}
+
+		private void InitializeSessionPre(HttpSessionState session)
+		{
+			sessionPre.InnerText = session["myUploadedFiles"] as string;
+		}
+		
 	}
 }
