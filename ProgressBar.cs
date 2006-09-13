@@ -250,6 +250,11 @@ if (frames['" + this.ClientID + @"'])
 			otherTriggers.Add(control);
 		}
 
+		// This is used to ensure that the browser gets the latest ProgressBar.js each time this assembly is
+		// reloaded.  Strictly speaking the browser only needs to get the latest when ProgressBar.js changes,
+		// but computing a hash on that file everytime this assembly is loaded strikes me as overkill.
+		private static Guid CacheBustingGuid = System.Guid.NewGuid();
+		
 		private void RegisterScripts()
 		{
 			if (!Page.IsClientScriptBlockRegistered("NeatUploadProgressBar"))
@@ -260,8 +265,8 @@ if (frames['" + this.ClientID + @"'])
 					appPath = "";
 				}
 				Page.RegisterClientScriptBlock("NeatUploadProgressBar", @"
-<script src='" + appPath + @"/NeatUpload/ProgressBar.js?rev=" 
-	+ System.Reflection.Assembly.GetExecutingAssembly().GetName().Version + @"'></script>
+<script src='" + appPath + @"/NeatUpload/ProgressBar.js?guid=" 
+	+ CacheBustingGuid + @"'></script>
 <script language='javascript'>
 NeatUploadPB.prototype.ClearFileNamesAlert = '" +  Config.Current.ResourceManager.GetString("ClearFileNamesAlert") + @"';
 // -->
