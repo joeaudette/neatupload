@@ -49,9 +49,9 @@ namespace Brettle.Web.NeatUpload
 			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
 		private string Page;
-		internal SessionAccessor Accessor;
+		internal SessionAccessCallback Accessor;
 
-		internal static SessionAccessingWorkerRequest Create(HttpWorkerRequest worker, string page, SessionAccessor accessor)
+		internal static SessionAccessingWorkerRequest Create(HttpWorkerRequest worker, string page, SessionAccessCallback accessor)
 		{
 			string sessionIDHeader = worker.GetUnknownRequestHeader("AspFilterSessionId");
 			string appPath = worker.GetAppPath();
@@ -78,7 +78,7 @@ namespace Brettle.Web.NeatUpload
 		}
 
 		protected SessionAccessingWorkerRequest (HttpWorkerRequest worker, 
-													string page, SessionAccessor accessor)
+													string page, SessionAccessCallback accessor)
 													: base(worker)
 		{
 			Page = page;

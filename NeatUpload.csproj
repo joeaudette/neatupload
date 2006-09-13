@@ -224,12 +224,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "SessionAccessingWorkerRequest.cs"
+                    RelPath = "SessionAccessCallback.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "SessionAccessor.cs"
+                    RelPath = "SessionAccessingWorkerRequest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -57,7 +57,7 @@ namespace Brettle.Web.NeatUpload
 		
 		private void Page_PreRender(object sender, EventArgs e)
 		{
-			UploadHttpModule.AccessSession(new SessionAccessor(InitializeSessionPre));
+			UploadHttpModule.AccessSession(new SessionAccessCallback(InitializeSessionPre));
 		}
 
 		private void Button_Clicked(object sender, EventArgs e)
@@ -76,7 +76,7 @@ namespace Brettle.Web.NeatUpload
 				uploadedFilePre.InnerText += "  Name: " + inputFile.FileName + "\n";
 				uploadedFilePre.InnerText += "  Size: " + inputFile.ContentLength + "\n";
 				uploadedFilePre.InnerText += "  Content type: " + inputFile.ContentType + "\n";
-				UploadHttpModule.AccessSession(new SessionAccessor(AddFileNameToSession));
+				UploadHttpModule.AccessSession(new SessionAccessCallback(AddFileNameToSession));
 			}
 		}
 		
