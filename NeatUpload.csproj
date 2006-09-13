@@ -248,11 +248,6 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "SyncUploadContextPage.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "UploadContext.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

@@ -62,10 +62,10 @@ namespace Brettle.Web.NeatUpload
 
 		private void Button_Clicked(object sender, EventArgs e)
 		{
-			ProgressInfo progress = inlineProgressBar.ProcessingProgress = new ProgressInfo(5, "Units");
-			for (int i = 1; i <= 5; i++)
+			ProgressInfo progress = inlineProgressBar.ProcessingProgress = new ProgressInfo(1000, "Units");
+			for (int i = 1; i <= 1000; i++)
 			{
-				System.Threading.Thread.Sleep(1000);
+				System.Threading.Thread.Sleep(1);
 				progress.Value = i;
 			}
 			progress.Text = "Processing Complete";

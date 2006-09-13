@@ -341,7 +341,7 @@ namespace Brettle.Web.NeatUpload
             if (uploadContext != null)
             {
                 uploadContext.Status = UploadStatus.ProcessingInProgress;
-                SyncUploadContextWithSession(uploadContext, GetOrigWorkerRequest());
+				UploadHttpModule.AccessSession(new SessionAccessCallback(uploadContext.SyncWithSession));
             }
         }
 
@@ -428,7 +428,7 @@ namespace Brettle.Web.NeatUpload
 				if (uploadContext.Status != UploadStatus.Failed && uploadContext.Status != UploadStatus.Rejected)
 				{
 					uploadContext.Status = UploadStatus.Completed;
-					SyncUploadContextWithSession(uploadContext, GetOrigWorkerRequest());
+					UploadHttpModule.AccessSession(new SessionAccessCallback(uploadContext.SyncWithSession));
 				}
 			}
 		}
@@ -461,40 +461,5 @@ namespace Brettle.Web.NeatUpload
 				HttpContext.Current = savedContext;
 			}		
 		}
-		
-		internal static void SyncUploadContextWithSession(UploadContext uploadContext, HttpWorkerRequest origWorker)
-		{
-			if (log.IsDebugEnabled) log.Debug("In SyncUploadContextWithSession");
-			HttpContext savedContext = HttpContext.Current;
-            if (savedContext == null)
-            {
-                return;
-            }
-            if (savedContext.Session != null && savedContext.Items["NeatUpload_RequestStateAcquired"] != null)
-            {
-                throw new NotSupportedException("Can't synchronize with session because it is locked.  Your"
-                    + " page must use EnableSessionState='false' to call this method.  See the NeatUpload"
-                    + " documentation for details.");
-            }
-			if (!uploadContext.IsSessionAvailable || uploadContext.PostBackID == null)
-			{
-				if (log.IsDebugEnabled) log.Debug("Not syncing because uploadContext.IsSessionAvailable = " 
-					+ uploadContext.IsSessionAvailable + " and uploadContext.PostBackID = " + uploadContext.PostBackID);
-				return;
-			}
-			
-			string page = "NeatUpload/SyncUploadContext.aspx";
-			SessionPreservingWorkerRequest req 
-				= SessionPreservingWorkerRequest.Create(origWorker, page, "postBackID=" + uploadContext.PostBackID);
-			try
-			{
-				req.ProcessRequest(null);
-				req.WaitForEndOfRequest();
-			}
-			finally
-			{
-				HttpContext.Current = savedContext;
-			}			
-		}		
 	}
 }

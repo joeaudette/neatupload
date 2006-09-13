@@ -627,7 +627,7 @@ namespace Brettle.Web.NeatUpload
 		{
 			try
 			{
-				UploadHttpModule.SyncUploadContextWithSession(uploadContext, OrigWorker);
+				UploadHttpModule.AccessSession(new SessionAccessCallback(uploadContext.SyncWithSession));
 			}
 			finally
 			{

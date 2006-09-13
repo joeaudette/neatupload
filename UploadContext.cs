@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.IO;
 using System.Web;
+using System.Web.SessionState;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Net;
@@ -148,10 +149,10 @@ namespace Brettle.Web.NeatUpload
 		private bool _IsSessionAvailable = true;
 		public bool IsSessionAvailable { get { lock(this) { return _IsSessionAvailable; } } } 
 		
-		internal void SyncWithSession()
+		internal void SyncWithSession(HttpSessionState session)
 		{
-			if (HttpContext.Current.Session == null || HttpContext.Current.Session.IsReadOnly 
-				|| HttpContext.Current.Session.Mode == System.Web.SessionState.SessionStateMode.Off)
+			if (session == null || session.IsReadOnly 
+				|| session.Mode == System.Web.SessionState.SessionStateMode.Off)
 			{
 				lock (this)
 				{

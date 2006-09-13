@@ -66,13 +66,20 @@ namespace Brettle.Web.NeatUpload
 								Value, Maximum, Units);
 		}
 		
+		private DateTime TimeOfLastSync = DateTime.MinValue;
+
 		protected void SyncWithSession()
 		{
+			if (TimeOfLastSync.AddSeconds(1) > DateTime.Now)
+			{
+				return;
+			}
 			UploadContext ctx = UploadContext.Current;
 			if (ctx != null)
 			{
-				UploadHttpModule.SyncUploadContextWithSession(ctx, UploadHttpModule.GetOrigWorkerRequest());
+				UploadHttpModule.AccessSession(new SessionAccessCallback(ctx.SyncWithSession));
 			}
+			TimeOfLastSync = DateTime.Now;
 		}
 	}
 }
