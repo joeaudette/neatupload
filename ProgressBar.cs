@@ -97,6 +97,18 @@ namespace Brettle.Web.NeatUpload
 		}
 		
 		/// <summary>
+		/// JavaScript expression which is evaluated when the form is submitted to determine whether to start the 
+		/// progress display.</summary>
+		/// <remarks>
+		/// Defaults to "IsFilesToUpload()" which will cause the progress display to only start when there
+		/// are files to be uploaded.</remarks>
+		public string AutoStartCondition
+		{
+			get { return (string)ViewState["AutoStartCondition"]; }
+			set { ViewState["AutoStartCondition"] = value; }
+		}
+		
+		/// <summary>
 		/// URL of an aspx page that displays the upload progress.</summary>
 		/// <remarks>
 		/// The specified page should inherits from the <see cref="Brettle.Web.NeatUpload.Progress"/> code behind class.
@@ -160,6 +172,11 @@ namespace Brettle.Web.NeatUpload
 		{
 			if (IsDesignTime || !Config.Current.UseHttpModule)
 				return;
+
+			if (AutoStartCondition == null)
+			{
+				AutoStartCondition = "IsFilesToUpload()";
+			}
 			
 			uploadProgressUrl = Url;
 			if (uploadProgressUrl == null)
@@ -289,7 +306,8 @@ NeatUploadPB.prototype.Bars['" + this.ClientID + @"']
 	                    """ + this.GetPopupDisplayStatement() + @""",
 	                    "  + (Inline ? "true" : "false") + @",
 	                    function() { " + displayStatement + @" },
-	                    " + allTriggerClientIDs + @");
+	                    " + allTriggerClientIDs + @", '"
+	                    + AutoStartCondition.Replace(@"'", @"\'") + @"');
 // -->
 </script>");
                                                                                

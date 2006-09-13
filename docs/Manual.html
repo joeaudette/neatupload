@@ -302,7 +302,8 @@ Features in NeatUpload-1.3</h3>
 <ul>
 
   <li>Added support for <a href="#ShowingProcessingProgress">using a <code>ProgressBar</code> to show
-  processing progress</a> after an upload has been received.</li>
+  processing progress</a>.  This can be used to display the progress of a long-running task even when no files are
+  uploaded.</li>
 
   <li>Added support for <a href="#UploadingWithoutInputFile">uploading without using <code>InputFile</code></a>.</li>
 
@@ -999,19 +1000,67 @@ is not maintained in the page's <code>ViewState</code>.<br>
 
 <h3><a class="mozTocH3" name="ShowingProcessingProgress">Showing Processing Progress</a></h3>
 
-</p>
-NOTE: The feature described in this section is still under development and almost definitely won't work properly
-in some cases.  Frequently updating the progress may result in performance problems.  More importantly, your page
-will probably hang when you attempt to update the progress if your page uses a session state mode other than 
-"InProc" or it has already accessed the session state.  It is likely that when this feature is released in its
-stable form, your page will need to declare <code>EnableSessionState="false"</code> for this feature to work
-properly.
-</p>
 <p>
-By default, the NeatUpload <code>ProgressBar</code> displays "Processing..." if it refreshes while the code
+By default, the NeatUpload <code>ProgressBar</code> displays "Processing..." (the <code>ProcessingMessage</code>
+resource in <code>Strings.resx</code>) if it refreshes while the code
 associated with your page runs.  In most cases your code finishes running before the display refreshes, so you
 never see that text.  However, if you perform some long-running task (e.g. converting large images to a different 
-format) you can use the <code>ProgressBar</code> to display how that task is progressing.  To do that:
+format) you can use the <code>ProgressBar</code> to display how that task is progressing.  
+</p>
+
+<p>To display the progress of a long-running task, you first must set some properties on you page and the 
+<code>ProgressBar</code> control.  Specifically:
+<ol>
+  <li>Use <code>EnableSessionState="false"</code> in your <code>&lt;%@Page ...%&gt;</code> directive.  
+  If you don't do that your page will hold a lock on the session for the duration of your long-running task.
+  That will block the display of any other pages which need access to the session until your long-running task
+  completes.  More importantly, NeatUpload's progress display will not update
+  because it needs access to the session to determine how the upload is progressing.
+  If you need to access the session from your page,
+  NeatUpload provides a way to do that without holding a lock on the session for the duration of the page.  To do
+  that, pass a <code>SessionAccessCallback</code> to <code>UploadHttpModule.AccessSession()</code>, like this:
+  <pre>
+using System.Web;
+using System.Web.SessionState;
+using Brettle.Web.NeatUpload;
+...
+namespace YourNamepace
+{
+	public class YourPage : System.Web.UI.Page
+	{
+		...
+		void YourMethodNeedingSessionAccess()
+		{
+			...
+			UploadHttpModule.AccessSession(new SessionAccessCallback(YourSessionAccessingMethod));
+			...
+		}
+		...
+		void YourSessionAccessingMethod(HttpSessionState session)
+		{
+			// This method is called in a subrequest that has the session locked.  When this method returns
+			// the session state will be updated and unlocked.
+			object oldValue = session["YourSessionKey"];
+			session["YourSessionKey"] = "YourNewValue";
+		}
+		...
+	}
+}
+  </pre>
+  Note that <code>UploadHttpModule.AccessSession()</code> creates a subrequest to run your 
+  <code>SessionAccessCallback</code>.  This is considerably more expensive than a normal method call so you
+  should try to avoid calling <code>UploadHttpModule.AccessSession()</code> unnecessarily.
+  </li>
+  <li>If you're form doesn't contain any <code>InputFile</code> controls you need to add a 
+  <code>HiddenPostBackID</code> control at the top of the form so that NeatUpload can associate the form submission
+  with the progress display.
+  </li>
+  <li>If you want to display progress even if the user doesn't upload a file (either because your form doesn't
+  have a way to select file or because the user chose not to select a file), you need to set the 
+  <code>ProgressBar</code>'s <code>AutoStartCondition</code> property to the string <code>"true"</code>.  
+  </li>
+</ol>
+To actually update the progress display from the your page:
 <ol>
   <li>Set the <code>ProgressBar</code>'s <code>ProcessingProgress</code>
   property to a new <code>ProgressInfo</code> object, passing to the constructor the maximum number of work units
@@ -1023,11 +1072,11 @@ format) you can use the <code>ProgressBar</code> to display how that task is pro
   <li>Optionally, update the <code>ProgressInfo</code>'s <code>Text</code> property.  By default, when a 
   <code>ProgressBar</code>'s <code>ProcessingProgress</code> property has been set, it will display 
   "<i>Value</i>/<i>Maximum</i> <i>Units</i> processed" where <i>Value</i>, <i>Maximum</i>, and <i>Units</i> 
-  are the corresponding properties of the <code>ProgressInfo</code> object.  However, you can replace that
-  text by setting the <code>ProgressInfo</code>'s <code>Text</code> property.</li>
+  are the corresponding properties of the <code>ProgressInfo</code> object.  You can localize that text via the 
+  <code>ProgressInfoFormat</code> resource in <code>Strings.resx</code> or you can replace that
+  text completely by setting the <code>ProgressInfo</code>'s <code>Text</code> property.</li>
 </ol>
 Here's an example:
-</p>
 <pre>
 ...
 myProgressBar.ProcessingProgress = new ProgressInfo(5, "images");
@@ -1039,6 +1088,10 @@ for (int i = 1; i <= 5; i++)
 myProgressBar.ProgressInfo.Text = "Image conversion complete";
 ...
 </pre>
+
+For a complete working example, see <code>Processing.aspx</code> and <code>Processing.aspx.cs</code> in the
+<code>NeatUpload-1.3.x/tests/</code> directory. 
+</p>
 
 <h3><a class="mozTocH3" name="UploadingWithoutInputFile">Uploading without <code>InputFile</code></a></h3>
 

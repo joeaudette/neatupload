@@ -25,7 +25,7 @@
 			being executed.  This page simulates doing some processing and updates the progress bar periodically.
 			</p>
 			<p>
-			You need to select a file to upload so that the progress bar will start.
+			You can optionally select a file to upload:
 			</p>
 			<p>
 			Pick a file:
@@ -42,7 +42,7 @@
 			</p>
 
 			<p>
-			<Upload:ProgressBar id="inlineProgressBar" runat="server" inline="true" Triggers="submitButton" />
+			<Upload:ProgressBar id="inlineProgressBar" runat="server" inline="true" Triggers="submitButton" AutoStartCondition="true" />
 			</p>
 
 			Files just uploaded:

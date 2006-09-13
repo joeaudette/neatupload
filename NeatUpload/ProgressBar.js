@@ -54,7 +54,7 @@ if (!Function.prototype.call)
 	};
 }
 
-function NeatUploadPB(id, popupDisplayStatement, inline, displayFunc, triggerIDs)
+function NeatUploadPB(id, popupDisplayStatement, inline, displayFunc, triggerIDs, autoStartCondition)
 {
 	if (!document.getElementById)
 		return;
@@ -88,6 +88,7 @@ function NeatUploadPB(id, popupDisplayStatement, inline, displayFunc, triggerIDs
 	this.TriggerIDs.length = 0;
 	this.Display = displayFunc;
 	this.FormElem = formElem;
+	this.AutoStartCondition = autoStartCondition;
 	this.AddSubmitHandler(pb.FormElem, !inline, function () {
 		// If trigger controls were specified for this progress bar and the trigger is not 
 		// specified for *any* progress bar, then clear the filenames.
@@ -99,7 +100,7 @@ function NeatUploadPB(id, popupDisplayStatement, inline, displayFunc, triggerIDs
 		}
 		// If there are files to upload and either no trigger controls were specified for this progress bar or
 		// a specified trigger control was triggered, then start the progress display.
-		if (pb.IsFilesToUpload(pb.FormElem)
+		if (pb.EvaluateAutoStartCondition()
 			&& (!pb.TriggerIDs.length
 			    || pb.IsElemWithin(NeatUpload_LastEventSource, pb.TriggerIDs)))
 		{
@@ -240,8 +241,17 @@ NeatUploadPB.prototype.AddHandler = function(elem, eventName, handler, useCaptur
 	}
 };
 
-NeatUploadPB.prototype.IsFilesToUpload = function(formElem)
+NeatUploadPB.prototype.EvaluateAutoStartCondition = function()
 {
+	with (this)
+	{
+		return eval(AutoStartCondition);
+	}
+}
+
+NeatUploadPB.prototype.IsFilesToUpload = function()
+{
+	var formElem = this.FormElem;
 	while (formElem && formElem.tagName.toLowerCase() != "form")
 	{
 		formElem = formElem.parentNode;
