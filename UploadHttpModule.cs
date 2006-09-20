@@ -22,6 +22,8 @@ using System;
 using System.Configuration;
 using System.Web;
 using System.Threading;
+using System.IO;
+using System.Xml.XPath;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -107,20 +109,33 @@ namespace Brettle.Web.NeatUpload
 		{
 			get { lock (typeof(UploadHttpModule)) { return _isInited;} }
 		}
-				
+						
 		public void Init(HttpApplication app)
 		{
+			// When tracing is enabled at the application level ASP.NET reads the entire request before
+			// BeginRequest is fired.  So, we should not use our module at all.
+			bool isTracingEnabled = HttpContext.Current.Trace.IsEnabled;
+			if (isTracingEnabled)
+			{
+				lock (typeof(UploadHttpModule))
+				{
+					_isInited = false;
+				}
+				return;
+			}
+			
 			app.BeginRequest += new System.EventHandler(Application_BeginRequest);
 			app.Error += new System.EventHandler(Application_Error);
 			app.EndRequest += new System.EventHandler(Application_EndRequest);
 			app.PreSendRequestHeaders += new System.EventHandler(Application_PreSendRequestHeaders);
 			app.ResolveRequestCache += new System.EventHandler(Application_ResolveRequestCache);
 			RememberErrorHandler = new System.EventHandler(RememberError);
+			
 			lock (typeof(UploadHttpModule))
 			{
 				_isInited = true;
 			}
-		}
+		}		
 		
 		public void Dispose()
 		{

@@ -88,6 +88,7 @@ a Custom UploadStorageProvider</a></li>
   <li><a href="#mozTocId580088">Known
 Issues</a>
     <ul>
+      <li><a href="#AspNetTrace">ASP.NET application-wide tracing disables NeatUpload</a></li>
       <li><a href="#WebGardenIssue">ProgressBar doesn't work with web gardens/farms</a></li>
       <li><a href="#mozTocId766780">HttpResponse.AppendToLog()
 does nothing when UploadHttpModule is used</a></li>
@@ -2911,6 +2912,25 @@ input file form element so that the user knows what the problem is.
 <h2><a class="mozTocH2" name="mozTocId580088"></a>Known
 Issues</h2>
 
+<h3><a class="mozTocH3" name="AspNetTrace"></a>ASP.NET application-wide tracing disables NeatUpload</h3>
+
+<p>When ASP.NET tracing is enabled in the application Web.config, ASP.NET reads the entire upload before
+NeatUpload can access it.  As a result, NeatUpload can't stream the upload
+to storage and can't provide a meaningful progress bar.  Since NeatUpload can't do anything useful under such
+circumstances, it automatically disables itself.  Specifically, it acts as though you set the 
+<code>useHttpModule</code> attribute of the <code>&lt;neatUpload&gt;</code> element to "false".  That prevents
+display of the progress bar and prevents streaming to storage, but your code should otherwise continue to function
+normally.
+</p>
+
+<p>Note that this issue only arises when you enable <i>application-wide</i> ASP.NET tracing (i.e. via the
+Web.config).  It does not arise if you only enable ASP.NET tracing at the page level using the <code>Trace</code>
+attribute of the <code>&lt;%@Page%&gt;</code> directive.  Unfortunately, if you enable 
+application-wide ASP.NET tracing but disable tracing for some or all pages using the
+<code>Trace</code> attribute of the <code>&lt;%@Page%&gt;</code> directive, the problem still occurs.  This is
+because the <code>Trace</code> attribute of the <code>&lt;%@Page%&gt;</code> directive has no effect on whether
+ASP.NET reads in the entire request before NeatUpload can access it.
+</p>
 
 <h3><a class="mozTocH3" name="WebGardenIssue"></a><code>ProgressBar</code> doesn't work with web gardens/farms</h3>
 
