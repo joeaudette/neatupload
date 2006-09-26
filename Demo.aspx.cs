@@ -43,6 +43,12 @@ namespace Brettle.Web.NeatUpload
 		protected HtmlGenericControl linkButtonSpan;
 		protected LinkButton linkButton;
 		protected LinkButton cancelLinkButton;
+		protected HtmlGenericControl htmlInputButtonButtonSpan;
+		protected HtmlInputButton htmlInputButtonButton;
+		protected HtmlInputButton cancelhtmlInputButtonButton;
+		protected HtmlGenericControl htmlInputButtonSubmitSpan;
+		protected HtmlInputButton htmlInputButtonSubmit;
+		protected HtmlInputButton cancelhtmlInputButtonSubmit;
 		protected HtmlGenericControl bodyPre;
 		protected HtmlGenericControl inlineProgressBarDiv;
 		protected HtmlGenericControl popupProgressBarDiv;
@@ -65,12 +71,17 @@ namespace Brettle.Web.NeatUpload
 			submitButtonSpan.Visible = (buttonTypeDropDown.SelectedValue == "Button");
 			linkButtonSpan.Visible = (buttonTypeDropDown.SelectedValue == "LinkButton");
 			commandButtonSpan.Visible = (buttonTypeDropDown.SelectedValue == "CommandButton");
+			htmlInputButtonButtonSpan.Visible = (buttonTypeDropDown.SelectedValue == "HtmlInputButtonButton");
+			htmlInputButtonSubmitSpan.Visible = (buttonTypeDropDown.SelectedValue == "HtmlInputButtonSubmit");
 			
 			inlineProgressBarDiv.Visible = (progressBarLocationDropDown.SelectedValue == "Inline");
 			popupProgressBarDiv.Visible = (progressBarLocationDropDown.SelectedValue == "Popup");
 			
 			submitButton.Click += new System.EventHandler(this.Button_Clicked);
 			linkButton.Click += new System.EventHandler(this.Button_Clicked);
+			commandButton.Click += new System.EventHandler(this.Button_Clicked);
+			htmlInputButtonButton.ServerClick += new System.EventHandler(this.Button_Clicked);
+			htmlInputButtonSubmit.ServerClick += new System.EventHandler(this.Button_Clicked);
 			
 /*
 			// Instead of setting the Triggers property of the 
@@ -78,8 +89,14 @@ namespace Brettle.Web.NeatUpload
 			// the following in your code-behind:
 			progressBar.AddTrigger(submitButton);
 			progressBar.AddTrigger(linkButton);
+			progressBar.AddTrigger(commandButton);
+			progressBar.AddTrigger(htmlInputButtonButton);
+			progressBar.AddTrigger(htmlInputButtonSubmit);
 			inlineProgressBar.AddTrigger(submitButton);
 			inlineProgressBar.AddTrigger(linkButton);
+			inlineProgressBar.AddTrigger(commandButton);
+			inlineProgressBar.AddTrigger(htmlInputButtonButton);
+			inlineProgressBar.AddTrigger(htmlInputButtonSubmit);
 */
 
 /*
