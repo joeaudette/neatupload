@@ -141,7 +141,10 @@ namespace Brettle.Web.NeatUpload
 			if (!IsDesignTime && Config.Current.UseHttpModule)
 			{
 				InitializeVars();
-				RegisterScripts();
+				if (!Page.IsClientScriptBlockRegistered("NeatUploadProgressBar"))
+				{
+					Page.RegisterClientScriptBlock("NeatUploadProgressBar", clientScript);
+				}
 			}
 			base.OnPreRender(e);
 		}
@@ -281,11 +284,6 @@ if (NeatUpload_DivNode)
 		{
 			HtmlControl formControl = GetFormControl(this);
 			
-			if (!Page.IsClientScriptBlockRegistered("NeatUploadProgressBar"))
-			{
-				Page.RegisterClientScriptBlock("NeatUploadProgressBar", clientScript);
-			}
-			
 			this.Page.RegisterStartupScript(formControl.UniqueID + "-OnSubmit", @"
 <script language=""javascript"">
 <!--
@@ -359,6 +357,13 @@ if (document.getElementById)
 			else if (!Config.Current.UseHttpModule)
 			{
 				return;
+			}
+			
+			if (!IsDesignTime)
+			{
+				// We can't register these scripts during PreRender because if we do there will be no way to
+				// programmatically add triggers that are in data-bound controls that occur after the ProgressBar.
+				RegisterScripts();
 			}
 			
 			// Enclose the pop-up fallback div in a <noscript> tag to ensure that it is not visible, even during
