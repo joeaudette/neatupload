@@ -132,7 +132,22 @@ namespace Brettle.Web.NeatUpload
 			if (!IsDesignTime && Config.Current.UseHttpModule)
 			{
 				InitializeVars();
-				RegisterScripts();
+				if (!Page.IsClientScriptBlockRegistered("NeatUploadProgressBar"))
+				{
+					string appPath = Context.Request.ApplicationPath;
+					if (appPath == "/")
+					{
+						appPath = "";
+					}
+					Page.RegisterClientScriptBlock("NeatUploadProgressBar", @"
+	<script type='text/javascript' src='" + appPath + @"/NeatUpload/ProgressBar.js?guid=" 
+		+ CacheBustingGuid + @"'></script>
+	<script type='text/javascript'>
+	NeatUploadPB.prototype.ClearFileNamesAlert = '" +  Config.Current.ResourceManager.GetString("ClearFileNamesAlert") + @"';
+	// -->
+	</script>
+	");
+				}
 			}
 			base.OnPreRender(e);
 		}
@@ -274,23 +289,6 @@ if (frames['" + this.ClientID + @"'])
 		
 		private void RegisterScripts()
 		{
-			if (!Page.IsClientScriptBlockRegistered("NeatUploadProgressBar"))
-			{
-				string appPath = Context.Request.ApplicationPath;
-				if (appPath == "/")
-				{
-					appPath = "";
-				}
-				Page.RegisterClientScriptBlock("NeatUploadProgressBar", @"
-<script type='text/javascript' src='" + appPath + @"/NeatUpload/ProgressBar.js?guid=" 
-	+ CacheBustingGuid + @"'></script>
-<script type='text/javascript'>
-NeatUploadPB.prototype.ClearFileNamesAlert = '" +  Config.Current.ResourceManager.GetString("ClearFileNamesAlert") + @"';
-// -->
-</script>
-");
-			}
-			
 			string allTriggerClientIDs = "[]";
 			
 			if (Config.Current.UseHttpModule)
@@ -357,6 +355,13 @@ NeatUploadPB.prototype.Bars['" + this.ClientID + @"']
 			else if (!Config.Current.UseHttpModule)
 			{
 				return;
+			}
+			
+			if (!IsDesignTime)
+			{
+				// We can't register these scripts during PreRender because if we do there will be no way to
+				// programmatically add triggers that are in data-bound controls that occur after the ProgressBar.
+				RegisterScripts();
 			}
 			
 			if (!Inline && !IsDesignTime)
