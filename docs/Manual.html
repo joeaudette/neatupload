@@ -198,7 +198,10 @@ completely backward-compatible with NeatUpload-1.2.x and NeatUpload-1.1.x.
 To upgrade, simply
 replace your
 <code>Brettle.Web.NeatUpload.dll</code> with the copy from
-NeatUpload-1.3.x and copy NeatUpload-1.3.x/NeatUpload/SyncUploadContext.aspx into the NeatUpload folder in your application.
+NeatUpload-1.3.x and copy everything from the NeatUpload-1.3.x/NeatUpload folder into the NeatUpload folder in
+your application.  If you have customized your <code>Progress.aspx</code> page, it will probably work unchanged 
+under NeatUpload-1.3.x but merging your changes into the latest version should not be difficult and is 
+recommended.
 </p>
 <p>
 The only compatiblity exceptions are:
@@ -1009,7 +1012,7 @@ never see that text.  However, if you perform some long-running task (e.g. conve
 format) you can use the <code>ProgressBar</code> to display how that task is progressing.  
 </p>
 
-<p>To display the progress of a long-running task, you first must set some properties on you page and the 
+<p>To display the progress of a long-running task, you first must set some properties on your page and the 
 <code>ProgressBar</code> control.  Specifically:
 <ol>
   <li>Use <code>EnableSessionState="false"</code> in your <code>&lt;%@Page ...%&gt;</code> directive.  
@@ -2797,10 +2800,11 @@ receiving the upload<br>
       <code>ChunkedInProgress</code> - an upload which uses
 chunked transfer coding has started but not yet finished.<br>
 
-
+      <code>ProcessingInProgress</code> - an upload (if any) has completed and the code associated with the page 
+      is running.  See <a href="#ShowingProcessingProgress">Showing Processing Progress</a> for details.<br>
 
       <code>Completed</code> - the entire upload
-was&nbsp;successfully received<br>
+was&nbsp;successfully received and processed<br>
 
 
 
