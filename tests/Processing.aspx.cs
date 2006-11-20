@@ -53,6 +53,10 @@ namespace Brettle.Web.NeatUpload
 		private void Page_Load(object sender, EventArgs e)
 		{
 			submitButton.Click += new System.EventHandler(this.Button_Clicked);
+			if (Request.Params["processing"] == "true")
+			{
+				DoProcessing();
+			}
 		}
 		
 		private void Page_PreRender(object sender, EventArgs e)
@@ -60,16 +64,20 @@ namespace Brettle.Web.NeatUpload
 			UploadHttpModule.AccessSession(new SessionAccessCallback(InitializeSessionPre));
 		}
 
-		private void Button_Clicked(object sender, EventArgs e)
+		private void DoProcessing()
 		{
-			ProgressInfo progress = inlineProgressBar.ProcessingProgress = new ProgressInfo(1000, "Units");
-			for (int i = 1; i <= 1000; i++)
+			ProgressInfo progress = inlineProgressBar.ProcessingProgress = new ProgressInfo(5000, "Units");
+			for (int i = 1; i <= 5000; i++)
 			{
 				System.Threading.Thread.Sleep(1);
 				progress.Value = i;
 			}
 			progress.Text = "Processing Complete";
+		}
 			
+		private void Button_Clicked(object sender, EventArgs e)
+		{
+			DoProcessing();
 			uploadedFilePre.InnerText = "";
 			if (inputFile.HasFile)
 			{

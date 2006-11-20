@@ -331,6 +331,10 @@ namespace Brettle.Web.NeatUpload
 		private void Application_ResolveRequestCache(object sender, EventArgs e)
 		{
 			if (log.IsDebugEnabled) log.Debug("In Application_ResolveRequestCache");
+			if (!Config.Current.UseHttpModule)
+			{
+				return;
+			}
 			// Wait for the upload to complete before AcquireRequestState fires.  If we don't then the session
 			// will be locked while the upload completes
 			WaitForUploadToComplete();
@@ -341,10 +345,28 @@ namespace Brettle.Web.NeatUpload
                 // then create and register an UploadContext.  This occurs the module disabled, 
                 // this is not a form/multipart POST request, etc.  This allows ProgressBars
                 // to be used for pages where no upload is occuring.
-                HttpContext httpContext = HttpContext.Current;
-                string postBackID = httpContext.Request.Params[Config.Current.PostBackIDQueryParam];
-                if (postBackID != null)
+
+                // Parse out the postBackID.  Note, we can't just do:
+                //   string postBackID = httpContext.Request.Params[Config.Current.PostBackIDQueryParam];
+                // because that will prevent ASP.NET from getting a new Params array if Server.Transfer() is called.
+
+                HttpWorkerRequest worker = GetCurrentWorkerRequest();
+                string query = worker.GetQueryString();
+                string postBackIDQueryParam = Config.Current.PostBackIDQueryParam + "=";
+                int postBackIDQueryParamStart = query.IndexOf(postBackIDQueryParam);
+                if (postBackIDQueryParamStart == 0 || 
+                	(postBackIDQueryParamStart > 0 
+                		&& (query[postBackIDQueryParamStart-1] == '?' 
+                			|| query[postBackIDQueryParamStart-1] == '&')))
                 {
+                	int postBackIDStart = postBackIDQueryParamStart + postBackIDQueryParam.Length;
+                	int postBackIDEnd = query.IndexOf('&', postBackIDStart);
+                	if (postBackIDEnd == -1)
+                	{
+                		postBackIDEnd = query.Length;
+                	}
+                	string postBackID = query.Substring(postBackIDStart, postBackIDEnd-postBackIDStart);
+
                     uploadContext = new UploadContext();
                     uploadContext.SetContentLength(HttpContext.Current.Request.ContentLength);
                     uploadContext.RegisterPostBack(postBackID);
@@ -362,6 +384,10 @@ namespace Brettle.Web.NeatUpload
 		private void Application_PreSendRequestHeaders(object sender, EventArgs e)
 		{
 			if (log.IsDebugEnabled) log.Debug("In Application_PreSendRequestHeaders");
+			if (!Config.Current.UseHttpModule)
+			{
+				return;
+			}
 			if (requestHandledBySubRequest)
 			{
 				HttpApplication app = sender as HttpApplication;
@@ -373,23 +399,39 @@ namespace Brettle.Web.NeatUpload
 		private void Application_AcquireRequestState(object sender, EventArgs e)
 		{
 			if (log.IsDebugEnabled) log.Debug("In Application_AcquireRequestState");
+			if (!Config.Current.UseHttpModule)
+			{
+				return;
+			}
 			HttpContext.Current.Items["NeatUpload_RequestStateAcquired"] = true;
 		}
 
 		private void Application_ReleaseRequestState(object sender, EventArgs e)
 		{
 			if (log.IsDebugEnabled) log.Debug("In Application_ReleaseRequestState");
+			if (!Config.Current.UseHttpModule)
+			{
+				return;
+			}
 			HttpContext.Current.Items.Remove("NeatUpload_RequestStateAcquired");
 		}
 
 		private void Application_PreRequestHandlerExecute(object sender, EventArgs e)
 		{
 			if (log.IsDebugEnabled) log.Debug("In Application_PreRequestHandlerExecute");
+			if (!Config.Current.UseHttpModule)
+			{
+				return;
+			}
 		}
 
 		private void Application_Error(object sender, EventArgs e)
 		{
 			if (log.IsDebugEnabled) log.Debug("In Application_Error");
+			if (!Config.Current.UseHttpModule)
+			{
+				return;
+			}
 			HttpApplication app = sender as HttpApplication;
 			if (log.IsDebugEnabled) log.DebugFormat("Error is: {0}", app.Server.GetLastError());
 
@@ -403,6 +445,10 @@ namespace Brettle.Web.NeatUpload
 		private EventHandler RememberErrorHandler; 
 		private void RememberError(object sender, EventArgs e)
 		{
+			if (!Config.Current.UseHttpModule)
+			{
+				return;
+			}
 			DecoratedWorkerRequest decoratedWorker = GetCurrentWorkerRequest() as DecoratedWorkerRequest;
 			HttpApplication app = sender as HttpApplication;
 			
@@ -429,6 +475,10 @@ namespace Brettle.Web.NeatUpload
 		private void Application_EndRequest(object sender, EventArgs e)
 		{
 			if (log.IsDebugEnabled) log.Debug("In Application_EndRequest");
+			if (!Config.Current.UseHttpModule)
+			{
+				return;
+			}
 
 			HttpApplication app = sender as HttpApplication;
 			if (RememberErrorHandler != null)

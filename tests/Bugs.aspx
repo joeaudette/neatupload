@@ -67,6 +67,8 @@
   <body>
     <h1>Test Page for NeatUpload Bugs</h1>
     <p>
+    Request.Params["test"] = <%= Request.Params["test"] %>
+    <p>
     This page can be used to verify that various NeatUpload bugs or potential bugs have been fixed.  
     You should be able to:
     <ul>

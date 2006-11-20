@@ -17,13 +17,25 @@
 		</style>
 	</Head>
 	<Body>
+		<h1>Test of the ProcessingInProgress UploadStatus</h1>
+		<p>
+		This page tests the "ProcessingInProgress" UploadStatus which is the status used while the page handler is 
+		being executed.  This page simulates doing some processing and updates the progress bar periodically.
+		</p>
+		<p>
+		The following links should demonstrate this without requiring a POST:
+			<ul>
+				<li><a onclick="NeatUploadPB.prototype.Bars['inlineProgressBar'].Display()" href="Processing.aspx?NeatUpload_PostBackID=<%= inlineProgressBar.PostBackID %>&processing=true">Processing.aspx?NeatUpload_PostBackID=<%= inlineProgressBar.PostBackID %>&processing=true</a></li>
+				<li><a onclick="NeatUploadPB.prototype.Bars['inlineProgressBar'].Display()" href="Processing.aspx?processing=true&NeatUpload_PostBackID=<%= inlineProgressBar.PostBackID %>">Processing.aspx?processing=true&NeatUpload_PostBackID=<%= inlineProgressBar.PostBackID %></a></li>
+			</ul>
+		The following link should not work because there is no postback ID query param:
+			<ul>
+				<li><a onclick="NeatUploadPB.prototype.Bars['inlineProgressBar'].Display()" href="Processing.aspx?processing=true">Processing.aspx?processing=true</a></li>
+			</ul>
+		
+		</p>
 		<form id="uploadForm" runat="server">
 			<Upload:HiddenPostBackID />
-			<h1>Test of the ProcessingInProgress UploadStatus</h1>
-			<p>
-			This page tests the "ProcessingInProgress" UploadStatus which is the status used while the page handler is 
-			being executed.  This page simulates doing some processing and updates the progress bar periodically.
-			</p>
 			<p>
 			You can optionally select a file to upload:
 			</p>

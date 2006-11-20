@@ -438,5 +438,10 @@ NeatUploadPB.prototype.Bars['" + this.ClientID + @"']
 				}
 			}
 		}
+		
+		public string PostBackID
+		{
+			get { return FormContext.Current.PostBackID; }
+		}
 	}
 }
