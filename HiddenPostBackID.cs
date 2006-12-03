@@ -92,8 +92,10 @@ namespace Brettle.Web.NeatUpload
 		{
 			writer.AddAttribute(HtmlTextWriterAttribute.Type, "hidden");
 			writer.AddAttribute(HtmlTextWriterAttribute.Name, Config.Current.PostBackIDQueryParam);
-			
-			writer.AddAttribute(HtmlTextWriterAttribute.Value, FormContext.Current.PostBackID);				
+			if (!IsDesignTime)
+			{
+				writer.AddAttribute(HtmlTextWriterAttribute.Value, FormContext.Current.PostBackID);
+			}
 			writer.RenderBeginTag(HtmlTextWriterTag.Input);
 			writer.RenderEndTag();
 		}
