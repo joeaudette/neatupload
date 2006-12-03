@@ -352,26 +352,7 @@ namespace Brettle.Web.NeatUpload
 
                 HttpWorkerRequest worker = GetCurrentWorkerRequest();
                 string query = worker.GetQueryString();
-                string postBackIDQueryParam = Config.Current.PostBackIDQueryParam + "=";
-                int postBackIDQueryParamStart = query.IndexOf(postBackIDQueryParam);
-                if (postBackIDQueryParamStart == 0 || 
-                	(postBackIDQueryParamStart > 0 
-                		&& (query[postBackIDQueryParamStart-1] == '?' 
-                			|| query[postBackIDQueryParamStart-1] == '&')))
-                {
-                	int postBackIDStart = postBackIDQueryParamStart + postBackIDQueryParam.Length;
-                	int postBackIDEnd = query.IndexOf('&', postBackIDStart);
-                	if (postBackIDEnd == -1)
-                	{
-                		postBackIDEnd = query.Length;
-                	}
-                	string postBackID = query.Substring(postBackIDStart, postBackIDEnd-postBackIDStart);
-
-                    uploadContext = new UploadContext();
-                    uploadContext.SetContentLength(HttpContext.Current.Request.ContentLength);
-                    uploadContext.RegisterPostBack(postBackID);
-                    UploadContext.Current = uploadContext;
-                }
+                uploadContext = GetUploadContextFromQueryString(query);
             }
 
             if (uploadContext != null)
@@ -381,6 +362,40 @@ namespace Brettle.Web.NeatUpload
             }
         }
 
+		private UploadContext GetUploadContextFromQueryString(string query)
+		{
+			UploadContext uploadContext;
+			if (query == null)
+			{
+				return null;
+			}
+			string postBackIDQueryParam = Config.Current.PostBackIDQueryParam + "=";
+			int postBackIDQueryParamStart = query.IndexOf(postBackIDQueryParam);
+			if (postBackIDQueryParamStart == -1)
+			{
+				return null;
+			}
+			if (postBackIDQueryParamStart > 0 
+           		&& query[postBackIDQueryParamStart-1] != '?' 
+           		&& query[postBackIDQueryParamStart-1] != '&')
+           	{
+           		return null;
+           	}
+			int postBackIDStart = postBackIDQueryParamStart + postBackIDQueryParam.Length;
+			int postBackIDEnd = query.IndexOf('&', postBackIDStart);
+			if (postBackIDEnd == -1)
+			{
+				postBackIDEnd = query.Length;
+			}
+           	string postBackID = query.Substring(postBackIDStart, postBackIDEnd-postBackIDStart);
+
+			uploadContext = new UploadContext();
+			uploadContext.SetContentLength(HttpContext.Current.Request.ContentLength);
+			uploadContext.RegisterPostBack(postBackID);
+			UploadContext.Current = uploadContext;
+			return uploadContext;
+		}
+		
 		private void Application_PreSendRequestHeaders(object sender, EventArgs e)
 		{
 			if (log.IsDebugEnabled) log.Debug("In Application_PreSendRequestHeaders");
