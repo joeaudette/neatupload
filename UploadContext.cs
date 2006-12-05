@@ -180,6 +180,7 @@ namespace Brettle.Web.NeatUpload
 					ctxInSession.Exception = Exception;
 					ctxInSession.StartTime = StartTime;
 					ctxInSession.StopTime = StopTime;
+					ctxInSession.CurrentFileName = CurrentFileName;
 					ctxInSession.ProgressInfoByID = ProgressInfoByID;
 					ctxInSession.RegisterPostBack(PostBackID);
 				}
