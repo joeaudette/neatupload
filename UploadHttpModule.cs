@@ -71,8 +71,14 @@ namespace Brettle.Web.NeatUpload
 			get 
 			{
 				// If the upload is being handled by this module, then return the collection that it maintains.
-				FilteringWorkerRequest worker = UploadHttpModule.GetCurrentWorkerRequest() as FilteringWorkerRequest;
-				if (worker != null) return worker.GetUploadContext().Files;
+				if (Config.Current.UseHttpModule)
+				{
+					FilteringWorkerRequest worker = UploadHttpModule.GetCurrentWorkerRequest() as FilteringWorkerRequest;
+					if (worker != null) 
+					{
+						return worker.GetUploadContext().Files;
+					}
+				}
 				// Otherwise return a fake one that will use the HttpPostedFiles in the Request.Files collection.
 				HttpContext ctx = HttpContext.Current;
 				UploadedFileCollection aspNetFiles = ctx.Items["NeatUpload_AspNetFiles"] as UploadedFileCollection;
