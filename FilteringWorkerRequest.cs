@@ -349,6 +349,10 @@ namespace Brettle.Web.NeatUpload
 			catch (Exception ex)
 			{
 				uploadContext.Exception = ex;
+				// We need to remember the exception here because the 
+				// FormsAuthenticationHttpModule in ASP.NET 1.1 will eat any exception we throw and
+				// the UploadHttpModule's RememberError handler will not get called.
+				this.Exception = ex;
 				if (ex is UploadException)
 				{
 					uploadContext.Status = UploadStatus.Rejected;
