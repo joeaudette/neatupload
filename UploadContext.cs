@@ -154,6 +154,17 @@ namespace Brettle.Web.NeatUpload
 		
 		internal void SyncWithSession(HttpSessionState session)
 		{
+			// If we don't know what the PostBackID is yet, then there is no way to find the
+			// context in the session that we are suppose to sync with.  We fail silently in
+			// this case because it can be hard for callers to know whether they have PostBackID
+			// yet (since it can come from the query string, a hidden form field, or the name of
+			// the file form field).  The important thing is to avoid setting NeverSynced = false,
+			// because that would prevent future valid syncs from replacing old upload contexts
+			// associated with cancelled uploads.
+			if (PostBackID == null)
+			{
+				return;
+			}
 			if (session == null || session.IsReadOnly 
 				|| session.Mode == System.Web.SessionState.SessionStateMode.Off)
 			{
