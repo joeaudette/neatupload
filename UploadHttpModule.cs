@@ -158,7 +158,6 @@ namespace Brettle.Web.NeatUpload
 			app.BeginRequest += new System.EventHandler(Application_BeginRequest);
 			app.Error += new System.EventHandler(Application_Error);
 			app.EndRequest += new System.EventHandler(Application_EndRequest);
-			app.PreSendRequestHeaders += new System.EventHandler(Application_PreSendRequestHeaders);
 			app.ResolveRequestCache += new System.EventHandler(Application_ResolveRequestCache);
 			app.AcquireRequestState += new System.EventHandler(Application_AcquireRequestState);
 			app.ReleaseRequestState += new System.EventHandler(Application_ReleaseRequestState);
@@ -402,21 +401,6 @@ namespace Brettle.Web.NeatUpload
 			return uploadContext;
 		}
 		
-		private void Application_PreSendRequestHeaders(object sender, EventArgs e)
-		{
-			if (log.IsDebugEnabled) log.Debug("In Application_PreSendRequestHeaders");
-			if (!Config.Current.UseHttpModule)
-			{
-				return;
-			}
-			if (requestHandledBySubRequest)
-			{
-				HttpApplication app = sender as HttpApplication;
-				app.Response.ClearHeaders();
-				app.Response.ClearContent();
-			}
-		}
-
 		private void Application_AcquireRequestState(object sender, EventArgs e)
 		{
 			if (log.IsDebugEnabled) log.Debug("In Application_AcquireRequestState");
