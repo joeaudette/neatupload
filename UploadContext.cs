@@ -97,6 +97,10 @@ namespace Brettle.Web.NeatUpload
 		{
 			UploadContext uploadContext = HttpContext.Current.Application[UploadContext.NamePrefix + postBackID] as UploadContext;
 			if (log.IsDebugEnabled) log.Debug("Application[" + UploadContext.NamePrefix + postBackID + "] = " + uploadContext);
+			if (uploadContext == null)
+			{
+				uploadContext = HttpContext.Current.Cache[UploadContext.NamePrefix + postBackID] as UploadContext;
+			}
 			return uploadContext;
 		}
 		
@@ -235,6 +239,21 @@ namespace Brettle.Web.NeatUpload
 				}
 				// Don't clear the File collection, because we use it to determine the number of files uploaded in the
 				// last postback.
+			}
+
+			// Move the current UploadContext from the ApplicationState to the Cache so that we don't leak memory.
+			// We only need it in the Cache briefly because it is only used by the inline ProgressBar to display
+			// the status of the upload that just completed.
+			HttpContext ctx = HttpContext.Current;
+			if (ctx != null)
+			{
+				ctx.Cache.Insert(UploadContext.NamePrefix + PostBackID, this, null, 
+								System.Web.Caching.Cache.NoAbsoluteExpiration, 
+								TimeSpan.FromSeconds(60));
+				if (ctx.Application[UploadContext.NamePrefix + PostBackID] != null)
+				{
+					ctx.Application.Remove(UploadContext.NamePrefix + PostBackID);
+				}
 			}
 		}
 		
