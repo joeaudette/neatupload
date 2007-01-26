@@ -198,8 +198,6 @@ namespace Brettle.Web.NeatUpload
 			return worker;
 		}
 
-		bool requestHandledBySubRequest;
-
 		private void Application_BeginRequest(object sender, EventArgs e)
 		{
 			if (log.IsDebugEnabled) log.Debug("In Application_BeginRequest");
@@ -211,7 +209,6 @@ namespace Brettle.Web.NeatUpload
 			}
 				
 			if (log.IsDebugEnabled) log.Debug(origWorker.GetType() + " for " + origWorker.GetRawUrl() + " with AspFilterSessionId = " + origWorker.GetUnknownRequestHeader("AspFilterSessionId"));
-			requestHandledBySubRequest = false;
 			if (!Config.Current.UseHttpModule)
 			{
 				return;
@@ -293,7 +290,6 @@ namespace Brettle.Web.NeatUpload
 					if (log.IsDebugEnabled) log.Debug("Called ProcessRequest().  Calling subWorker.WaitForEndOfRequest().");
 					subWorker.WaitForEndOfRequest();
 					if (log.IsDebugEnabled) log.Debug("subWorker.WaitForEndOfRequest() returned.");
-					requestHandledBySubRequest = true;
 				}
 				finally
 				{
@@ -309,7 +305,6 @@ namespace Brettle.Web.NeatUpload
 					// If there was an error, rethrow it so that ASP.NET uses any custom error pages.
 					if (subWorker.Exception != null)
 					{
-						requestHandledBySubRequest = false;
 						HttpException httpException = subWorker.Exception as HttpException;
 						if (httpException != null)
 						{
