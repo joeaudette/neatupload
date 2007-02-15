@@ -78,7 +78,7 @@ namespace Brettle.Web.NeatUpload
 				if (lastPostBackID != null && lastPostBackID.Length > 0 && Page.Request.Params["refresher"] == null)
 				{
 					uploadContext = UploadContext.FindByID(lastPostBackID);
-					if (uploadContext.FileBytesRead == 0)
+					if (uploadContext != null && uploadContext.FileBytesRead == 0)
 					{
 						uploadContext = null;
 					}
