@@ -33,7 +33,9 @@ namespace Brettle.Web.NeatUpload
 
 		protected void Application_BeginRequest(Object sender, EventArgs e)
 		{
-
+			// This is only used by tests/WithoutNeatUpload.aspx so that it know when the upload
+			// starts being received.
+			HttpContext.Current.Items["WithoutNeatUpload_StartTime"] = System.DateTime.Now;
 		}
 
 		protected void Application_EndRequest(Object sender, EventArgs e)
@@ -64,6 +66,7 @@ namespace Brettle.Web.NeatUpload
 		private void InitializeComponent()
 		{    
 			this.components = new System.ComponentModel.Container();
+			this.BeginRequest += new System.EventHandler(Application_BeginRequest);
 		}
 		#endregion
 	}
