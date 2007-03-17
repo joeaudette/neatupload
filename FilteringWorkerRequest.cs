@@ -444,7 +444,10 @@ namespace Brettle.Web.NeatUpload
 					if (log.IsDebugEnabled) log.Debug("Ignoring unsupported charset " + charset + ".  Using utf-8.");
 				}
 			}
-
+            else
+            {
+            	ContentEncoding = HttpContext.Current.Response.ContentEncoding;
+            }
 			preloadedEntityBodyStream = new MemoryStream();
 			outputStream = preloadedEntityBodyStream;
 			readPos = writePos = parsePos = 0;

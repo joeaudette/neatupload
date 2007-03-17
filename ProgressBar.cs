@@ -739,10 +739,17 @@ function NeatUpload_ClearFileInputs(elem)
 				for (var a=0; a < inputFile.attributes.length; a++)
 				{
 					var attr = inputFile.attributes.item(a); 
-					if (attr.specified && attr.name != 'type' && attr.name != 'value')
+					if (! attr.specified)
+						continue;
+					var attrName = attr.name.toLowerCase();
+					if (attrName != 'type' && attrName != 'value')
 					{
-						if (attr.name == 'style' && newInputFile.style && newInputFile.style.cssText)
+						if (attrName == 'style' && newInputFile.style && newInputFile.style.cssText)
 							newInputFile.style.cssText = attr.value;
+						else if (attrName == 'class') // Needed for IE because 'class' is a JS keyword
+							newInputFile.className = attr.value;
+						else if (attrName == 'for') // Needed for IE because 'for' is a JS keyword
+							newInputFile.htmlFor = attr.value;
 						else
 							newInputFile.setAttribute(attr.name, attr.value);
 					}

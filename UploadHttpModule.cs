@@ -127,7 +127,6 @@ namespace Brettle.Web.NeatUpload
 			app.BeginRequest += new System.EventHandler(Application_BeginRequest);
 			app.Error += new System.EventHandler(Application_Error);
 			app.EndRequest += new System.EventHandler(Application_EndRequest);
-			app.PreSendRequestHeaders += new System.EventHandler(Application_PreSendRequestHeaders);
 			app.ResolveRequestCache += new System.EventHandler(Application_ResolveRequestCache);
 			RememberErrorHandler = new System.EventHandler(RememberError);
 			
@@ -149,11 +148,8 @@ namespace Brettle.Web.NeatUpload
 			return origWorker;
 		}
 
-		bool requestHandledBySubRequest;
-
 		private void Application_BeginRequest(object sender, EventArgs e)
 		{
-			requestHandledBySubRequest = false;
 			if (!Config.Current.UseHttpModule)
 			{
 				return;
@@ -237,7 +233,6 @@ namespace Brettle.Web.NeatUpload
 					if (log.IsDebugEnabled) log.Debug("Called ProcessRequest().  Calling subWorker.WaitForEndOfRequest().");
 					subWorker.WaitForEndOfRequest();
 					if (log.IsDebugEnabled) log.Debug("subWorker.WaitForEndOfRequest() returned.");
-					requestHandledBySubRequest = true;
 				}
 				finally
 				{
@@ -253,7 +248,6 @@ namespace Brettle.Web.NeatUpload
 					// If there was an error, rethrow it so that ASP.NET uses any custom error pages.
 					if (subWorker.Exception != null)
 					{
-						requestHandledBySubRequest = false;
 						HttpException httpException = subWorker.Exception as HttpException;
 						if (httpException != null)
 						{
@@ -275,16 +269,6 @@ namespace Brettle.Web.NeatUpload
 			// Wait for the upload to complete before AcquireRequestState fires.  If we don't then the session
 			// will be locked while the upload completes
 			WaitForUploadToComplete();
-		}
-
-		private void Application_PreSendRequestHeaders(object sender, EventArgs e)
-		{
-			if (requestHandledBySubRequest)
-			{
-				HttpApplication app = sender as HttpApplication;
-				app.Response.ClearHeaders();
-				app.Response.ClearContent();
-			}
 		}
 
 		private void Application_Error(object sender, EventArgs e)
