@@ -454,20 +454,42 @@ namespace Brettle.Web.NeatUpload
 			
 			if (decoratedWorker != null)
 			{
-				decoratedWorker.Exception = app.Server.GetLastError();
-				if (log.IsDebugEnabled) log.DebugFormat("Remembering error: {0}", decoratedWorker.Exception);
-				if (decoratedWorker.Exception != null)
+				Exception ex = app.Server.GetLastError();
+				if (ex != null)
 				{
+					// We are here because an exception was thrown while the subrequest was being proceessed.
+					// Ideally, we'd like it to appear as though the exception was thrown in the context of the
+					// original request so that thigs which rely on the original context (e.g. custom error pages)
+					// operate properly.  To achieve that, we'd like to end the subrequest without sending any
+					// response, and remember the exception so that we can rethrow it in the original
+					// request context.  However, if some headers or content have been already been sent to the
+					// client, then that is impossible.  In that case we'll continue processing normally which
+					// will mean that the exception is handled in the context of the subrequest.
+
+					// Try to clear the headers.  This will throw an HttpException if headers have already been
+					// sent to the client.
+					try
+					{
+						app.Response.ClearHeaders();
+					}
+					catch (HttpException)
+					{
+						if (log.IsDebugEnabled)
+							log.DebugFormat("The following error will be processed in NeatUpload's subrequest context because the response has already been at least partially sent {0}", ex);
+						return;
+					}
+					// Clear any buffered content as well so that it isn't 
+					// written when we end the subrequest.
+					app.Response.ClearContent();
+
+					decoratedWorker.Exception = ex;
+					if (log.IsDebugEnabled) log.DebugFormat("Remembering error: {0}", decoratedWorker.Exception);
+
 					// For the remainder of the subrequest, act as though there was no error.
 					app.Server.ClearError();
-					
-					// Clear any content that has not yet been written to the client so that it isn't written
-					// when we end the subrequest.
-					app.Response.ClearHeaders();
-					app.Response.ClearContent();
-					
+
 					// Finish the subrequest.
-					app.CompleteRequest();
+					app.CompleteRequest();					
 				}
 			}
 		}		
