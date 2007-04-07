@@ -16,6 +16,14 @@
 		{
 			TestTrace();
 		}
+		else if (test == "flushandthrow")
+		{
+			TestFlushAndThrow();
+		}
+		else if (test == "throwtocustomerror")
+		{
+			TestThrowToCustomError();
+		}
 	}
 	
 	void TestDownload()
@@ -59,6 +67,16 @@
 		Trace.Write("Hello world from TestTrace() in Bugs.aspx!");
 	}
 	
+	void TestFlushAndThrow()
+	{
+		Response.Flush();
+		throw new HttpException(413, "Can't display the Error413.aspx page because response was flushed.");
+	}
+
+	void TestThrowToCustomError()
+	{
+		throw new HttpException(413, "Should display the Error413.aspx page.");
+	}
 </script>
 <html>
   <head>
@@ -73,6 +91,8 @@
       <li><a href="Bugs.aspx?test=download">download the Web.config file</a>.</li>
       <li><a href="Bugs.aspx?test=redirect">get redirected to Google</a>.</li>
       <li><a href="Bugs.aspx?test=trace">generate some trace output</a>.</li>
+      <li><a href="Bugs.aspx?test=throwtocustomerror">throw a 413 HttpException to display a custom error page</a>.</li>
+      <li><a href="Bugs.aspx?test=flushandthrow">flush the response and throw an exception that shouldn't display a custom error page.</a>.</li>
     </ul>
     </p>
   </body>
