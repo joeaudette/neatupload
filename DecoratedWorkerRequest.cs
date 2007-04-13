@@ -125,8 +125,9 @@ namespace Brettle.Web.NeatUpload
 		{
 			if (Exception == null)
 			{
-				if (log.IsDebugEnabled) log.Debug("Calling FlushResponse(" + finalFlush + ")");
-				OrigWorker.FlushResponse(finalFlush);
+				if (log.IsDebugEnabled) log.Debug("FlushResponse(" + finalFlush + ") called -> Calling FlushResponse(false)");
+				// Always pass false so that ASP.NET doesn't recycle response buffers while they are still in use.
+				OrigWorker.FlushResponse(false);
 			}
 		}
 
