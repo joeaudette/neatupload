@@ -25,6 +25,7 @@
       <Entry build="True" name="SqlServerUploader" configuration="Release" />
     </Configuration>
   </Configurations>
+  <DeployTargets />
   <StartMode startupentry="NeatUpload" single="True">
     <Execute type="None" entry="NeatUpload" />
     <Execute type="None" entry="TestFilter" />
