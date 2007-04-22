@@ -396,7 +396,7 @@ namespace Brettle.Web.NeatUpload
 				formatter.Deserialize(memoryStream);
 				return true;
 			}
-			catch (System.Runtime.Serialization.SerializationException ex)
+			catch (System.Runtime.Serialization.SerializationException)
 			{
 				return false;
 			}
