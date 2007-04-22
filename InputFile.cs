@@ -350,6 +350,8 @@ namespace Brettle.Web.NeatUpload
 				// to support, and less likely to submit patches.  So they contribute in another way when they
 				// use NeatUpload - they contribute by advertising it.  If they don't want to do that, they can
 				// always have someone more capable find and remove the code for them (probably for a fee).
+				// For more information, see the "Branding, Licensing, and the Trademark" section in 
+				// docs/Manual.html.
 				writer.AddStyleAttribute(HtmlTextWriterStyle.FontSize, "smal" + "ler");
 				writer.RenderBeginTag(HtmlTextWriterTag.Span);
 				writer.Write("&nbsp;(Po" + "wer" +"ed&nb" + "sp;by&nb" + "sp;");
@@ -357,7 +359,7 @@ namespace Brettle.Web.NeatUpload
 				writer.AddAttribute(HtmlTextWriterAttribute.Href, 
 					"htt" +"p://ww" + "w.bre"+ "ttle." + "com/" + "neat" + "upload");
 				writer.RenderBeginTag(HtmlTextWriterTag.A);
-				writer.Write("NeatUpload");
+				writer.Write("Neat" + "Upload");
 				writer.RenderEndTag(); // a
 				writer.Write(")");
 				writer.RenderEndTag(); // span
