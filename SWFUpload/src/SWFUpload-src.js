@@ -20,6 +20,7 @@ function SWFUpload(settings) {
 	// Load the settings.  Load the Flash movie.
 	this.init(settings);
 	this.loadFlash();
+	this.fireFlashLoaded();
 	
 	if (this.debug) 
 		this.debugSettings();
@@ -147,8 +148,19 @@ SWFUpload.prototype.loadFlash = function() {
 	container.innerHTML = html;
 		
 	this.movieElement = document.getElementById(this.movieName);
-	
 };
+
+SWFUpload.prototype.fireFlashLoaded = function() {
+	var movie = this.movieElement;
+	// Use setTimeout() to ensure that the current script and any pending scripts are finished before the 
+	// Flash plugin attempts to call back in to JS to run the flash_loaded_callback.  Without this the 
+	// flash_loaded_callback is sometimes not run.
+	setTimeout(function () {
+		if (movie.fireFlashLoaded) {
+			movie.fireFlashLoaded();
+		}
+	}, 1);
+}
 
 SWFUpload.prototype._getFlashVars = function() {
 	

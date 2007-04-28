@@ -90,7 +90,16 @@ class com.mammon.swfupload.SWFUpload
 		ExternalInterface.addCallback("upload", this, upload);
 		ExternalInterface.addCallback("cancelFile", this, cancelFile);
 		ExternalInterface.addCallback("cancelQueue", this, cancelQueue);
-		
+		ExternalInterface.addCallback("fireFlashLoaded", this, fireFlashLoaded);		
+	}
+
+	/**
+	* @method fireFlashLoaded
+	* @description Invoked from javascript via setTimeout() to avoid race conditions / re-entry issues.
+	* @return {Void}
+	*/
+	private function fireFlashLoaded():Void 
+	{
 		if (flashLoadedCallback.length > 0)
 			ExternalInterface.call(flashLoadedCallback, true);
 	}
