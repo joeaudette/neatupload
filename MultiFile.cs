@@ -273,16 +273,8 @@ namespace Brettle.Web.NeatUpload
 					Page.RegisterClientScriptBlock("NeatUploadMultiFile", @"
 	<script type='text/javascript' src='" + AppPath + @"/NeatUpload/SWFUpload.js?guid=" 
 		+ CacheBustingGuid + @"'></script>
-	<script type='text/javascript'>
-<!--
-function NeatUploadMultiFile()
-{
-}
-
-NeatUploadMultiFile.prototype.Controls = new Object();
-// -->
-</script>
-");
+	<script type='text/javascript' src='" + AppPath + @"/NeatUpload/MultiFile.js?guid=" 
+		+ CacheBustingGuid + @"'></script>");
 				}
 			}
 			base.OnPreRender(e);
@@ -311,55 +303,10 @@ NeatUploadMultiFile.prototype.Controls = new Object();
 				this.Page.RegisterStartupScript("NeatUploadMultiFile-" + this.UniqueID, @"
 <script type='text/javascript'>
 <!--
-var swfu;
-// Only use SWFUpload in non-Mozilla browsers because bugs in the Firefox Flash 9 plugin cause it to
-// crash the browser on Linux and send IE cookies on Windows.  TODO: Workaround too cookies issue.
-if (true || !(navigator.plugins && navigator.mimeTypes && navigator.mimeTypes.length)) {
-	SWFUpload.prototype.NeatUploadDisplayProgress = function () {
-		// If no bar was specified, use the first one.
-		if (!this.NeatUploadProgressBar)
-		{
-			this.NeatUploadProgressBar = NeatUploadPB.prototype.FirstBarID;
-		}
-		if (this.NeatUploadProgressBar)
-		{
-			NeatUploadPB.prototype.Bars[this.NeatUploadProgressBar].Display();
-		}
-	};
-
-	SWFUpload.prototype.NeatUploadFlashLoaded = function () {
-		// TODO: Hookup the upload trigger.
-		// Make clicking 'Browse...' on the <input type='file'> call SWFUpload.browse().
-		var inputFile = document.getElementById('" + this.ClientID + @"');
-		var swfUpload = this;
-		inputFile.onclick = function() {
-			swfUpload.browse();
-			return false;
-		};
-		
-		this.flashLoaded(true);
-	};
-	
-	SWFUpload.prototype.NeatUploadFileQueued = function (file) {
-		var inputFile = document.getElementById('" + this.ClientID + @"');
-		var span = document.createElement('span');
-		span.innerHTML = file.name + '<br/>';
-		inputFile.parentNode.insertBefore(span, inputFile);
-	};
-
-	window.onload = function() {
-	NeatUploadMultiFile.prototype.Controls['" + this.ClientID + @"'] 
-		= new SWFUpload({
-			flash_path : '" + AppPath + @"/NeatUpload/SWFUpload.swf',
-			upload_script : '" + AppPath + @"/NeatUpload/AsyncUpload.aspx?NeatUpload_PostBackID=" + FormContext.Current.PostBackID + @"',
-			allowed_filesize: 2097151,
-			upload_file_start_callback : 'NeatUploadMultiFile.prototype.Controls[""" + this.ClientID + @"""].NeatUploadDisplayProgress',
-			upload_file_queued_callback : 'NeatUploadMultiFile.prototype.Controls[""" + this.ClientID + @"""].NeatUploadFileQueued',
-			flash_loaded_callback : 'NeatUploadMultiFile.prototype.Controls[""" + this.ClientID + @"""].NeatUploadFlashLoaded'
-			});
-	NeatUploadMultiFile.prototype.Controls['" + this.ClientID + @"'].NeatUploadProgressBar = '" + ProgressBar + @"';
-	};
-}
+NeatUploadMultiFileCreate('" + this.ClientID + @"', 
+		'" + AppPath + @"',
+		'" + AppPath + @"/NeatUpload/AsyncUpload.aspx?NeatUpload_PostBackID=" + FormContext.Current.PostBackID + @"',
+		'" + ProgressBar + @"');
 // -->
 </script>");
  			}
