@@ -306,6 +306,8 @@ NeatUploadPB.prototype.Bars['" + this.ClientID + @"']
 	                    function() { " + displayStatement + @" },
 	                    " + allTriggerClientIDs + @", '"
 	                    + AutoStartCondition.Replace(@"'", @"\'") + @"');
+if (!NeatUploadPB.prototype.FirstBarID)
+	NeatUploadPB.prototype.FirstBarID = '" + this.ClientID + @"';
 // -->
 </script>");
                                                                                

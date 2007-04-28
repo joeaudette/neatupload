@@ -117,6 +117,63 @@ namespace Brettle.Web.NeatUpload
 				return _validationFileNames;
 			}
 		}
+
+		public string Accept
+		{
+			get
+			{
+				string val = Attributes["accept"];
+				if (val == null)
+					return String.Empty;
+				else
+					return val;
+			}
+			set
+			{
+				if (value == null || value == String.Empty)
+					Attributes.Remove("accept");
+				else
+					Attributes["accept"] = value;
+			}
+		}
+		
+		public int MaxLength
+		{
+			get
+			{
+				string val = Attributes["maxlength"];
+				if (val == null)
+					return -1;
+				else
+					return Convert.ToInt32(val);
+			}
+			set
+			{
+				if (value == -1)
+					Attributes.Remove("maxlength");
+				else
+					Attributes["maxlength"] = value.ToString();
+			}
+		}
+				
+		public int Size
+		{
+			get
+			{
+				string val = Attributes["size"];
+				if (val == null)
+					return -1;
+				else
+					return Convert.ToInt32(val);
+			}
+			set
+			{
+				if (value == -1)
+					Attributes.Remove("size");
+				else
+					Attributes["size"] = value.ToString();
+			}
+		}
 				
 		/// <summary>
 		/// ID of the ProgressBar control to display when a file is uploaded.
@@ -234,14 +291,18 @@ NeatUploadMultiFile.prototype.Controls = new Object();
 
 		protected override void Render(HtmlTextWriter writer)
 		{
+			string targetDivID = "NeatUploadDiv_" + this.ClientID;
+			string name;
 			string storageConfigName;
 			if (!IsDesignTime && Config.Current.UseHttpModule)
 			{
 				// Generate a special name recognized by the UploadHttpModule
+				name = FormContext.Current.GenerateFileID(this.UniqueID);
 				storageConfigName = FormContext.Current.GenerateStorageConfigID(this.UniqueID);
 			}
 			else
 			{
+				name = this.UniqueID;
 				storageConfigName = UploadContext.ConfigNamePrefix + "-" + this.UniqueID;
 			}
 			if (!IsDesignTime)
@@ -250,37 +311,58 @@ NeatUploadMultiFile.prototype.Controls = new Object();
 				this.Page.RegisterStartupScript("NeatUploadMultiFile-" + this.UniqueID, @"
 <script type='text/javascript'>
 <!--
-SWFUpload.prototype.NeatUploadDisplayProgress = function () {
-	// If no bar was specified, use the first one.
-	if (!this.NeatUploadProgressBar)
-	{
-		this.NeatUploadProgressBar = NeatUploadPB.prototype.FirstBarID;
-	}
-	if (this.NeatUploadProgressBar)
-	{
-		NeatUploadPB.prototype.Bars[this.NeatUploadProgressBar].Display();
-	}
-};
+var swfu;
+// Only use SWFUpload in non-Mozilla browsers because bugs in the Firefox Flash 9 plugin cause it to
+// crash the browser on Linux and send IE cookies on Windows.  TODO: Workaround too cookies issue.
+if (true || !(navigator.plugins && navigator.mimeTypes && navigator.mimeTypes.length)) {
+	SWFUpload.prototype.NeatUploadDisplayProgress = function () {
+		// If no bar was specified, use the first one.
+		if (!this.NeatUploadProgressBar)
+		{
+			this.NeatUploadProgressBar = NeatUploadPB.prototype.FirstBarID;
+		}
+		if (this.NeatUploadProgressBar)
+		{
+			NeatUploadPB.prototype.Bars[this.NeatUploadProgressBar].Display();
+		}
+	};
 
-window.onload = function() {
-NeatUploadMultiFile.prototype.Controls['" + this.ClientID + @"'] 
-	= new SWFUpload({
-		flash_path : '" + AppPath + @"/NeatUpload/SWFUpload.swf',
-		upload_script : '" + AppPath + @"/NeatUpload/AsyncUpload.aspx?NeatUpload_PostBackID=" + FormContext.Current.PostBackID + @"',
-		target : '" + this.ClientID + @"',
-		allowed_filesize: 2097151,
-		upload_file_start_callback : 'NeatUploadMultiFile.prototype.Controls[""" + this.ClientID + @"""].NeatUploadDisplayProgress',
-		flash_loaded_callback : 'NeatUploadMultiFile.prototype.Controls[""" + this.ClientID + @"""].flashLoaded'
-		});
-NeatUploadMultiFile.prototype.Controls['" + this.ClientID + @"'].NeatUploadProgressBar = '" + ProgressBar + @"';
-};
+	SWFUpload.prototype.NeatUploadFlashLoaded = function () {
+		// TODO: Hookup the upload trigger.
+		// Make clicking 'Browse...' on the <input type='file'> call SWFUpload.browse().
+		var inputFile = document.getElementById('" + this.ClientID + @"');
+		var swfUpload = this;
+		inputFile.onclick = function() {
+			swfUpload.browse();
+			return false;
+		};
+		
+		this.flashLoaded(true);
+	};
+	
+	SWFUpload.prototype.NeatUploadFileQueued = function (file) {
+		var inputFile = document.getElementById('" + this.ClientID + @"');
+		var span = document.createElement('span');
+		span.innerHTML = file.name + '<br/>';
+		inputFile.parentNode.insertBefore(span, inputFile);
+	};
+
+	window.onload = function() {
+	NeatUploadMultiFile.prototype.Controls['" + this.ClientID + @"'] 
+		= new SWFUpload({
+			flash_path : '" + AppPath + @"/NeatUpload/SWFUpload.swf',
+			upload_script : '" + AppPath + @"/NeatUpload/AsyncUpload.aspx?NeatUpload_PostBackID=" + FormContext.Current.PostBackID + @"',
+			allowed_filesize: 2097151,
+			upload_file_start_callback : 'NeatUploadMultiFile.prototype.Controls[""" + this.ClientID + @"""].NeatUploadDisplayProgress',
+			upload_file_queued_callback : 'NeatUploadMultiFile.prototype.Controls[""" + this.ClientID + @"""].NeatUploadFileQueued',
+			flash_loaded_callback : 'NeatUploadMultiFile.prototype.Controls[""" + this.ClientID + @"""].NeatUploadFlashLoaded'
+			});
+	NeatUploadMultiFile.prototype.Controls['" + this.ClientID + @"'].NeatUploadProgressBar = '" + ProgressBar + @"';
+	};
+}
 // -->
 </script>");
  			}
- 			
-			base.AddAttributesToRender(writer);
- 			writer.RenderBeginTag(HtmlTextWriterTag.Div);
-			
 			// Store the StorageConfig in a hidden form field with a related name
 			if (StorageConfig != null && StorageConfig.Count > 0)
 			{
@@ -291,15 +373,16 @@ NeatUploadMultiFile.prototype.Controls['" + this.ClientID + @"'].NeatUploadProgr
 				writer.RenderBeginTag(HtmlTextWriterTag.Input);
 				writer.RenderEndTag();
 			}
- 			writer.RenderEndTag(); // div
 			
-/*
+			writer.AddAttribute(HtmlTextWriterAttribute.Id, targetDivID);
+ 			writer.RenderBeginTag(HtmlTextWriterTag.Div);
+
 			base.AddAttributesToRender(writer);
-			writer.AddAttribute(HtmlTextWriterAttribute.Src, AppPath + @"/NeatUpload/AsyncUpload.aspx?NeatUploadPostBackID=" + FormContext.Current.PostBackID);
-			writer.RenderBeginTag(HtmlTextWriterTag.Iframe);
-#warning TODO: add no-iframe fallback
-			writer.RenderEndTag(); // iframe
-*/
+			writer.AddAttribute(HtmlTextWriterAttribute.Type, "file");
+			writer.AddAttribute(HtmlTextWriterAttribute.Name, name);
+			writer.RenderBeginTag(HtmlTextWriterTag.Input);
+			writer.RenderEndTag(); // input type="file"
+
 			if (Config.Current.UseHttpModule)
 			{
 				// The constant strings below are broken apart so that you couldn't just search for the text and
@@ -323,6 +406,7 @@ NeatUploadMultiFile.prototype.Controls['" + this.ClientID + @"'].NeatUploadProgr
 				writer.RenderEndTag(); // span
 			}
 
+ 			writer.RenderEndTag(); // div
 		}
 
 		/// <summary>
