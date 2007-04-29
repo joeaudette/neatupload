@@ -69,6 +69,7 @@ NeatUploadMultiFile.prototype.FlashLoaded = function () {
 	var swfUpload = this.Swfu;
 	inputFile.onclick = function() {
 		swfUpload.browse();
+		window.event.returnValue = false;
 		return false;
 	};
 	
