@@ -273,7 +273,7 @@ namespace Brettle.Web.NeatUpload
 					Page.RegisterClientScriptBlock("NeatUploadMultiFile", @"
 	<script type='text/javascript' src='" + AppPath + @"/NeatUpload/SWFUpload.js?guid=" 
 		+ CacheBustingGuid + @"'></script>
-	<script type='text/javascript' src='" + AppPath + @"/NeatUpload/MultiFile.js?guid=" 
+	<script type='text/javascript' src='" + AppPath + @"/NeatUpload/NeatUpload.js?guid=" 
 		+ CacheBustingGuid + @"'></script>");
 				}
 			}

@@ -140,7 +140,7 @@ namespace Brettle.Web.NeatUpload
 						appPath = "";
 					}
 					Page.RegisterClientScriptBlock("NeatUploadProgressBar", @"
-	<script type='text/javascript' src='" + appPath + @"/NeatUpload/ProgressBar.js?guid=" 
+	<script type='text/javascript' src='" + appPath + @"/NeatUpload/NeatUpload.js?guid=" 
 		+ CacheBustingGuid + @"'></script>
 	<script type='text/javascript'>
 	NeatUploadPB.prototype.ClearFileNamesAlert = '" +  Config.Current.ResourceManager.GetString("ClearFileNamesAlert") + @"';
@@ -282,8 +282,8 @@ if (frames['" + this.ClientID + @"'])
 			otherTriggers.Add(control);
 		}
 
-		// This is used to ensure that the browser gets the latest ProgressBar.js each time this assembly is
-		// reloaded.  Strictly speaking the browser only needs to get the latest when ProgressBar.js changes,
+		// This is used to ensure that the browser gets the latest NeatUpload.js each time this assembly is
+		// reloaded.  Strictly speaking the browser only needs to get the latest when NeatUpload.js changes,
 		// but computing a hash on that file everytime this assembly is loaded strikes me as overkill.
 		private static Guid CacheBustingGuid = System.Guid.NewGuid();
 		
