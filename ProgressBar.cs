@@ -195,7 +195,7 @@ namespace Brettle.Web.NeatUpload
 setTimeout(""frames['" + this.ClientID + @"'].location.href = '" + uploadProgressUrl + @"&refresher=client&canScript=true&canCancel=' + NeatUploadCanCancel();"", 0);
 ";
 				this.Page.RegisterStartupScript(this.UniqueID + "UpdateIFrameSrc", @"
-<script language=""javascript"">
+<script type=""text/javascript"" language=""javascript"">
 <!--
 if (frames['" + this.ClientID + @"'])
 	frames['" + this.ClientID + @"'].location.replace('" + uploadProgressUrl + @"&canScript=true&canCancel=' + NeatUploadCanCancel());
@@ -208,7 +208,7 @@ if (frames['" + this.ClientID + @"'])
 				Tag = HtmlTextWriterTag.Div;
 				displayStatement = GetPopupDisplayStatement();
 				this.Page.RegisterStartupScript(this.UniqueID + "RemoveDiv", @"
-<script language=""javascript"">
+<script type=""text/javascript"" language=""javascript"">
 <!--
 NeatUpload_DivNode = document.getElementById ? document.getElementById('" + this.ClientID + @"') : null; 
 if (NeatUpload_DivNode)
@@ -285,7 +285,7 @@ if (NeatUpload_DivNode)
 			HtmlControl formControl = GetFormControl(this);
 			
 			this.Page.RegisterStartupScript(formControl.UniqueID + "-OnSubmit", @"
-<script language=""javascript"">
+<script type=""text/javascript"" language=""javascript"">
 <!--
 function NeatUpload_OnSubmitForm_" + formControl.ClientID + @"()
 {
@@ -302,7 +302,7 @@ if (document.getElementById)
 
 			StringBuilder scriptBuilder = new StringBuilder();
 			scriptBuilder.Append(@"
-<script language=""javascript"">
+<script type=""text/javascript"" language=""javascript"">
 <!--
 ");
 			AddPerProgressBarScripts(scriptBuilder, formControl);
@@ -577,7 +577,7 @@ NeatUpload_AddSubmittingHandler('" + formControl.ClientID + @"', function () {
 		}
 
 		private string clientScript = @"
-<script language=""javascript"">
+<script type=""text/javascript"" language=""javascript"">
 <!--
 
 if (!Array.prototype.push)

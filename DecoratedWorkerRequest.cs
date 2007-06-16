@@ -358,6 +358,14 @@ namespace Brettle.Web.NeatUpload
 		{
 			if (Exception == null)
 			{
+				long bufSize = 1024*1024;
+				while (length > bufSize  && OrigWorker.IsClientConnected())
+				{
+					OrigWorker.SendResponseFromFile (handle, offset, bufSize);
+					OrigWorker.FlushResponse(false);
+					offset += bufSize;
+					length -= bufSize;
+				}
 				OrigWorker.SendResponseFromFile (handle, offset, length);
 			}
 		}
@@ -366,6 +374,14 @@ namespace Brettle.Web.NeatUpload
 		{
 			if (Exception == null)
 			{
+				long bufSize = 1024*1024;
+				while (length > bufSize && OrigWorker.IsClientConnected())
+				{
+					OrigWorker.SendResponseFromFile (filename, offset, bufSize);
+					OrigWorker.FlushResponse(false);
+					offset += bufSize;
+					length -= bufSize;
+				}
 				OrigWorker.SendResponseFromFile (filename, offset, length);
 			}
 		}
