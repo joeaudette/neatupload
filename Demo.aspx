@@ -39,7 +39,12 @@
 			</asp:DropDownList>
 			</p>
 			<p>
-			Now select some files and click Submit.
+			Now either select and upload files using the following MultiFile control:
+			</p>
+			<p>File(s) to upload: <Upload:MultiFile id="multiFile" runat="server" />
+			</p>
+			<p>
+			Or, select some files using the InputFile controls below and click Submit.
 			</p>
 			<p>
 			Pick file #1: <Upload:InputFile id="inputFile" runat="server" />

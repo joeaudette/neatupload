@@ -140,9 +140,9 @@ namespace Brettle.Web.NeatUpload
 						appPath = "";
 					}
 					Page.RegisterClientScriptBlock("NeatUploadProgressBar", @"
-	<script type='text/javascript' src='" + appPath + @"/NeatUpload/NeatUpload.js?guid=" 
+	<script type='text/javascript' language='javascript' src='" + appPath + @"/NeatUpload/NeatUpload.js?guid=" 
 		+ CacheBustingGuid + @"'></script>
-	<script type='text/javascript'>
+	<script type='text/javascript' language='javascript'>
 	NeatUploadPB.prototype.ClearFileNamesAlert = '" +  Config.Current.ResourceManager.GetString("ClearFileNamesAlert") + @"';
 	// -->
 	</script>
@@ -224,7 +224,7 @@ namespace Brettle.Web.NeatUpload
 setTimeout(""frames['" + this.ClientID + @"'].location.href = '" + uploadProgressUrl + @"&refresher=client&canScript=true&canCancel=' + NeatUploadPB.prototype.CanCancel();"", 0);
 ";
 				this.Page.RegisterStartupScript(this.UniqueID + "UpdateIFrameSrc", @"
-<script type='text/javascript'>
+<script type='text/javascript' language='javascript'>
 <!--
 if (frames['" + this.ClientID + @"'])
 	frames['" + this.ClientID + @"'].location.replace('" + uploadProgressUrl + @"&canScript=true&canCancel=' + NeatUploadPB.prototype.CanCancel());
@@ -297,7 +297,7 @@ if (frames['" + this.ClientID + @"'])
 			}
 						
 			this.Page.RegisterStartupScript("NeatUploadProgressBar-" + this.UniqueID, @"
-<script type='text/javascript'>
+<script type='text/javascript' language='javascript'>
 <!--
 NeatUploadPB.prototype.Bars['" + this.ClientID + @"'] 
 	= new NeatUploadPB('" + this.ClientID + @"',

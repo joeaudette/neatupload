@@ -498,14 +498,14 @@ NeatUploadForm.prototype.EventData.NeatUploadPBAlertShown = false;
 /* NeatUploadMultiFile - JS support for NeatUpload's MultiFile control
 /* ******************************************************************************************* */
 
-function NeatUploadMultiFileCreate(clientID, appPath, uploadScript, progressBar)
+function NeatUploadMultiFileCreate(clientID, appPath, uploadScript)
 {
 	NeatUploadMultiFile.prototype.Controls[clientID] 
-		= new NeatUploadMultiFile(clientID, appPath, uploadScript, progressBar);
+		= new NeatUploadMultiFile(clientID, appPath, uploadScript);
 	return NeatUploadMultiFile.prototype.Controls[clientID];
 }
 
-function NeatUploadMultiFile(clientID, appPath, uploadScript, progressBar)
+function NeatUploadMultiFile(clientID, appPath, uploadScript)
 {
 	// Only use SWFUpload in non-Mozilla browsers because bugs in the Firefox Flash 9 plugin cause it to
 	// crash the browser on Linux and send IE cookies on Windows.  
@@ -515,8 +515,6 @@ function NeatUploadMultiFile(clientID, appPath, uploadScript, progressBar)
 	this.ClientID = clientID;
 	this.AppPath = appPath;
 	this.UploadScript = uploadScript;
-	this.ProgressBar = progressBar;
-	this.FilesQueued = 0;
 	var numf = this;
 	window.onload = function() {
 		numf.Swfu = new SWFUpload({
@@ -536,14 +534,10 @@ function NeatUploadMultiFile(clientID, appPath, uploadScript, progressBar)
 NeatUploadMultiFile.prototype.Controls = new Object();
 
 NeatUploadMultiFile.prototype.DisplayProgress = function () {
-	// If no bar was specified, use the first one.
-	if (!this.ProgressBar)
+	// TODO: This shouldn't be necessary once the UploadContext survives across upload requests.
+	if (NeatUploadPB.prototype.FirstBarID)
 	{
-		this.ProgressBar = NeatUploadPB.prototype.FirstBarID;
-	}
-	if (this.ProgressBar)
-	{
-		NeatUploadPB.prototype.Bars[this.ProgressBar].Display();
+		NeatUploadPB.prototype.Bars[NeatUploadPB.prototype.FirstBarID].Display();
 	}
 };
 
@@ -551,6 +545,7 @@ NeatUploadMultiFile.prototype.FlashLoaded = function () {
 	var numf = this;
 	var swfUpload = this.Swfu;
 	var inputFile = document.getElementById(this.ClientID);
+	numf.NumAsyncFilesField = inputFile.nextSibling;
 	var nuf = NeatUploadForm.prototype.GetFor(inputFile);
 
 	// Hookup the upload trigger.
@@ -566,13 +561,14 @@ NeatUploadMultiFile.prototype.FlashLoaded = function () {
 
 	// Add the GetFileCount callback.
 	nuf.AddGetFileCountCallback(function () {
-		return numf.FilesQueued;
+		return numf.NumAsyncFilesField.value;
 	});
 
 	// Make clicking 'Browse...' on the <input type='file'> call SWFUpload.browse().
 	inputFile.onclick = function() {
 		swfUpload.browse();
-		window.event.returnValue = false;
+		if (window.event)
+			window.event.returnValue = false;
 		return false;
 	};
 	
@@ -580,7 +576,7 @@ NeatUploadMultiFile.prototype.FlashLoaded = function () {
 };
 
 NeatUploadMultiFile.prototype.FileQueued = function (file) {
-	this.FilesQueued++;
+	this.NumAsyncFilesField.value++;
 	var inputFile = document.getElementById(this.ClientID);
 	var span = document.createElement('span');
 	span.innerHTML = file.name + '<br/>';
@@ -588,9 +584,9 @@ NeatUploadMultiFile.prototype.FileQueued = function (file) {
 };
 
 NeatUploadMultiFile.prototype.QueueCancelled = function (file) {
-	this.FilesQueued = 0;
+	this.NumAsyncFilesField.value = 0;
 };
 
 NeatUploadMultiFile.prototype.FileCancelled = function (file) {
-	this.FilesQueued--;
+	this.NumAsyncFilesField.value = this.NumAsyncFilesField.value - 1;
 };

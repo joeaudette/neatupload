@@ -32,6 +32,7 @@ namespace Brettle.Web.NeatUpload
 		protected HtmlForm form;
 		protected DropDownList progressBarLocationDropDown;
 		protected DropDownList buttonTypeDropDown;
+		protected MultiFile multiFile;
 		protected InputFile inputFile;
 		protected InputFile inputFile2;
 		protected HtmlGenericControl submitButtonSpan;
@@ -118,6 +119,21 @@ namespace Brettle.Web.NeatUpload
 				return;
 			}
 			bodyPre.InnerText = "";
+			if (multiFile.Files.Count > 0)
+			{
+				bodyPre.InnerText += "Uploaded " + multiFile.Files.Count + " files with MultiFile:\n"; 
+				for (int i = 0; i < multiFile.Files.Count; i++)
+				{
+					/* 
+						In a real app, you'd do something like:
+						multiFile.Files[i].MoveTo(Path.Combine(Request.PhysicalApplicationPath, multiFile.Files[i].FileName), 
+										 MoveToOptions.Overwrite);
+					*/
+					bodyPre.InnerText += multiFile.Files[i].FileName + "\n";
+				}
+			}
+
+
 			if (inputFile.HasFile)
 			{
 				/* 

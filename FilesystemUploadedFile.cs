@@ -26,6 +26,7 @@ using System.Collections.Specialized;
 
 namespace Brettle.Web.NeatUpload
 {
+	[Serializable]
 	public class FilesystemUploadedFile : UploadedFile
 	{
 		// Create a logger for use in this class
@@ -74,7 +75,7 @@ namespace Brettle.Web.NeatUpload
 		}
 
 		private string tmpFileName;
-		
+				
 		public override bool IsUploaded
 		{
 			get { return (TmpFile != null && (TmpFile.Length > 0 || FileName.Length > 0)); }

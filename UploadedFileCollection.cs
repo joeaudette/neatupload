@@ -64,61 +64,79 @@ namespace Brettle.Web.NeatUpload
 			lock (SyncRoot)
 			{
 				UploadedFile file = (UploadedFile)this.BaseGet(key);
-				if (! (file is AspNetUploadedFile))
+				if (ProcessAspNetUploadedFile(ref file, key))
 				{
-					return file;
+					this.BaseSet(key, file);
 				}
-				// Its an AspNetUploadedFile which means it hasn't yet been sent to the UploadStorageProvider.
-				// We send it to the UploadStorageProvider now, and replace it with the new UploadedFile returned
-				// by the UploadStorageProvider.
-
-				HttpPostedFile postedFile = HttpContext.Current.Request.Files[key];
-				UploadContext ctx = UploadContext.Current;
-				if (ctx == null)
-				{
-					// We use a temporary UploadContext so that we have something we can pass to the
-					// UploadStorageProvider.  Note that unlike when the UploadHttpModule is used,
-					// this temporary context is not shared between uploaded files.
-					ctx = new UploadContext();
-					ctx.SetContentLength(HttpContext.Current.Request.ContentLength);
-					ctx.Status = UploadStatus.NormalInProgress;
-				}
-				UploadStorageConfig storageConfig = UploadStorage.CreateUploadStorageConfig();
-				string storageConfigString = HttpContext.Current.Request.Form[UploadContext.ConfigNamePrefix + "-" + key];
-				if (storageConfigString != null && storageConfigString != string.Empty)
-				{
-					storageConfig.Unprotect(storageConfigString);
-				}
-				file = UploadStorage.CreateUploadedFile(ctx, key, postedFile.FileName, postedFile.ContentType, storageConfig);
-				Stream outStream = null, inStream = null;
-				try
-				{
-					outStream = file.CreateStream();
-					inStream = postedFile.InputStream;
-					byte[] buf = new byte[4096];
-					int bytesRead = -1;
-					while (outStream.CanWrite && inStream.CanRead 
-						   && (bytesRead = inStream.Read(buf, 0, buf.Length)) > 0)
-					{
-						outStream.Write(buf, 0, bytesRead);
-						ctx.BytesRead += bytesRead;
-					}
-					ctx.BytesRead = ctx.ContentLength;
-					ctx.Status = UploadStatus.Completed;
-				}
-				finally
-				{
-					if (inStream != null) inStream.Close();
-					if (outStream != null) outStream.Close();
-				}
-				this.BaseSet(key, file);
 				return file;
 			}
 		}
 
 		public UploadedFile Get(int index)
 		{
-			return Get(GetKey(index));
+			lock (SyncRoot)
+			{
+				UploadedFile file = (UploadedFile)this.BaseGet(index);
+				string key = this.BaseGetKey(index);
+				if (ProcessAspNetUploadedFile(ref file, key))
+				{
+					this.BaseSet(key, file);
+					this.BaseSet(index, file);
+				}
+				return file;
+			}
+		}
+		
+		private bool ProcessAspNetUploadedFile(ref UploadedFile file, string key)
+		{
+			if (! (file is AspNetUploadedFile))
+			{
+				return false;
+			}
+
+			// Its an AspNetUploadedFile which means it hasn't yet been sent to the UploadStorageProvider.
+			// We send it to the UploadStorageProvider now, and replace it with the new UploadedFile returned
+			// by the UploadStorageProvider.
+			HttpPostedFile postedFile = HttpContext.Current.Request.Files[key];				
+			UploadContext ctx = UploadContext.Current;
+			if (ctx == null)
+			{
+				// We use a temporary UploadContext so that we have something we can pass to the
+				// UploadStorageProvider.  Note that unlike when the UploadHttpModule is used,
+				// this temporary context is not shared between uploaded files.
+				ctx = new UploadContext();
+				ctx.SetContentLength(HttpContext.Current.Request.ContentLength);
+				ctx.Status = UploadStatus.NormalInProgress;
+			}
+			UploadStorageConfig storageConfig = UploadStorage.CreateUploadStorageConfig();
+			string storageConfigString = HttpContext.Current.Request.Form[UploadContext.ConfigNamePrefix + "-" + key];
+			if (storageConfigString != null && storageConfigString != string.Empty)
+			{
+				storageConfig.Unprotect(storageConfigString);
+			}
+			file = UploadStorage.CreateUploadedFile(ctx, key, postedFile.FileName, postedFile.ContentType, storageConfig);
+			Stream outStream = null, inStream = null;
+			try
+			{
+				outStream = file.CreateStream();
+				inStream = postedFile.InputStream;
+				byte[] buf = new byte[4096];
+				int bytesRead = -1;
+				while (outStream.CanWrite && inStream.CanRead 
+					   && (bytesRead = inStream.Read(buf, 0, buf.Length)) > 0)
+				{
+					outStream.Write(buf, 0, bytesRead);
+					ctx.BytesRead += bytesRead;
+				}
+				ctx.BytesRead = ctx.ContentLength;
+				ctx.Status = UploadStatus.Completed;
+			}
+			finally
+			{
+				if (inStream != null) inStream.Close();
+				if (outStream != null) outStream.Close();
+			}
+			return true;
 		}
 		
 		public string GetKey(int index)

@@ -306,7 +306,7 @@ namespace Brettle.Web.NeatUpload
 			if (form != null)
 			{
 				form.Enctype = "multipart/form-data";
-				form.Method = "Post";
+				form.Method = "post";
 			}
 		}
 				

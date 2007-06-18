@@ -25,6 +25,7 @@ using System.Configuration;
 
 namespace Brettle.Web.NeatUpload
 {
+	[Serializable]
 	public abstract class UploadedFile
 	{
 		private UploadedFile() {}
@@ -57,8 +58,8 @@ namespace Brettle.Web.NeatUpload
 		public abstract long ContentLength { get; }
 
 		public abstract Stream OpenRead();
-		
-		public FileInfo TmpFile = null;
+				
+		public FileInfo TmpFile;
 		
 		public string FileName;
 		

@@ -24,6 +24,7 @@ using System.Web;
 using System.Threading;
 using System.Security.Permissions;
 using System.Collections.Specialized;
+using System.Text.RegularExpressions;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -156,7 +157,6 @@ namespace Brettle.Web.NeatUpload
 			}
 			
 			app.BeginRequest += new System.EventHandler(Application_BeginRequest);
-			app.Error += new System.EventHandler(Application_Error);
 			app.EndRequest += new System.EventHandler(Application_EndRequest);
 			app.ResolveRequestCache += new System.EventHandler(Application_ResolveRequestCache);
 			app.AcquireRequestState += new System.EventHandler(Application_AcquireRequestState);
@@ -345,50 +345,27 @@ namespace Brettle.Web.NeatUpload
                 // then create and register an UploadContext.  This occurs the module disabled, 
                 // this is not a form/multipart POST request, etc.  This allows ProgressBars
                 // to be used for pages where no upload is occuring.
-
-                // Parse out the postBackID.  Note, we can't just do:
-                //   string postBackID = httpContext.Request.Params[Config.Current.PostBackIDQueryParam];
-                // because that will prevent ASP.NET from getting a new Params array if Server.Transfer() is called.
-
-                HttpWorkerRequest worker = GetCurrentWorkerRequest();
-                string query = worker.GetQueryString();
-                uploadContext = GetUploadContextFromQueryString(query);
+                uploadContext = CreateUploadContextFromQueryString();
             }
 
-            if (uploadContext != null)
+            if (uploadContext != null && !uploadContext.IsAsyncRequest)
             {
                 uploadContext.Status = UploadStatus.ProcessingInProgress;
 				UploadHttpModule.AccessSession(new SessionAccessCallback(uploadContext.SyncWithSession));
             }
         }
-
-		private UploadContext GetUploadContextFromQueryString(string query)
+        
+		private UploadContext CreateUploadContextFromQueryString()
 		{
-			UploadContext uploadContext;
-			if (query == null)
-			{
-				return null;
-			}
-			string postBackIDQueryParam = Config.Current.PostBackIDQueryParam + "=";
-			int postBackIDQueryParamStart = query.IndexOf(postBackIDQueryParam);
-			if (postBackIDQueryParamStart == -1)
-			{
-				return null;
-			}
-			if (postBackIDQueryParamStart > 0 
-           		&& query[postBackIDQueryParamStart-1] != '?' 
-           		&& query[postBackIDQueryParamStart-1] != '&')
-           	{
+			HttpWorkerRequest worker = UploadHttpModule.GetCurrentWorkerRequest();
+            if (worker == null)
+                return null;
+			string qs = worker.GetQueryString();
+           	string postBackID = GetPostBackIDFromQueryString(qs);
+           	if (postBackID == null)
            		return null;
-           	}
-			int postBackIDStart = postBackIDQueryParamStart + postBackIDQueryParam.Length;
-			int postBackIDEnd = query.IndexOf('&', postBackIDStart);
-			if (postBackIDEnd == -1)
-			{
-				postBackIDEnd = query.Length;
-			}
-           	string postBackID = query.Substring(postBackIDStart, postBackIDEnd-postBackIDStart);
 
+			UploadContext uploadContext;
 			uploadContext = new UploadContext();
 			uploadContext.SetContentLength(HttpContext.Current.Request.ContentLength);
 			uploadContext.RegisterPostBack(postBackID);
@@ -396,6 +373,30 @@ namespace Brettle.Web.NeatUpload
 			return uploadContext;
 		}
 		
+        internal static string GetPostBackIDFromQueryString(string qs)
+        {
+			// Parse out the postBackID.  Note, we can't just do:
+			//   string postBackID = httpContext.Request.Params[Config.Current.PostBackIDQueryParam];
+			// because that will prevent ASP.NET from getting a new Params array if Server.Transfer() is called.
+			string postBackIDQueryParam = Config.Current.PostBackIDQueryParam;
+            if (qs == null || postBackIDQueryParam == null)
+                return null;
+			Match match = Regex.Match(qs, @"(^|\?|&)" + Regex.Escape(postBackIDQueryParam) + @"=([^&]+)");
+			if (!match.Success)
+				return null;
+			return HttpUtility.UrlDecode(match.Groups[2].Value);
+		}
+
+        internal static string GetAsyncControlIDFromQueryString(string qs)
+        {
+            if (qs == null)
+                return null;
+			Match match = Regex.Match(qs, @"(^|\?|&)NeatUpload_AsyncControlID=([^&]+)");
+			if (!match.Success)
+				return null;
+			return HttpUtility.UrlDecode(match.Groups[2].Value);
+		}
+
 		private void Application_AcquireRequestState(object sender, EventArgs e)
 		{
 			if (log.IsDebugEnabled) log.Debug("In Application_AcquireRequestState");
@@ -422,23 +423,6 @@ namespace Brettle.Web.NeatUpload
 			if (!Config.Current.UseHttpModule)
 			{
 				return;
-			}
-		}
-
-		private void Application_Error(object sender, EventArgs e)
-		{
-			if (log.IsDebugEnabled) log.Debug("In Application_Error");
-			if (!Config.Current.UseHttpModule)
-			{
-				return;
-			}
-			HttpApplication app = sender as HttpApplication;
-			if (log.IsDebugEnabled) log.DebugFormat("Error is: {0}", app.Server.GetLastError());
-
-			UploadContext uploadContext = UploadContext.Current;
-			if (uploadContext != null)
-			{
-				uploadContext.RemoveUploadedFiles();
 			}
 		}
 
@@ -510,12 +494,7 @@ namespace Brettle.Web.NeatUpload
 			UploadContext uploadContext = UploadContext.Current;
 			if (uploadContext != null)
 			{
-				uploadContext.RemoveUploadedFiles();
-				if (uploadContext.Status != UploadStatus.Failed && uploadContext.Status != UploadStatus.Rejected)
-				{
-					uploadContext.Status = UploadStatus.Completed;
-					UploadHttpModule.AccessSession(new SessionAccessCallback(uploadContext.SyncWithSession));
-				}
+				uploadContext.CompleteRequest();
 			}
 		}
 		

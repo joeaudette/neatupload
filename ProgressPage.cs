@@ -138,7 +138,7 @@ namespace Brettle.Web.NeatUpload
 		
 		protected override void OnLoad(EventArgs e)
 		{
-			RegisterClientScriptBlock("NeatUpload-ProgressPage", "<script src='Progress.js'></script>");
+			RegisterClientScriptBlock("NeatUpload-ProgressPage", "<script type='text/javascript' language='javascript' src='Progress.js'></script>");
 			SetupContext();
 			SetupBindableProps();
 			
@@ -177,7 +177,7 @@ namespace Brettle.Web.NeatUpload
 					if (CanCancel)
 					{
 						RegisterStartupScript("scrNeatUploadError", @"
-<script language=""javascript"">
+<script type=""text/javascript"" language=""javascript"">
 <!--
 window.onload = function() {
 		NeatUploadCancel();
@@ -188,7 +188,7 @@ window.onload = function() {
 				}
 				else if (curStatus != UploadStatus.Failed.ToString())
 				{
-					RegisterStartupScript("scrNeatUploadClose", @"<script language='javascript'>
+					RegisterStartupScript("scrNeatUploadClose", @"<script type='text/javascript' language='javascript'>
 <!--
 window.close();
 // -->
@@ -330,7 +330,7 @@ window.close();
 		private void RefreshWithClientScript(string refreshUrl)
 		{
 			refreshUrl += "&refresher=client";
-			RegisterStartupScript("scrNeatUploadRefresh", @"<script language='javascript'>
+			RegisterStartupScript("scrNeatUploadRefresh", @"<script type='text/javascript' language='javascript'>
 <!--
 NeatUploadRefreshUrl = '" + refreshUrl + @"';
 window.onload = NeatUpload_CombineHandlers(window.onload, function () 

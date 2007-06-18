@@ -41,26 +41,31 @@ namespace Brettle.Web.NeatUpload
 		{
 			if (!UploadHttpModule.IsInited)
 				return;
-			string postBackIDQueryParam = Config.Current.PostBackIDQueryParam;
 			HttpWorkerRequest worker = UploadHttpModule.GetCurrentWorkerRequest();
-            if (postBackIDQueryParam == null || worker == null)
-                return;
-			string qs = worker.GetQueryString();
-            if (qs == null)
-                return;
-			Match match = Regex.Match(qs, @"(^|\?|&)" + Regex.Escape(postBackIDQueryParam) + @"=([^&]+)");
-			if (match.Success)
-			{
-				PostBackID = HttpUtility.UrlDecode(match.Groups[2].Value);
+            if (worker != null)
+            {
+            	string qs = worker.GetQueryString();
+				PostBackID = UploadHttpModule.GetPostBackIDFromQueryString(qs);
+				AsyncControlID = UploadHttpModule.GetAsyncControlIDFromQueryString(qs);
 			}
 		}
 		
 		internal string PostBackID = null;
+		internal string AsyncControlID = null;
 		
 		internal virtual string FileFieldNameToControlID(string name)
 		{
+			// If an AsyncControlID was specified in the query string, use it instead, 
+			// because Flash doesn't provide any control over the field name used to upload files.
+			if (AsyncControlID != null)
+			{
+				return AsyncControlID;
+			}
+			// Otherwise, if a PostBackID was speified in the query string just use the field name as is.
 			if (PostBackID != null)
+			{
 				return name;
+			}
 			
 			if (name == null || !name.StartsWith(UploadContext.NamePrefix))
 				return null;

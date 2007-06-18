@@ -74,7 +74,7 @@ namespace Brettle.Web.NeatUpload
 					UploadedFileCollection allFiles = UploadHttpModule.Files;
 					for (int i = 0; i < allFiles.Count; i++)
 					{
-						if (allFiles.GetKey(i).StartsWith(this.UniqueID))
+						if (allFiles.GetKey(i) == this.ClientID && allFiles[i].IsUploaded)
 						{
 							_files.Add(_files.Count.ToString(), allFiles[i]);
 						}
@@ -89,7 +89,7 @@ namespace Brettle.Web.NeatUpload
 		/// <remarks>
 		/// Derived classes can use this to access the <see cref="UploadedFile"/> objects that were created by the
 		/// UploadStorageProvider.</remarks>
-		private UploadedFileCollection Files
+		public UploadedFileCollection Files
 		{
 			get 
 			{
@@ -175,17 +175,6 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 				
-		/// <summary>
-		/// ID of the ProgressBar control to display when a file is uploaded.
-		/// </summary>
-		/// <remarks>
-		/// If no ProgressBar is specified, the first progress bar on the page will be used.</remarks>  
-		public string ProgressBar
-		{
-			get { return (string)ViewState["ProgressBar"]; }
-			set { ViewState["ProgressBar"] = value; }
-		}
-		
 #warning TODO
 		private UploadStorageConfig _StorageConfig;
 		public UploadStorageConfig StorageConfig
@@ -241,7 +230,7 @@ namespace Brettle.Web.NeatUpload
 			if (form != null)
 			{
 				form.Enctype = "multipart/form-data";
-				form.Method = "Post";
+				form.Method = "post";
 			}
 		}
 
@@ -271,9 +260,9 @@ namespace Brettle.Web.NeatUpload
 				if (!Page.IsClientScriptBlockRegistered("NeatUploadMultiFile"))
 				{
 					Page.RegisterClientScriptBlock("NeatUploadMultiFile", @"
-	<script type='text/javascript' src='" + AppPath + @"/NeatUpload/SWFUpload.js?guid=" 
+	<script type='text/javascript' language='javascript' src='" + AppPath + @"/NeatUpload/SWFUpload.js?guid=" 
 		+ CacheBustingGuid + @"'></script>
-	<script type='text/javascript' src='" + AppPath + @"/NeatUpload/NeatUpload.js?guid=" 
+	<script type='text/javascript' language='javascript' src='" + AppPath + @"/NeatUpload/NeatUpload.js?guid=" 
 		+ CacheBustingGuid + @"'></script>");
 				}
 			}
@@ -301,12 +290,12 @@ namespace Brettle.Web.NeatUpload
 			{
 #warning TODO: Do not use Flash on Linux Firefox because it is currently unstable (i.e. crashes FF).
 				this.Page.RegisterStartupScript("NeatUploadMultiFile-" + this.UniqueID, @"
-<script type='text/javascript'>
+<script type='text/javascript' language='javascript'>
 <!--
 NeatUploadMultiFileCreate('" + this.ClientID + @"', 
 		'" + AppPath + @"',
-		'" + AppPath + @"/NeatUpload/AsyncUpload.aspx?NeatUpload_PostBackID=" + FormContext.Current.PostBackID + @"',
-		'" + ProgressBar + @"');
+		'" + AppPath + @"/NeatUpload/AsyncUpload.aspx?" + Config.Current.PostBackIDQueryParam 
+			+ "=" + FormContext.Current.PostBackID + @"&NeatUpload_AsyncControlID=" + this.ClientID + @"');
 // -->
 </script>");
  			}
@@ -329,6 +318,12 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
 			writer.AddAttribute(HtmlTextWriterAttribute.Name, name);
 			writer.RenderBeginTag(HtmlTextWriterTag.Input);
 			writer.RenderEndTag(); // input type="file"
+
+			writer.AddAttribute(HtmlTextWriterAttribute.Type, "hidden");
+			writer.AddAttribute(HtmlTextWriterAttribute.Name, UploadContext.NumAsyncFilesNamePrefix + this.UniqueID);
+			writer.AddAttribute(HtmlTextWriterAttribute.Value, "0");				
+			writer.RenderBeginTag(HtmlTextWriterTag.Input);
+			writer.RenderEndTag(); // input type="hidden" name="NeatUploadNumAsyncFiles_..." value="0"
 
 			if (Config.Current.UseHttpModule)
 			{

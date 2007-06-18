@@ -46,6 +46,10 @@ namespace Brettle.Web.NeatUpload
 		// The hidden form fields that contain per-control StorageConfig info have names which start with:
 		internal const string ConfigNamePrefix = "NeatUploadConfig_";
 		
+		// The hidden form fields that contain the number of async files to expext per-control have names
+		// which start with:
+		internal const string NumAsyncFilesNamePrefix = "NeatUploadNumAsyncFiles_";
+
 		internal static string NameToConfigName(string name)
 		{
 			if (!name.StartsWith(NamePrefix))
@@ -84,6 +88,10 @@ namespace Brettle.Web.NeatUpload
 		
 		internal static UploadContext FindByID(string postBackID)
 		{
+			if (postBackID == null)
+			{
+				return null;
+			}
 			if (HttpContext.Current.Session == null)
 			{
 				return FindByIDInAppState(postBackID);
@@ -111,8 +119,9 @@ namespace Brettle.Web.NeatUpload
 			NeverSynced = true;
 		}
 				
- 		[NonSerialized]
 		internal UploadedFileCollection Files = new UploadedFileCollection();
+		
+		internal int NumAsyncFilesRemaining = -1;
 
 		private string postBackID;
 		
@@ -122,12 +131,6 @@ namespace Brettle.Web.NeatUpload
 			set { lock(this) { postBackID = value; } }
 		}
 				
-		internal UploadedFile GetUploadedFile(string controlUniqueID)
-		{
-			if (log.IsDebugEnabled) log.Debug("In GetUploadedFile() controlUniqueID=" + controlUniqueID);
-			return Files[controlUniqueID] as UploadedFile; 
-		}
-		
 		internal void RegisterPostBack(string postBackID)
 		{
 			PostBackID = postBackID;
@@ -180,7 +183,7 @@ namespace Brettle.Web.NeatUpload
 				}
 			}
 			UploadContext ctxInSession = FindByID(PostBackID);
-			// If we've never synced this context to the session before then we ignore any
+			// If we've never synced this context to the session before then we ignore the
 			// context in the session because it is from a previous upload attempt 
 			// with the same postbackid.
 			if (ctxInSession == null || NeverSynced)
@@ -200,13 +203,47 @@ namespace Brettle.Web.NeatUpload
 					ctxInSession.StopTime = StopTime;
 					ctxInSession.CurrentFileName = CurrentFileName;
 					ctxInSession.ProgressInfoByID = ProgressInfoByID;
+					ctxInSession.Files = Files;
+					ctxInSession.NumAsyncFilesRemaining = NumAsyncFilesRemaining;
 					ctxInSession.RegisterPostBack(PostBackID);
 				}
 				else
 				{
 					Status = ctxInSession.Status;
 				}
+				
 				ctxInSession.NeverSynced = NeverSynced = false;
+			}
+		}
+				
+		internal void SyncFromSession(HttpSessionState session)
+		{
+			if (PostBackID == null)
+			{
+				throw new NullReferenceException("PostBackID");
+			}
+			if (session == null || session.Mode == System.Web.SessionState.SessionStateMode.Off)
+			{
+				return;
+			}
+			UploadContext ctxInSession = FindByID(PostBackID);
+			if (ctxInSession == null)
+			{
+				return;
+			}
+			lock (ctxInSession)
+			{
+				FileBytesRead = ctxInSession.FileBytesRead;
+				BytesRead = ctxInSession.BytesRead;
+				SetContentLength(ctxInSession.ContentLength);
+				Status = ctxInSession.Status;
+				Exception = ctxInSession.Exception;
+				StartTime = ctxInSession.StartTime;
+				StopTime = ctxInSession.StopTime;
+				CurrentFileName = ctxInSession.CurrentFileName;
+				ProgressInfoByID = ctxInSession.ProgressInfoByID;
+				Files = ctxInSession.Files;
+				NumAsyncFilesRemaining = ctxInSession.NumAsyncFilesRemaining;
 			}
 		}
 				
@@ -228,7 +265,42 @@ namespace Brettle.Web.NeatUpload
 			Files.Add(name, new AspNetUploadedFile(name));
 		}
 		
-		internal void RemoveUploadedFiles()
+		internal void CompleteRequest()
+		{
+			if (!IsAsyncRequest)
+			{
+				RemoveUploadedFiles();
+
+				// Move the current UploadContext from the ApplicationState to the Cache so that we don't leak memory.
+				// We only need it in the Cache briefly because it is only used by the inline ProgressBar to display
+				// the status of the upload that just completed.
+				HttpContext ctx = HttpContext.Current;
+				if (ctx != null)
+				{
+					ctx.Cache.Insert(UploadContext.NamePrefix + PostBackID, this, null, 
+									System.Web.Caching.Cache.NoAbsoluteExpiration, 
+									TimeSpan.FromSeconds(60));
+					if (ctx.Application[UploadContext.NamePrefix + PostBackID] != null)
+					{
+						ctx.Application.Remove(UploadContext.NamePrefix + PostBackID);
+					}
+				}
+
+				if (Status != UploadStatus.Failed && Status != UploadStatus.Rejected)
+				{
+					Status = UploadStatus.Completed;
+					UploadHttpModule.AccessSession(new SessionAccessCallback(this.SyncWithSession));
+				}
+			}
+			else
+			{
+				// This async upload is complete, so decrement NumAsyncFilesRemaining and sync to session.
+				NumAsyncFilesRemaining--;
+				UploadHttpModule.AccessSession(new SessionAccessCallback(this.SyncWithSession));
+			}
+		}
+		
+		private void RemoveUploadedFiles()
 		{
 			if (log.IsDebugEnabled) log.Debug("In RemoveUploadedFiles");
 			lock (Files.SyncRoot)
@@ -239,21 +311,6 @@ namespace Brettle.Web.NeatUpload
 				}
 				// Don't clear the File collection, because we use it to determine the number of files uploaded in the
 				// last postback.
-			}
-
-			// Move the current UploadContext from the ApplicationState to the Cache so that we don't leak memory.
-			// We only need it in the Cache briefly because it is only used by the inline ProgressBar to display
-			// the status of the upload that just completed.
-			HttpContext ctx = HttpContext.Current;
-			if (ctx != null)
-			{
-				ctx.Cache.Insert(UploadContext.NamePrefix + PostBackID, this, null, 
-								System.Web.Caching.Cache.NoAbsoluteExpiration, 
-								TimeSpan.FromSeconds(60));
-				if (ctx.Application[UploadContext.NamePrefix + PostBackID] != null)
-				{
-					ctx.Application.Remove(UploadContext.NamePrefix + PostBackID);
-				}
 			}
 		}
 		
@@ -475,5 +532,7 @@ namespace Brettle.Web.NeatUpload
 		}
 		
 		internal Hashtable ProgressInfoByID = new Hashtable();
+		
+		internal bool IsAsyncRequest = false;
 	}
 }

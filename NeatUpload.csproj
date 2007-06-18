@@ -109,6 +109,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "AsyncUploadPage.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Config.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -190,6 +195,11 @@
                 />
                 <File
                     RelPath = "MoveToOptions.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "MultiFile.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
