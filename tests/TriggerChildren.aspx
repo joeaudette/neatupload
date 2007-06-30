@@ -1,9 +1,10 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ Page language="c#" Src="TriggerChildren.aspx.cs" AutoEventWireup="false" Inherits="Brettle.Web.NeatUpload.TriggerChildren" %>
 <%@ Register TagPrefix="Upload" Namespace="Brettle.Web.NeatUpload" Assembly="Brettle.Web.NeatUpload" %>
-
-<Html>
-	<Head runat="server">
-		<Title>NeatUpload Test of Trigger Children</Title>
+<html>
+	<head runat="server">
+		<title>NeatUpload Test of Trigger Children</title>
 		<style type="text/css">
 <!--
 		.ProgressBar {
@@ -15,8 +16,8 @@
 		}
 -->
 		</style>
-	</Head>
-	<Body>
+	</head>
+	<body>
 		<form id="uploadForm" runat="server">
 			<h1>Trigger Children Test</h1>
 			<p>
@@ -28,12 +29,11 @@
 			File: <Upload:InputFile id="inputFile" runat="server" />
 			<asp:LinkButton id="submitButton" runat="server">Start <i>Upload <b>Now</b></i></asp:LinkButton>
 			<asp:LinkButton id="cancelButton" runat="server" Text="Cancel" CausesValidation="False"/>
+			</p>
 			<Upload:ProgressBar id="inlineProgressBar" runat="server" Triggers="submitButton"/>
-			<br />
 			<pre id="bodyPre" runat="server">
 			
 			</pre>
-			</p>
 		</form>
-	</Body>
-</Html>
+	</body>
+</html>

@@ -1,9 +1,10 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ Page language="c#" Src="Demo.aspx.cs" AutoEventWireup="false" Inherits="Brettle.Web.NeatUpload.Demo" %>
 <%@ Register TagPrefix="Upload" Namespace="Brettle.Web.NeatUpload" Assembly="Brettle.Web.NeatUpload" %>
-
-<Html>
-	<Head runat="server">
-		<Title>NeatUpload Demo</Title>
+<html>
+	<head runat="server">
+		<title>NeatUpload Demo</title>
 		<style type="text/css">
 <!--
 		.ProgressBar {
@@ -15,8 +16,8 @@
 		}
 -->
 		</style>
-	</Head>
-	<Body>
+	</head>
+	<body>
 		<form id="uploadForm" runat="server">
 			<h1>NeatUpload Demo</h1>
 			<p>
@@ -76,7 +77,7 @@
 			<input type="Submit" id="htmlInputButtonSubmit" runat="server" name="htmlInputButtonSubmit" value="Submit" />
 			<input type="Submit" id="cancelhtmlInputButtonSubmit" runat="server" name="htmlInputButtonSubmit" value="Cancel" /><br />
 			</span>
-			
+			</p>
 			<p>
 			NeatUpload stores uploaded files in temporary storage on the server and
 			automatically deletes them when your request completes.  A real 
@@ -87,7 +88,6 @@
 			<pre id="bodyPre" runat="server">
 			
 			</pre>
-			</p>
 			<div id="inlineProgressBarDiv" runat="server">
 			<h2>Inline Progress Bar</h2>
 			<p>
@@ -121,5 +121,5 @@
 			</p>
 			
 		</form>
-	</Body>
-</Html>
+	</body>
+</html>

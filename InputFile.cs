@@ -350,7 +350,7 @@ namespace Brettle.Web.NeatUpload
 			}
 			HtmlForm form = c as HtmlForm;
 			form.Enctype = "multipart/form-data";
-			form.Method = "Post";
+			form.Method = "post";
 		}
 				
 		protected override void Render(HtmlTextWriter writer)
