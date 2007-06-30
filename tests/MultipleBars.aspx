@@ -1,9 +1,10 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ Page language="c#" Src="MultipleBars.aspx.cs" AutoEventWireup="false" Inherits="Brettle.Web.NeatUpload.MultipleBars" %>
 <%@ Register TagPrefix="Upload" Namespace="Brettle.Web.NeatUpload" Assembly="Brettle.Web.NeatUpload" %>
-
-<Html>
-	<Head runat="server">
-		<Title>NeatUpload Test of Multiple Progress Bars</Title>
+<html>
+	<head runat="server">
+		<title>NeatUpload Test of Multiple Progress Bars</title>
 		<style type="text/css">
 <!--
 		.ProgressBar {
@@ -15,19 +16,19 @@
 		}
 -->
 		</style>
-	</Head>
-	<Body>
+	</head>
+	<body>
 		<form id="uploadForm" runat="server">
 			<h1>Multiple Progress Bars Test</h1>
 			<p>
-			This is a test of having multiple ProgressBars in the same form but with different triggers.  
+			This is a test of having multiple ProgressBars in the same form but with different triggers. 
+			</p>
 			<ul>
 				<li>Each Submit button should start it's associated ProgressBar and the Common ProgressBar
 				and the and all files should be uploaded.</li>
 				<li>Each Cancel button should clear all filenames and no ProgressBars should start.</li>
 				<li>The Trigger All button should start all ProgressBars and all files should be uploaded</li>
 			</ul>
-			</p>
 			<p>
 			File #1: <Upload:InputFile id="inputFile1" runat="server" />
 			<asp:Button id="submitButton1" runat="server" Text="Submit" />
@@ -43,11 +44,11 @@
 			<br/>
 			Common ProgressBar:	<Upload:ProgressBar id="inlineProgressNoTriggers" runat="server" inline="true" />
 			<br />
+			</p>
 
 			<pre id="bodyPre" runat="server">
 			
 			</pre>
-			</p>
 		</form>
-	</Body>
-</Html>
+	</body>
+</html>
