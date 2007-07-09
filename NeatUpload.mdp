@@ -111,17 +111,19 @@
     <File name="./tests/Transfer.aspx" subtype="Code" buildaction="Nothing" />
     <File name="./tests/WithoutNeatUpload.aspx" subtype="Code" buildaction="Nothing" />
     <File name="./docs/Notes.txt" subtype="Code" buildaction="Nothing" />
-    <File name="./SWFUpload/src/Build.sh" subtype="Code" buildaction="Nothing" />
-    <File name="./SWFUpload/src/SWFUpload.fdp" subtype="Code" buildaction="Nothing" />
-    <File name="./SWFUpload/src/SWFUpload-src.js" subtype="Code" buildaction="Nothing" />
     <File name="./SWFUpload/license.txt" subtype="Code" buildaction="Nothing" />
-    <File name="./SWFUpload/src/classes/com/mammon/swfupload/Delegate.as" subtype="Code" buildaction="Nothing" />
-    <File name="./SWFUpload/src/classes/com/mammon/swfupload/SWFUpload.as" subtype="Code" buildaction="Nothing" />
     <File name="./NeatUpload/SWFUpload-license.txt" subtype="Code" buildaction="Nothing" />
     <File name="./MultiFile.cs" subtype="Code" buildaction="Compile" />
     <File name="./NeatUpload/NeatUpload.js" subtype="Code" buildaction="Nothing" />
     <File name="./NeatUpload/AsyncUpload.aspx" subtype="Code" buildaction="Nothing" />
     <File name="./AsyncUploadPage.cs" subtype="Code" buildaction="Compile" />
+    <File name="./SWFUpload/FlashDevelop/Build.sh" subtype="Code" buildaction="Nothing" />
+    <File name="./SWFUpload/FlashDevelop/Changelog.txt" subtype="Code" buildaction="Nothing" />
+    <File name="./SWFUpload/FlashDevelop/license.txt" subtype="Code" buildaction="Nothing" />
+    <File name="./SWFUpload/FlashDevelop/swfupload.js" subtype="Code" buildaction="Nothing" />
+    <File name="./SWFUpload/FlashDevelop/SWFUpload R6.fdp" subtype="Code" buildaction="Nothing" />
+    <File name="./SWFUpload/FlashDevelop/classes/FileItem.as" subtype="Code" buildaction="Nothing" />
+    <File name="./SWFUpload/FlashDevelop/classes/SWFUpload.as" subtype="Code" buildaction="Nothing" />
   </Contents>
   <References>
     <ProjectReference type="Gac" localcopy="True" refto="System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />

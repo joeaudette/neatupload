@@ -309,7 +309,40 @@ namespace Brettle.Web.NeatUpload
 				form.Method = "post";
 			}
 		}
+
+		// This is used to ensure that the browser gets the latest NeatUpload.js each time this assembly is
+		// reloaded.  Strictly speaking the browser only needs to get the latest when NeatUpload.js changes,
+		// but computing a hash on that file everytime this assembly is loaded strikes me as overkill.
+		private static Guid CacheBustingGuid = System.Guid.NewGuid();
+
+		private string AppPath
+		{
+			get 
+			{
+				string appPath = Context.Request.ApplicationPath;
+				if (appPath == "/")
+				{
+					appPath = "";
+				}
+				return appPath;
+			}
+		}
 				
+		protected override void OnPreRender (EventArgs e)
+		{
+			if (!IsDesignTime && Config.Current.UseHttpModule)
+			{
+				if (!Page.IsClientScriptBlockRegistered("NeatUploadJs"))
+				{
+					Page.RegisterClientScriptBlock("NeatUploadInputJs", @"
+	<script type='text/javascript' language='javascript' src='" + AppPath + @"/NeatUpload/NeatUpload.js?guid=" 
+		+ CacheBustingGuid + @"'></script>");
+				}
+			}
+			base.OnPreRender(e);
+		}
+
+
 		protected override void Render(HtmlTextWriter writer)
 		{
 			string name;
@@ -326,6 +359,16 @@ namespace Brettle.Web.NeatUpload
 				storageConfigName = UploadContext.ConfigNamePrefix + "-" + this.UniqueID;
 				
 			}
+			if (!IsDesignTime)
+			{
+				this.Page.RegisterStartupScript("NeatUploadInputFile-" + this.UniqueID, @"
+<script type='text/javascript' language='javascript'>
+<!--
+NeatUploadInputFileCreate('" + this.ClientID + @"','"
+							 + FormContext.Current.PostBackID + @"');
+// -->
+</script>");
+ 			}
 			// Store the StorageConfig in a hidden form field with a related name
 			if (StorageConfig != null && StorageConfig.Count > 0)
 			{

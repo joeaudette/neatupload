@@ -50,8 +50,7 @@ namespace Brettle.Web.NeatUpload
 	{
 		private bool IsDesignTime = (HttpContext.Current == null);
 
-		private string uploadProgressUrl;
-		private string displayStatement;
+		private string UploadProgressPath;
 		private ArrayList otherTriggers = new ArrayList(); // Controls passed to AddTrigger()
 		private	HtmlTextWriterTag Tag;
 
@@ -126,22 +125,34 @@ namespace Brettle.Web.NeatUpload
 			InitializeComponent();
 			base.OnInit(e);
 		}
+
+		private string AppPath
+		{
+			get 
+			{
+				string appPath = Context.Request.ApplicationPath;
+				if (appPath == "/")
+				{
+					appPath = "";
+				}
+				return appPath;
+			}
+		}
 		
 		protected override void OnPreRender (EventArgs e)
 		{
 			if (!IsDesignTime && Config.Current.UseHttpModule)
 			{
 				InitializeVars();
+				if (!Page.IsClientScriptBlockRegistered("NeatUploadJs"))
+				{
+					Page.RegisterClientScriptBlock("NeatUploadInputJs", @"
+	<script type='text/javascript' language='javascript' src='" + AppPath + @"/NeatUpload/NeatUpload.js?guid=" 
+		+ CacheBustingGuid + @"'></script>");
+				}
 				if (!Page.IsClientScriptBlockRegistered("NeatUploadProgressBar"))
 				{
-					string appPath = Context.Request.ApplicationPath;
-					if (appPath == "/")
-					{
-						appPath = "";
-					}
 					Page.RegisterClientScriptBlock("NeatUploadProgressBar", @"
-	<script type='text/javascript' language='javascript' src='" + appPath + @"/NeatUpload/NeatUpload.js?guid=" 
-		+ CacheBustingGuid + @"'></script>
 	<script type='text/javascript' language='javascript'>
 	NeatUploadPB.prototype.ClearFileNamesAlert = '" +  Config.Current.ResourceManager.GetString("ClearFileNamesAlert") + @"';
 	// -->
@@ -193,61 +204,39 @@ namespace Brettle.Web.NeatUpload
 				AutoStartCondition = "IsFilesToUpload()";
 			}
 			
-			uploadProgressUrl = Url;
-			if (uploadProgressUrl == null)
+			UploadProgressPath = Url;
+			if (UploadProgressPath == null)
 			{
-				uploadProgressUrl = "~/NeatUpload/Progress.aspx";
+				UploadProgressPath = "~/NeatUpload/Progress.aspx";
 			}
-			uploadProgressUrl = ApplyAppPathModifier(uploadProgressUrl);
-
-			uploadProgressUrl += "?postBackID=" + FormContext.Current.PostBackID;
+			UploadProgressPath = ApplyAppPathModifier(UploadProgressPath);
 
 			if (Attributes["class"] == null)
 			{
 				Attributes["class"] = "ProgressBar";
 			}
 
+			UploadProgressPath += "?barID=" + this.ClientID;
+
 			if (UploadContext.Current != null)
 			{
-				uploadProgressUrl += "&lastPostBackID=" + UploadContext.Current.PostBackID;
+				UploadProgressPath += "&lastPostBackID=" + UploadContext.Current.PostBackID;
 			}
-			
-			uploadProgressUrl += "&barID=" + this.ClientID;
+						
 			if (Inline)
 			{
 				Tag = HtmlTextWriterTag.Iframe;
-				Attributes["src"] = uploadProgressUrl + "&canScript=false&canCancel=false";
+				Attributes["src"] = UploadProgressPath + "&canScript=false&canCancel=false&postBackID=" + FormContext.Current.PostBackID;
 				Attributes["frameborder"] = "0";
 				Attributes["scrolling"] = "no";
 				Attributes["name"] = this.ClientID;
-				displayStatement = @"
-setTimeout(""frames['" + this.ClientID + @"'].location.href = '" + uploadProgressUrl + @"&refresher=client&canScript=true&canCancel=' + NeatUploadPB.prototype.CanCancel();"", 0);
-";
-				this.Page.RegisterStartupScript(this.UniqueID + "UpdateIFrameSrc", @"
-<script type='text/javascript' language='javascript'>
-<!--
-if (frames['" + this.ClientID + @"'])
-	frames['" + this.ClientID + @"'].location.replace('" + uploadProgressUrl + @"&canScript=true&canCancel=' + NeatUploadPB.prototype.CanCancel());
-// -->
-</script>
-");
 			}
 			else
 			{
 				Tag = HtmlTextWriterTag.Div;
-				displayStatement = GetPopupDisplayStatement();
 			}
 		}
-		
-		private string GetPopupDisplayStatement()
-		{
-			string width = GetPopupDimension("Width", Width, 500);
-			string height = GetPopupDimension("Height", Height, 100);
-			return @"window.open('" + uploadProgressUrl + "&refresher=client&canScript=true&canCancel=' + NeatUploadPB.prototype.CanCancel(), '"
-			                        + FormContext.Current.PostBackID + @"','width=" + width + @",height=" + height
-			                        + @",directories=no,location=no,menubar=no,resizable=yes,scrollbars=auto,status=no,toolbar=no');";
-		}
-			
+					
 		private string GetPopupDimension(string name, Unit length, int min)
 		{
 			if (length.Type == UnitType.Pixel && length.Value >= min)
@@ -263,6 +252,7 @@ if (frames['" + this.ClientID + @"'])
 				throw new System.ArgumentOutOfRangeException(name, "must be at least " + min + " pixels and must use pixel(px) units when using a popup ProgressBar.");
 			}
 		}
+
 		
 		/// <summary>
 		/// Adds a control (typically a button) to a list trigger controls.</summary>
@@ -300,11 +290,13 @@ if (frames['" + this.ClientID + @"'])
 <script type='text/javascript' language='javascript'>
 <!--
 NeatUploadPB.prototype.Bars['" + this.ClientID + @"'] 
-	= new NeatUploadPB('" + this.ClientID + @"',
-	                    """ + this.GetPopupDisplayStatement() + @""",
-	                    "  + (Inline ? "true" : "false") + @",
-	                    function() { " + displayStatement + @" },
-	                    " + allTriggerClientIDs + @", '"
+	= new NeatUploadPB('" + this.ClientID + @"','" 
+						+ FormContext.Current.PostBackID + @"','"
+	                    + this.UploadProgressPath + @"',"
+	                    + (Inline ? "true" : "false") + @",'"
+	                    + this.GetPopupDimension("Width", Width, 500) + @"','"
+	                    + this.GetPopupDimension("Height", Height, 100) + @"',"
+	                    + allTriggerClientIDs + @", '"
 	                    + AutoStartCondition.Replace(@"'", @"\'") + @"');
 if (!NeatUploadPB.prototype.FirstBarID)
 	NeatUploadPB.prototype.FirstBarID = '" + this.ClientID + @"';
@@ -403,7 +395,7 @@ if (!NeatUploadPB.prototype.FirstBarID)
 				}
 			    
 				writer.AddAttribute("id", ClientID + "_fallback_link");
-				writer.AddAttribute("href", uploadProgressUrl + "&refresher=server&canScript=false&canCancel=false");
+				writer.AddAttribute("href", UploadProgressPath + "&postBackID=" + FormContext.Current.PostBackID + "&refresher=server&canScript=false&canCancel=false");
 				string target = IsDesignTime ? "_blank" : FormContext.Current.PostBackID;
 				writer.AddAttribute("target", target);
 				writer.RenderBeginTag(HtmlTextWriterTag.A);

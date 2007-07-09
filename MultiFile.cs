@@ -261,7 +261,11 @@ namespace Brettle.Web.NeatUpload
 				{
 					Page.RegisterClientScriptBlock("NeatUploadMultiFile", @"
 	<script type='text/javascript' language='javascript' src='" + AppPath + @"/NeatUpload/SWFUpload.js?guid=" 
-		+ CacheBustingGuid + @"'></script>
+		+ CacheBustingGuid + @"'></script>");
+				}
+				if (!Page.IsClientScriptBlockRegistered("NeatUploadJs"))
+				{
+					Page.RegisterClientScriptBlock("NeatUploadInputJs", @"
 	<script type='text/javascript' language='javascript' src='" + AppPath + @"/NeatUpload/NeatUpload.js?guid=" 
 		+ CacheBustingGuid + @"'></script>");
 				}
@@ -293,6 +297,7 @@ namespace Brettle.Web.NeatUpload
 <script type='text/javascript' language='javascript'>
 <!--
 NeatUploadMultiFileCreate('" + this.ClientID + @"', 
+		'" + FormContext.Current.PostBackID + @"',
 		'" + AppPath + @"',
 		'" + AppPath + @"/NeatUpload/AsyncUpload.aspx?" + Config.Current.PostBackIDQueryParam 
 			+ "=" + FormContext.Current.PostBackID + @"&NeatUpload_AsyncControlID=" + this.ClientID + @"');

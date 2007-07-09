@@ -54,9 +54,11 @@ if (!Function.prototype.call)
 	};
 }
 
-function NeatUploadForm(formElem)
+function NeatUploadForm(formElem, postBackID)
 {
 	var f = this;
+	this.PostBackID = postBackID;
+	this.SubmitCount = 0;
 	this.FormElem = formElem;
 	this.TriggerIDs = new Object();
 	this.TriggerIDs.NeatUpload_length = 0;
@@ -101,11 +103,6 @@ function NeatUploadForm(formElem)
 			{
 				return true;
 			}
-			if (NeatUploadForm.prototype.IsElemWithin(src, f.TriggerIDs)
-			      || f.TriggerIDs.NeatUpload_length == 0)
-			{
-				return true;
-			}
 			var tagName = src.tagName;
 			if (!tagName)
 			{
@@ -118,14 +115,19 @@ function NeatUploadForm(formElem)
 				if (inputType) inputType = inputType.toLowerCase();
 				if (!inputType || inputType == 'submit' || inputType == 'image')
 				{
-					f.OnNonupload(f.FormElem);
+					f.FormElem.NeatUpload_OnSubmitting();
 				}
 			}
 			return true;
 		}, true);
 	}
-
+	
 	this.AddSubmittingHandler(function () {
+		f.SubmitCount++;
+		var url = f.FormElem.getAttribute('action');
+		url = f.ChangePostBackIDInUrl(url, NeatUploadForm.prototype.PostBackIDQueryParam);
+		f.FormElem.setAttribute('action', url);
+		
 		if (!NeatUpload_LastEventSource)
 		{
 			return;
@@ -136,7 +138,7 @@ function NeatUploadForm(formElem)
 		}
 		if (f.TriggerIDs.NeatUpload_length)
 		{
-			f.OnNonupload(pb.FormElem);
+			f.OnNonupload(f.FormElem);
 		}
 	});
 }
@@ -145,6 +147,35 @@ NeatUpload_LastEventSource = null;
 NeatUpload_LastEventType = null;
 NeatUploadForm.prototype.EventData = new Object();
 
+NeatUploadForm.prototype.ChangePostBackIDInUrl = function(url, queryParam)
+{
+		var qp = queryParam + '=';
+		var postBackIDStart = url.indexOf('?' + qp);
+		if (postBackIDStart == -1)
+		{
+			postBackIDStart = url.indexOf('&' + qp);
+		}
+		if (postBackIDStart == -1)
+		{
+			return url;
+		}
+		postBackIDStart += qp.length;
+		var postBackIDEnd = url.indexOf('&', postBackIDStart);
+		if (postBackIDEnd == -1)
+		{
+			postBackIDEnd = url.length;
+		}
+		url = url.substring(0, postBackIDStart) 
+			+ this.GetPostBackID()
+			+ url.substring(postBackIDEnd, url.length);
+		return url;
+}
+
+NeatUploadForm.prototype.GetPostBackID = function()
+{
+	return this.PostBackID + this.SubmitCount.toString();
+}
+ 
 NeatUploadForm.prototype.IsElemWithin = function(elem, assocArray)
 {
 	while (elem)
@@ -345,7 +376,7 @@ NeatUploadForm.prototype.GetFileCount = function(elem)
 	return fileCount;
 };
 
-NeatUploadForm.prototype.GetFor = function (elem)
+NeatUploadForm.prototype.GetFor = function (elem, postBackID)
 {
 	var formElem = elem;
 	while (formElem && formElem.tagName.toLowerCase() != "form")
@@ -358,24 +389,52 @@ NeatUploadForm.prototype.GetFor = function (elem)
 	}
 	if (!formElem.NeatUploadForm)
 	{
-		formElem.NeatUploadForm = new NeatUploadForm(formElem);
+		formElem.NeatUploadForm = new NeatUploadForm(formElem, postBackID);
 	}
 	return formElem.NeatUploadForm;
 };
 
-function NeatUploadPB(id, popupDisplayStatement, inline, displayFunc, triggerIDs, autoStartCondition)
+function NeatUploadPB(id, postBackID, uploadProgressPath, inline, popupWidth, popupHeight, triggerIDs, autoStartCondition)
 {
 	if (!document.getElementById)
 		return;
 	var pb = this;
-
+	pb.ClientID = id;
+	pb.UploadProgressPath = uploadProgressPath;
+	pb.PopupWidth = popupWidth;
+	pb.PopupHeight = popupHeight;
 	if (!document.getElementById)
 		return null;
 	var elem = document.getElementById(id);
 	if (!elem)
 		elem = document.getElementById(id + '_NeatUpload_dummyspan');
-	this.UploadForm = NeatUploadForm.prototype.GetFor(elem);
-
+	this.UploadForm = NeatUploadForm.prototype.GetFor(elem, postBackID);
+		
+	var displayFunc;
+	if (inline)
+	{
+		displayFunc = function () {
+								setTimeout( 
+									function () {
+										frames[pb.ClientID].location.href 
+											= pb.UploadProgressPath + '&postBackID=' + pb.UploadForm.GetPostBackID() + '&refresher=client&canScript=true&canCancel=' + NeatUploadPB.prototype.CanCancel();
+										},
+								0);
+							};
+		if (frames[pb.ClientID]) 
+		{
+			frames[pb.ClientID].location.replace(pb.UploadProgressPath + '&postBackID=' + pb.UploadForm.GetPostBackID() + '&canScript=true&canCancel=' + NeatUploadPB.prototype.CanCancel());
+		}
+	}
+	else
+	{
+		displayFunc = function () {
+			window.open(pb.UploadProgressPath + '&postBackID=' + pb.UploadForm.GetPostBackID() + '&refresher=client&canScript=true&canCancel=' + NeatUploadPB.prototype.CanCancel(),
+				pb.UploadForm.GetPostBackID(), 'width=' + pb.PopupWidth + ',height=' + pb.PopupHeight
+				+ ',directories=no,location=no,menubar=no,resizable=yes,scrollbars=auto,status=no,toolbar=no');
+		}
+	}
+	
 	var fallbackLink = document.getElementById(id + '_fallback_link');
 	if (fallbackLink)
 		fallbackLink.setAttribute('href', 'javascript:' + popupDisplayStatement);
@@ -492,20 +551,45 @@ NeatUploadPB.prototype.ClearFileInputs = function(elem)
 
 NeatUploadForm.prototype.EventData.NeatUploadPBAlertShown = false;
 
+/* ******************************************************************************************* */
+/* NeatUploadInputFile - JS support for NeatUpload's InputFile control
+/* ******************************************************************************************* */
+
+function NeatUploadInputFileCreate(clientID, postBackID)
+{
+	NeatUploadInputFile.prototype.Controls[clientID] 
+		= new NeatUploadInputFile(clientID, postBackID);
+	return NeatUploadInputFile.prototype.Controls[clientID];
+}
+
+function NeatUploadInputFile(clientID, postBackID)
+{
+	this.ClientID = clientID;
+	var nuif = this;
+	// Use the latest postback ID when the form is submitted.
+	var nuf = NeatUploadForm.prototype.GetFor(document.getElementById(this.ClientID), postBackID);
+	nuf.AddSubmittingHandler(function () {
+		var inputFile = document.getElementById(nuif.ClientID);
+		inputFile.setAttribute('name', 'NeatUpload_' + nuf.GetPostBackID() + '-' + inputFile.getAttribute('id'));
+	});
+}
+
+
+NeatUploadInputFile.prototype.Controls = new Object();
 
 
 /* ******************************************************************************************* */
 /* NeatUploadMultiFile - JS support for NeatUpload's MultiFile control
 /* ******************************************************************************************* */
 
-function NeatUploadMultiFileCreate(clientID, appPath, uploadScript)
+function NeatUploadMultiFileCreate(clientID, postBackID, appPath, uploadScript)
 {
 	NeatUploadMultiFile.prototype.Controls[clientID] 
-		= new NeatUploadMultiFile(clientID, appPath, uploadScript);
+		= new NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript);
 	return NeatUploadMultiFile.prototype.Controls[clientID];
 }
 
-function NeatUploadMultiFile(clientID, appPath, uploadScript)
+function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript)
 {
 	// Only use SWFUpload in non-Mozilla browsers because bugs in the Firefox Flash 9 plugin cause it to
 	// crash the browser on Linux and send IE cookies on Windows.  
@@ -527,7 +611,14 @@ function NeatUploadMultiFile(clientID, appPath, uploadScript)
 				upload_queue_cancel_callback : 'NeatUploadMultiFile.prototype.Controls["' + numf.ClientID + '"].QueueCancelled',
 				flash_loaded_callback : 'NeatUploadMultiFile.prototype.Controls["' + numf.ClientID + '"].FlashLoaded'
 		});
-	};	
+	};
+	
+	// Use the latest postback ID when the form is submitted.
+	var nuf = NeatUploadForm.prototype.GetFor(document.getElementById(this.ClientID), postBackID);
+	nuf.AddSubmittingHandler(function () {
+		var inputFile = document.getElementById(numf.ClientID);
+		inputFile.setAttribute('name', 'NeatUpload_' + nuf.GetPostBackID() + '-' + inputFile.getAttribute('id'));
+	});
 }
 
 

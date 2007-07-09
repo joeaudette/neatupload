@@ -292,17 +292,10 @@ window.close();
 			CancelVisible = (CanCancel
 		                    && (CurrentStatus == UploadStatus.NormalInProgress || CurrentStatus == UploadStatus.ChunkedInProgress));
 			
-			// The base refresh url contains just the postBackID (which is the first parameter)
+			// The base refresh url contains just the barID and postBackID
 
-			RefreshUrl = Request.Url.PathAndQuery;
-			int ampIndex = RefreshUrl.IndexOf("&");
-			if (ampIndex != -1)
-			{
-				RefreshUrl = RefreshUrl.Substring(0, ampIndex);
-			}
-			
-			// Plus the barID
-			RefreshUrl += "&barID=" + ProgressBarID;
+			RefreshUrl = Request.Url.AbsolutePath;
+			RefreshUrl += "?barID=" + ProgressBarID + "&postBackID=" + Request.Params["postBackID"];
 			
 			// Workaround Mono XSP bug where ApplyAppPathModifier() removes the session id
 			RefreshUrl = ProgressBar.ApplyAppPathModifier(RefreshUrl);
