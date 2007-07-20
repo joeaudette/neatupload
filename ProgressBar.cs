@@ -470,6 +470,11 @@ NeatUpload_AddSubmitHandler('" + formControl.ClientID + "'," + (Inline ? "false"
 	{
 		return NeatUpload_ClearFileInputs(formElem);
 	}
+	// If the submit has been cancelled in IE, return.
+	if (window.event && typeof(window.event.returnValue) != 'undefined' && !window.event.returnValue)
+	{
+		return window.event.returnValue;
+	}
 	// If there are files to upload and either no trigger controls were specified for this progress bar or
 	// a specified trigger control was triggered, then start the progress display.
 	if (NeatUpload_IsFilesToUpload('" + formControl.ClientID + @"')
