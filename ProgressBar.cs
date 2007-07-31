@@ -145,7 +145,9 @@ namespace Brettle.Web.NeatUpload
 				{
 					Page.RegisterClientScriptBlock("NeatUploadProgressBar", clientScript);
 				}
-			}
+                HtmlControl formControl = GetFormControl(this);
+                this.Page.RegisterOnSubmitStatement(formControl.UniqueID + "-OnSubmitStatement", "NeatUpload_OnSubmitForm_" + formControl.ClientID + @"();");
+            }
 			base.OnPreRender(e);
 		}
 		
@@ -283,7 +285,6 @@ if (NeatUpload_DivNode)
 		private void RegisterScripts()
 		{
 			HtmlControl formControl = GetFormControl(this);
-			
 			this.Page.RegisterStartupScript(formControl.UniqueID + "-OnSubmit", @"
 <script type=""text/javascript"" language=""javascript"">
 <!--
@@ -292,10 +293,6 @@ function NeatUpload_OnSubmitForm_" + formControl.ClientID + @"()
 	var elem = document.getElementById('" + formControl.ClientID + @"');
 	return elem.NeatUpload_OnSubmit();
 }
-
-if (document.getElementById)
-	document.getElementById('" + formControl.ClientID + @"').onsubmit 
-		= NeatUpload_CombineHandlers(document.getElementById('" + formControl.ClientID + @"').onsubmit, NeatUpload_OnSubmitForm_" + formControl.ClientID + @");
 // -->
 </script>
 ");
@@ -469,11 +466,6 @@ NeatUpload_AddSubmitHandler('" + formControl.ClientID + "'," + (Inline ? "false"
 	    && !NeatUpload_IsElemWithin(NeatUpload_LastEventSource, NeatUpload_TriggerIDs))
 	{
 		return NeatUpload_ClearFileInputs(formElem);
-	}
-	// If the submit has been cancelled in IE, return.
-	if (window.event && typeof(window.event.returnValue) != 'undefined' && !window.event.returnValue)
-	{
-		return window.event.returnValue;
 	}
 	// If there are files to upload and either no trigger controls were specified for this progress bar or
 	// a specified trigger control was triggered, then start the progress display.
