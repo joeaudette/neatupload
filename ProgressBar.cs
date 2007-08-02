@@ -707,7 +707,7 @@ function NeatUpload_IsFilesToUpload(id)
 					var ua = navigator.userAgent.toLowerCase();
 					var msiePosition = ua.indexOf('msie');
 					if (msiePosition != -1 && typeof(ActiveXObject) != 'undefined' && ua.indexOf('mac') == -1
-					    && ua.charAt(msiePosition + 5) < 7)
+					    && ua.charAt(msiePosition + 5) < 8)
 					{
 						var re = new RegExp('^(\\\\\\\\[^\\\\]|([a-zA-Z]:)?\\\\).*');
 						var match = re.exec(inputElem.value);
