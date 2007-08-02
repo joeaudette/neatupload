@@ -135,8 +135,8 @@ namespace Brettle.Web.NeatUpload
 			InitializeComponent();
 			base.OnInit(e);
 		}
-		
-		protected override void OnPreRender (EventArgs e)
+
+        protected override void OnPreRender(EventArgs e)
 		{
 			if (!IsDesignTime && Config.Current.UseHttpModule)
 			{
@@ -145,8 +145,17 @@ namespace Brettle.Web.NeatUpload
 				{
 					Page.RegisterClientScriptBlock("NeatUploadProgressBar", clientScript);
 				}
-			}
+            }
 			base.OnPreRender(e);
+		}
+
+		protected override object SaveViewState()
+		{
+			// We register the on submit statement here in hopes that it will be the last on submit statement.
+			// Other on submit statements will generally be added during PreRender.
+			HtmlControl formControl = GetFormControl(this);
+			this.Page.RegisterOnSubmitStatement(formControl.UniqueID + "-OnSubmitStatement", "NeatUpload_OnSubmitForm_" + formControl.ClientID + @"();");
+			return base.SaveViewState();
 		}
 		
 		private void InitializeComponent()
@@ -283,7 +292,6 @@ if (NeatUpload_DivNode)
 		private void RegisterScripts()
 		{
 			HtmlControl formControl = GetFormControl(this);
-			
 			this.Page.RegisterStartupScript(formControl.UniqueID + "-OnSubmit", @"
 <script type=""text/javascript"" language=""javascript"">
 <!--
@@ -292,10 +300,6 @@ function NeatUpload_OnSubmitForm_" + formControl.ClientID + @"()
 	var elem = document.getElementById('" + formControl.ClientID + @"');
 	return elem.NeatUpload_OnSubmit();
 }
-
-if (document.getElementById)
-	document.getElementById('" + formControl.ClientID + @"').onsubmit 
-		= NeatUpload_CombineHandlers(document.getElementById('" + formControl.ClientID + @"').onsubmit, NeatUpload_OnSubmitForm_" + formControl.ClientID + @");
 // -->
 </script>
 ");
