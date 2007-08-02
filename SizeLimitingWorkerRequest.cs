@@ -29,11 +29,10 @@ namespace Brettle.Web.NeatUpload
 {
 	internal class SizeLimitingWorkerRequest : DecoratedWorkerRequest
 	{
-/*
 		// Create a logger for use in this class
 		private static readonly log4net.ILog log 
 			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-*/
+
 		private long maxRequestLength;
 		private long totalBytesRead;
 		
@@ -44,6 +43,7 @@ namespace Brettle.Web.NeatUpload
 		
 		public override int ReadEntityBody (byte[] buffer, int size)
 		{
+			if (log.IsDebugEnabled) log.Debug("In ReadEntityBody() with size=" + size);
 			int bytesRead = OrigWorker.ReadEntityBody(buffer, size);
 			totalBytesRead += bytesRead;
 

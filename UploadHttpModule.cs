@@ -144,6 +144,7 @@ namespace Brettle.Web.NeatUpload
 						
 		public void Init(HttpApplication app)
 		{
+			if (log.IsDebugEnabled) log.Debug("In UploadHttpModule.Init()");
 			// When tracing is enabled at the application level ASP.NET reads the entire request before
 			// BeginRequest is fired.  So, we should not use our module at all.
 			bool isTracingEnabled = HttpContext.Current.Trace.IsEnabled;
@@ -155,19 +156,20 @@ namespace Brettle.Web.NeatUpload
 				}
 				return;
 			}
-			
 			app.BeginRequest += new System.EventHandler(Application_BeginRequest);
 			app.EndRequest += new System.EventHandler(Application_EndRequest);
 			app.ResolveRequestCache += new System.EventHandler(Application_ResolveRequestCache);
 			app.AcquireRequestState += new System.EventHandler(Application_AcquireRequestState);
 			app.ReleaseRequestState += new System.EventHandler(Application_ReleaseRequestState);
 			app.PreRequestHandlerExecute += new System.EventHandler(Application_PreRequestHandlerExecute);
+			app.Error += new System.EventHandler(Application_Error);
 			RememberErrorHandler = new System.EventHandler(RememberError);
 			
 			lock (typeof(UploadHttpModule))
 			{
 				_isInited = true;
 			}
+			if (log.IsDebugEnabled) log.Debug("Leaving UploadHttpModule.Init()");
 		}		
 		
 		public void Dispose()
@@ -198,6 +200,11 @@ namespace Brettle.Web.NeatUpload
 			return worker;
 		}
 
+		private void Application_Error(object sender, EventArgs e)
+		{
+			if (log.IsDebugEnabled) log.Debug("In Application_Error");
+		}
+		
 		private void Application_BeginRequest(object sender, EventArgs e)
 		{
 			if (log.IsDebugEnabled) log.Debug("In Application_BeginRequest");
