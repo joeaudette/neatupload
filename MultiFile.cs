@@ -265,7 +265,7 @@ namespace Brettle.Web.NeatUpload
 				}
 				if (!Page.IsClientScriptBlockRegistered("NeatUploadJs"))
 				{
-					Page.RegisterClientScriptBlock("NeatUploadInputJs", @"
+					Page.RegisterClientScriptBlock("NeatUploadJs", @"
 	<script type='text/javascript' language='javascript' src='" + AppPath + @"/NeatUpload/NeatUpload.js?guid=" 
 		+ CacheBustingGuid + @"'></script>");
 				}
@@ -284,14 +284,7 @@ namespace Brettle.Web.NeatUpload
 				// Generate a special name recognized by the UploadHttpModule
 				name = FormContext.Current.GenerateFileID(this.UniqueID);
 				storageConfigName = FormContext.Current.GenerateStorageConfigID(this.UniqueID);
-			}
-			else
-			{
-				name = this.UniqueID;
-				storageConfigName = UploadContext.ConfigNamePrefix + "-" + this.UniqueID;
-			}
-			if (!IsDesignTime)
-			{
+
 #warning TODO: Do not use Flash on Linux Firefox because it is currently unstable (i.e. crashes FF).
 				this.Page.RegisterStartupScript("NeatUploadMultiFile-" + this.UniqueID, @"
 <script type='text/javascript' language='javascript'>
@@ -303,7 +296,13 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
 			+ "=" + FormContext.Current.PostBackID + @"&NeatUpload_AsyncControlID=" + this.ClientID + @"');
 // -->
 </script>");
- 			}
+			}
+			else
+			{
+				name = this.UniqueID;
+				storageConfigName = UploadContext.ConfigNamePrefix + "-" + this.UniqueID;
+			}
+
 			// Store the StorageConfig in a hidden form field with a related name
 			if (StorageConfig != null && StorageConfig.Count > 0)
 			{

@@ -334,7 +334,7 @@ namespace Brettle.Web.NeatUpload
 			{
 				if (!Page.IsClientScriptBlockRegistered("NeatUploadJs"))
 				{
-					Page.RegisterClientScriptBlock("NeatUploadInputJs", @"
+					Page.RegisterClientScriptBlock("NeatUploadJs", @"
 	<script type='text/javascript' language='javascript' src='" + AppPath + @"/NeatUpload/NeatUpload.js?guid=" 
 		+ CacheBustingGuid + @"'></script>");
 				}
@@ -352,15 +352,7 @@ namespace Brettle.Web.NeatUpload
 				// Generate a special name recognized by the UploadHttpModule
 				name = FormContext.Current.GenerateFileID(this.UniqueID);
 				storageConfigName = FormContext.Current.GenerateStorageConfigID(this.UniqueID);
-			}
-			else
-			{
-				name = this.UniqueID;
-				storageConfigName = UploadContext.ConfigNamePrefix + "-" + this.UniqueID;
-				
-			}
-			if (!IsDesignTime)
-			{
+
 				this.Page.RegisterStartupScript("NeatUploadInputFile-" + this.UniqueID, @"
 <script type='text/javascript' language='javascript'>
 <!--
@@ -368,7 +360,13 @@ NeatUploadInputFileCreate('" + this.ClientID + @"','"
 							 + FormContext.Current.PostBackID + @"');
 // -->
 </script>");
- 			}
+			}
+			else
+			{
+				name = this.UniqueID;
+				storageConfigName = UploadContext.ConfigNamePrefix + "-" + this.UniqueID;
+				
+			}
 			// Store the StorageConfig in a hidden form field with a related name
 			if (StorageConfig != null && StorageConfig.Count > 0)
 			{
