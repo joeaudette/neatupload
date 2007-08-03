@@ -5,10 +5,10 @@
 ?>
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head>
-    <title>SWFUpload Revision 6 Demo</title>
+    <title>SWFUpload Revision 5 Demo</title>
 
 	<link href="../css/default.css" rel="stylesheet" type="text/css" />
-	<script type="text/javascript" src="../swfuploadr6_0011/swfupload.js"></script>
+	<script type="text/javascript" src="../swfuploadr52_0002/swfupload.js"></script>
 	<script type="text/javascript" src="js/handlers.js"></script>
 	<script type="text/javascript">
 		var swfu;
@@ -16,7 +16,7 @@
 			swfu = new SWFUpload({
 				// Backend Settings
 				upload_target_url: "../applicationdemo/upload.php",	// Relative to the SWF file
-				post_params: {"PHPSESSID": "<?php echo session_id(); ?>"},
+				upload_cookies: ["PHPSESSID"],
 
 				// File Upload Settings
 				file_size_limit : "2048",	// 2MB
@@ -24,7 +24,6 @@
 				file_types_description : "JPG Images",
 				file_upload_limit : "0",
 				begin_upload_on_queue : true,
-				validate_files : false,
 
 				// Event Handler Settings
 				file_queued_handler : fileQueued,
@@ -37,7 +36,7 @@
 				error_handler : uploadError,
 
 				// Flash Settings
-				flash_url : "../swfuploadr6_0011/swfupload.swf",	// Relative to this file
+				flash_url : "../swfuploadr52_0002/swfupload.swf",	// Relative to this file
 				flash_container_id : "theflashgohere",
 
 				// UI Settings
@@ -53,7 +52,7 @@
 
 </head>
 <body>
-	<div id="title" class="title"><a class="likeParent" href="../index.php">SWFUpload (Revision 6) Application Demo</a></div>
+	<div id="title" class="title"><a class="likeParent" href="../index.php">SWFUpload (Revision 5) Application Demo</a></div>
 	<div id="swfu_container" style="display: none; margin: 0px 10px;">
 		<div>
 			<form>

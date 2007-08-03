@@ -292,8 +292,9 @@ namespace Brettle.Web.NeatUpload
 NeatUploadMultiFileCreate('" + this.ClientID + @"', 
 		'" + FormContext.Current.PostBackID + @"',
 		'" + AppPath + @"',
-		'" + AppPath + @"/NeatUpload/AsyncUpload.aspx?" + Config.Current.PostBackIDQueryParam 
-			+ "=" + FormContext.Current.PostBackID + @"&NeatUpload_AsyncControlID=" + this.ClientID + @"');
+		'" + AppPath + @"/NeatUpload/AsyncUpload.aspx',
+		{" + Config.Current.PostBackIDQueryParam + @" : '" + FormContext.Current.PostBackID + @"',
+		 NeatUpload_AsyncControlID : '" + this.ClientID + @"'});
 // -->
 </script>");
 			}

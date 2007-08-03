@@ -1,9 +1,9 @@
 <?php
-	$php_session_id = isset($_POST["PHPSESSID"]) ? $_POST["PHPSESSID"] : false;
-
-	if ($php_session_id === false) {
+	$php_session_id = isset($_GET["PHPSESSID"]) ? $_GET["PHPSESSID"] : false;
+	$file_id = isset($_GET["file_id"]) ? $_GET["file_id"] : false;
+	if ($php_session_id === false || $file_id === false) {
 		header("HTTP/1.0 500 Internal Server Error");
-		echo "Could not find session";
+		echo "Could not find session or file id";
 		exit(0);
 	}
 
@@ -72,9 +72,16 @@
 	$imagevariable = ob_get_contents();
 	ob_end_clean();
 
-	$file_id = md5($_FILES["Filedata"]["tmp_name"] + rand()*100000);
-	
 	$_SESSION["file_info"][$file_id] = $imagevariable;
 
-	echo $file_id;	// Return the file id to the script
 ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title>SWFUpload Revision 4 Demo</title>
+</head>
+<body>
+	<p>Upload Page</p>
+	<?php echo session_id() ?>
+</body>
+</html>

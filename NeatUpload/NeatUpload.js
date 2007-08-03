@@ -582,14 +582,14 @@ NeatUploadInputFile.prototype.Controls = new Object();
 /* NeatUploadMultiFile - JS support for NeatUpload's MultiFile control
 /* ******************************************************************************************* */
 
-function NeatUploadMultiFileCreate(clientID, postBackID, appPath, uploadScript)
+function NeatUploadMultiFileCreate(clientID, postBackID, appPath, uploadScript, uploadParams)
 {
 	NeatUploadMultiFile.prototype.Controls[clientID] 
-		= new NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript);
+		= new NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, uploadParams);
 	return NeatUploadMultiFile.prototype.Controls[clientID];
 }
 
-function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript)
+function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, uploadParams)
 {
 	// Only use SWFUpload in non-Mozilla browsers because bugs in the Firefox Flash 9 plugin cause it to
 	// crash the browser on Linux and send IE cookies on Windows.  
@@ -599,17 +599,20 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript)
 	this.ClientID = clientID;
 	this.AppPath = appPath;
 	this.UploadScript = uploadScript;
+	this.UploadParams = uploadParams;
 	var numf = this;
 	window.onload = function() {
 		numf.Swfu = new SWFUpload({
-				flash_path : numf.AppPath + '/NeatUpload/SWFUpload.swf',
-				upload_script : numf.UploadScript,
-				allowed_filesize: 2097151,
-				upload_file_start_callback : 'NeatUploadMultiFile.prototype.Controls["' + numf.ClientID + '"].DisplayProgress',
-				upload_file_queued_callback : 'NeatUploadMultiFile.prototype.Controls["' + numf.ClientID + '"].FileQueued',
-				upload_file_cancel_callback : 'NeatUploadMultiFile.prototype.Controls["' + numf.ClientID + '"].FileCancelled',
-				upload_queue_cancel_callback : 'NeatUploadMultiFile.prototype.Controls["' + numf.ClientID + '"].QueueCancelled',
-				flash_loaded_callback : 'NeatUploadMultiFile.prototype.Controls["' + numf.ClientID + '"].FlashLoaded'
+//				debug : true,
+				flash_url : numf.AppPath + '/NeatUpload/SWFUpload.swf',
+				upload_target_url : numf.UploadScript,
+				upload_params : numf.UploadParams,
+				file_size_limit: 2097151,
+				begin_upload_on_queue : false,
+				file_queued_handler : function (file) { numf.FileQueued(file); },
+				file_cancelled_handler : function (file) { numf.FileCancelled(file); },
+				queue_stopped_handler : function (file) { numf.QueueCancelled(file); },
+				flash_ready_handler : function () { numf.FlashLoaded(); }
 		});
 	};
 	
@@ -641,7 +644,8 @@ NeatUploadMultiFile.prototype.FlashLoaded = function () {
 
 	// Hookup the upload trigger.
 	nuf.AddSubmitHandler(true, function () {
-		swfUpload.upload();
+		numf.DisplayProgress();
+		swfUpload.startUpload();
 		return true;
 	});
 	
@@ -659,11 +663,15 @@ NeatUploadMultiFile.prototype.FlashLoaded = function () {
 	inputFile.onclick = function() {
 		swfUpload.browse();
 		if (window.event)
+		{
 			window.event.returnValue = false;
+			if (window.event.preventDefault)
+			{
+				window.event.preventDefault();
+			}
+		}
 		return false;
 	};
-	
-	swfUpload.flashLoaded(true);
 };
 
 NeatUploadMultiFile.prototype.FileQueued = function (file) {

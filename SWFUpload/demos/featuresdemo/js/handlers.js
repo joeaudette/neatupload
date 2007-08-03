@@ -9,14 +9,6 @@ function fileQueued(fileObj) {
 
 }
 
-function fileValidation(fileObj) {
-	try {
-		FeaturesDemo.selEventsFile.options[FeaturesDemo.selEventsFile.options.length] = new Option("File Validation: " + fileObj.id, "");
-	} catch (ex) { this.debugMessage(ex); }
-
-	return true;
-}
-
 function fileProgress(fileObj, bytesLoaded) {
 
 	try {
@@ -33,7 +25,7 @@ function fileProgress(fileObj, bytesLoaded) {
 	} catch (ex) { this.debugMessage(ex); }
 }
 
-function fileComplete(fileObj, data) {
+function fileComplete(fileObj) {
 	try {
 		var queue_string = fileObj.id + ":Done:" + fileObj.name;
 		FeaturesDemo.selQueue.value = fileObj.id;
@@ -41,8 +33,6 @@ function fileComplete(fileObj, data) {
 
 		FeaturesDemo.selEventsQueue.options[FeaturesDemo.selEventsQueue.options.length] = new Option("File Complete: " + fileObj.id, "");
 		FeaturesDemo.selEventsFile.options[FeaturesDemo.selEventsFile.options.length] = new Option("File Complete: " + fileObj.id, "");
-
-		FeaturesDemo.divServerData.innerHTML = data;
 	} catch (ex) { this.debugMessage(ex); }
 }
 
@@ -112,9 +102,6 @@ function uploadError(error_code, fileObj, message) {
 			break;
 			case SWFUpload.ERROR_CODE_UPLOAD_LIMIT_EXCEEDED:
 				error_name = "UPLOAD LIMIT EXCEEDED";
-			break;
-			case SWFUpload.ERROR_CODE_INVALID_FILETYPE:
-				error_name = "INVALID FILE TYPE";
 			break;
 			default:
 				error_name = "UNKNOWN";
