@@ -582,14 +582,14 @@ NeatUploadInputFile.prototype.Controls = new Object();
 /* NeatUploadMultiFile - JS support for NeatUpload's MultiFile control
 /* ******************************************************************************************* */
 
-function NeatUploadMultiFileCreate(clientID, postBackID, appPath, uploadScript, uploadParams)
+function NeatUploadMultiFileCreate(clientID, postBackID, appPath, uploadScript, postBackIDQueryParam, uploadParams)
 {
 	NeatUploadMultiFile.prototype.Controls[clientID] 
-		= new NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, uploadParams);
+		= new NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBackIDQueryParam, uploadParams);
 	return NeatUploadMultiFile.prototype.Controls[clientID];
 }
 
-function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, uploadParams)
+function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBackIDQueryParam, uploadParams)
 {
 	// Only use SWFUpload in non-Mozilla browsers because bugs in the Firefox Flash 9 plugin cause it to
 	// crash the browser on Linux and send IE cookies on Windows.  
@@ -598,12 +598,13 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, upload
 		return null;
 	this.ClientID = clientID;
 	this.AppPath = appPath;
+	this.PostBackIDQueryParam = postBackIDQueryParam;
 	this.UploadScript = uploadScript;
 	this.UploadParams = uploadParams;
 	var numf = this;
 	window.onload = function() {
 		numf.Swfu = new SWFUpload({
-//				debug : true,
+				debug : true,
 				flash_url : numf.AppPath + '/NeatUpload/SWFUpload.swf',
 				upload_target_url : numf.UploadScript,
 				upload_params : numf.UploadParams,
@@ -621,6 +622,9 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, upload
 	nuf.AddSubmittingHandler(function () {
 		var inputFile = document.getElementById(numf.ClientID);
 		inputFile.setAttribute('name', 'NeatUpload_' + nuf.GetPostBackID() + '-' + inputFile.getAttribute('id'));
+		numf.UploadParams[numf.PostBackIDQueryParam] = nuf.GetPostBackID();
+		numf.Swfu.setUploadParams(numf.UploadParams);
+		numf.Swfu.updateUploadStrings();
 	});
 }
 

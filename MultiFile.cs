@@ -293,6 +293,7 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
 		'" + FormContext.Current.PostBackID + @"',
 		'" + AppPath + @"',
 		'" + AppPath + @"/NeatUpload/AsyncUpload.aspx',
+		'" + Config.Current.PostBackIDQueryParam + @"',
 		{" + Config.Current.PostBackIDQueryParam + @" : '" + FormContext.Current.PostBackID + @"',
 		 NeatUpload_AsyncControlID : '" + this.ClientID + @"'});
 // -->
