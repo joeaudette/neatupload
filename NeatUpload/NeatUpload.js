@@ -16,6 +16,96 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
+/* **********************************
+    Debug Console -
+    
+    based on mmSWFUpload Debug Console which has the following license:
+ 
+	mmSWFUpload 1.0: Flash upload dialog - http://profandesign.se/swfupload/
+	SWFUpload is (c) 2006-2007 Lars Huring, Olov Nilzén and Mammon Media and is released under the MIT License:
+	http://www.opensource.org/licenses/mit-license.php
+ 
+    The debug console is a self contained, in page location
+    for debug message to be sent.  The Debug Console adds
+    itself to the body if necessary.
+
+    The console is automatically scrolled as messages appear.
+   ********************************** */
+
+
+NeatUploadConsole = {};
+NeatUploadConsole.debug_enabled = true;
+NeatUploadConsole.InitialMessage = "";
+NeatUploadConsole.debugMessage = function (message) {
+    var exception_message, exception_values;
+	
+    if (this.debug_enabled) {
+        if (typeof(message) === "object" && typeof(message.name) === "string" && typeof(message.message) === "string") {
+            exception_message = "";
+            exception_values = [];
+            for (var key in message) {
+                exception_values.push(key + ": " + message[key]);
+            }
+            exception_message = exception_values.join("\n");
+            exception_values = exception_message.split("\n");
+            exception_message = "EXCEPTION: " + exception_values.join("\nEXCEPTION: ");
+            NeatUploadConsole.writeLine(exception_message);
+        } else {
+            NeatUploadConsole.writeLine(message);
+        }
+    }
+};
+
+NeatUploadConsole.writeLine = function (message) {
+	var console = this.Console;
+	if (console) {
+		console.value += message + "\n";
+		console.scrollTop = console.scrollHeight - console.clientHeight;
+	} else {
+		this.InitialMessage += message + "\n";
+	}
+}
+
+NeatUploadConsole.open = function(message) { 
+	var consoleWindow = window.open("", "NeatUploadConsole", "height=400,width=750,location=no,menubar=no,status=no", false);
+	consoleWindow.onunload = function () {
+		var nuc = window.opener.NeatUploadConsole;
+		if (!nuc) {
+			return;
+		}
+		nuc.Console = null;
+	};
+	var console = consoleWindow.document.getElementById("NeatUploadConsole");
+	if (!console) {
+		documentForm = consoleWindow.document.createElement("form");
+		consoleWindow.document.getElementsByTagName("body")[0].appendChild(documentForm);
+
+		console = consoleWindow.document.createElement("textarea");
+		console.id = "NeatUploadConsole";
+		console.style.fontFamily = "monospace";
+		console.setAttribute("wrap", "off");
+		console.wrap = "off";
+		console.style.overflow = "auto";
+		console.style.width = "700px";
+		console.style.height = "350px";
+		console.style.margin = "5px";
+		console.value = "";
+		documentForm.appendChild(console);
+	}
+	this.Console = console;
+	if (this.InitialMessage != "")
+		this.debugMessage(this.InitialMessage);
+	this.InitialMessage = "";
+	this.debugMessage(message);
+};
+
+// Have SWFUpload use the same console
+if (SWFUpload && SWFUpload.prototype)
+{
+	SWFUpload.prototype.debugMessage = NeatUploadConsole.debugMessage;
+}
+
 if (!Array.prototype.push)
 {
 	Array.prototype.push = function() {
@@ -71,17 +161,94 @@ function NeatUploadForm(formElem, postBackID)
 	this.OnUnloadHandlers.push(function () { window.onunload = origOnUnload; });
 	window.onunload = this.CombineHandlers(window.onunload, function() { return f.OnUnload(); });
 
-	// Add a hook to call our own onsubmit handlers, but restore the original onsubmit handler during unload
-	this.OnSubmitForm = function()
+	// Override the form.submit() method to call our own handlers before and after.
+	this.debugMessage("overriding form.submit()");
+	f.FormElem.NeatUpload_OnSubmittingHandlers = new Array();
+	f.FormElem.NeatUpload_OnSubmitting = this.OnSubmitting;
+	this.OnUnloadHandlers.push(function() 
 	{
-		return formElem.NeatUpload_OnSubmit();
+		f.FormElem.NeatUpload_OnSubmittingHandlers = null;
+		f.FormElem.NeatUpload_OnSubmitting = null;
+	});
+	f.FormElem.NeatUpload_OnSubmitHandlers = new Array();
+	f.FormElem.NeatUpload_OrigSubmit = f.FormElem.submit;
+	f.FormElem.NeatUpload_OnSubmit = this.OnSubmit;
+	try
+	{
+		f.FormElem.submit = function () {
+			f.debugMessage("In submit()");
+			f.FormElem.NeatUpload_OnSubmitting();
+			f.FormElem.NeatUpload_OrigSubmit();
+			f.FormElem.NeatUpload_OnSubmit();
+			f.debugMessage("Leaving submit()");
+		};
+		this.OnUnloadHandlers.push(function() 
+		{
+			f.FormElem.submit = f.FormElem.NeatUpload_OrigSubmit;
+			f.FormElem.NeatUpload_OnSubmitHandlers = null;
+			f.FormElem.NeatUpload_OnSubmit = null;
+		});
 	}
-	var origOnSubmit = formElem.onsubmit;
-	formElem.onsubmit = this.CombineHandlers(formElem.onsubmit, this.OnSubmitForm);
-	this.OnUnloadHandlers.push(function () { formElem.onsubmit = origOnSubmit; });
+	catch (ex)
+	{
+		// We can't override the submit method.  That means NeatUpload won't work 
+		// when the form is submitted programmatically.  This occurs in Mac IE.
+		this.debugMessage("can't override form.submit()");
+	}			
 
+
+	// Hook preventDefault() so we know whether it was called to prevent the upload
+	try
+	{
+		Event.prototype.NeatUpload_OrigPreventDefault = Event.prototype.preventDefault;
+		Event.prototype.preventDefault = function () {
+			this.NeatUpload_PreventDefaultCalled = true;
+			return this.NeatUpload_OrigPreventDefault();
+		};
+		this.debugMessage("Hooked preventDefault");
+	}
+	catch (ex)
+	{
+		this.debugMessage("Could not hook preventDefault: " + ex);
+	}
+	
+	// This next bit of code needs to run after any other JS has set onsubmit or added any onsubmit handlers,
+	// so we do it after a short delay after window.onload has fired
+	this.debugMessage("hooking form.onsubmit()");
+	this.AddHandler(window, "load", function ()	{
+		window.setTimeout(function () {
+			// Hook form.onsubmit so that we know whether it returned false (which would prevent the upload)
+			f.FormElem.NeatUpload_OrigOnSubmit = f.FormElem.onsubmit;
+			f.OnUnloadHandlers.push(function () { f.FormElem.onsubmit = f.FormElem.NeatUpload_OrigOnSubmit; });
+			f.FormElem.onsubmit = function (ev)
+			{
+				ev = ev || window.event;
+				if (this.NeatUpload_OrigOnSubmit)
+				{
+					ev.NeatUpload_OrigOnSubmitReturnValue = this.NeatUpload_OrigOnSubmit();
+					return ev.NeatUpload_OrigOnSubmitReturnValue;
+				}
+			}
+			// Add our own onsubmit handler (which will hopefully be the last one) so that it can check whether
+			// another onsubmit handler prevented the upload
+			f.AddHandler(f.FormElem, "submit", function (ev) {
+				f.debugMessage("Checking whether another onsubmit handler prevented the upload");
+				ev = ev || window.event;
+				if (typeof(ev.returnValue) != "undefined" && !ev.returnValue)
+					return false;
+				if (typeof(ev.NeatUpload_OrigOnSubmitReturnValue) != "undefined" && !ev.NeatUpload_OrigOnSubmitReturnValue)
+					return false;
+				if (ev.NeatUpload_PreventDefaultCalled)
+					return false;
+				f.debugMessage("Calling NeatUpload_OnSubmit");
+				return f.FormElem.NeatUpload_OnSubmit();
+			});
+		}, 1);
+	});
+
+	// Note when an event that could trigger a postback occurs so that we can check whether it is a trigger.	
+	this.debugMessage("Adding handlers for possible triggers");
 	var eventsThatCouldTriggerPostBack = ['click', 'keypress', 'drop', 'mousedown', 'keydown'];
-							
 	for (var i = 0; i < eventsThatCouldTriggerPostBack.length; i++)
 	{
 		var eventName = eventsThatCouldTriggerPostBack[i];
@@ -121,7 +288,8 @@ function NeatUploadForm(formElem, postBackID)
 			return true;
 		}, true);
 	}
-	
+
+	this.debugMessage("Adding submitting handler");	
 	this.AddSubmittingHandler(function () {
 		f.SubmitCount++;
 		var url = f.FormElem.getAttribute('action');
@@ -141,7 +309,10 @@ function NeatUploadForm(formElem, postBackID)
 			f.OnNonupload(f.FormElem);
 		}
 	});
+	this.debugMessage("Submitting handler added");	
 }
+
+NeatUploadForm.prototype.debugMessage = NeatUploadConsole.debugMessage;
 
 NeatUpload_LastEventSource = null;
 NeatUpload_LastEventType = null;
@@ -230,31 +401,6 @@ NeatUploadForm.prototype.AddHandler = function(elem, eventName, handler, useCapt
 NeatUploadForm.prototype.AddSubmitHandler = function(prepend, handler)
 {
 	var elem = this.FormElem;
-	if (!elem.NeatUpload_OnSubmitHandlers) 
-	{
-		elem.NeatUpload_OnSubmitHandlers = new Array();
-		elem.NeatUpload_OrigSubmit = elem.submit;
-		elem.NeatUpload_OnSubmit = this.OnSubmit;
-		try
-		{
-			elem.submit = function () {
-				elem.NeatUpload_OnSubmitting();
-				elem.NeatUpload_OrigSubmit();
-				elem.NeatUpload_OnSubmit();
-			};
-			this.OnUnloadHandlers.push(function() 
-			{
-				elem.submit = elem.NeatUpload_OrigSubmit;
-				elem.NeatUpload_OnSubmitHandlers = null;
-				elem.NeatUpload_OnSubmit = null;
-			});
-		}
-		catch (ex)
-		{
-			// We can't override the submit method.  That means NeatUpload won't work 
-			// when the form is submitted programmatically.  This occurs in Mac IE.
-		}			
-	}
 	if (prepend)
 	{
 		elem.NeatUpload_OnSubmitHandlers.unshift(handler);
@@ -268,16 +414,6 @@ NeatUploadForm.prototype.AddSubmitHandler = function(prepend, handler)
 NeatUploadForm.prototype.AddSubmittingHandler = function(handler)
 {
 	var elem = this.FormElem;
-	if (!elem.NeatUpload_OnSubmittingHandlers) 
-	{
-		elem.NeatUpload_OnSubmittingHandlers = new Array();
-		elem.NeatUpload_OnSubmitting = this.OnSubmitting;
-		this.OnUnloadHandlers.push(function() 
-		{
-			elem.NeatUpload_OnSubmittingHandlers = null;
-			elem.NeatUpload_OnSubmitting = null;
-		});
-	}
 	elem.NeatUpload_OnSubmittingHandlers.push(handler);
 };
 
@@ -292,6 +428,16 @@ NeatUploadForm.prototype.OnSubmitting = function()
 
 NeatUploadForm.prototype.OnSubmit = function()
 {
+	// To avoid having OnSubmit() run twice for the same click
+	// (once from our form.submit() and again from our onsubmit handler),
+	// we set a flag to note that we've already called it, and add a timer event 
+	// that will reset it once all other pending events are processed.
+	var formElem = this;
+	if (formElem.NeatUpload_OnSubmitCalled)
+		return false;
+	formElem.NeatUpload_OnSubmitCalled = true;
+	window.setTimeout(function () { formElem.NeatUpload_OnSubmitCalled = false; }, 1);
+
 	for (var i=0; i < this.NeatUpload_OnSubmitHandlers.length; i++)
 	{
 		if (!this.NeatUpload_OnSubmitHandlers[i].call(this))
@@ -357,7 +503,7 @@ NeatUploadForm.prototype.GetFileCount = function(elem)
 					var ua = navigator.userAgent.toLowerCase();
 					var msiePosition = ua.indexOf('msie');
 					if (msiePosition != -1 && typeof(ActiveXObject) != 'undefined' && ua.indexOf('mac') == -1
-					    && ua.charAt(msiePosition + 5) < 7)
+					    && ua.charAt(msiePosition + 5) < 8)
 					{
 						var re = new RegExp('^(\\\\\\\\[^\\\\]|([a-zA-Z]:)?\\\\).*');
 						var match = re.exec(inputElem.value);
@@ -387,11 +533,13 @@ NeatUploadForm.prototype.GetFor = function (elem, postBackID)
 	{
 		return null;
 	}
-	if (!formElem.NeatUploadForm)
+	if (!formElem.NeatUpload_NUForm)
 	{
-		formElem.NeatUploadForm = new NeatUploadForm(formElem, postBackID);
+		formElem.NeatUpload_NUForm = new NeatUploadForm(formElem, postBackID);
+		formElem.NeatUpload_NUForm.debugMessage("Constructor returned");
 	}
-	return formElem.NeatUploadForm;
+	formElem.NeatUpload_NUForm.debugMessage("GetFor returning");
+	return formElem.NeatUpload_NUForm;
 };
 
 function NeatUploadPB(id, postBackID, uploadProgressPath, inline, popupWidth, popupHeight, triggerIDs, autoStartCondition)
@@ -409,7 +557,7 @@ function NeatUploadPB(id, postBackID, uploadProgressPath, inline, popupWidth, po
 	if (!elem)
 		elem = document.getElementById(id + '_NeatUpload_dummyspan');
 	this.UploadForm = NeatUploadForm.prototype.GetFor(elem, postBackID);
-		
+	this.debugMessage("GetFor returned");
 	var displayFunc;
 	if (inline)
 	{
@@ -429,6 +577,7 @@ function NeatUploadPB(id, postBackID, uploadProgressPath, inline, popupWidth, po
 	else
 	{
 		displayFunc = function () {
+			pb.debugMessage("Calling window.open");
 			window.open(pb.UploadProgressPath + '&postBackID=' + pb.UploadForm.GetPostBackID() + '&refresher=client&canScript=true&canCancel=' + NeatUploadPB.prototype.CanCancel(),
 				pb.UploadForm.GetPostBackID(), 'width=' + pb.PopupWidth + ',height=' + pb.PopupHeight
 				+ ',directories=no,location=no,menubar=no,resizable=yes,scrollbars=auto,status=no,toolbar=no');
@@ -446,12 +595,14 @@ function NeatUploadPB(id, postBackID, uploadProgressPath, inline, popupWidth, po
 	this.UploadForm.AddNonuploadHandler(function () { pb.ClearFileInputs(pb.UploadForm.FormElem); });
 
 	this.UploadForm.AddSubmitHandler(!inline, function () {
+		pb.debugMessage("In NeatUploadPB SubmitHandler");
 		// If there are files to upload and either no trigger controls were specified for this progress bar or
 		// a specified trigger control was triggered, then start the progress display.
 		if (pb.EvaluateAutoStartCondition()
 			&& (!pb.TriggerIDs.NeatUpload_length
 			    || NeatUploadForm.prototype.IsElemWithin(NeatUpload_LastEventSource, pb.TriggerIDs)))
 		{
+			pb.debugMessage("Calling pb.Display()");
 			pb.Display();
 		}
 		return true;
@@ -462,7 +613,10 @@ function NeatUploadPB(id, postBackID, uploadProgressPath, inline, popupWidth, po
 		this.UploadForm.AddTrigger(triggerIDs[i]);
 		this.TriggerIDs[triggerIDs[i]] = ++this.TriggerIDs.NeatUpload_length;
 	}
+	this.debugMessage("NeatUploadPB returning");
 }
+
+NeatUploadPB.prototype.debugMessage = NeatUploadConsole.debugMessage;
 
 NeatUploadPB.prototype.Bars = new Object();
 
@@ -604,7 +758,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	var numf = this;
 	window.onload = function() {
 		numf.Swfu = new SWFUpload({
-				debug : true,
+				debug : numf.debug_enabled,
 				flash_url : numf.AppPath + '/NeatUpload/SWFUpload.swf',
 				upload_target_url : numf.UploadScript,
 				upload_params : numf.UploadParams,
@@ -628,16 +782,9 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	});
 }
 
+NeatUploadMultiFile.prototype.debugMessage = NeatUploadConsole.debugMessage;
 
 NeatUploadMultiFile.prototype.Controls = new Object();
-
-NeatUploadMultiFile.prototype.DisplayProgress = function () {
-	// TODO: This shouldn't be necessary once the UploadContext survives across upload requests.
-	if (NeatUploadPB.prototype.FirstBarID)
-	{
-		NeatUploadPB.prototype.Bars[NeatUploadPB.prototype.FirstBarID].Display();
-	}
-};
 
 NeatUploadMultiFile.prototype.FlashLoaded = function () {
 	var numf = this;
@@ -645,10 +792,9 @@ NeatUploadMultiFile.prototype.FlashLoaded = function () {
 	var inputFile = document.getElementById(this.ClientID);
 	numf.NumAsyncFilesField = inputFile.nextSibling;
 	var nuf = NeatUploadForm.prototype.GetFor(inputFile);
-
+	
 	// Hookup the upload trigger.
 	nuf.AddSubmitHandler(true, function () {
-		numf.DisplayProgress();
 		swfUpload.startUpload();
 		return true;
 	});
@@ -664,15 +810,13 @@ NeatUploadMultiFile.prototype.FlashLoaded = function () {
 	});
 
 	// Make clicking 'Browse...' on the <input type='file'> call SWFUpload.browse().
-	inputFile.onclick = function() {
+	inputFile.onclick = function(ev) {
 		swfUpload.browse();
-		if (window.event)
+		ev = ev || window.event;
+		ev.returnValue = false;
+		if (ev.preventDefault)
 		{
-			window.event.returnValue = false;
-			if (window.event.preventDefault)
-			{
-				window.event.preventDefault();
-			}
+			ev.preventDefault();
 		}
 		return false;
 	};
@@ -693,3 +837,9 @@ NeatUploadMultiFile.prototype.QueueCancelled = function (file) {
 NeatUploadMultiFile.prototype.FileCancelled = function (file) {
 	this.NumAsyncFilesField.value = this.NumAsyncFilesField.value - 1;
 };
+
+
+/***************************** Debug Settings **************************/
+NeatUploadForm.prototype.debug_enabled = true;
+NeatUploadPB.prototype.debug_enabled = true;
+NeatUploadMultiFile.prototype.debug_enabled = true;

@@ -1,3 +1,5 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ Page language="c#" AutoEventWireup="false" Inherits="Brettle.Web.NeatUpload.ProgressPage" %>
 <%@ Register TagPrefix="Upload" Namespace="Brettle.Web.NeatUpload" Assembly="Brettle.Web.NeatUpload" %>
 <%--
@@ -30,10 +32,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			padding: 0px;
 		}
 
-		#progressDisplayCenterer {
-			vertical-align: middle;
+		html, body, form, #progressDisplayCenterer {
 			width: 100%;
 			height: 100%;
+		}
+		
+		#progressDisplayCenterer {
+			vertical-align: middle;
+			margin: 0 auto;
 		}
 		
 		#progressDisplay {

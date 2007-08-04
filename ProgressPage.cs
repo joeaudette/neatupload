@@ -61,7 +61,7 @@ namespace Brettle.Web.NeatUpload
 		protected string StartRefreshUrl;
 		protected string StopRefreshUrl;
 		
-		protected string GetResourceString(string resourceName)
+		protected virtual string GetResourceString(string resourceName)
 		{
 			return Config.Current.ResourceManager.GetString(resourceName);
 		}

@@ -1,3 +1,5 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ Page language="c#" %>
 <%@ Import namespace="System.IO" %>
 <script runat="server">
@@ -89,6 +91,7 @@
     <p>
     This page can be used to verify that various NeatUpload bugs or potential bugs have been fixed.  
     You should be able to:
+    </p>
     <ul>
       <li><a href="Bugs.aspx?test=download">download the Web.config file</a>.</li>
       <li><a href="Bugs.aspx?test=redirect">get redirected to Google</a>.</li>
@@ -96,6 +99,5 @@
       <li><a href="Bugs.aspx?test=throwtocustomerror">throw a 413 HttpException to display a custom error page</a>.</li>
       <li><a href="Bugs.aspx?test=flushandthrow">flush the response and throw an exception that shouldn't display a custom error page.</a>.</li>
     </ul>
-    </p>
   </body>
 </html>

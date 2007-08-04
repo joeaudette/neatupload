@@ -159,7 +159,7 @@ namespace Brettle.Web.NeatUpload
 	</script>
 	");
 				}
-			}
+            }
 			base.OnPreRender(e);
 		}
 		
@@ -280,7 +280,6 @@ namespace Brettle.Web.NeatUpload
 		private void RegisterScripts()
 		{
 			string allTriggerClientIDs = "[]";
-			
 			if (Config.Current.UseHttpModule)
 			{
 				allTriggerClientIDs = GetClientIDsAsJSArray(Triggers, otherTriggers);

@@ -160,6 +160,7 @@ ProgressBars don't work with Opera</a></li>
       <li><a href="#OnClickReturnValue">Handler returning false does not block default action in IE6</a></li>
       <li><a href="#MacIELinkButtons"><code>LinkButtons</code> do not start the progress display in Internet Explorer 
 for the Mac</a></li>
+      <li><a href="#LargeResponseNotBuffered">Sometimes responses larger than 1MB are not buffered</a></li>
     </ul>
 
   </li>
@@ -3820,6 +3821,34 @@ form is submitted programmatically (e.g. with a <code>LinkButton</code>).  Mac I
 <code>form.submit()</code> so NeatUpload can't start the progress display if a <code>LinkButton</code> is used to
 submit the form.  The upload still occurs though.  Since Mac IE is no longer supported by Microsoft and currently
 has less than 1% of the browser market, there are currently no plans to develop a workaround for this.
+</p>
+
+<h3><a class="mozTocH3" name="LargeResponseNotBuffered"></a>Sometimes responses larger than 1MB are not buffered</h3>
+<p>
+Without NeatUpload, ASP.NET (by default) buffers the entire response in memory before sending it.  However, 
+when NeatUpload's <code>UploadHttpModule</code> is installed, it will sometimes
+flush the buffer if the response is larger than 1 MByte.  Responses smaller then 1 MBytes are not affected,
+but NeatUpload will sometimes flush 
+larger responses even if the page does not contain any NeatUpload controls and does not receive uploads.  
+To avoid this behavior you need to use <a href="#mozTocId134915">location
+filtering</a> to set <code>&lt;neatUpload ... useHttpModule="true".../&gt;</code> for the page.
+Very few applications need to buffer such large 
+responses, but if your application needs such buffering, you can use 
+location filtering to workaround the issue.
+</p>
+<p>
+Technical note: The current behavior is a side-effect of a workaround for a problem where
+<code>HttpResponse.TransmitFile()</code>
+was causing the entire file to be buffered in memory when the <code>UploadHttpModule</code> was being used.  
+Apparently, Microsoft coded <code>TransmitFile()</code> so that buffering is only avoided when the
+current <code>HttpWorkerRequest</code> is a particular subclass of <code>HttpWorkerRequest</code>.  Since NeatUpload
+wraps the original <code>HttpWorkerRequest</code> in it's own subclass, ASP.NET does not see the original
+<code>HttpWorkerRequest</code> and does not bypass the buffering.  Instead it calls 
+<code>HttpWorkerRequest.SendResponseFromFile()</code>.  NeatUpload's implementation of 
+<code>SendResponseFromFile()</code> avoids the problem by flushing the response after every 1 MByte.  
+Since this workaround affects <code>SendResponseFromFile()</code> but not other methods of sending response content,
+the flushing will not occur for all types of responses.  That means you should not assume a response will be
+flushed simply because it is larger than 1 MByte.  
 </p>
 
 <h2><a class="mozTocH2" name="mozTocId405545"></a>Troubleshooting</h2>

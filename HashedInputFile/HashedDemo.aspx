@@ -1,10 +1,11 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ Page language="c#" Src="HashedDemo.aspx.cs" AutoEventWireup="false" Inherits="Brettle.Web.NeatUpload.HashedDemo" %>
 <%@ Register TagPrefix="Upload" Namespace="Brettle.Web.NeatUpload" Assembly="Brettle.Web.NeatUpload" %>
 <%@ Register TagPrefix="HashedUpload" Namespace="Brettle.Web.NeatUpload" Assembly="Brettle.Web.NeatUpload.HashedInputFile" %>
-
-<Html>
-	<Head runat="server">
-		<Title>NeatUpload Demo</Title>
+<html>
+	<head runat="server">
+		<title>NeatUpload Demo</title>
 		<style type="text/css">
 <!--
 		.ProgressBar {
@@ -16,8 +17,8 @@
 		}
 -->
 		</style>
-	</Head>
-	<Body>
+	</head>
+	<body>
 		<form id="uploadForm" runat="server">
 			<h1>NeatUpload Demo</h1>
 			<p>
@@ -110,5 +111,5 @@
 			</p>
 			
 		</form>
-	</Body>
-</Html>
+	</body>
+</html>
