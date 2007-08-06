@@ -101,7 +101,7 @@ NeatUploadConsole.open = function(message) {
 };
 
 // Have SWFUpload use the same console
-if (SWFUpload && SWFUpload.prototype)
+if (typeof(SWFUpload) != "undefined" && SWFUpload && SWFUpload.prototype)
 {
 	SWFUpload.prototype.debugMessage = NeatUploadConsole.debugMessage;
 }
@@ -219,16 +219,20 @@ function NeatUploadForm(formElem, postBackID)
 		window.setTimeout(function () {
 			// Hook form.onsubmit so that we know whether it returned false (which would prevent the upload)
 			f.FormElem.NeatUpload_OrigOnSubmit = f.FormElem.onsubmit;
-			f.OnUnloadHandlers.push(function () { f.FormElem.onsubmit = f.FormElem.NeatUpload_OrigOnSubmit; });
-			f.FormElem.onsubmit = function (ev)
+			if (f.FormElem.NeatUpload_OrigOnSubmit)
 			{
-				ev = ev || window.event;
-				if (this.NeatUpload_OrigOnSubmit)
-				{
-					ev.NeatUpload_OrigOnSubmitReturnValue = this.NeatUpload_OrigOnSubmit();
-					return ev.NeatUpload_OrigOnSubmitReturnValue;
-				}
-			}
+			    f.OnUnloadHandlers.push(function () { f.FormElem.onsubmit = f.FormElem.NeatUpload_OrigOnSubmit; });
+			    f.FormElem.onsubmit = function (ev)
+			    {
+				    var returnValue = this.NeatUpload_OrigOnSubmit();
+				    ev = ev || window.event;
+				    if (ev)
+				    {					
+					    ev.NeatUpload_OrigOnSubmitReturnValue = returnValue;
+				    }
+				    return returnValue;
+			    }
+		    }
 			// Add our own onsubmit handler (which will hopefully be the last one) so that it can check whether
 			// another onsubmit handler prevented the upload
 			f.AddHandler(f.FormElem, "submit", function (ev) {
