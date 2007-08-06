@@ -1,4 +1,3 @@
-Use JS to create new postBackID everytime form is submitted.
 Pass total async size like we pass num async files.  Use that to make progress bar show total progress
 instead of per-file progress.
 Allow files to be deleted from queue.
