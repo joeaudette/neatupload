@@ -143,6 +143,18 @@ namespace Brettle.Web.NeatUpload
 		{
 			if (!IsDesignTime && Config.Current.UseHttpModule)
 			{
+                // If we don't have a session yet and the session mode is not "Off", we need to create a
+                // session so that it can be used to pass information between the progress display and the 
+                // upload request.  Apparently the only way to force the session to be created is to put
+                // something in it.
+                if (Page.Session != null
+                    && Page.Session.Mode != System.Web.SessionState.SessionStateMode.Off
+                    && Page.Session.Count == 0
+                    && !Page.Session.IsReadOnly)
+                {
+                    Page.Session["NeatUpload_value"] = "ignored";
+                }
+
 				InitializeVars();
 				if (!Page.IsClientScriptBlockRegistered("NeatUploadJs"))
 				{
