@@ -771,7 +771,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 				file_queued_handler : function (file) { numf.FileQueued(file); },
 				file_cancelled_handler : function (file) { numf.FileCancelled(file); },
 				queue_stopped_handler : function (file) { numf.QueueCancelled(file); },
-				flash_ready_handler : function () { numf.FlashLoaded(); }
+				flash_ready_handler : function () { numf.IsFlashLoaded = true; }
 		});
 	};
 	
@@ -784,47 +784,62 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 		numf.Swfu.setUploadParams(numf.UploadParams);
 		numf.Swfu.updateUploadStrings();
 	});
-}
 
-NeatUploadMultiFile.prototype.debugMessage = NeatUploadConsole.debugMessage;
-
-NeatUploadMultiFile.prototype.Controls = new Object();
-
-NeatUploadMultiFile.prototype.FlashLoaded = function () {
-	var numf = this;
-	var swfUpload = this.Swfu;
 	var inputFile = document.getElementById(this.ClientID);
-	numf.NumAsyncFilesField = inputFile.nextSibling;
-	var nuf = NeatUploadForm.prototype.GetFor(inputFile);
+	this.NumAsyncFilesField = inputFile.nextSibling;
 	
 	// Hookup the upload trigger.
 	nuf.AddSubmitHandler(true, function () {
-		swfUpload.startUpload();
+	    if (numf.IsFlashLoaded && numf.Swfu)
+	    {
+		    numf.Swfu.startUpload();
+		}
 		return true;
 	});
 	
 	// Hookup the non-upload handler.
 	nuf.AddNonuploadHandler(function () {
-		swfUpload.cancelQueue();			
+	    if (numf.IsFlashLoaded && numf.Swfu)
+	    {
+    		numf.Swfu.cancelQueue();
+    	}
 	});
 
 	// Add the GetFileCount callback.
 	nuf.AddGetFileCountCallback(function () {
-		return numf.NumAsyncFilesField.value;
+	    if (numf.IsFlashLoaded && numf.Swfu)
+	    {
+    		return numf.NumAsyncFilesField.value;
+    	}
+    	else
+    	{
+    	    return (inputFile.value != null && inputFile.value != "") ? 1 : 0;
+    	}
 	});
 
 	// Make clicking 'Browse...' on the <input type='file'> call SWFUpload.browse().
 	inputFile.onclick = function(ev) {
-		swfUpload.browse();
-		ev = ev || window.event;
-		ev.returnValue = false;
-		if (ev.preventDefault)
-		{
-			ev.preventDefault();
-		}
-		return false;
+	    if (numf.IsFlashLoaded && numf.Swfu)
+	    {
+		    numf.Swfu.browse();
+		    ev = ev || window.event;
+		    ev.returnValue = false;
+		    if (ev.preventDefault)
+		    {
+			    ev.preventDefault();
+		    }
+		    return false;
+        }
+        else
+        {
+            return true;
+        }
 	};
-};
+}
+
+NeatUploadMultiFile.prototype.debugMessage = NeatUploadConsole.debugMessage;
+
+NeatUploadMultiFile.prototype.Controls = new Object();
 
 NeatUploadMultiFile.prototype.FileQueued = function (file) {
 	this.NumAsyncFilesField.value++;
