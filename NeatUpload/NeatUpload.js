@@ -244,6 +244,11 @@ function NeatUploadForm(formElem, postBackID)
 					return false;
 				if (ev.NeatUpload_PreventDefaultCalled)
 					return false;
+				// asp:ScriptManager moves form.onsubmit into an event handler and sets form.onsubmit=null.
+				// That means that we can't know the value that the orign form.onsubmit returned.  As a 
+				// workaround, we check Page_IsValid which validators will set.
+				if (Page_IsValid != "undefined" && !Page_IsValid) 
+				    return false;
 				f.debugMessage("Calling NeatUpload_OnSubmit");
 				return f.FormElem.NeatUpload_OnSubmit();
 			});
