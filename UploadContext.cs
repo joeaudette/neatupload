@@ -46,9 +46,9 @@ namespace Brettle.Web.NeatUpload
 		// The hidden form fields that contain per-control StorageConfig info have names which start with:
 		internal const string ConfigNamePrefix = "NeatUploadConfig_";
 		
-		// The hidden form fields that contain the number of async files to expext per-control have names
+		// The hidden form fields that contain the sizes of async files to expect per-control have names
 		// which start with:
-		internal const string NumAsyncFilesNamePrefix = "NeatUploadNumAsyncFiles_";
+		internal const string AsyncFileSizesNamePrefix = "NeatUploadAsyncFilesSizes_";
 
 		internal static string NameToConfigName(string name)
 		{
@@ -121,7 +121,8 @@ namespace Brettle.Web.NeatUpload
 				
 		internal UploadedFileCollection Files = new UploadedFileCollection();
 		
-		internal int NumAsyncFilesRemaining = -1;
+		internal long[] AsyncFileSizes = null;
+		internal int NumAsyncFilesReceived = 0;
 
 		private string postBackID;
 		
@@ -196,6 +197,10 @@ namespace Brettle.Web.NeatUpload
 				{
 					ctxInSession.FileBytesRead = FileBytesRead;
 					ctxInSession.BytesRead = BytesRead;
+					ctxInSession.SyncBytesRead = SyncBytesRead;
+					ctxInSession.AsyncBytesRead = AsyncBytesRead;
+					ctxInSession.SyncBytesTotal = SyncBytesTotal;
+					ctxInSession.AsyncBytesTotal = AsyncBytesTotal;
 					ctxInSession.SetContentLength(ContentLength);
 					ctxInSession.Status = Status;
 					ctxInSession.Exception = Exception;
@@ -204,7 +209,8 @@ namespace Brettle.Web.NeatUpload
 					ctxInSession.CurrentFileName = CurrentFileName;
 					ctxInSession.ProgressInfoByID = ProgressInfoByID;
 					ctxInSession.Files = Files;
-					ctxInSession.NumAsyncFilesRemaining = NumAsyncFilesRemaining;
+					ctxInSession.AsyncFileSizes = AsyncFileSizes;
+					ctxInSession.NumAsyncFilesReceived = NumAsyncFilesReceived;
 					ctxInSession.RegisterPostBack(PostBackID);
 				}
 				else
@@ -235,6 +241,10 @@ namespace Brettle.Web.NeatUpload
 			{
 				FileBytesRead = ctxInSession.FileBytesRead;
 				BytesRead = ctxInSession.BytesRead;
+				SyncBytesRead = ctxInSession.SyncBytesRead;
+				AsyncBytesRead = ctxInSession.AsyncBytesRead;
+				SyncBytesTotal = ctxInSession.SyncBytesTotal;
+				AsyncBytesTotal = ctxInSession.AsyncBytesTotal;
 				SetContentLength(ctxInSession.ContentLength);
 				Status = ctxInSession.Status;
 				Exception = ctxInSession.Exception;
@@ -243,7 +253,8 @@ namespace Brettle.Web.NeatUpload
 				CurrentFileName = ctxInSession.CurrentFileName;
 				ProgressInfoByID = ctxInSession.ProgressInfoByID;
 				Files = ctxInSession.Files;
-				NumAsyncFilesRemaining = ctxInSession.NumAsyncFilesRemaining;
+				AsyncFileSizes = ctxInSession.AsyncFileSizes;
+				NumAsyncFilesReceived = ctxInSession.NumAsyncFilesReceived;
 			}
 		}
 				
@@ -295,7 +306,7 @@ namespace Brettle.Web.NeatUpload
 			else
 			{
 				// This async upload is complete, so decrement NumAsyncFilesRemaining and sync to session.
-				NumAsyncFilesRemaining--;
+				NumAsyncFilesReceived++;
 				UploadHttpModule.AccessSession(new SessionAccessCallback(this.SyncWithSession));
 			}
 		}
@@ -324,7 +335,7 @@ namespace Brettle.Web.NeatUpload
 					{
 						return 0;
 					}
-					return (double)BytesRead / ContentLength; 
+					return (double)(SyncBytesRead + AsyncBytesRead) / (SyncBytesTotal + AsyncBytesTotal); 
 				}
 			}
 		}
@@ -359,6 +370,58 @@ namespace Brettle.Web.NeatUpload
 				lock(this)
 				{
 					bytesRead = value;
+				}
+			}
+		}
+
+		private long syncBytesRead;
+		internal long SyncBytesRead
+		{
+			get { lock(this) { return syncBytesRead; } }
+			set
+			{
+				lock(this)
+				{
+					syncBytesRead = value;
+				}
+			}
+		}
+
+		private long asyncBytesRead;
+		internal long AsyncBytesRead
+		{
+			get { lock(this) { return asyncBytesRead; } }
+			set
+			{
+				lock(this)
+				{
+					asyncBytesRead = value;
+				}
+			}
+		}
+
+		private long syncBytesTotal;
+		internal long SyncBytesTotal
+		{
+			get { lock(this) { return syncBytesTotal; } }
+			set
+			{
+				lock(this)
+				{
+					syncBytesTotal = value;
+				}
+			}
+		}
+
+		private long asyncBytesTotal;
+		internal long AsyncBytesTotal
+		{
+			get { lock(this) { return asyncBytesTotal; } }
+			set
+			{
+				lock(this)
+				{
+					asyncBytesTotal = value;
 				}
 			}
 		}

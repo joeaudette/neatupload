@@ -247,7 +247,7 @@ function NeatUploadForm(formElem, postBackID)
 				// asp:ScriptManager moves form.onsubmit into an event handler and sets form.onsubmit=null.
 				// That means that we can't know the value that the orign form.onsubmit returned.  As a 
 				// workaround, we check Page_IsValid which validators will set.
-				if (Page_IsValid != "undefined" && !Page_IsValid) 
+				if (typeof(Page_IsValid) != "undefined" && !Page_IsValid) 
 				    return false;
 				f.debugMessage("Calling NeatUpload_OnSubmit");
 				return f.FormElem.NeatUpload_OnSubmit();
@@ -764,6 +764,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	this.PostBackIDQueryParam = postBackIDQueryParam;
 	this.UploadScript = uploadScript;
 	this.UploadParams = uploadParams;
+	this.FilesToUpload = [];
 	var numf = this;
 	window.onload = function() {
 		numf.Swfu = new SWFUpload({
@@ -791,12 +792,18 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	});
 
 	var inputFile = document.getElementById(this.ClientID);
-	this.NumAsyncFilesField = inputFile.nextSibling;
+	this.AsyncFileSizesField = inputFile.nextSibling;
 	
 	// Hookup the upload trigger.
 	nuf.AddSubmitHandler(true, function () {
 	    if (numf.IsFlashLoaded && numf.Swfu)
 	    {
+	    	var fileSizes = [];
+	    	for (var i = 0; i < numf.FilesToUpload.length; i++)
+	    	{
+	    		fileSizes[i] = numf.FilesToUpload[i].size;
+	    	}
+	    	numf.AsyncFileSizesField.value = fileSizes.join(" ");
 		    numf.Swfu.startUpload();
 		}
 		return true;
@@ -814,7 +821,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	nuf.AddGetFileCountCallback(function () {
 	    if (numf.IsFlashLoaded && numf.Swfu)
 	    {
-    		return numf.NumAsyncFilesField.value;
+    		return numf.FilesToUpload.length;
     	}
     	else
     	{
@@ -847,7 +854,7 @@ NeatUploadMultiFile.prototype.debugMessage = NeatUploadConsole.debugMessage;
 NeatUploadMultiFile.prototype.Controls = new Object();
 
 NeatUploadMultiFile.prototype.FileQueued = function (file) {
-	this.NumAsyncFilesField.value++;
+	this.FilesToUpload.push(file);
 	var inputFile = document.getElementById(this.ClientID);
 	var span = document.createElement('span');
 	span.innerHTML = file.name + '<br/>';
@@ -855,11 +862,26 @@ NeatUploadMultiFile.prototype.FileQueued = function (file) {
 };
 
 NeatUploadMultiFile.prototype.QueueCancelled = function (file) {
-	this.NumAsyncFilesField.value = 0;
+	this.FilesToUpload = [];
 };
 
 NeatUploadMultiFile.prototype.FileCancelled = function (file) {
-	this.NumAsyncFilesField.value = this.NumAsyncFilesField.value - 1;
+	var i, fileIndex = -1;
+	for (i = 0; i < this.FilesToUpload.length; i++)
+	{
+		if (this.FilesToUpload[i].id == file.id)
+		{
+			fileIndex = i;
+			break;
+		}
+	}
+	if (fileIndex == -1)
+	{
+		this.debugMessage("WARN: FileCancelled can not find file: ");
+		this.debugMessage(file);
+		return;
+	}
+	this.FilesToUpload.splice(fileIndex, 1);
 };
 
 

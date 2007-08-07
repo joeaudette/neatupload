@@ -1,12 +1,10 @@
-Pass total async size like we pass num async files.  Use that to make progress bar show total progress
-instead of per-file progress.
-Allow files to be deleted from queue.
+Make progress bar correct when more than one MultiFile on a form.
 Non-flash fallback for MultiFile.
-Allow per-file progress to be displayed when Flash is being used.
+Allow files to be deleted from queue.
 Allow some HTML (e.g. a help link) to be displayed only when Flash is being used. 
 
-Hide/stop progress bar when an error occurs (eg upload too large).  Requires using javascript to 
-add postBackID to the action query string.
+Allow per-file progress to be displayed when Flash is being used.
+
 Target progress bar to a frame
 Multi-file
 Zip files

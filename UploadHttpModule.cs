@@ -349,7 +349,7 @@ namespace Brettle.Web.NeatUpload
             if (uploadContext == null)
             {
                 // If a FilteringWorkerRequest was not used, but the request contains the PostBackIDQueryParam, 
-                // then create and register an UploadContext.  This occurs the module disabled, 
+                // then create and register an UploadContext.  This occurs when the module disabled, 
                 // this is not a form/multipart POST request, etc.  This allows ProgressBars
                 // to be used for pages where no upload is occuring.
                 uploadContext = CreateUploadContextFromQueryString();

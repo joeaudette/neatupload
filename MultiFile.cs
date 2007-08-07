@@ -326,10 +326,10 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
 			writer.RenderEndTag(); // input type="file"
 
 			writer.AddAttribute(HtmlTextWriterAttribute.Type, "hidden");
-			writer.AddAttribute(HtmlTextWriterAttribute.Name, UploadContext.NumAsyncFilesNamePrefix + this.UniqueID);
-			writer.AddAttribute(HtmlTextWriterAttribute.Value, "0");				
+			writer.AddAttribute(HtmlTextWriterAttribute.Name, UploadContext.AsyncFileSizesNamePrefix + this.UniqueID);
+			writer.AddAttribute(HtmlTextWriterAttribute.Value, "");				
 			writer.RenderBeginTag(HtmlTextWriterTag.Input);
-			writer.RenderEndTag(); // input type="hidden" name="NeatUploadNumAsyncFiles_..." value="0"
+			writer.RenderEndTag(); // input type="hidden" name="NeatUploadAsyncFileSizes_..." value=""
 
 			if (Config.Current.UseHttpModule)
 			{
