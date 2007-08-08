@@ -46,9 +46,8 @@ namespace Brettle.Web.NeatUpload
 		// The hidden form fields that contain per-control StorageConfig info have names which start with:
 		internal const string ConfigNamePrefix = "NeatUploadConfig_";
 		
-		// The hidden form fields that contain the sizes of async files to expect per-control have names
-		// which start with:
-		internal const string AsyncFileSizesNamePrefix = "NeatUploadAsyncFilesSizes_";
+		// The hidden form field that contain the sizes files to expect
+		internal const string FileSizesName = "NeatUploadFileSizes";
 
 		internal static string NameToConfigName(string name)
 		{
@@ -121,7 +120,7 @@ namespace Brettle.Web.NeatUpload
 				
 		internal UploadedFileCollection Files = new UploadedFileCollection();
 		
-		internal long[] AsyncFileSizes = null;
+		internal long[] FileSizes = null;
 		internal int NumAsyncFilesReceived = 0;
 
 		private string postBackID;
@@ -209,7 +208,7 @@ namespace Brettle.Web.NeatUpload
 					ctxInSession.CurrentFileName = CurrentFileName;
 					ctxInSession.ProgressInfoByID = ProgressInfoByID;
 					ctxInSession.Files = Files;
-					ctxInSession.AsyncFileSizes = AsyncFileSizes;
+					ctxInSession.FileSizes = FileSizes;
 					ctxInSession.NumAsyncFilesReceived = NumAsyncFilesReceived;
 					ctxInSession.RegisterPostBack(PostBackID);
 				}
@@ -253,7 +252,7 @@ namespace Brettle.Web.NeatUpload
 				CurrentFileName = ctxInSession.CurrentFileName;
 				ProgressInfoByID = ctxInSession.ProgressInfoByID;
 				Files = ctxInSession.Files;
-				AsyncFileSizes = ctxInSession.AsyncFileSizes;
+				FileSizes = ctxInSession.FileSizes;
 				NumAsyncFilesReceived = ctxInSession.NumAsyncFilesReceived;
 			}
 		}

@@ -153,7 +153,7 @@ function NeatUploadForm(formElem, postBackID)
 	this.TriggerIDs = new Object();
 	this.TriggerIDs.NeatUpload_length = 0;
 	this.OnNonuploadHandlers = new Array();
-	this.GetFileCountCallbacks = new Array();
+	this.GetFileSizesCallbacks = new Array();
 	
 	// Add a hook to call our own unload handler(s) which do things like restore the original on submit handlers
 	this.OnUnloadHandlers = new Array();	
@@ -298,8 +298,18 @@ function NeatUploadForm(formElem, postBackID)
 		}, true);
 	}
 
+	// Add a hidden field at the beginning of the form that will be used to pass the sizes of all files to be
+	// uploaded (-1 for each file where that can't be determined)
+	var fileSizesField = document.createElement("input");
+	fileSizesField.type = "hidden"
+	fileSizesField.name = "NeatUploadFileSizes";
+	fileSizesField.value = "";
+	f.FormElem.insertBefore(fileSizesField, f.FormElem.firstChild);
+	f.FileSizesField = fileSizesField;
+
 	this.debugMessage("Adding submitting handler");	
 	this.AddSubmittingHandler(function () {
+		f.FileSizesField.value = f.GetFileSizes().join(" ");
 		f.SubmitCount++;
 		var url = f.FormElem.getAttribute('action');
 		url = f.ChangePostBackIDInUrl(url, NeatUploadForm.prototype.PostBackIDQueryParam);
@@ -481,17 +491,17 @@ NeatUploadForm.prototype.OnNonupload = function(elem)
 	return true;
 };
 
-NeatUploadForm.prototype.AddGetFileCountCallback = function(callback)
+NeatUploadForm.prototype.AddGetFileSizesCallback = function(callback)
 {
-	this.GetFileCountCallbacks.push(callback);
+	this.GetFileSizesCallbacks.push(callback);
 };
 
-NeatUploadForm.prototype.GetFileCount = function(elem)
+NeatUploadForm.prototype.GetFileSizes = function(elem)
 {
-	var fileCount = 0;
-	for (var i=0; i < this.GetFileCountCallbacks.length; i++)
+	var fileSizes = [];
+	for (var i=0; i < this.GetFileSizesCallbacks.length; i++)
 	{
-		fileCount += this.GetFileCountCallbacks[i].call(elem);
+		fileSizes = fileSizes.concat(this.GetFileSizesCallbacks[i].call(elem));
 	}
 
 	var inputElems = this.FormElem.getElementsByTagName("input");
@@ -502,7 +512,7 @@ NeatUploadForm.prototype.GetFileCount = function(elem)
 		{
 			if (inputElem.value && inputElem.value.length > 0)
 			{
-				fileCount++;
+				fileSizes.push(-1);
 
 				// If the browser really is IE on Windows, return false if the path is not absolute because
 				// IE will not actually submit the form if any file value is not an absolute path.  If IE doesn't
@@ -521,14 +531,14 @@ NeatUploadForm.prototype.GetFileCount = function(elem)
 							if (typeof(NeatUpload_HandleIE6InvalidPath) != 'undefined'
 							    && NeatUpload_HandleIE6InvalidPath != null)
 								NeatUpload_HandleIE6InvalidPath(inputElem);
-							return 0;
+							return [];
 						}
 					}
 				}
 			}
 		}
 	}
-	return fileCount;
+	return fileSizes;
 };
 
 NeatUploadForm.prototype.GetFor = function (elem, postBackID)
@@ -654,7 +664,7 @@ NeatUploadPB.prototype.EvaluateAutoStartCondition = function()
 
 NeatUploadPB.prototype.IsFilesToUpload = function()
 {
-	var isFilesToUpload = (this.UploadForm.GetFileCount() > 0);
+	var isFilesToUpload = (this.UploadForm.GetFileSizes().length > 0);
 	return isFilesToUpload; 
 };
 
@@ -790,20 +800,11 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 		numf.Swfu.setUploadParams(numf.UploadParams);
 		numf.Swfu.updateUploadStrings();
 	});
-
-	var inputFile = document.getElementById(this.ClientID);
-	this.AsyncFileSizesField = inputFile.nextSibling;
 	
 	// Hookup the upload trigger.
 	nuf.AddSubmitHandler(true, function () {
 	    if (numf.IsFlashLoaded && numf.Swfu)
 	    {
-	    	var fileSizes = [];
-	    	for (var i = 0; i < numf.FilesToUpload.length; i++)
-	    	{
-	    		fileSizes[i] = numf.FilesToUpload[i].size;
-	    	}
-	    	numf.AsyncFileSizesField.value = fileSizes.join(" ");
 		    numf.Swfu.startUpload();
 		}
 		return true;
@@ -817,20 +818,26 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
     	}
 	});
 
-	// Add the GetFileCount callback.
-	nuf.AddGetFileCountCallback(function () {
+	// Add the GetFileSizes callback.
+	nuf.AddGetFileSizesCallback(function () {
 	    if (numf.IsFlashLoaded && numf.Swfu)
 	    {
-    		return numf.FilesToUpload.length;
+	    	var fileSizes = [];
+	    	for (var i = 0; i < numf.FilesToUpload.length; i++)
+	    	{
+	    		fileSizes[i] = numf.FilesToUpload[i].size;
+	    	}
+    		return fileSizes;
     	}
     	else
     	{
-    	    return (inputFile.value != null && inputFile.value != "") ? 1 : 0;
+			var inputFile = document.getElementById(numf.ClientID);
+    	    return (inputFile.value != null && inputFile.value != "") ? [-1] : [];
     	}
 	});
 
 	// Make clicking 'Browse...' on the <input type='file'> call SWFUpload.browse().
-	inputFile.onclick = function(ev) {
+	document.getElementById(numf.ClientID).onclick = function(ev) {
 	    if (numf.IsFlashLoaded && numf.Swfu)
 	    {
 		    numf.Swfu.browse();

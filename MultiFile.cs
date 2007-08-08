@@ -325,12 +325,6 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
 			writer.RenderBeginTag(HtmlTextWriterTag.Input);
 			writer.RenderEndTag(); // input type="file"
 
-			writer.AddAttribute(HtmlTextWriterAttribute.Type, "hidden");
-			writer.AddAttribute(HtmlTextWriterAttribute.Name, UploadContext.AsyncFileSizesNamePrefix + this.UniqueID);
-			writer.AddAttribute(HtmlTextWriterAttribute.Value, "");				
-			writer.RenderBeginTag(HtmlTextWriterTag.Input);
-			writer.RenderEndTag(); // input type="hidden" name="NeatUploadAsyncFileSizes_..." value=""
-
 			if (Config.Current.UseHttpModule)
 			{
 				// The constant strings below are broken apart so that you couldn't just search for the text and
