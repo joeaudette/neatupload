@@ -261,8 +261,8 @@ window.close();
 						FractionComplete = this.UploadContext.FractionComplete;
 						ProcessingHtml = GetResourceString("ProcessingMessage");
 					}
-					BytesRead = this.UploadContext.SyncBytesRead + this.UploadContext.AsyncBytesRead;
-					BytesTotal = this.UploadContext.SyncBytesTotal + this.UploadContext.AsyncBytesTotal;
+					BytesRead = this.UploadContext.BytesRead;
+					BytesTotal = this.UploadContext.BytesTotal;
 					BytesPerSec = this.UploadContext.BytesPerSec;
 					if (this.UploadContext.Exception is UploadException)
 					{

@@ -195,7 +195,6 @@ namespace Brettle.Web.NeatUpload
 				if (ctxInSession.Status != UploadStatus.Cancelled)
 				{
 					ctxInSession.FileBytesRead = FileBytesRead;
-					ctxInSession.BytesRead = BytesRead;
 					ctxInSession.SyncBytesRead = SyncBytesRead;
 					ctxInSession.AsyncBytesRead = AsyncBytesRead;
 					ctxInSession.SyncBytesTotal = SyncBytesTotal;
@@ -239,7 +238,6 @@ namespace Brettle.Web.NeatUpload
 			lock (ctxInSession)
 			{
 				FileBytesRead = ctxInSession.FileBytesRead;
-				BytesRead = ctxInSession.BytesRead;
 				SyncBytesRead = ctxInSession.SyncBytesRead;
 				AsyncBytesRead = ctxInSession.AsyncBytesRead;
 				SyncBytesTotal = ctxInSession.SyncBytesTotal;
@@ -330,11 +328,11 @@ namespace Brettle.Web.NeatUpload
 			{
 				lock (this)
 				{
-					if (ContentLength <= 0)
+					if (BytesTotal <= 0)
 					{
 						return 0;
 					}
-					return (double)(SyncBytesRead + AsyncBytesRead) / (SyncBytesTotal + AsyncBytesTotal); 
+					return (double) BytesRead / BytesTotal; 
 				}
 			}
 		}
@@ -360,17 +358,9 @@ namespace Brettle.Web.NeatUpload
 			set { lock(this) { fileBytesRead = value; } }
 		}
 
-		private long bytesRead;
 		internal long BytesRead
 		{
-			get { lock(this) { return bytesRead; } }
-			set
-			{
-				lock(this)
-				{
-					bytesRead = value;
-				}
-			}
+			get { lock(this) { return SyncBytesRead + AsyncBytesRead; } }
 		}
 
 		private long syncBytesRead;
@@ -397,6 +387,11 @@ namespace Brettle.Web.NeatUpload
 					asyncBytesRead = value;
 				}
 			}
+		}
+
+		internal long BytesTotal
+		{
+			get { lock(this) { return SyncBytesTotal + AsyncBytesTotal; } }
 		}
 
 		private long syncBytesTotal;
@@ -527,13 +522,13 @@ namespace Brettle.Web.NeatUpload
 			{
 				lock(this) 
 				{
-					if (BytesRead == 0 || ContentLength < 0)
+					if (BytesRead == 0 || BytesTotal < 0)
 					{
 						return TimeSpan.MaxValue;
 					}
 					else
 					{
-						double bytesRemaining = ((double)(ContentLength - BytesRead));
+						double bytesRemaining = ((double)(BytesTotal - BytesRead));
 						if (log.IsDebugEnabled) log.Debug("BytesRead = " + BytesRead + " bytesRemaining = " + bytesRemaining);
 						double ticksRemaining = bytesRemaining * TimeElapsed.Ticks;
 						return new TimeSpan((long)(ticksRemaining/BytesRead));

@@ -218,7 +218,7 @@ namespace Brettle.Web.NeatUpload
             if (uploadContext != null && Config.Current.MaxUploadRate > 0)
             {
                 double desiredSecs 
-                	= ((double)uploadContext.SyncBytesRead + uploadContext.AsyncBytesRead) / Config.Current.MaxUploadRate;
+                	= ((double)uploadContext.BytesRead) / Config.Current.MaxUploadRate;
                 secsToWait = Math.Max(0, desiredSecs - uploadContext.TimeElapsed.TotalSeconds);
             }
 
@@ -281,7 +281,6 @@ namespace Brettle.Web.NeatUpload
 				writePos += bytesRead;
 				totalBytesRead += bytesRead;
 				grandTotalBytesRead += bytesRead;
-				uploadContext.BytesRead = grandTotalBytesRead;
 				if (!uploadContext.IsAsyncRequest)
 				{
 					uploadContext.SyncBytesRead = grandTotalBytesRead;

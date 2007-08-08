@@ -1,4 +1,3 @@
-Make progress bar correct when more than one MultiFile on a form.
 Non-flash fallback for MultiFile.
 Allow files to be deleted from queue.
 Allow some HTML (e.g. a help link) to be displayed only when Flash is being used. 

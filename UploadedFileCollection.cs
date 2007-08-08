@@ -126,9 +126,9 @@ namespace Brettle.Web.NeatUpload
 					   && (bytesRead = inStream.Read(buf, 0, buf.Length)) > 0)
 				{
 					outStream.Write(buf, 0, bytesRead);
-					ctx.BytesRead += bytesRead;
+					ctx.SyncBytesRead += bytesRead;
 				}
-				ctx.BytesRead = ctx.ContentLength;
+				ctx.SyncBytesRead = ctx.BytesTotal;
 				ctx.Status = UploadStatus.Completed;
 			}
 			finally
