@@ -106,6 +106,32 @@ if (typeof(SWFUpload) != "undefined" && SWFUpload && SWFUpload.prototype)
 	SWFUpload.prototype.debugMessage = NeatUploadConsole.debugMessage;
 }
 
+function NeatUploadCloneInputFile (inputFile)
+{
+	var newInputFile = document.createElement('input');
+	for (var a=0; a < inputFile.attributes.length; a++)
+	{
+		var attr = inputFile.attributes.item(a); 
+		if (! attr.specified)
+			continue;
+		var attrName = attr.name.toLowerCase();
+		if (attrName != 'type' && attrName != 'value')
+		{
+			if (attrName == 'style' && newInputFile.style && newInputFile.style.cssText)
+				newInputFile.style.cssText = attr.value;
+			else if (attrName == 'class') // Needed for IE because 'class' is a JS keyword
+				newInputFile.className = attr.value;
+			else if (attrName == 'for') // Needed for IE because 'for' is a JS keyword
+				newInputFile.htmlFor = attr.value;
+			else
+				newInputFile.setAttribute(attr.name, attr.value);
+		}
+	}
+	newInputFile.onchange = inputFile.onchange;
+	newInputFile.setAttribute('type', 'file');
+	return newInputFile;
+}
+
 if (!Array.prototype.push)
 {
 	Array.prototype.push = function() {
@@ -681,26 +707,7 @@ NeatUploadPB.prototype.ClearFileInputs = function(elem)
 		{
 			try
 			{
-				var newInputFile = document.createElement('input');
-				for (var a=0; a < inputFile.attributes.length; a++)
-				{
-					var attr = inputFile.attributes.item(a); 
-					if (! attr.specified)
-						continue;
-					var attrName = attr.name.toLowerCase();
-					if (attrName != 'type' && attrName != 'value')
-					{
-						if (attrName == 'style' && newInputFile.style && newInputFile.style.cssText)
-							newInputFile.style.cssText = attr.value;
-						else if (attrName == 'class') // Needed for IE because 'class' is a JS keyword
-							newInputFile.className = attr.value;
-						else if (attrName == 'for') // Needed for IE because 'for' is a JS keyword
-							newInputFile.htmlFor = attr.value;
-						else
-							newInputFile.setAttribute(attr.name, attr.value);
-					}
-				}
-				newInputFile.setAttribute('type', 'file');
+				var newInputFile = NeatUploadCloneInputFile(inputFile);
 				inputFile.parentNode.replaceChild(newInputFile, inputFile);
 			}
 			catch (ex)
@@ -764,18 +771,36 @@ function NeatUploadMultiFileCreate(clientID, postBackID, appPath, uploadScript, 
 
 function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBackIDQueryParam, uploadParams)
 {
-	// Only use SWFUpload in non-Mozilla browsers because bugs in the Firefox Flash 9 plugin cause it to
-	// crash the browser on Linux and send IE cookies on Windows.  
-	// TODO: Workaround cookies issue.
-	if (navigator.plugins && navigator.mimeTypes && navigator.mimeTypes.length) 
-		return null;
+	var numf = this;
 	this.ClientID = clientID;
 	this.AppPath = appPath;
 	this.PostBackIDQueryParam = postBackIDQueryParam;
 	this.UploadScript = uploadScript;
 	this.UploadParams = uploadParams;
 	this.FilesToUpload = [];
-	var numf = this;
+
+	// If no Flash, the following onchange handler will make it appear that multiple files can be selected from
+	// one file input by just repeated clicking Browse... and selecting a file.
+	// In reality, each time a file is selected, the file input is hidden and a new empty clone is created to
+	// take its place.
+	document.getElementById(numf.ClientID).onchange = function(ev) {
+	    if (numf.IsFlashLoaded && numf.Swfu)
+	    {
+		    return true;
+        }
+		var newInputFile = NeatUploadCloneInputFile(this);
+		this.parentNode.insertBefore(newInputFile, this.nextSibling);
+		this.style.display = 'none';
+		numf.FileQueued({ name: this.value, size: -1});		
+        return true;
+	};	
+
+	// Only use SWFUpload in non-Mozilla browsers because bugs in the Firefox Flash 9 plugin cause it to
+	// crash the browser on Linux and send IE cookies on Windows.  
+	// TODO: Workaround cookies issue.
+	if (navigator.plugins && navigator.mimeTypes && navigator.mimeTypes.length) 
+		return;
+
 	window.onload = function() {
 		numf.Swfu = new SWFUpload({
 				debug : numf.debug_enabled,
@@ -831,8 +856,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
     	}
     	else
     	{
-			var inputFile = document.getElementById(numf.ClientID);
-    	    return (inputFile.value != null && inputFile.value != "") ? [-1] : [];
+    		return [];
     	}
 	});
 
