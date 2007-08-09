@@ -153,8 +153,11 @@ namespace Brettle.Web.NeatUpload
 		{
 			// We register the on submit statement here in hopes that it will be the last on submit statement.
 			// Other on submit statements will generally be added during PreRender.
-			HtmlControl formControl = GetFormControl(this);
-			this.Page.RegisterOnSubmitStatement(formControl.UniqueID + "-OnSubmitStatement", "NeatUpload_OnSubmitForm_" + formControl.ClientID + @"();");
+			if (!IsDesignTime && Config.Current.UseHttpModule)
+			{
+				HtmlControl formControl = GetFormControl(this);
+				this.Page.RegisterOnSubmitStatement(formControl.UniqueID + "-OnSubmitStatement", "NeatUpload_OnSubmitForm_" + formControl.ClientID + @"();");
+			}
 			return base.SaveViewState();
 		}
 		
