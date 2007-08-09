@@ -256,7 +256,12 @@ namespace Brettle.Web.NeatUpload
 		internal long MaxNormalRequestLength = 4096 * 1024;
 		internal long MaxRequestLength = 2097151 * 1024;
 		internal int MaxUploadRate = -1;
-		internal bool UseHttpModule = UploadHttpModule.IsInited;
+        private bool _UseHttpModule = UploadHttpModule.IsInited;
+        internal bool UseHttpModule
+        {
+            set { _UseHttpModule = value; }
+            get { return _UseHttpModule && CanGetWorkerRequest; }
+        }
 		internal ResourceManager ResourceManager = null;
 		internal DirectoryInfo DebugDirectory = null;
 		internal byte[] ValidationKey = Config.DefaultValidationKey;
@@ -265,7 +270,52 @@ namespace Brettle.Web.NeatUpload
 		
 		private static byte[] DefaultValidationKey = null;
 		private static byte[] DefaultEncryptionKey = null;
-		
+
+        private bool CanGetWorkerRequestInited = false;
+        private bool _CanGetWorkerRequest = false;
+        private bool CanGetWorkerRequest
+        {
+            get
+            {
+                if (CanGetWorkerRequestInited)
+                {
+                    return _CanGetWorkerRequest;
+                }
+                if (HttpContext.Current == null) return false;
+                HttpApplicationState appState = HttpContext.Current.Application;
+                if (appState == null) return false;
+                object canGetWorkerRequest = appState["NeatUpload_CanGetWorkerRequest"];
+                if (canGetWorkerRequest != null)
+                {
+                    _CanGetWorkerRequest = (bool)canGetWorkerRequest;
+                    CanGetWorkerRequestInited = true;
+                }
+                else
+                {
+                    appState["NeatUpload_CanGetWorkerRequest"] = _CanGetWorkerRequest = false;
+                    CanGetWorkerRequestInited = true;
+                    try
+                    {
+                        UploadHttpModule.GetCurrentWorkerRequest();
+                        appState["NeatUpload_CanGetWorkerRequest"] = _CanGetWorkerRequest = true;
+                    }
+                    catch (System.Security.SecurityException secEx)
+                    {
+                        // Trust level does not allow access to HttpWorkerRequest.
+                        // Prior to .NET 2.0, ASP.NET stored requests in memory
+                        // so just disabling the module could open the site to denial of service attacks.
+                        // To avoid that we throw an explanatory exception in that case.
+                        if (System.Environment.Version.Major < 2)
+                        {
+                            throw new System.Configuration.ConfigurationException("Can't use NeatUpload's UploadHttpModule at this trust level outside the GAC.  Either install NeatUpload in the GAC, or use full trust, or disable the UploadHttpModule.  If you disable the UploadHttpModule, ASP.NET will hold uploads in memory and the ProgressBar will not display.", secEx);
+                        }
+                    }
+                }
+                return _CanGetWorkerRequest;
+            }
+        }
+
+
 		static Config()
 		{
 			using (KeyedHashAlgorithm macAlg = KeyedHashAlgorithm.Create())
