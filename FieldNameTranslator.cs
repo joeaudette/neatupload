@@ -39,7 +39,7 @@ namespace Brettle.Web.NeatUpload
 		*/
 		internal FieldNameTranslator()
 		{
-			if (!UploadHttpModule.IsInited)
+			if (!Config.Current.UseHttpModule)
 				return;
 			HttpWorkerRequest worker = UploadHttpModule.GetCurrentWorkerRequest();
             if (worker != null)
