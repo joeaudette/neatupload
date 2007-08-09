@@ -153,8 +153,11 @@ namespace Brettle.Web.NeatUpload
 		{
 			// We register the on submit statement here in hopes that it will be the last on submit statement.
 			// Other on submit statements will generally be added during PreRender.
-			HtmlControl formControl = GetFormControl(this);
-			this.Page.RegisterOnSubmitStatement(formControl.UniqueID + "-OnSubmitStatement", "NeatUpload_OnSubmitForm_" + formControl.ClientID + @"();");
+			if (!IsDesignTime && Config.Current.UseHttpModule)
+			{
+				HtmlControl formControl = GetFormControl(this);
+				this.Page.RegisterOnSubmitStatement(formControl.UniqueID + "-OnSubmitStatement", "NeatUpload_OnSubmitForm_" + formControl.ClientID + @"();");
+			}
 			return base.SaveViewState();
 		}
 		
@@ -707,7 +710,7 @@ function NeatUpload_IsFilesToUpload(id)
 					var ua = navigator.userAgent.toLowerCase();
 					var msiePosition = ua.indexOf('msie');
 					if (msiePosition != -1 && typeof(ActiveXObject) != 'undefined' && ua.indexOf('mac') == -1
-					    && ua.charAt(msiePosition + 5) < 7)
+					    && ua.charAt(msiePosition + 5) < 8)
 					{
 						var re = new RegExp('^(\\\\\\\\[^\\\\]|([a-zA-Z]:)?\\\\).*');
 						var match = re.exec(inputElem.value);
