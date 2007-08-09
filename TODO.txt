@@ -1,5 +1,10 @@
-Allow files to be deleted from queue.
-Allow some HTML (e.g. a help link) to be displayed only when Flash is being used. 
+Support FileAdded handlers that takes the file object (with a Delete() function) as a parameter and returns 
+a handler to be called when the file is deleted.  Those handlers would be used to update the file list.
+Support Init handler which could be used to add the FileAdded handler as well as the element(s) for displaying
+the file list?
+Add DeleteAll() function which just calls Delete() on all the files.
+Support FlashLoaded handler that could show extra text like "Use Shift-click or Cntrl-click to select multiple file". 
+
 
 Allow per-file progress to be displayed when Flash is being used.
 

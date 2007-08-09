@@ -791,7 +791,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 		var newInputFile = NeatUploadCloneInputFile(this);
 		this.parentNode.insertBefore(newInputFile, this.nextSibling);
 		this.style.display = 'none';
-		numf.FileQueued({ name: this.value, size: -1});		
+		numf.FileQueued({ name: this.value, size: -1, inputFileElem: this});		
         return true;
 	};	
 
@@ -856,7 +856,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
     	}
     	else
     	{
-    		return [];
+    		return []; // NeatUploadForm code handles all <input type=file> elements we might have added
     	}
 	});
 
@@ -885,11 +885,34 @@ NeatUploadMultiFile.prototype.debugMessage = NeatUploadConsole.debugMessage;
 NeatUploadMultiFile.prototype.Controls = new Object();
 
 NeatUploadMultiFile.prototype.FileQueued = function (file) {
+	var numf = this;
 	this.FilesToUpload.push(file);
-	var inputFile = document.getElementById(this.ClientID);
+
 	var span = document.createElement('span');
-	span.innerHTML = file.name + '<br/>';
+	var link = document.createElement('a');
+	link.setAttribute('href', '#');
+	link.onclick = function () { file.Delete(); return false; }
+	link.appendChild(document.createTextNode('X'));
+	span.appendChild(link);
+	span.appendChild(document.createTextNode(' ' + file.name));
+	span.appendChild(document.createElement('br'));
+
+	var inputFile = document.getElementById(this.ClientID);
 	inputFile.parentNode.insertBefore(span, inputFile);
+
+	var nodeToRemove = span;
+	file.Delete = function() {
+	    if (numf.IsFlashLoaded && numf.Swfu)
+	    {
+			numf.Swfu.cancelUpload(this.id);
+		}
+		else
+		{
+			this.inputFileElem.parentNode.removeChild(this.inputFileElem);
+			numf.FileCancelled(this);
+		}
+		nodeToRemove.parentNode.removeChild(nodeToRemove);
+	}
 };
 
 NeatUploadMultiFile.prototype.QueueCancelled = function (file) {
