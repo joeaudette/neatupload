@@ -27,7 +27,7 @@ namespace Brettle.Web.NeatUpload
 	public class UploadTooLargeException : UploadException
 	{			
 		public UploadTooLargeException(long maxRequestLength, long requestLength) 
-			: base(413, String.Format(Config.Current.ResourceManager.GetString("UploadTooLargeMessageFormat"), maxRequestLength, requestLength))
+			: base(413, String.Format(Config.Current.GetResourceString("UploadTooLargeMessageFormat"), maxRequestLength, requestLength))
 		{
 			MaxRequestLength = maxRequestLength;
 			RequestLength = requestLength;

@@ -63,7 +63,7 @@ namespace Brettle.Web.NeatUpload
 		
 		protected virtual string GetResourceString(string resourceName)
 		{
-			return Config.Current.ResourceManager.GetString(resourceName);
+			return Config.Current.GetResourceString(resourceName);
 		}
 		
 		protected string FormatCount(long count)

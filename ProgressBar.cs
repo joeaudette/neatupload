@@ -166,7 +166,7 @@ namespace Brettle.Web.NeatUpload
 				{
 					Page.RegisterClientScriptBlock("NeatUploadProgressBar", @"
 	<script type='text/javascript' language='javascript'>
-	NeatUploadPB.prototype.ClearFileNamesAlert = '" +  Config.Current.ResourceManager.GetString("ClearFileNamesAlert") + @"';
+	NeatUploadPB.prototype.ClearFileNamesAlert = '" +  Config.Current.GetResourceString("ClearFileNamesAlert") + @"';
 	// -->
 	</script>
 	");

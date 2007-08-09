@@ -27,7 +27,7 @@ namespace Brettle.Web.NeatUpload
 	public class NonfilePortionTooLargeException : UploadException
 	{			
 		public NonfilePortionTooLargeException(long maxNormalRequestLength, long normalRequestLength) 
-			: base(413, String.Format(Config.Current.ResourceManager.GetString("NonfilePortionTooLargeMessageFormat"), maxNormalRequestLength, normalRequestLength))
+			: base(413, String.Format(Config.Current.GetResourceString("NonfilePortionTooLargeMessageFormat"), maxNormalRequestLength, normalRequestLength))
 		{
 			MaxNormalRequestLength = maxNormalRequestLength;
 			NormalRequestLength = normalRequestLength;
