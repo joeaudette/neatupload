@@ -713,7 +713,7 @@ namespace Brettle.Web.NeatUpload
 			long[] fileSizes = uploadContext.FileSizes;
 			long asyncBytesTotal = 0;
 			int numAsyncFiles = 0;
-			for (int i = 0; i < fileSizes.Length; i++)
+			for (int i = 0; fileSizes != null && i < fileSizes.Length; i++)
 			{
 				if (fileSizes[i] != -1)
 				{
