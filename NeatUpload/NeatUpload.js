@@ -750,7 +750,9 @@ function NeatUploadInputFile(clientID, postBackID)
 	var nuf = NeatUploadForm.prototype.GetFor(document.getElementById(this.ClientID), postBackID);
 	nuf.AddSubmittingHandler(function () {
 		var inputFile = document.getElementById(nuif.ClientID);
-		inputFile.setAttribute('name', 'NeatUpload_' + nuf.GetPostBackID() + '-' + inputFile.getAttribute('id'));
+		var name = inputFile.getAttribute('name');
+		name = name.replace(/^[^-]+/, 'NeatUpload_' + nuf.GetPostBackID())
+		inputFile.setAttribute('name', name);
 	});
 }
 
@@ -820,7 +822,9 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	var nuf = NeatUploadForm.prototype.GetFor(document.getElementById(this.ClientID), postBackID);
 	nuf.AddSubmittingHandler(function () {
 		var inputFile = document.getElementById(numf.ClientID);
-		inputFile.setAttribute('name', 'NeatUpload_' + nuf.GetPostBackID() + '-' + inputFile.getAttribute('id'));
+		var name = inputFile.getAttribute('name');
+		name = name.replace(/^[^-]+/, 'NeatUpload_' + nuf.GetPostBackID())
+		inputFile.setAttribute('name', name);
 		numf.UploadParams[numf.PostBackIDQueryParam] = nuf.GetPostBackID();
 		numf.Swfu.setUploadParams(numf.UploadParams);
 		numf.Swfu.updateUploadStrings();
