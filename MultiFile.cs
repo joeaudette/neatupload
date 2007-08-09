@@ -74,7 +74,7 @@ namespace Brettle.Web.NeatUpload
 					UploadedFileCollection allFiles = UploadHttpModule.Files;
 					for (int i = 0; i < allFiles.Count; i++)
 					{
-						if (allFiles.GetKey(i) == this.ClientID && allFiles[i].IsUploaded)
+						if (allFiles.GetKey(i) == this.UniqueID && allFiles[i].IsUploaded)
 						{
 							_files.Add(_files.Count.ToString(), allFiles[i]);
 						}
