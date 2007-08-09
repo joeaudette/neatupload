@@ -208,6 +208,10 @@ namespace Brettle.Web.NeatUpload
 		private void Application_BeginRequest(object sender, EventArgs e)
 		{
 			if (log.IsDebugEnabled) log.Debug("In Application_BeginRequest");
+			if (!Config.Current.UseHttpModule)
+			{
+				return;
+			}
 			HttpWorkerRequest origWorker = GetCurrentWorkerRequest();
 			if (origWorker == null)
 			{
@@ -216,10 +220,6 @@ namespace Brettle.Web.NeatUpload
 			}
 				
 			if (log.IsDebugEnabled) log.Debug(origWorker.GetType() + " for " + origWorker.GetRawUrl() + " with AspFilterSessionId = " + origWorker.GetUnknownRequestHeader("AspFilterSessionId"));
-			if (!Config.Current.UseHttpModule)
-			{
-				return;
-			}
 			HttpApplication app = sender as HttpApplication;
 			string rawUrl = app.Context.Request.RawUrl;
 			log4net.ThreadContext.Properties["url"] = rawUrl;
