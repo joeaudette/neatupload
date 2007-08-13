@@ -18,6 +18,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 using System;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.SessionState;
@@ -46,7 +47,7 @@ namespace Brettle.Web.NeatUpload
 			if (log.IsDebugEnabled) log.Debug("In AccessSessionPage.OnLoad()");
 			SessionAccessingWorkerRequest worker 
 				= (SessionAccessingWorkerRequest)UploadHttpModule.GetCurrentWorkerRequest();
-			worker.Accessor(Session);
+			worker.Accessor(HttpContext.Current.Session);
 			return;
 		}
 			

@@ -147,7 +147,7 @@ namespace Brettle.Web.NeatUpload
                 // session so that it can be used to pass information between the progress display and the 
                 // upload request.  Apparently the only way to force the session to be created is to put
                 // something in it.
-                if (Page.Session != null
+                if (HttpContext.Current.Session != null
                     && Page.Session.Mode != System.Web.SessionState.SessionStateMode.Off
                     && Page.Session.Count == 0
                     && !Page.Session.IsReadOnly)
