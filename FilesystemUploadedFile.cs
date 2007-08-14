@@ -76,7 +76,20 @@ namespace Brettle.Web.NeatUpload
 		
 		public override bool IsUploaded
 		{
-			get { return (TmpFile != null && (TmpFile.Length > 0 || FileName.Length > 0)); }
+			get 
+            {
+                if (TmpFile == null)
+                {
+                    return false;
+                }
+                if (TmpFile.FullName != (new FileInfo(tmpFileName)).FullName)
+                {
+                    // Was moved so it has clearly been uploaded.  Don't do any other
+                    // checks because it might have since been deleted by the user.
+                    return true;
+                }
+                return (TmpFile != null && (TmpFile.Length > 0 || FileName.Length > 0)); 
+            }
 		}
 
 		public override Stream CreateStream()
