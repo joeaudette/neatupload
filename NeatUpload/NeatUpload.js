@@ -800,14 +800,11 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	// Use the latest postback ID when the form is submitted.
 	var nuf = NeatUploadForm.prototype.GetFor(document.getElementById(this.ClientID), postBackID);
 	nuf.AddSubmittingHandler(function () {
-		nuf.debugMessage("In numf submitting handler");
 		var inputFile = document.getElementById(numf.ClientID);
 		var oldName = inputFile.getAttribute('name');
 		var newName = oldName.replace(/^[^-]+/, 'NeatUpload_' + nuf.GetPostBackID());
-		nuf.debugMessage(oldName + " -> " + newName);
 		for (var n = inputFile.parentNode.firstChild; n; n = n.nextSibling)
 		{
-			nuf.debugMessage(n);
 			if (n.tagName && n.tagName.toLowerCase() == "input" 
 				&& n.getAttribute && n.getAttribute('type') == "file" 
 				&& n.getAttribute('name') == oldName)
