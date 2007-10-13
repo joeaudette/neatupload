@@ -28,6 +28,8 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 using System.Security.Permissions;
+using System.Web.UI.Design;
+using System.Drawing.Design;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -114,6 +116,7 @@ namespace Brettle.Web.NeatUpload
 		/// You may use an absolute or relative URL that refers to a page in the same web application.  If the URL
 		/// starts with "~", the "~" will be replaced with the web application root as returned by
 		/// <see cref="HttpRequest.ApplicationPath"/>.  By default, "~/NeatUpload/Progress.aspx" will be used.</remarks>
+		[Editor(typeof(UrlEditor), typeof(UITypeEditor)), Bindable(true), DefaultValue("~/NeatUpload/Progress.aspx")]
 		public string Url
 		{
 			get { return (string)ViewState["Url"]; }
