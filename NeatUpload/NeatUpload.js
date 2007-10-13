@@ -797,6 +797,32 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
         return true;
 	};	
 
+	// Use the latest postback ID when the form is submitted.
+	var nuf = NeatUploadForm.prototype.GetFor(document.getElementById(this.ClientID), postBackID);
+	nuf.AddSubmittingHandler(function () {
+		nuf.debugMessage("In numf submitting handler");
+		var inputFile = document.getElementById(numf.ClientID);
+		var oldName = inputFile.getAttribute('name');
+		var newName = oldName.replace(/^[^-]+/, 'NeatUpload_' + nuf.GetPostBackID());
+		nuf.debugMessage(oldName + " -> " + newName);
+		for (var n = inputFile.parentNode.firstChild; n; n = n.nextSibling)
+		{
+			nuf.debugMessage(n);
+			if (n.tagName && n.tagName.toLowerCase() == "input" 
+				&& n.getAttribute && n.getAttribute('type') == "file" 
+				&& n.getAttribute('name') == oldName)
+			{
+				n.setAttribute('name', newName);
+			}
+		}
+	    if (numf.IsFlashLoaded && numf.Swfu)
+	    {
+			numf.UploadParams[numf.PostBackIDQueryParam] = nuf.GetPostBackID();
+			numf.Swfu.setUploadParams(numf.UploadParams);
+			numf.Swfu.updateUploadStrings();
+		}
+	});
+	
 	// Only use SWFUpload in non-Mozilla browsers because bugs in the Firefox Flash 9 plugin cause it to
 	// crash the browser on Linux and send IE cookies on Windows.  
 	// TODO: Workaround cookies issue.
@@ -817,18 +843,6 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 				flash_ready_handler : function () { numf.IsFlashLoaded = true; }
 		});
 	};
-	
-	// Use the latest postback ID when the form is submitted.
-	var nuf = NeatUploadForm.prototype.GetFor(document.getElementById(this.ClientID), postBackID);
-	nuf.AddSubmittingHandler(function () {
-		var inputFile = document.getElementById(numf.ClientID);
-		var name = inputFile.getAttribute('name');
-		name = name.replace(/^[^-]+/, 'NeatUpload_' + nuf.GetPostBackID())
-		inputFile.setAttribute('name', name);
-		numf.UploadParams[numf.PostBackIDQueryParam] = nuf.GetPostBackID();
-		numf.Swfu.setUploadParams(numf.UploadParams);
-		numf.Swfu.updateUploadStrings();
-	});
 	
 	// Hookup the upload trigger.
 	nuf.AddSubmitHandler(true, function () {
