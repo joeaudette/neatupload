@@ -764,14 +764,17 @@ NeatUploadInputFile.prototype.Controls = new Object();
 /* NeatUploadMultiFile - JS support for NeatUpload's MultiFile control
 /* ******************************************************************************************* */
 
-function NeatUploadMultiFileCreate(clientID, postBackID, appPath, uploadScript, postBackIDQueryParam, uploadParams)
+function NeatUploadMultiFileCreate(clientID, postBackID, appPath, uploadScript, postBackIDQueryParam, uploadParams,
+									useFlashIfAvailable)
 {
 	NeatUploadMultiFile.prototype.Controls[clientID] 
-		= new NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBackIDQueryParam, uploadParams);
+		= new NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBackIDQueryParam, uploadParams,
+									useFlashIfAvailable);
 	return NeatUploadMultiFile.prototype.Controls[clientID];
 }
 
-function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBackIDQueryParam, uploadParams)
+function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBackIDQueryParam, uploadParams,
+							useFlashIfAvailable)
 {
 	var numf = this;
 	this.ClientID = clientID;
@@ -819,6 +822,10 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 			numf.Swfu.updateUploadStrings();
 		}
 	});
+	
+	// Don't use SWFUpload if Flash support wasn't requested
+	if (!useFlashIfAvailable)
+		return;
 	
 	// Only use SWFUpload in non-Mozilla browsers because bugs in the Firefox Flash 9 plugin cause it to
 	// crash the browser on Linux and send IE cookies on Windows.  

@@ -175,6 +175,22 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 				
+		public bool UseFlashIfAvailable
+		{
+			get
+			{
+				string val = Attributes["UseFlashIfAvailable"];
+				if (val == null)
+					return false;
+				else
+					return Convert.ToBoolean(val);
+			}
+			set
+			{
+				Attributes["UseFlashIfAvailable"] = value.ToString();
+			}
+		}
+
 #warning TODO
 		private UploadStorageConfig _StorageConfig;
 		public UploadStorageConfig StorageConfig
@@ -295,7 +311,8 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
 		'" + AppPath + @"/NeatUpload/AsyncUpload.aspx',
 		'" + Config.Current.PostBackIDQueryParam + @"',
 		{" + Config.Current.PostBackIDQueryParam + @" : '" + FormContext.Current.PostBackID + @"',
-		 NeatUpload_AsyncControlID : '" + this.ClientID + @"'});
+		 NeatUpload_AsyncControlID : '" + this.ClientID + @"'},
+		 " + (UseFlashIfAvailable ? "true" : "false") + @");
 // -->
 </script>");
 			}
