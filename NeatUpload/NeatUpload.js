@@ -112,9 +112,12 @@ function NeatUploadCloneInputFile (inputFile)
 	for (var a=0; a < inputFile.attributes.length; a++)
 	{
 		var attr = inputFile.attributes.item(a); 
-		if (! attr.specified)
-			continue;
 		var attrName = attr.name.toLowerCase();
+		// For some unknown reason IE7 (and perhaps other browsers) always set attr.specified = false for the
+		// "name" attribute if it is set from script (e.g. during an earlier call to this function).  As a 
+		// result, we only skip unspecified attributes other than "name".
+		if (attrName != 'name' && ! attr.specified)
+			continue;
 		if (attrName != 'type' && attrName != 'value')
 		{
 			if (attrName == 'style' && newInputFile.style && inputFile.style && inputFile.style.cssText)
@@ -794,6 +797,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 		    return true;
         }
 		var newInputFile = NeatUploadCloneInputFile(this);
+		this.removeAttribute("id");
 		this.parentNode.insertBefore(newInputFile, this.nextSibling);
 		this.style.display = 'none';
 		numf.FileQueued({ name: this.value, size: -1, inputFileElem: this});		
