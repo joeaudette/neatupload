@@ -117,8 +117,8 @@ function NeatUploadCloneInputFile (inputFile)
 		var attrName = attr.name.toLowerCase();
 		if (attrName != 'type' && attrName != 'value')
 		{
-			if (attrName == 'style' && newInputFile.style && newInputFile.style.cssText)
-				newInputFile.style.cssText = attr.value;
+			if (attrName == 'style' && newInputFile.style && inputFile.style && inputFile.style.cssText)
+				newInputFile.style.cssText = inputFile.style.cssText;
 			else if (attrName == 'class') // Needed for IE because 'class' is a JS keyword
 				newInputFile.className = attr.value;
 			else if (attrName == 'for') // Needed for IE because 'for' is a JS keyword
