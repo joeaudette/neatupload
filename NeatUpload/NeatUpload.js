@@ -786,6 +786,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	this.UploadScript = uploadScript;
 	this.UploadParams = uploadParams;
 	this.FilesToUpload = [];
+	this.FileID = 0;
 
 	// If no Flash, the following onchange handler will make it appear that multiple files can be selected from
 	// one file input by just repeated clicking Browse... and selecting a file.
@@ -800,7 +801,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 		this.removeAttribute("id");
 		this.parentNode.insertBefore(newInputFile, this.nextSibling);
 		this.style.display = 'none';
-		numf.FileQueued({ name: this.value, size: -1, inputFileElem: this});		
+		numf.FileQueued({ name: this.value, size: -1, inputFileElem: this, id: numf.FileID++});		
         return true;
 	};	
 
