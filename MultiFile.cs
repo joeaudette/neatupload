@@ -174,6 +174,27 @@ namespace Brettle.Web.NeatUpload
 					Attributes["size"] = value.ToString();
 			}
 		}
+		
+		/// <summary>
+		/// The ClientID of the control where the file queue should be displayed.</summary>
+		/// <remarks>
+		/// Defaults to "" which will cause the file queue to be displayed in a DIV element that is 
+		/// automatically inserted immediately before this MultiFile control.</remarks>
+		public string FileQueueControlID
+		{
+			get
+			{
+				string val = Attributes["FileQueueControlID"];
+				if (val == null)
+					return "";
+				else
+					return val;
+			}
+			set
+			{
+				Attributes["FileQueueControlID"] = value;
+			}
+		}
 				
 		public bool UseFlashIfAvailable
 		{
@@ -312,7 +333,8 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
 		'" + Config.Current.PostBackIDQueryParam + @"',
 		{" + Config.Current.PostBackIDQueryParam + @" : '" + FormContext.Current.PostBackID + @"',
 		 NeatUpload_AsyncControlID : '" + this.ClientID + @"'},
-		 " + (UseFlashIfAvailable ? "true" : "false") + @");
+		 " + (UseFlashIfAvailable ? "true" : "false") + @",
+		 '" + FileQueueControlID + @"');
 // -->
 </script>");
 			}

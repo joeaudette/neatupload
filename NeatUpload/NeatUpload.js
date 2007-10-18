@@ -768,16 +768,16 @@ NeatUploadInputFile.prototype.Controls = new Object();
 /* ******************************************************************************************* */
 
 function NeatUploadMultiFileCreate(clientID, postBackID, appPath, uploadScript, postBackIDQueryParam, uploadParams,
-									useFlashIfAvailable)
+									useFlashIfAvailable, fileQueueControlID)
 {
 	NeatUploadMultiFile.prototype.Controls[clientID] 
 		= new NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBackIDQueryParam, uploadParams,
-									useFlashIfAvailable);
+									useFlashIfAvailable, fileQueueControlID);
 	return NeatUploadMultiFile.prototype.Controls[clientID];
 }
 
 function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBackIDQueryParam, uploadParams,
-							useFlashIfAvailable)
+							useFlashIfAvailable, fileQueueControlID)
 {
 	var numf = this;
 	this.ClientID = clientID;
@@ -787,6 +787,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	this.UploadParams = uploadParams;
 	this.FilesToUpload = [];
 	this.FileID = 0;
+	this.FileQueueControlID = fileQueueControlID;
 
 	// If no Flash, the following onchange handler will make it appear that multiple files can be selected from
 	// one file input by just repeated clicking Browse... and selecting a file.
@@ -801,7 +802,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 		this.removeAttribute("id");
 		this.parentNode.insertBefore(newInputFile, this.nextSibling);
 		this.style.display = 'none';
-		numf.FileQueued({ name: this.value, size: -1, inputFileElem: this, id: numf.FileID++});		
+		FileQueued({ name: this.value, size: -1, inputFileElem: this, id: numf.FileID++});		
         return true;
 	};	
 
@@ -838,7 +839,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	if (navigator.plugins && navigator.mimeTypes && navigator.mimeTypes.length) 
 		return;
 
-	window.onload = function() {
+	nuf.AddHandler(window, "load", function ()	{
 		numf.Swfu = new SWFUpload({
 				debug : numf.debug_enabled,
 				flash_url : numf.AppPath + '/NeatUpload/SWFUpload.swf',
@@ -846,12 +847,12 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 				upload_params : numf.UploadParams,
 				file_size_limit: 2097151,
 				begin_upload_on_queue : false,
-				file_queued_handler : function (file) { numf.FileQueued(file); },
-				file_cancelled_handler : function (file) { numf.FileCancelled(file); },
-				queue_stopped_handler : function (file) { numf.QueueCancelled(file); },
+				file_queued_handler : FileQueued,
+				file_cancelled_handler : FileCancelled,
+				queue_stopped_handler : QueueCancelled,
 				flash_ready_handler : function () { numf.IsFlashLoaded = true; }
 		});
-	};
+	});
 	
 	// Hookup the upload trigger.
 	nuf.AddSubmitHandler(true, function () {
@@ -905,64 +906,89 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
             return true;
         }
 	};
+	
+	/* PRIVATE FUNCTIONS */
+	
+	function FileQueued(file) {
+		numf.FilesToUpload.push(file);
+		file.Delete = function() {
+		    if (numf.IsFlashLoaded && numf.Swfu)
+		    {
+				numf.Swfu.cancelUpload(this.id);
+			}
+			else
+			{
+				this.inputFileElem.parentNode.removeChild(this.inputFileElem);
+				FileCancelled(this);
+			}
+		}
+		numf.OnFileQueued(file);
+	}
+
+	function QueueCancelled(file) {
+		numf.FilesToUpload = [];
+	}
+
+	function FileCancelled(file) {
+		var i, fileIndex = -1;
+		for (i = 0; i < numf.FilesToUpload.length; i++)
+		{
+			if (numf.FilesToUpload[i].id == file.id)
+			{
+				fileIndex = i;
+				break;
+			}
+		}
+		if (fileIndex == -1)
+		{
+			numf.debugMessage("WARN: FileCancelled can not find file: ");
+			numf.debugMessage(file);
+			return;
+		}
+		numf.FilesToUpload.splice(fileIndex, 1);
+	}
+
 }
 
 NeatUploadMultiFile.prototype.debugMessage = NeatUploadConsole.debugMessage;
 
 NeatUploadMultiFile.prototype.Controls = new Object();
 
-NeatUploadMultiFile.prototype.FileQueued = function (file) {
+/* Override OnFileQueued on your page to change how queued files are displayed. */
+NeatUploadMultiFile.prototype.OnFileQueued = function (file) {
 	var numf = this;
-	this.FilesToUpload.push(file);
 
 	var span = document.createElement('span');
 	var link = document.createElement('a');
 	link.setAttribute('href', '#');
-	link.onclick = function () { file.Delete(); return false; }
+	link.onclick = function () {
+		file.Delete(); 
+		span.parentNode.removeChild(span); 
+		return false;
+	};
 	link.appendChild(document.createTextNode('X'));
 	span.appendChild(link);
 	span.appendChild(document.createTextNode(' ' + file.name));
 	span.appendChild(document.createElement('br'));
 
-	var inputFile = document.getElementById(this.ClientID);
-	inputFile.parentNode.insertBefore(span, inputFile);
-
-	var nodeToRemove = span;
-	file.Delete = function() {
-	    if (numf.IsFlashLoaded && numf.Swfu)
-	    {
-			numf.Swfu.cancelUpload(this.id);
-		}
-		else
-		{
-			this.inputFileElem.parentNode.removeChild(this.inputFileElem);
-			numf.FileCancelled(this);
-		}
-		nodeToRemove.parentNode.removeChild(nodeToRemove);
-	}
+	var fqc = numf.GetFileQueueControl();
+	fqc.appendChild(span);
 };
 
-NeatUploadMultiFile.prototype.QueueCancelled = function (file) {
-	this.FilesToUpload = [];
-};
-
-NeatUploadMultiFile.prototype.FileCancelled = function (file) {
-	var i, fileIndex = -1;
-	for (i = 0; i < this.FilesToUpload.length; i++)
+NeatUploadMultiFile.prototype.GetFileQueueControl = function()
+{
+	var fqc = null;
+	if (typeof(this.FileQueueControlID) != "string" || this.FileQueueControlID == "")
 	{
-		if (this.FilesToUpload[i].id == file.id)
-		{
-			fileIndex = i;
-			break;
-		}
+		fqc = document.createElement('div');
+		var inputFile = document.getElementById(this.ClientID);
+		inputFile.parentNode.insertBefore(fqc, inputFile);
 	}
-	if (fileIndex == -1)
+	else
 	{
-		this.debugMessage("WARN: FileCancelled can not find file: ");
-		this.debugMessage(file);
-		return;
+		fqc = document.getElementById(this.FileQueueControlID);
 	}
-	this.FilesToUpload.splice(fileIndex, 1);
+	return fqc;
 };
 
 
