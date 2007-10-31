@@ -828,6 +828,14 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 			numf.Swfu.updateUploadStrings();
 		}
 	});
+
+	// Insert a default file queue control immediately before the input file control
+	this.fqc = document.createElement('div');
+	document.getElementById(this.ClientID).parentNode.insertBefore(this.fqc, document.getElementById(this.ClientID));
+	
+	// If the browser supports opacity and the div after the input file control has children,
+	// then use a variant of McGrady's technique to make the input file control look like those children.
+	StyleInputFile(numf.ClientID); 
 	
 	// Don't use SWFUpload if Flash support wasn't requested
 	if (!useFlashIfAvailable)
@@ -947,6 +955,40 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 		}
 		numf.FilesToUpload.splice(fileIndex, 1);
 	}
+	
+	function StyleInputFile(clientID)
+	{
+		var inputFile = document.getElementById(clientID);
+		var replacementDiv = inputFile.nextSibling;
+		if (!replacementDiv || !replacementDiv.tagName || replacementDiv.tagName.toLowerCase() != "div" 
+			|| !replacementDiv.firstChild)
+			return;
+		replacementDiv.style.display = "block";
+		replacementDiv.style.height = replacementDiv.offsetHeight + "px";
+		var w = 0;
+		for (var n = replacementDiv.firstChild; n; n = n.nextSibling)
+		{
+			w = ((n.offsetLeft + n.offsetWidth > w) ? (n.offsetLeft + n.offsetWidth) : w);
+		}	
+		replacementDiv.style.width = w + "px";
+		replacementDiv.style.overflow = "hidden";
+		inputFile.style.display = "none";
+		inputFile.style.position = "absolute";
+		inputFile.style.textAlign = "right";
+		inputFile.style.top = 0;
+		inputFile.style.right = 0;
+		inputFile.style.cursor = "pointer";
+		var fontHeight = replacementDiv.offsetHeight;
+		var fontWidth = w / 6;
+		var fontSize = (fontHeight > fontWidth ? fontHeight : fontWidth);
+		inputFile.style.fontSize = fontSize + "px";
+		inputFile.style.filter = "alpha(opacity=0)";
+		inputFile.style.opacity = 0;
+		inputFile.style.MozOpacity = 0;
+		inputFile.style.zIndex = 2;
+		replacementDiv.insertBefore(inputFile, replacementDiv.firstChild);
+		inputFile.style.display = "block";
+	}
 
 }
 
@@ -977,18 +1019,11 @@ NeatUploadMultiFile.prototype.OnFileQueued = function (file) {
 
 NeatUploadMultiFile.prototype.GetFileQueueControl = function()
 {
-	var fqc = null;
-	if (typeof(this.FileQueueControlID) != "string" || this.FileQueueControlID == "")
+	if (typeof(this.FileQueueControlID) == "string" && this.FileQueueControlID.length > 0)
 	{
-		fqc = document.createElement('div');
-		var inputFile = document.getElementById(this.ClientID);
-		inputFile.parentNode.insertBefore(fqc, inputFile);
+		this.fqc = document.getElementById(this.FileQueueControlID);
 	}
-	else
-	{
-		fqc = document.getElementById(this.FileQueueControlID);
-	}
-	return fqc;
+	return this.fqc;
 };
 
 

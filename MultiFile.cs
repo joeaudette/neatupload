@@ -49,6 +49,8 @@ namespace Brettle.Web.NeatUpload
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[ValidationProperty("ValidationFileNames")]
+	[ParseChildren(false)]
+	[PersistChildren(true)]
 	public class MultiFile : System.Web.UI.WebControls.WebControl, System.Web.UI.IPostBackDataHandler
 	{
 
@@ -363,6 +365,14 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
 			writer.AddAttribute(HtmlTextWriterAttribute.Name, name);
 			writer.RenderBeginTag(HtmlTextWriterTag.Input);
 			writer.RenderEndTag(); // input type="file"
+
+			if (Config.Current.UseHttpModule && HasControls())
+			{
+				writer.AddAttribute(HtmlTextWriterAttribute.Style, "position: relative; display: none;");
+				writer.RenderBeginTag(HtmlTextWriterTag.Div);
+				RenderChildren(writer);
+				writer.RenderEndTag();
+			}
 
 			if (Config.Current.UseHttpModule)
 			{
