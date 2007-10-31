@@ -87,6 +87,11 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 		
+		public virtual IEnumerator GetEnumerator()
+		{
+			return this.BaseGetAllValues().GetEnumerator();
+		}
+		
 		private bool ProcessAspNetUploadedFile(ref UploadedFile file, string key)
 		{
 			if (! (file is AspNetUploadedFile))
