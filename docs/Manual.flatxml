@@ -5,19 +5,19 @@
 <dc:title>NeatUpload™ Manual</dc:title>
 <meta:creation-date>2007-08-10T02:24:38</meta:creation-date>
 <dc:creator>Dean Brettle</dc:creator>
-<dc:date>2007-08-12T23:25:30</dc:date>
+<dc:date>2007-10-30T16:57:56</dc:date>
 <dc:language>en-US</dc:language>
-<meta:editing-cycles>9</meta:editing-cycles>
-<meta:editing-duration>PT2H57M11S</meta:editing-duration>
+<meta:editing-cycles>10</meta:editing-cycles>
+<meta:editing-duration>PT2H58M58S</meta:editing-duration>
 <meta:user-defined meta:name="Info 1"/>
 <meta:user-defined meta:name="Info 2"/>
 <meta:user-defined meta:name="Info 3"/>
 <meta:user-defined meta:name="Info 4"/>
-<meta:document-statistic meta:table-count="1" meta:image-count="0" meta:object-count="0" meta:page-count="1" meta:paragraph-count="399" meta:word-count="13038" meta:character-count="92083"/>
+<meta:document-statistic meta:table-count="1" meta:image-count="0" meta:object-count="0" meta:page-count="1" meta:paragraph-count="399" meta:word-count="13049" meta:character-count="92170"/>
 </office:meta>
 <office:settings>
 <config:config-item-set config:name="ooo:view-settings">
-<config:config-item config:name="ViewAreaTop" config:type="int">44605</config:config-item>
+<config:config-item config:name="ViewAreaTop" config:type="int">298605</config:config-item>
 <config:config-item config:name="ViewAreaLeft" config:type="int">1002</config:config-item>
 <config:config-item config:name="ViewAreaWidth" config:type="int">32651</config:config-item>
 <config:config-item config:name="ViewAreaHeight" config:type="int">20930</config:config-item>
@@ -26,12 +26,12 @@
 <config:config-item-map-indexed config:name="Views">
 <config:config-item-map-entry>
 <config:config-item config:name="ViewId" config:type="string">view2</config:config-item>
-<config:config-item config:name="ViewLeft" config:type="int">14208</config:config-item>
-<config:config-item config:name="ViewTop" config:type="int">50209</config:config-item>
+<config:config-item config:name="ViewLeft" config:type="int">7421</config:config-item>
+<config:config-item config:name="ViewTop" config:type="int">308504</config:config-item>
 <config:config-item config:name="VisibleLeft" config:type="int">1002</config:config-item>
-<config:config-item config:name="VisibleTop" config:type="int">44605</config:config-item>
+<config:config-item config:name="VisibleTop" config:type="int">298605</config:config-item>
 <config:config-item config:name="VisibleRight" config:type="int">33651</config:config-item>
-<config:config-item config:name="VisibleBottom" config:type="int">65534</config:config-item>
+<config:config-item config:name="VisibleBottom" config:type="int">319534</config:config-item>
 <config:config-item config:name="ZoomType" config:type="short">0</config:config-item>
 <config:config-item config:name="ZoomFactor" config:type="short">100</config:config-item>
 <config:config-item config:name="IsSelectedFrame" config:type="boolean">false</config:config-item>
@@ -68,7 +68,7 @@
 <config:config-item config:name="IsKernAsianPunctuation" config:type="boolean">false</config:config-item>
 <config:config-item config:name="AlignTabStopPosition" config:type="boolean">true</config:config-item>
 <config:config-item config:name="ClipAsCharacterAnchoredWriterFlyFrames" config:type="boolean">false</config:config-item>
-<config:config-item config:name="CurrentDatabaseDataSource" config:type="string"/>
+<config:config-item config:name="CurrentDatabaseDataSource" config:type="string">Addresses2</config:config-item>
 <config:config-item config:name="DoNotCaptureDrawObjsOnPage" config:type="boolean">false</config:config-item>
 <config:config-item config:name="TableRowKeep" config:type="boolean">false</config:config-item>
 <config:config-item config:name="PrinterName" config:type="string">Generic Printer</config:config-item>
@@ -122,8 +122,8 @@
 <style:text-properties fo:color="#000000" fo:font-size="12pt" fo:language="en" fo:country="US" style:font-size-asian="12pt" style:language-asian="en" style:country-asian="US" style:font-size-complex="12pt" style:language-complex="en" style:country-complex="US"/>
 </style:default-style>
 <style:default-style style:family="paragraph">
-<style:paragraph-properties style:text-autospace="ideograph-alpha" style:punctuation-wrap="hanging" style:line-break="strict" style:writing-mode="page"/>
-<style:text-properties fo:color="#000000" style:font-name="Nimbus Roman No9 L" fo:font-size="12pt" fo:language="en" fo:country="US" style:font-name-asian="DejaVu LGC Sans" style:font-size-asian="12pt" style:language-asian="en" style:country-asian="US" style:font-name-complex="DejaVu LGC Sans" style:font-size-complex="12pt" style:language-complex="en" style:country-complex="US"/>
+<style:paragraph-properties fo:hyphenation-ladder-count="no-limit" style:text-autospace="ideograph-alpha" style:punctuation-wrap="hanging" style:line-break="strict" style:tab-stop-distance="0.4925in" style:writing-mode="page"/>
+<style:text-properties fo:color="#000000" style:font-name="Nimbus Roman No9 L" fo:font-size="12pt" fo:language="en" fo:country="US" style:font-name-asian="DejaVu LGC Sans" style:font-size-asian="12pt" style:language-asian="en" style:country-asian="US" style:font-name-complex="DejaVu LGC Sans" style:font-size-complex="12pt" style:language-complex="en" style:country-complex="US" fo:hyphenate="false" fo:hyphenation-remain-char-count="2" fo:hyphenation-push-char-count="2"/>
 </style:default-style>
 <style:default-style style:family="table">
 <style:table-properties table:border-model="separating"/>
@@ -1451,6 +1451,7 @@
 </office:master-styles>
 <office:body>
 <office:text>
+<office:forms form:automatic-focus="false" form:apply-design-mode="false"/>
 <text:sequence-decls>
 <text:sequence-decl text:display-outline-level="0" text:name="Illustration"/>
 <text:sequence-decl text:display-outline-level="0" text:name="Table"/>
@@ -1723,7 +1724,8 @@
 <text:p text:style-name="P7">Added support for <text:a xlink:type="simple" xlink:href="#UploadingWithoutInputFile">uploading without using </text:a>
 <text:a xlink:type="simple" xlink:href="#UploadingWithoutInputFile">
 <text:span text:style-name="Source_20_Text">InputFile</text:span>
-</text:a>. </text:p>
+</text:a>
+<text:a xlink:type="simple" xlink:href="#UploadingWithoutInputFile"/>. </text:p>
 </text:list-item>
 <text:list-item>
 <text:p text:style-name="P7">Added support for using NeatUpload in a web garden or web farm if you have ASP.NET configured to share session state across the servers in your garden/farm. </text:p>
@@ -1861,7 +1863,7 @@
 <text:span text:style-name="Source_20_Text">
 <text:span text:style-name="Emphasis">version</text:span>
 </text:span>
-<text:span text:style-name="Source_20_Text">/</text:span>, where version is the version of the release you are installing. </text:p>
+<text:span text:style-name="Source_20_Text"> /</text:span>, where version is the version of the release you are installing. </text:p>
 </text:list-item>
 <text:list-item>
 <text:p text:style-name="P19">
@@ -1877,18 +1879,18 @@
 <text:span text:style-name="Source_20_Text">
 <text:span text:style-name="Emphasis">version</text:span>
 </text:span>
-<text:span text:style-name="Source_20_Text">\bin</text:span> folder. </text:p>
+<text:span text:style-name="Source_20_Text"> \bin</text:span> folder. </text:p>
 </text:list-item>
 <text:list-item>
 <text:p text:style-name="P19">Drag and drop <text:span text:style-name="Source_20_Text">Brettle.Web.NeatUpload.dll</text:span> and (if present) <text:span text:style-name="Source_20_Text">Policy.</text:span>
 <text:span text:style-name="Source_20_Text">
 <text:span text:style-name="Emphasis">major.minor</text:span>
 </text:span>
-<text:span text:style-name="Source_20_Text">.Brettle.Web.NeatUpload.dll</text:span> from the <text:span text:style-name="Source_20_Text">NeatUpload-</text:span>
+<text:span text:style-name="Source_20_Text"> .Brettle.Web.NeatUpload.dll</text:span> from the <text:span text:style-name="Source_20_Text">NeatUpload-</text:span>
 <text:span text:style-name="Source_20_Text">
 <text:span text:style-name="Emphasis">version</text:span>
 </text:span>
-<text:span text:style-name="Source_20_Text">\bin</text:span> folder into the GAC window to add them to the GAC. </text:p>
+<text:span text:style-name="Source_20_Text"> \bin</text:span> folder into the GAC window to add them to the GAC. </text:p>
 </text:list-item>
 <text:list-item>
 <text:p text:style-name="P19">Find the Brettle.Web.NeatUpload assembly that was just added and note the value in the "Version" column. </text:p>
@@ -1898,7 +1900,7 @@
 <text:span text:style-name="Source_20_Text">
 <text:span text:style-name="T2">value in version column</text:span>
 </text:span>
-<text:span text:style-name="Source_20_Text">, Culture=neutral, PublicKeyToken=C95290D92C5893C8"</text:span>. </text:p>
+<text:span text:style-name="Source_20_Text"> , Culture=neutral, PublicKeyToken=C95290D92C5893C8"</text:span>. </text:p>
 <text:p text:style-name="P19">To use NeatUpload after it has been installed in the GAC, you need to: </text:p>
 <text:list>
 <text:list-item>
@@ -1923,36 +1925,36 @@
 <text:span text:style-name="Source_20_Text">
 <text:span text:style-name="Emphasis">version</text:span>
 </text:span>
-<text:span text:style-name="Source_20_Text">/</text:span> is a web application. Then point your browser at the <text:span text:style-name="Source_20_Text">Demo.aspx</text:span> on that website. To use NeatUpload in your own web application, continue with the remaining installation steps. </text:p>
+<text:span text:style-name="Source_20_Text"> /</text:span> is a web application. Then point your browser at the <text:span text:style-name="Source_20_Text">Demo.aspx</text:span> on that website. To use NeatUpload in your own web application, continue with the remaining installation steps. </text:p>
 </text:list-item>
 <text:list-item>
 <text:p text:style-name="P19">If you will be using the Visual Studio Web Form Designer, add the NeatUpload controls to your toolbox.  To do that, right-click on the Toolbox, click Add/Remove Items, Browse to  <text:span text:style-name="Source_20_Text">NeatUpload-</text:span>
 <text:span text:style-name="Source_20_Text">
 <text:span text:style-name="Emphasis">version</text:span>
 </text:span>
-<text:span text:style-name="Source_20_Text">/bin/Brettle.Web.NeatUpload.dll</text:span>, click Open, and then click OK.  A reference to <text:span text:style-name="Source_20_Text">Brettle.Web.NeatUpload.dll</text:span> will automatically be added to your project the first time you use the designer to add one of the NeatUpload controls to a form. </text:p>
+<text:span text:style-name="Source_20_Text"> /bin/Brettle.Web.NeatUpload.dll</text:span>, click Open, and then click OK.  A reference to <text:span text:style-name="Source_20_Text">Brettle.Web.NeatUpload.dll</text:span> will automatically be added to your project the first time you use the designer to add one of the NeatUpload controls to a form. </text:p>
 </text:list-item>
 <text:list-item>
 <text:p text:style-name="P19">If you won't be using the Visual Studio Web Form Designer, add a reference to your web application that refers to the <text:span text:style-name="Source_20_Text">Brettle.Web.NeatUpload.dll</text:span> in the <text:span text:style-name="Source_20_Text">NeatUpload-</text:span>
 <text:span text:style-name="Source_20_Text">
 <text:span text:style-name="Emphasis">version</text:span>
 </text:span>
-<text:span text:style-name="Source_20_Text">/bin</text:span> directory. </text:p>
+<text:span text:style-name="Source_20_Text"> /bin</text:span> directory. </text:p>
 </text:list-item>
 <text:list-item>
 <text:p text:style-name="P19">Create a <text:span text:style-name="Source_20_Text">NeatUpload/</text:span> subdirectory in your web application by copying <text:span text:style-name="Source_20_Text">NeatUpload-</text:span>
 <text:span text:style-name="Source_20_Text">
 <text:span text:style-name="Emphasis">version</text:span>
 </text:span>
-<text:span text:style-name="Source_20_Text">/NeatUpload/</text:span> and its contents.  Don't copy the whole <text:span text:style-name="Source_20_Text">NeatUpload-</text:span>
+<text:span text:style-name="Source_20_Text"> /NeatUpload/</text:span> and its contents.  Don't copy the whole <text:span text:style-name="Source_20_Text">NeatUpload-</text:span>
 <text:span text:style-name="Source_20_Text">
 <text:span text:style-name="Emphasis">version</text:span>
 </text:span>
-<text:span text:style-name="Source_20_Text">/</text:span> directory, just the <text:span text:style-name="Source_20_Text">NeatUpload-</text:span>
+<text:span text:style-name="Source_20_Text"> /</text:span> directory, just the <text:span text:style-name="Source_20_Text">NeatUpload-</text:span>
 <text:span text:style-name="Source_20_Text">
 <text:span text:style-name="Emphasis">version</text:span>
 </text:span>
-<text:span text:style-name="Source_20_Text">/NeatUpload/</text:span>subdirectory.  That subdirectory contains <text:span text:style-name="Source_20_Text">Progress.aspx</text:span> and associated files. </text:p>
+<text:span text:style-name="Source_20_Text"> /NeatUpload/</text:span>subdirectory.  That subdirectory contains <text:span text:style-name="Source_20_Text">Progress.aspx</text:span> and associated files. </text:p>
 </text:list-item>
 <text:list-item>
 <text:p text:style-name="P20">Add the following line to your <text:span text:style-name="Source_20_Text">Web.config</text:span> under <text:span text:style-name="Source_20_Text">configuration/system.web/httpModules</text:span>: </text:p>
@@ -1968,7 +1970,7 @@
 <text:span text:style-name="Source_20_Text">
 <text:span text:style-name="Emphasis">version</text:span>
 </text:span>
-<text:span text:style-name="Source_20_Text">/</text:span> into your application. Point your browser at <text:span text:style-name="Source_20_Text">Demo.aspx</text:span> and verify that the demo functions properly. </text:p>
+<text:span text:style-name="Source_20_Text"> /</text:span> into your application. Point your browser at <text:span text:style-name="Source_20_Text">Demo.aspx</text:span> and verify that the demo functions properly. </text:p>
 </text:list-item>
 </text:list>
 <text:h text:style-name="Heading_20_2" text:outline-level="2" text:is-list-header="true">
@@ -1978,7 +1980,8 @@
 <text:a xlink:type="simple" xlink:href="http://www.brettle.com/ForumThreadView.aspx?thread=84&amp;pageindex=7">
 <text:span text:style-name="T5">forum thread</text:span>
 </text:a>
-<text:span text:style-name="T4"> discussing the process in more detail.</text:span>
+<text:a xlink:type="simple" xlink:href="http://www.brettle.com/ForumThreadView.aspx?thread=84&amp;pageindex=7"/>
+<text:span text:style-name="T4">discussing the process in more detail.</text:span>
 </text:p>
 <text:h text:style-name="Heading_20_3" text:outline-level="3" text:is-list-header="true">
 <text:bookmark text:name="mozTocId879490"/>Using NeatUpload with the Visual Studio Web Form Designer</text:h>
@@ -2059,9 +2062,11 @@
 <text:span text:style-name="Strong_20_Emphasis">
 <text:span text:style-name="T9">inputFileId</text:span>
 </text:span>
+<text:span text:style-name="Strong_20_Emphasis"/>
 <text:span text:style-name="Strong_20_Emphasis">
 <text:span text:style-name="T1">.MoveTo()</text:span>
 </text:span>
+<text:span text:style-name="Strong_20_Emphasis"/>
 <text:span text:style-name="T7">method to move the uploaded file to a permanent location.  If you do not, NeatUpload will automatically remove the uploaded file at the end of the request</text:span> to ensure that unwanted files do not fill up the filesystem.  The following code will put the uploaded file in the application's root directory (assuming sufficient permissions): </text:p>
 <text:p text:style-name="P27">using Brettle.Web.NeatUpload;<text:line-break/>...<text:line-break/>using System.IO;<text:line-break/>...<text:line-break/>public class YourPage : System.Web.UI.Page<text:line-break/>{<text:line-break/>
 <text:s text:c="7"/>private void Page_Load(object sender, EventArgs e)<text:line-break/>
@@ -2168,7 +2173,6 @@
 <text:p text:style-name="Preformatted_20_Text">&lt;configuration&gt;<text:line-break/>
 <text:s text:c="3"/>&lt;configSections&gt;<text:line-break/>
 <text:s text:c="7"/>&lt;sectionGroup name="system.web"&gt;<text:line-break/>
-<text:s text:c="11"/>&lt;remove name="neatUpload" /&gt;<text:line-break/>
 <text:s text:c="11"/>&lt;section name="neatUpload" type="Brettle.Web.NeatUpload.ConfigSectionHandler, Brettle.Web.NeatUpload" allowLocation="true" /&gt;<text:line-break/>
 <text:s text:c="7"/>&lt;/sectionGroup&gt;<text:line-break/>
 <text:s text:c="3"/>&lt;/configSections&gt;<text:line-break/>...</text:p>
@@ -2189,7 +2193,8 @@
 <text:s text:c="11"/>defaultProvider="<text:span text:style-name="T4">friendly name, defaults to a FilesystemUploadStorageProvider using the </text:span>
 <text:a xlink:type="simple" xlink:href="#TempDirectory">
 <text:span text:style-name="T5">default temp dir</text:span>
-</text:a>"&gt;<text:line-break/>
+</text:a>
+<text:a xlink:type="simple" xlink:href="#TempDirectory"/>"&gt;<text:line-break/>
 <text:s text:c="11"/>&lt;providers&gt;<text:line-break/>
 <text:s text:c="15"/>&lt;add name="<text:span text:style-name="T4">friendly name</text:span>" <text:line-break/>
 <text:s text:c="20"/>type="<text:span text:style-name="T4">type derived from Brettle.Web.NeatUpload.UploadStorageProvider</text:span>" <text:line-break/>
@@ -2255,8 +2260,8 @@
 <text:p text:style-name="Text_20_body">That configuration will cause the <text:span text:style-name="Source_20_Text">UploadHttpModule</text:span> to only be used for requests to <text:span text:style-name="Source_20_Text">Demo.aspx</text:span> and <text:span text:style-name="Source_20_Text">Special.aspx</text:span>.  In addition, ASP.NET's <text:span text:style-name="Source_20_Text">maxRequestLength</text:span> is set to only 100 KBytes for all requests other than those two pages.  For those two pages, the <text:span text:style-name="Source_20_Text">maxRequestLength</text:span> is increased to 2 GBytes and the <text:span text:style-name="Source_20_Text">executionTimeout</text:span> is increased to 1 hour.  Also, requests for <text:span text:style-name="Source_20_Text">Special.aspx</text:span> use the "special" provider which is configured to use the "<text:span text:style-name="Source_20_Text">SpecialTempDirectory</text:span>", while requests for <text:span text:style-name="Source_20_Text">Demo.aspx</text:span> use the default provider and the default temporary directory.<text:line-break/>
 <text:line-break/>Note that you still need to add the <text:span text:style-name="Source_20_Text">UploadHttpModule</text:span> in the <text:span text:style-name="Source_20_Text">&lt;httpModules&gt;</text:span> section so that it will be available to your application.  Location filtering just gives you finer control over which requests the <text:span text:style-name="Source_20_Text">UploadHttpModule</text:span> actually touches.</text:p>
 <text:h text:style-name="Heading_20_3" text:outline-level="3" text:is-list-header="true">
-<text:bookmark text:name="Limiting_the_Size_of_Upload_Requests"/>
-<text:bookmark text:name="mozTocId970185"/>Limiting the Size of Upload Requests</text:h>
+<text:bookmark text:name="mozTocId970185"/>
+<text:bookmark text:name="Limiting_the_Size_of_Upload_Requests"/>Limiting the Size of Upload Requests</text:h>
 <text:p text:style-name="Text_20_body">By default, NeatUpload does not directly limit the size of uploads.  To limit upload size, use the <text:span text:style-name="Source_20_Text">&lt;neatUpload&gt;</text:span> element's <text:span text:style-name="Source_20_Text">maxRequestLength </text:span>attribute: </text:p>
 <text:p text:style-name="P35">&lt;neatUpload ... maxRequestLength="<text:span text:style-name="Emphasis">sizeInKBytes</text:span>" ... /&gt;</text:p>
 <text:p text:style-name="Text_20_body">If a user attempts to upload a file larger than the specified size, NeatUpload will update the progress bar to indicate that the upload was rejected because it was too large.  If the progress bar is in a pop-up window, it will leave the window open to ensure that the user sees why the upload was rejected.   Next it will attempt to stop the upload by asking the browser to run JavaScript that simulates clicking the browser's Stop button.  If JavaScript is enabled, most modern browsers (including recent versions of IE, Firefox, and Opera) will be able to stop the upload and the user will simply see the original form along with the progress bar displaying the reason the upload was rejected.  The remainder of this section only affects the user when the browser is <text:span text:style-name="T4">not</text:span> able to stop the upload.</text:p>
@@ -2316,7 +2321,7 @@
 <text:span text:style-name="Source_20_Text">
 <text:span text:style-name="Emphasis">version</text:span>
 </text:span>
-<text:span text:style-name="Source_20_Text">/Extensions/SqlServerInputFile/SqlServerUploader/bin/Hitone.Web.SqlServerUploader.dll</text:span>, click Open, and then click OK.  A reference to <text:span text:style-name="Source_20_Text">Hitone.Web.SqlServerUploader.dll</text:span> will automatically be added to your project the first time you use the designer to a SqlServerInputFile to a form.<text:line-break/>
+<text:span text:style-name="Source_20_Text"> /Extensions/SqlServerInputFile/SqlServerUploader/bin/Hitone.Web.SqlServerUploader.dll</text:span>, click Open, and then click OK.  A reference to <text:span text:style-name="Source_20_Text">Hitone.Web.SqlServerUploader.dll</text:span> will automatically be added to your project the first time you use the designer to a SqlServerInputFile to a form.<text:line-break/>
 <text:span text:style-name="T13">If you won't be using the Visual Studio Web Form Designer</text:span>, add a reference to your web application that refers to the <text:span text:style-name="Source_20_Text">Hitone.Web.SqlServerUploader.dll</text:span> in the <text:span text:style-name="Source_20_Text">NeatUpload-1.2.</text:span>
 <text:span text:style-name="T6">x</text:span>
 <text:span text:style-name="Source_20_Text">/Extensions/SqlServerInputFile/SqlServerUploader/bin/ </text:span>directory.</text:p>
@@ -2325,7 +2330,6 @@
 <text:p text:style-name="Text_20_body">To configure your application to use the <text:span text:style-name="Source_20_Text">SqlServerUploadStorageProvider</text:span>, add the following to your <text:span text:style-name="Source_20_Text">Web.config</text:span>:</text:p>
 <text:p text:style-name="Preformatted_20_Text">&lt;configuration&gt;<text:line-break/> &lt;configSections&gt;<text:line-break/>
 <text:s/>&lt;sectionGroup name="system.web"&gt;<text:line-break/>
-<text:s text:c="2"/>&lt;remove name="neatUpload" /&gt;<text:line-break/>
 <text:s text:c="2"/>&lt;section name="neatUpload" type="Brettle.Web.NeatUpload.ConfigSectionHandler, Brettle.Web.NeatUpload" allowLocation="true" /&gt;<text:line-break/>
 <text:s/>&lt;/sectionGroup&gt;<text:line-break/> &lt;/configSections&gt;<text:line-break/>
 <text:s/>...<text:line-break/> &lt;system.web&gt;<text:line-break/>
@@ -2373,9 +2377,11 @@
 <text:span text:style-name="Source_20_Text">
 <text:span text:style-name="Emphasis">inputFileId</text:span>
 </text:span>
+<text:span text:style-name="Source_20_Text"/>
 <text:span text:style-name="Source_20_Text">
 <text:span text:style-name="Source_20_Text">.Verify()</text:span>
 </text:span>
+<text:span text:style-name="Source_20_Text"/>
 </text:p>
 </text:list-item>
 <text:list-item>
@@ -2440,7 +2446,7 @@
 <text:span text:style-name="Source_20_Text">
 <text:span text:style-name="Emphasis">inputFileId</text:span>
 </text:span>
-<text:span text:style-name="Source_20_Text">.FileName, MoveToOptions.Overwrite)</text:span> but doesn't cause the extra database update. <text:span text:style-name="Source_20_Text">SqlServerInputFile</text:span> also adds <text:span text:style-name="Source_20_Text">Hash</text:span>, <text:span text:style-name="Source_20_Text">HashSize</text:span>, and <text:span text:style-name="Source_20_Text">HashAlgorithm</text:span> properties which return information about the cryptographic hash (if any) computed for the uploaded file.</text:p>
+<text:span text:style-name="Source_20_Text"> .FileName, MoveToOptions.Overwrite)</text:span> but doesn't cause the extra database update. <text:span text:style-name="Source_20_Text">SqlServerInputFile</text:span> also adds <text:span text:style-name="Source_20_Text">Hash</text:span>, <text:span text:style-name="Source_20_Text">HashSize</text:span>, and <text:span text:style-name="Source_20_Text">HashAlgorithm</text:span> properties which return information about the cryptographic hash (if any) computed for the uploaded file.</text:p>
 </text:list-item>
 </text:list>
 <text:h text:style-name="Heading_20_3" text:outline-level="3" text:is-list-header="true">
@@ -2594,18 +2600,17 @@
 <text:span text:style-name="Source_20_Text">
 <text:span text:style-name="Emphasis">version</text:span>
 </text:span>
-<text:span text:style-name="Source_20_Text">/HashedInputFile/bin/Brettle.Web.NeatUpload.HashedInputFile.dll</text:span>, click Open, and then click OK.  A reference to <text:span text:style-name="Source_20_Text">Brettle.Web.NeatUpload.HashedInputFile.dll</text:span> will automatically be added to your project the first time you use the designer to a HashedInputFile to a form.<text:line-break/>
+<text:span text:style-name="Source_20_Text"> /HashedInputFile/bin/Brettle.Web.NeatUpload.HashedInputFile.dll</text:span>, click Open, and then click OK.  A reference to <text:span text:style-name="Source_20_Text">Brettle.Web.NeatUpload.HashedInputFile.dll</text:span> will automatically be added to your project the first time you use the designer to a HashedInputFile to a form.<text:line-break/>
 <text:span text:style-name="T13">If you won't be using the Visual Studio Web Form Designer</text:span>, add a reference to your web application that refers to the <text:span text:style-name="Source_20_Text">Brettle.Web.NeatUpload.HashedInputFile.dll</text:span> in the <text:span text:style-name="Source_20_Text">NeatUpload-</text:span>
 <text:span text:style-name="Source_20_Text">
 <text:span text:style-name="Emphasis">version</text:span>
 </text:span>
-<text:span text:style-name="Source_20_Text">/HashedInputFile/bin</text:span> directory.</text:p>
+<text:span text:style-name="Source_20_Text"> /HashedInputFile/bin</text:span> directory.</text:p>
 </text:list-item>
 <text:list-item>
 <text:p text:style-name="P53">Configure your web application to use the <text:span text:style-name="Source_20_Text">HashingFilesystemUploadStorageProvider</text:span>.  The simplest way to do that is to add the following to your <text:span text:style-name="Source_20_Text">Web.config</text:span> (see <text:a xlink:type="simple" xlink:href="Manual.html#mozTocId221000">Configuration</text:a> for more options):</text:p>
 <text:p text:style-name="P54">&lt;configuration&gt;<text:line-break/> &lt;configSections&gt;<text:line-break/>
 <text:s/>&lt;sectionGroup name="system.web"&gt;<text:line-break/>
-<text:s text:c="2"/>&lt;remove name="neatUpload" /&gt;<text:line-break/>
 <text:s text:c="2"/>&lt;section name="neatUpload" type="Brettle.Web.NeatUpload.ConfigSectionHandler, Brettle.Web.NeatUpload"<text:line-break/>
 <text:s text:c="16"/>allowLocation="true" /&gt;<text:line-break/>
 <text:s/>&lt;/sectionGroup&gt;<text:line-break/> &lt;/configSections&gt;<text:line-break/>
@@ -2643,8 +2648,8 @@
 <text:h text:style-name="Heading_20_2" text:outline-level="2" text:is-list-header="true">
 <text:bookmark text:name="mozTocId250326"/>Customization</text:h>
 <text:h text:style-name="Heading_20_3" text:outline-level="3" text:is-list-header="true">
-<text:bookmark text:name="Customizing_Progress_aspx"/>
-<text:bookmark text:name="mozTocId628349"/>Customizing <text:span text:style-name="Source_20_Text">Progress.aspx</text:span>
+<text:bookmark text:name="mozTocId628349"/>
+<text:bookmark text:name="Customizing_Progress_aspx"/>Customizing <text:span text:style-name="Source_20_Text">Progress.aspx</text:span>
 </text:h>
 <text:p text:style-name="Text_20_body">The <text:span text:style-name="Source_20_Text">Progress.aspx</text:span> page that comes with NeatUpload is just an example. You can modify it to suit your needs.  For example, you could change the color scheme with minor modification to the <text:span text:style-name="Source_20_Text">default.css</text:span> stylesheet that is included, or you could change the text or images that are used by modifying <text:span text:style-name="Source_20_Text">Progress.aspx</text:span> itself.  You could even rearrange the layout entirely or create a new page derived from <text:span text:style-name="Source_20_Text">ProgressPage</text:span> and use the <text:span text:style-name="Source_20_Text">Url</text:span> property of the <text:span text:style-name="Source_20_Text">ProgressBar</text:span> to refer to it.  To allow AJAX refreshless updates, you must include at least one <text:span text:style-name="Source_20_Text">DetailsSpan</text:span> or <text:span text:style-name="Source_20_Text">DetailsDiv</text:span> control.  Those controls render as like <text:span text:style-name="Source_20_Text">div</text:span> and <text:span text:style-name="Source_20_Text">span</text:span> controls, respectively.  Use data-binding expressions within those controls (either the in the content or properties) to access the details of the upload at runtime.  Below is a list of the properties and methods that NeatUpload provides for use in data-binding expressions.   Refer to the default <text:span text:style-name="Source_20_Text">Progress.aspx</text:span> for an example of how each of these is used. </text:p>
 <table:table table:name="Table1" table:style-name="Table1">
@@ -2882,7 +2887,8 @@
 </text:list>
 <text:p text:style-name="Text_20_body">One final note: By default, <text:span text:style-name="Source_20_Text">DetailsDiv</text:span> and <text:span text:style-name="Source_20_Text">DetailsSpan</text:span> controls (like regular <text:span text:style-name="Source_20_Text">div</text:span> and <text:span text:style-name="Source_20_Text">span</text:span> controls) will not render as simple <text:span text:style-name="Source_20_Text">&lt;div&gt;</text:span> and <text:span text:style-name="Source_20_Text">&lt;span&gt;</text:span> elements in browsers that ASP.NET considers "downlevel".  Instead, <text:span text:style-name="Source_20_Text">div</text:span> controls are rendered as tables and <text:span text:style-name="Source_20_Text">span</text:span> controls may render with extra font tags, etc.  The <text:span text:style-name="Source_20_Text">Machine.config</text:span> shipped with ASP.NET 1.1 contains a <text:a xlink:type="simple" xlink:href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpgenref/html/gngrfbrowsercapssection.asp">
 <text:span text:style-name="Source_20_Text">&lt;browserCaps&gt;</text:span>
-</text:a> section that causes all non-IE browsers to be considered downlevel, including Netscape, Firefox, Opera, Safari, etc.  To force the <text:span text:style-name="Source_20_Text">DetailsDiv</text:span> and <text:span text:style-name="Source_20_Text">DetailsSpan</text:span> controls to render as simple <text:span text:style-name="Source_20_Text">&lt;div&gt;</text:span> and <text:span text:style-name="Source_20_Text">&lt;span&gt;</text:span> elements even in supposedly downlevel browsers, set the control's <text:span text:style-name="Source_20_Text">UseHtml4</text:span> property to "true".  The default <text:span text:style-name="Source_20_Text">Progress.aspx</text:span> does that for the <text:span text:style-name="Source_20_Text">DetailsDiv</text:span> control with an id of "barDetailsDiv" that is used to draw the gray progress bar.  Note that even with the <text:span text:style-name="Source_20_Text">UseHtml4</text:span> property it is still a good idea to <text:a xlink:type="simple" xlink:href="http://slingfive.com/pages/code/browserCaps/">update or supplement the default ASP.NET 1.1 </text:a>
+</text:a>
+<text:a xlink:type="simple" xlink:href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpgenref/html/gngrfbrowsercapssection.asp"/>section that causes all non-IE browsers to be considered downlevel, including Netscape, Firefox, Opera, Safari, etc.  To force the <text:span text:style-name="Source_20_Text">DetailsDiv</text:span> and <text:span text:style-name="Source_20_Text">DetailsSpan</text:span> controls to render as simple <text:span text:style-name="Source_20_Text">&lt;div&gt;</text:span> and <text:span text:style-name="Source_20_Text">&lt;span&gt;</text:span> elements even in supposedly downlevel browsers, set the control's <text:span text:style-name="Source_20_Text">UseHtml4</text:span> property to "true".  The default <text:span text:style-name="Source_20_Text">Progress.aspx</text:span> does that for the <text:span text:style-name="Source_20_Text">DetailsDiv</text:span> control with an id of "barDetailsDiv" that is used to draw the gray progress bar.  Note that even with the <text:span text:style-name="Source_20_Text">UseHtml4</text:span> property it is still a good idea to <text:a xlink:type="simple" xlink:href="http://slingfive.com/pages/code/browserCaps/">update or supplement the default ASP.NET 1.1 </text:a>
 <text:a xlink:type="simple" xlink:href="http://slingfive.com/pages/code/browserCaps/">
 <text:span text:style-name="Source_20_Text">&lt;browserCaps&gt;</text:span>
 </text:a>
@@ -2938,7 +2944,8 @@
 <text:p text:style-name="Text_20_body">ASP.NET will handled the exception the same way any other exception is handled.  It will fire the <text:span text:style-name="Source_20_Text">Application.Error</text:span> event and use custom error pages if they are configured.<text:line-break/>
 <text:line-break/>If the <text:span text:style-name="Source_20_Text">NameValueCollection</text:span> provided by <text:span text:style-name="Source_20_Text">UploadStorageConfig</text:span> is not sufficient for your provider, you can override <text:span text:style-name="Source_20_Text">UploadStorageProvider.CreateUploadStorageConfig()</text:span> to return your own <text:span text:style-name="Source_20_Text">UploadStorageConfig</text:span> subclass.  Your subclass can override the <text:span text:style-name="Source_20_Text">UploadStorageConfig.Serialize(Stream)</text:span> and <text:span text:style-name="Source_20_Text">UploadStorageConfig.Deserialize(Stream)</text:span> methods to serialize itself to the provided <text:span text:style-name="Source_20_Text">Stream</text:span> and deserialize itself from the provided <text:span text:style-name="Source_20_Text">Stream</text:span>.  The base class implementations of these methods use <text:a xlink:type="simple" xlink:href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemWebUILosFormatterClassTopic.asp">
 <text:span text:style-name="Source_20_Text">LosFormatter</text:span>
-</text:a> to provide a concise serialization of the <text:span text:style-name="Source_20_Text">NameValueCollection</text:span> as a <text:span text:style-name="Source_20_Text">Hashtable</text:span>.<text:line-break/>
+</text:a>
+<text:a xlink:type="simple" xlink:href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemWebUILosFormatterClassTopic.asp"/>to provide a concise serialization of the <text:span text:style-name="Source_20_Text">NameValueCollection</text:span> as a <text:span text:style-name="Source_20_Text">Hashtable</text:span>.<text:line-break/>
 <text:line-break/>For an example of how to implement a custom <text:span text:style-name="Source_20_Text">UploadStorageProvider</text:span>, see <text:span text:style-name="Source_20_Text">FilesystemUploadStorageProvider.cs</text:span> and <text:span text:style-name="Source_20_Text">FilesystemUploadedFile.cs</text:span>.   For another example, see the files in the <text:span text:style-name="Source_20_Text">HashedInputFile</text:span> directory.</text:p>
 <text:h text:style-name="Heading_20_3" text:outline-level="3" text:is-list-header="true">
 <text:bookmark text:name="mozTocId614710"/>Handling Non-absolute Paths in IE6</text:h>
@@ -3011,7 +3018,7 @@
 <text:span text:style-name="Source_20_Text">
 <text:span text:style-name="Emphasis">version</text:span>
 </text:span>
-<text:span text:style-name="Source_20_Text">/log4net.config</text:span> to the root directory of your web application. </text:p>
+<text:span text:style-name="Source_20_Text"> /log4net.config</text:span> to the root directory of your web application. </text:p>
 </text:list-item>
 <text:list-item>
 <text:p text:style-name="P66">Add the following line to your <text:span text:style-name="Source_20_Text">Global.asax.cs</text:span> before the <text:span text:style-name="Source_20_Text">namespace</text:span> keyword: </text:p>
