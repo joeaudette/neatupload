@@ -89,7 +89,13 @@ namespace Brettle.Web.NeatUpload
 		
 		public virtual IEnumerator GetEnumerator()
 		{
-			return this.BaseGetAllValues().GetEnumerator();
+			// Force conversion of all AspNetUploadedFiles to regular UploadedFiles before 
+			// calling BaseGetAllValues() so that the IEnumerator doesn't return any AspNetUplaodedFiles. 
+			for (int i = 0; i < Count; i++)
+			{
+				Get(i); // Converts any AspNetUploadedFile to an UploadedFile.
+			}
+			return BaseGetAllValues().GetEnumerator();
 		}
 		
 		private bool ProcessAspNetUploadedFile(ref UploadedFile file, string key)
