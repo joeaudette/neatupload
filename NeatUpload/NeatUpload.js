@@ -802,6 +802,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 		this.removeAttribute("id");
 		this.parentNode.insertBefore(newInputFile, this.nextSibling);
 		this.style.display = 'none';
+		this.style.position = 'relative';
 		FileQueued({ name: this.value, size: -1, inputFileElem: this, id: numf.FileID++});		
         return true;
 	};	

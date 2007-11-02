@@ -368,10 +368,9 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
 
 			if (Config.Current.UseHttpModule && HasControls())
 			{
-				writer.AddAttribute(HtmlTextWriterAttribute.Style, "position: relative; display: none;");
-				writer.RenderBeginTag(HtmlTextWriterTag.Div);
+				writer.Write("<div style='position: relative; display: none;'>");
 				RenderChildren(writer);
-				writer.RenderEndTag();
+				writer.Write("</div>");
 			}
 
 			if (Config.Current.UseHttpModule)
