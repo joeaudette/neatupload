@@ -980,7 +980,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 		inputFile.style.right = 0;
 		inputFile.style.cursor = "pointer";
 		var fontHeight = replacementDiv.offsetHeight;
-		var fontWidth = w / 6;
+		var fontWidth = w / 3;
 		var fontSize = (fontHeight > fontWidth ? fontHeight : fontWidth);
 		inputFile.style.fontSize = fontSize + "px";
 		inputFile.style.filter = "alpha(opacity=0)";
