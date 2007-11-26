@@ -251,24 +251,31 @@ function NeatUploadForm(formElem, postBackID)
 			if (f.FormElem.NeatUpload_OrigOnSubmit)
 			{
 			    f.OnUnloadHandlers.push(function () { f.FormElem.onsubmit = f.FormElem.NeatUpload_OrigOnSubmit; });
-			    f.FormElem.onsubmit = function (ev)
+			    f.FormElem.onsubmit = function (oev)
 			    {
-				    var returnValue = this.NeatUpload_OrigOnSubmit();
-				    ev = ev || window.event;
+				    ev = NeatUploadForm.prototype.ClickEvent || oev || window.event;
+				    var returnValue = this.NeatUpload_OrigOnSubmit(ev);
 				    if (ev)
-				    {					
 					    ev.NeatUpload_OrigOnSubmitReturnValue = returnValue;
-				    }
 				    return returnValue;
 			    }
 		    }
 			// Add our own onsubmit handler (which will hopefully be the last one) so that it can check whether
 			// another onsubmit handler prevented the upload
-			f.AddHandler(f.FormElem, "submit", function (ev) {
+			f.AddHandler(f.FormElem, "submit", function (oev) {
 				f.debugMessage("Checking whether another onsubmit handler prevented the upload");
-				ev = ev || window.event;
+				ev = NeatUploadForm.prototype.ClickEvent || oev || window.event;
 				if (typeof(ev.returnValue) != "undefined" && !ev.returnValue)
-					return false;
+				{
+				    // In Opera window.event.returnValue is always false and can't be changed.
+				    // Detect that case and ignore it.
+				    ev.returnValue = true; // Try to change it
+				    if (ev.returnValue) // If it changed, change it back and return false.
+				    {
+				        ev.returnValue = false;
+				        return false;
+				    }
+				}
 				if (typeof(ev.NeatUpload_OrigOnSubmitReturnValue) != "undefined" && !ev.NeatUpload_OrigOnSubmitReturnValue)
 					return false;
 				if (ev.NeatUpload_PreventDefaultCalled)
@@ -291,7 +298,7 @@ function NeatUploadForm(formElem, postBackID)
 	{
 		var eventName = eventsThatCouldTriggerPostBack[i];
 		this.AddHandler(f.FormElem, eventName, function (ev) {
-			ev = ev || window.event;
+			ev = NeatUploadForm.prototype.ClickEvent || ev || window.event;
 			if (!ev)
 			{
 				return true;
@@ -410,7 +417,39 @@ NeatUploadForm.prototype.IsElemWithin = function(elem, assocArray)
 NeatUploadForm.prototype.AddTrigger = function (id)
 {
 	this.TriggerIDs[id] = ++this.TriggerIDs.NeatUpload_length;
+	NeatUploadForm.prototype.HookClick(id);
 };
+
+NeatUploadForm.prototype.HookClick = function (id)
+{
+    var elem = document.getElementById(id);
+    if (!elem)
+    {
+        return;
+    }
+    // If a user event (e.g. pressing enter) causes elem.click() to be called, the source of the
+    // original event hides the element for which click() was called (in Firefox).  As a result, we 
+    // don't know whether to start the progress bar.  To avoid that, we hook the click() method so 
+    // that we can note the element it was called on.
+    if (!elem.click)
+    {
+        return;
+    }
+    var origClick = elem.click;
+    elem.click = function() {
+        NeatUploadForm.prototype.ClickEvent = { target: this, type: "click" };
+        var retVal;
+        try 
+        {
+            retVal = origClick.call(this);
+        }
+        finally
+        {
+            NeatUploadForm.prototype.ClickEvent = null;
+        }
+        return retVal;
+    }
+ };
 
 NeatUploadForm.prototype.CombineHandlers = function(origHandler, newHandler) 
 {
@@ -642,7 +681,7 @@ function NeatUploadPB(id, postBackID, uploadProgressPath, inline, popupWidth, po
 
 	this.UploadForm.AddNonuploadHandler(function () { pb.ClearFileInputs(pb.UploadForm.FormElem); });
 
-	this.UploadForm.AddSubmitHandler(!inline, function () {
+	this.UploadForm.AddSubmitHandler(!inline, function (ev) {
 		pb.debugMessage("In NeatUploadPB SubmitHandler");
 		// If there are files to upload and either no trigger controls were specified for this progress bar or
 		// a specified trigger control was triggered, then start the progress display.
