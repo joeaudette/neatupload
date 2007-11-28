@@ -43,7 +43,10 @@
 			<p>
 			Now either select and upload files using the following MultiFile control:
 			</p>
-			<p>File(s) to upload: <Upload:MultiFile id="multiFile" runat="server" />
+			<p>File(s) to upload: 
+			<Upload:MultiFile id="multiFile" runat="server">
+				<input type="button" id="multiFileButton" value="Add File..." />
+			</Upload:MultiFile>
 			</p>
 			<p>
 			Or, select some files using the InputFile controls below and click Submit.
@@ -98,7 +101,22 @@
 			<h2>Inline Progress Bar</h2>
 			<p>
 			Here's the inline progress bar:
+			<div style="display: none">
 			<Upload:ProgressBar id="inlineProgressBar" runat="server" inline="true" Triggers="submitButton linkButton commandButton htmlInputButtonButton htmlInputButtonSubmit" />
+			</div>
+			<script type="text/javascript">
+window.onload = function()
+{
+	var inlineProgressBar = NeatUploadPB.prototype.Bars["inlineProgressBar"];
+	var origDisplay = inlineProgressBar.Display;
+	inlineProgressBar.Display = function()
+	{
+		var elem = document.getElementById(this.ClientID);
+		elem.parentNode.style.display = "block";
+		origDisplay.call(this);
+	}
+}
+</script>
 			The inline progress bar is an IFRAME.  If your browser doesn't support IFRAMEs, you'll see a link to
 			display the progress bar in a new window.  The text of that link is configurable.
 			</p>
