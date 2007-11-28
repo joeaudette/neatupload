@@ -67,9 +67,29 @@ namespace Brettle.Web.NeatUpload
 
 		public string ControlUniqueID;
 
-		// The following 2 utility methods are provided to simplify switching from System.Web.HttpPostedFile.
-		public Stream InputStream { get { return OpenRead(); } }
+		// InputStream and SaveAs() are provided to simplify switching from System.Web.HttpPostedFile.
+		
+		/// <summary>
+		/// A readable <see cref="Stream"/> on the uploaded file. </summary>
+		/// <remarks>
+		/// A readable <see cref="Stream"/> on the uploaded file.  Note that the <see cref="Stream"/> is opened 
+		/// when this property is first accessed and that stream becomes the permanent value of this property.  
+		/// If you use this property and don't either Close() the stream or call <see cref="MoveTo"/> or
+		/// <see cref="SaveAs"/> before the request ends you may get an exception when NeatUpload tries to delete 
+		/// the underlying temporary storage at the end of the request.
+		/// </remarks>
+		public Stream InputStream 
+		{
+			get 
+			{
+				if (_InputStream == null) 
+					_InputStream = OpenRead(); 
+				return _InputStream; 
+			} 
+		}
+		
 		public void SaveAs(string path) { MoveTo(path, MoveToOptions.Overwrite); }
 
+		private Stream _InputStream;
 	}
 }
