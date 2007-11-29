@@ -311,7 +311,7 @@ function NeatUploadForm(formElem, postBackID)
 			NeatUpload_LastEventType = ev.type;
 			NeatUpload_LastEventSource = src;
 			NeatUploadForm.prototype.EventData = new Object();
-			if (ev.type != 'click' && ev.type != 'keypress')
+			if (ev.type != 'click') // Note: pressing enter or space on a button causes a click event.
 			{
 				return true;
 			}
@@ -435,20 +435,18 @@ NeatUploadForm.prototype.HookClick = function (id)
     {
         return;
     }
-    var origClick = elem.click;
+    elem.NeatUpload_OrigClick = elem.click;
     elem.click = function() {
         NeatUploadForm.prototype.ClickEvent = { target: this, type: "click" };
         var retVal;
-        try 
-        {
-            retVal = origClick.call(this);
+        try {
+            retVal = this.NeatUpload_OrigClick();
         }
-        finally
-        {
+        finally { 
             NeatUploadForm.prototype.ClickEvent = null;
         }
         return retVal;
-    }
+    };
  };
 
 NeatUploadForm.prototype.CombineHandlers = function(origHandler, newHandler) 
