@@ -24,14 +24,26 @@ using System.Collections.Specialized;
 using System.Reflection;
 using System.IO;
 using System.Web;
+using System.Runtime.Serialization;
 
 namespace Brettle.Web.NeatUpload
 {
-	public class UploadedFileCollection : NameObjectCollectionBase
+    [Serializable]
+    public class UploadedFileCollection : NameObjectCollectionBase
 	{
 		internal UploadedFileCollection() {}
-		
-		public new object SyncRoot = new object();
+
+        protected UploadedFileCollection(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+
+		public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+        }
+
+        public new object SyncRoot = new object();
 		
 		public new bool IsSynchronized { get { return true; } }
 		

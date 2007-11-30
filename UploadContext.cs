@@ -117,7 +117,7 @@ namespace Brettle.Web.NeatUpload
 			this.stopTime = System.DateTime.MaxValue;
 			NeverSynced = true;
 		}
-				
+		
 		internal UploadedFileCollection Files = new UploadedFileCollection();
 		
 		internal long[] FileSizes = null;
