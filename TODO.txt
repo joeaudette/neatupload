@@ -19,3 +19,5 @@ Comment/document code
 
 Document design (eg write an article about it)
 Acceptance tests
+
+IGNORE: testing svn under vista
