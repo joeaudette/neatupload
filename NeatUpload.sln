@@ -3,7 +3,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeatUpload", "NeatUpload.cs
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HashedInputFile", "HashedInputFile\HashedInputFile.csproj", "{B761E580-916D-11DA-A72B-08O0200C9A66}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HashedInputFile", "HashedInputFile\HashedInputFile.csproj", "{B761E580-916D-11DA-A72B-0800200C9A66}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
@@ -21,10 +21,10 @@ Global
 		{1C35B162-7797-47C8-B515-D3C2E13F4C34}.Debug.Build.0 = Debug|.NET
 		{1C35B162-7797-47C8-B515-D3C2E13F4C34}.Release.ActiveCfg = Release|.NET
 		{1C35B162-7797-47C8-B515-D3C2E13F4C34}.Release.Build.0 = Release|.NET
-		{B761E580-916D-11DA-A72B-08O0200C9A66}.Debug.ActiveCfg = Debug|.NET
-		{B761E580-916D-11DA-A72B-08O0200C9A66}.Debug.Build.0 = Debug|.NET
-		{B761E580-916D-11DA-A72B-08O0200C9A66}.Release.ActiveCfg = Release|.NET
-		{B761E580-916D-11DA-A72B-08O0200C9A66}.Release.Build.0 = Release|.NET
+		{B761E580-916D-11DA-A72B-0800200C9A66}.Debug.ActiveCfg = Debug|.NET
+		{B761E580-916D-11DA-A72B-0800200C9A66}.Debug.Build.0 = Debug|.NET
+		{B761E580-916D-11DA-A72B-0800200C9A66}.Release.ActiveCfg = Release|.NET
+		{B761E580-916D-11DA-A72B-0800200C9A66}.Release.Build.0 = Release|.NET
 		{32723920-B8AC-48AA-8D20-212CAD0E9BFA}.Debug.ActiveCfg = Debug|.NET
 		{32723920-B8AC-48AA-8D20-212CAD0E9BFA}.Debug.Build.0 = Debug|.NET
 		{32723920-B8AC-48AA-8D20-212CAD0E9BFA}.Release.ActiveCfg = Release|.NET
