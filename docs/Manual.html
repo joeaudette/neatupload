@@ -1696,11 +1696,16 @@ or HtmlInputFile</code> control.</li>
 
 <h3><a class="mozTocH3" name="SqlServerInputFileExample"></a>Example</h3>
 <p>
-There is a demo at <code>Extensions/SqlServerInputFile/UploaderTest/DBWrite.aspx</code>.  To use it:
+There is a demo at <code>Extensions/SqlServerInputFile/UploaderTest/DBWrite.aspx</code>.  Before using it for the
+first time, you need to:
   <ol>
-    <li>Create a database named FileStorageTest on your local machine, or change the connection strings in the
-    <code>Web.config</code> to point to your database.</li>
-    <li>Run the query below for your version of SQL Server to create the table and stored procedures.</li>
+    <li>Create a database named "FileStorageTest" on an SQL Server.</li>
+    <li>Create the table and stored procedures by running the query below corresponding to your version of 
+    SQL Server.</li>
+    <li>If necessary, change the connection strings in
+    <code>Extensions/SqlServerInputFile/UploaderTest/Web.config</code> to point to your database.  For example,
+    if you are using SQL Server Express on your local machine, you'll need to change <code>"Server=.;"</code> to 
+    <code>"Server=.\SQLEXPRESS;"</code> in several places.</li>
   </ol>
 </p>
 

@@ -156,17 +156,17 @@ namespace Hitone.Web.SqlServerUploader
             StringBuilder sql = new StringBuilder("SET NOCOUNT ON;");
             sql.AppendFormat("INSERT INTO [{0}] ([{1}]", tableName, dataColumnName);
             if (partialFlagColumnName != null) sql.AppendFormat(",[{0}]", partialFlagColumnName);
-            if (fileNameColumnName != null) sql.AppendFormat(",[{0}]", fileNameColumnName);
-            if (MIMETypeColumnName != null) sql.AppendFormat(",[{0}]", MIMETypeColumnName);
+            if (fileNameColumnName != null && fileName != null) sql.AppendFormat(",[{0}]", fileNameColumnName);
+            if (MIMETypeColumnName != null && MIMEType != null) sql.AppendFormat(",[{0}]", MIMETypeColumnName);
             sql.Append(") VALUES (@Bytes");
             if (partialFlagColumnName != null) sql.Append(",1");
 
-            if (fileNameColumnName != null)
+            if (fileNameColumnName != null && fileName != null)
             {
                 sql.Append(",@FileName");
                 AddWithValue(createCommand.Parameters, "@FileName", fileName);
             }
-            if (MIMETypeColumnName != null)
+            if (MIMETypeColumnName != null && MIMEType != null)
             {
                 sql.Append(",@MIMEType");
                 AddWithValue(createCommand.Parameters, "@MIMEType", MIMEType);
