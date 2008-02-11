@@ -124,7 +124,7 @@ Alter Procedure CreateBlob
 	@FileName VarChar(250) = null,
 	@MIMEType VarChar(250) = null
 As Begin Set NoCount ON;
-	Insert Into VerboseTable2 (Datafield,FileName,MimeType,PartiallyUploaded) Values ('',@FileName,@MimeType,1)
+	Insert Into VerboseTable2 (Datafield,FileName,MimeType,Partial) Values ('',@FileName,@MimeType,1)
 	Select @Identity = SCOPE_IDENTITY()
 	Select @Pointer = TEXTPTR(DataField) From VerboseTable2 Where $IDENTITY = @Identity
 End
@@ -173,7 +173,7 @@ Go
 Alter Procedure CleanUpBlob
 	@Identity Numeric
 As Begin Set NoCount On
-	Update VerboseTable2 Set PartiallyUploaded=0 Where $Identity=@Identity
+	Update VerboseTable2 Set Partial=0 Where $Identity=@Identity
 End
 
 Go

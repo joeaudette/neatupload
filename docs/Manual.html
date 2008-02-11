@@ -1696,12 +1696,11 @@ or HtmlInputFile</code> control.</li>
 
 <h3><a class="mozTocH3" name="SqlServerInputFileExample"></a>Example</h3>
 <p>
-There is an example web application in <code>Extensions/SqlServerInputFile/UploaderTest</code>.  To use it:
+There is a demo at <code>Extensions/SqlServerInputFile/UploaderTest/DBWrite.aspx</code>.  To use it:
   <ol>
-    <li>Make <code>Extensions/SqlServerInputFile/UploaderTest</code> it's own web application.</li>
     <li>Create a database named FileStorageTest on your local machine, or change the connection strings in the
     <code>Web.config</code> to point to your database.</li>
-    <li>Run the query for your version of SQL Server to create the table and stored procedures.</li>
+    <li>Run the query below for your version of SQL Server to create the table and stored procedures.</li>
   </ol>
 </p>
 
@@ -1724,7 +1723,7 @@ Alter Procedure CreateBlob
 	@FileName VarChar(250) = null,
 	@MIMEType VarChar(250) = null
 As Begin Set NoCount ON;
-	Insert Into FileTable (Datafield,FileName,MimeType,PartiallyUploaded) Values ('',@FileName,@MimeType,1)
+	Insert Into FileTable (Datafield,FileName,MimeType,Partial) Values ('',@FileName,@MimeType,1)
 	Select @Identity = SCOPE_IDENTITY()
 	Select @Pointer = TEXTPTR(DataField) From FileTable Where $IDENTITY = @Identity
 End
@@ -1773,7 +1772,7 @@ Go
 Alter Procedure CleanUpBlob
 	@Identity Numeric
 As Begin Set NoCount On
-	Update FileTable Set PartiallyUploaded=0 Where $Identity=@Identity
+	Update FileTable Set Partial=0 Where $Identity=@Identity
 End
 
 Go
