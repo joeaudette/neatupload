@@ -100,7 +100,7 @@ namespace UploaderTest
                 
                 // Test FileContent property by reading (but ignoring) the whole stream.
                 System.IO.Stream content = inputFile.FileContent;
-                int bytesToRead = inputFile.ContentLength;
+                int bytesToRead = (int)inputFile.ContentLength;
                 byte[] buf = new byte[4096];
                 while (bytesToRead > 0)
                 {
