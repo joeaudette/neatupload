@@ -104,9 +104,7 @@ namespace UploaderTest
                 byte[] buf = new byte[4096];
                 while (bytesToRead > 0)
                 {
-                	bytesToRead 
-                		-= content.Read(buf, inputFile.ContentLength - bytesToRead, 
-                		                Math.Min(bytesToRead, buf.Length));
+                	bytesToRead -= content.Read(buf, 0, Math.Min(bytesToRead, buf.Length));
                 }
                 content.Close();
                 

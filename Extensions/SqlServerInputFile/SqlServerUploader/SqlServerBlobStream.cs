@@ -375,6 +375,7 @@ namespace Hitone.Web.SqlServerUploader
             GenerateCleanupCommand(tableName, dataColumnName, partialFlagColumnName, cleanupProcedure);
             GenerateDeleteCommand(tableName, deleteProcedure);
             GenerateWriteCommand(tableName, dataColumnName, writeProcedure);
+            GenerateReadCommand(tableName, dataColumnName, readProcedure);
 
             _isOpen = true;
         }

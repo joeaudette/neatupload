@@ -222,6 +222,7 @@ namespace Hitone.Web.SqlServerUploader
         public override Stream OpenRead()
         {
             if (_disposed) throw new ObjectDisposedException("SqlServerBlobStream");
+            _blobStream.ReOpen();
             if (!_blobStream.CanRead) throw new NotSupportedException();
             _blobStream.Seek(0, SeekOrigin.Begin);
             return _blobStream;
