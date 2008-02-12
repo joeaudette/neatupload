@@ -88,8 +88,10 @@ a Custom UploadStorageProvider</a></li>
   <li><a href="#mozTocId580088">Known
 Issues</a>
     <ul>
+      <li><a href="#IIS7">NeatUpload does not work in IIS7's default application pool</a></li>
       <li><a href="#AspNetTrace">ASP.NET application-wide tracing disables NeatUpload</a></li>
       <li><a href="#WebGardenIssue">ProgressBar doesn't work with web gardens/farms</a></li>
+      <li><a href="#Permissions">Permissions on uploaded files depends on temporary directory</a></li>
       <li><a href="#mozTocId766780">HttpResponse.AppendToLog()
 does nothing when UploadHttpModule is used</a></li>
       <li><a href="#mozTocId752771">Inline
@@ -2902,7 +2904,17 @@ input file form element so that the user knows what the problem is.
 
 <h2><a class="mozTocH2" name="mozTocId580088"></a>Known
 Issues</h2>
+<h3><a class="mozTocH3" name="IIS7"></a>NeatUpload does not work in IIS7's default application pool</h3>
 
+<p>Due to <a href="https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=308352">a
+bug in IIS7's Integrated Pipeline Mode</a>, NeatUpload will not work in IIS7's default application pool.
+To workaround this, you need to configure your web site to use the "Classic .NET AppPool".  To
+encourage Microsoft to fix the bug in a future IIS release, please 
+<a href="https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=308352">give 5 stars
+to it</a>.  For more information on the issue,
+please see <a href="http://forums.iis.net/p/1132368/1802914.aspx">the discussion with IIS7 Program Manager Mike 
+Volodarsky</a>.
+</p>
 <h3><a class="mozTocH3" name="AspNetTrace"></a>ASP.NET application-wide tracing disables NeatUpload</h3>
 
 <p>When ASP.NET tracing is enabled in the application Web.config, ASP.NET reads the entire upload before
@@ -2936,6 +2948,16 @@ are not running a web garden, see Microsoft's documentation on
 For high volume sites, you might be able to use a web farm if you are able to ensure that all requests from a 
 particular client are routed to the same server (i.e. sticky IP).</p>
 
+
+<h3><a class="mozTocH3" name="Permissions"></a>Permissions on uploaded files depends on temporary directory</h3>
+
+<p>
+Uploaded files are created in a temporary directory and inherit the permissions of that directory.  Calling
+<code>InputFile.MoveTo()</code> does not change the permissions.  In some environments, files in the default
+temporary directory are not readable by web applications, and as a result uploaded files are not readable
+by the web application.  To avoid this issue, simply <a href="#mozTocId905959">change the temporary
+directory used by NeatUpload</a> to a directory that has the permissions you desire.
+</p>
 
 <h3><a class="mozTocH3" name="mozTocId766780"></a><code>HttpResponse.AppendToLog()</code>
 does nothing when <code>UploadHttpModule</code> is used</h3>
