@@ -1,86 +1,89 @@
 <Project name="NeatUpload" fileversion="2.0" language="C#" clr-version="Net_1_1" ctype="DotNetProject">
-  <Configurations active="Debug">
+  <Configurations active="Release">
     <Configuration name="Debug" ctype="DotNetProjectConfiguration">
-      <Output directory="./bin/Debug" assembly="Brettle.Web.NeatUpload" />
-      <Build executeBeforeBuild="./PreBuild.sh" debugmode="True" target="Library" />
+      <CustomCommands>
+        <Command type="BeforeBuild" command="PreBuild.sh" />
+      </CustomCommands>
+      <Output directory="bin/Debug" assembly="Brettle.Web.NeatUpload" />
+      <Build executeBeforeBuild="PreBuild.sh" debugmode="True" target="Library" />
       <Execution runwithwarnings="True" consolepause="False" runtime="MsNet" clr-version="Net_1_1" />
       <CodeGeneration compiler="Csc" warninglevel="4" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" generatexmldocumentation="True" ctype="CSharpCompilerParameters" />
     </Configuration>
     <Configuration name="Release" ctype="DotNetProjectConfiguration">
-      <Output directory="./bin/Release" assembly="Brettle.Web.NeatUpload" />
-      <Build executeBeforeBuild="./PreBuild.sh" executeAfterBuild="./PostBuild.sh" debugmode="False" target="Library" />
+      <CustomCommands>
+        <Command type="BeforeBuild" command="PreBuild.sh" />
+      </CustomCommands>
+      <Output directory="bin/Release" assembly="Brettle.Web.NeatUpload" />
+      <Build executeBeforeBuild="PreBuild.sh" debugmode="False" target="Library" />
       <Execution runwithwarnings="True" consolepause="False" runtime="MsNet" clr-version="Net_1_1" />
       <CodeGeneration compiler="Csc" warninglevel="4" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" generatexmldocumentation="True" ctype="CSharpCompilerParameters" />
     </Configuration>
   </Configurations>
-  <DeployTargets />
   <Contents>
-    <File name="./Demo.aspx.cs" subtype="Code" buildaction="Nothing" />
-    <File name="./AssemblyInfo.cs" subtype="Code" buildaction="Compile" />
-    <File name="./Demo.aspx" subtype="Code" buildaction="Nothing" />
-    <File name="./UploadHttpModule.cs" subtype="Code" buildaction="Compile" />
-    <File name="./FilteringWorkerRequest.cs" subtype="Code" buildaction="Compile" />
-    <File name="./Web.config" subtype="Code" buildaction="Compile" />
-    <File name="./InputFile.cs" subtype="Code" buildaction="Compile" />
-    <File name="./UploadedFile.cs" subtype="Code" buildaction="Compile" />
-    <File name="./UploadContext.cs" subtype="Code" buildaction="Compile" />
-    <File name="./ProgressBar.cs" subtype="Code" buildaction="Compile" />
-    <File name="./FormContext.cs" subtype="Code" buildaction="Compile" />
-    <File name="./UploadStatus.cs" subtype="Code" buildaction="Compile" />
-    <File name="./TODO.txt" subtype="Code" buildaction="Compile" />
-    <File name="./log4net.config" subtype="Code" buildaction="Compile" />
-    <File name="./Global.asax" subtype="Code" buildaction="Nothing" />
-    <File name="./Global.asax.cs" subtype="Code" buildaction="Nothing" />
-    <File name="./Global.asax.resx" subtype="Code" buildaction="Nothing" />
-    <File name="./SizeLimitingWorkerRequest.cs" subtype="Code" buildaction="Compile" />
-    <File name="./DecoratedWorkerRequest.cs" subtype="Code" buildaction="Compile" />
-    <File name="./NeatUpload/Progress.aspx" subtype="Code" buildaction="Nothing" />
-    <File name="./NeatUpload/cancel.png" subtype="Code" buildaction="Nothing" />
-    <File name="./NeatUpload/refresh.png" subtype="Code" buildaction="Nothing" />
-    <File name="./NeatUpload/stop_refresh.png" subtype="Code" buildaction="Nothing" />
-    <File name="./NeatUpload/default.css" subtype="Code" buildaction="Nothing" />
-    <File name="./docs" subtype="Directory" buildaction="Compile" />
-    <File name="./docs/Design.html" subtype="Code" buildaction="Nothing" />
-    <File name="./docs/Manual.html" subtype="Code" buildaction="Nothing" />
-    <File name="./LICENSE.txt" subtype="Code" buildaction="Compile" />
-    <File name="./COPYING-LIB.txt" subtype="Code" buildaction="Nothing" />
-    <File name="./NeatUpload/Error413.aspx" subtype="Code" buildaction="Nothing" />
-    <File name="./MyLog4net.cs" subtype="Code" buildaction="Compile" />
-    <File name="./MockWorkerRequest.cs" subtype="Code" buildaction="Compile" />
-    <File name="./FilterTester.cs" subtype="Code" buildaction="Compile" />
-    <File name="./ConfigSectionHandler.cs" subtype="Code" buildaction="Compile" />
-    <File name="./Config.cs" subtype="Code" buildaction="Compile" />
-    <File name="./MoveToOptions.cs" subtype="Code" buildaction="Compile" />
-    <File name="./UploadStorageProvider.cs" subtype="Code" buildaction="Compile" />
-    <File name="./UploadStorage.cs" subtype="Code" buildaction="Compile" />
-    <File name="./FilesystemUploadedFile.cs" subtype="Code" buildaction="Compile" />
-    <File name="./FilesystemUploadStorageProvider.cs" subtype="Code" buildaction="Compile" />
-    <File name="./UploadStorageProviderCollection.cs" subtype="Code" buildaction="Compile" />
-    <File name="./UploadException.cs" subtype="Code" buildaction="Compile" />
-    <File name="./UploadTooLargeException.cs" subtype="Code" buildaction="Compile" />
-    <File name="./PreBuild.sh" subtype="Code" buildaction="Nothing" />
-    <File name="./PostBuild.sh" subtype="Code" buildaction="Nothing" />
-    <File name="./DetailsControl.cs" subtype="Code" buildaction="Compile" />
-    <File name="./DetailsDiv.cs" subtype="Code" buildaction="Compile" />
-    <File name="./DetailsSpan.cs" subtype="Code" buildaction="Compile" />
-    <File name="./NeatUpload/Progress.js" subtype="Code" buildaction="Compile" />
-    <File name="./ProgressPage.cs" subtype="Code" buildaction="Compile" />
-    <File name="./Progress-1.0.aspx.cs" subtype="Code" buildaction="Compile" />
-    <File name="./Strings.resx" subtype="Code" buildaction="Nothing" />
-    <File name="./NeatUpload.Strings.resources" subtype="Code" buildaction="EmbedAsResource" />
-    <File name="./NeatUpload.sln" subtype="Code" buildaction="Nothing" />
-    <File name="./InvalidStorageConfigException.cs" subtype="Code" buildaction="Compile" />
-    <File name="./UploadStorageConfig.cs" subtype="Code" buildaction="Compile" />
-    <File name="./NeatUpload.csproj" subtype="Code" buildaction="Nothing" />
-    <File name="./FieldNameTranslator.cs" subtype="Code" buildaction="Compile" />
-    <File name="./tests/MultipleBars.aspx" subtype="Code" buildaction="Nothing" />
-    <File name="./tests/MultipleBars.aspx.cs" subtype="Code" buildaction="Nothing" />
-    <File name="./tests/Web.config" subtype="Code" buildaction="Nothing" />
-    <File name="./tests/HideFallback.aspx" subtype="Code" buildaction="Nothing" />
-    <File name="./tests/TriggerChildren.aspx" subtype="Code" buildaction="Nothing" />
-    <File name="./tests/TriggerChildren.aspx.cs" subtype="Code" buildaction="Nothing" />
-    <File name="./tests/InlineProgressBarsInOpera.aspx" subtype="Code" buildaction="Nothing" />
-    <File name="./tests/Bugs.aspx" subtype="Code" buildaction="Nothing" />
+    <File name="Demo.aspx.cs" subtype="Code" buildaction="Nothing" />
+    <File name="AssemblyInfo.cs" subtype="Code" buildaction="Compile" />
+    <File name="Demo.aspx" subtype="Code" buildaction="Nothing" />
+    <File name="UploadHttpModule.cs" subtype="Code" buildaction="Compile" />
+    <File name="FilteringWorkerRequest.cs" subtype="Code" buildaction="Compile" />
+    <File name="Web.config" subtype="Code" buildaction="FileCopy" />
+    <File name="InputFile.cs" subtype="Code" buildaction="Compile" />
+    <File name="UploadedFile.cs" subtype="Code" buildaction="Compile" />
+    <File name="UploadContext.cs" subtype="Code" buildaction="Compile" />
+    <File name="ProgressBar.cs" subtype="Code" buildaction="Compile" />
+    <File name="FormContext.cs" subtype="Code" buildaction="Compile" />
+    <File name="UploadStatus.cs" subtype="Code" buildaction="Compile" />
+    <File name="TODO.txt" subtype="Code" buildaction="FileCopy" />
+    <File name="log4net.config" subtype="Code" buildaction="FileCopy" />
+    <File name="Global.asax" subtype="Code" buildaction="Nothing" />
+    <File name="Global.asax.cs" subtype="Code" buildaction="Nothing" />
+    <File name="SizeLimitingWorkerRequest.cs" subtype="Code" buildaction="Compile" />
+    <File name="DecoratedWorkerRequest.cs" subtype="Code" buildaction="Compile" />
+    <File name="NeatUpload/Progress.aspx" subtype="Code" buildaction="Nothing" />
+    <File name="NeatUpload/cancel.png" subtype="Code" buildaction="Nothing" />
+    <File name="NeatUpload/refresh.png" subtype="Code" buildaction="Nothing" />
+    <File name="NeatUpload/stop_refresh.png" subtype="Code" buildaction="Nothing" />
+    <File name="NeatUpload/default.css" subtype="Code" buildaction="Nothing" />
+    <File name="docs" subtype="Directory" buildaction="Compile" />
+    <File name="docs/Design.html" subtype="Code" buildaction="Nothing" />
+    <File name="docs/Manual.html" subtype="Code" buildaction="Nothing" />
+    <File name="LICENSE.txt" subtype="Code" buildaction="FileCopy" />
+    <File name="COPYING-LIB.txt" subtype="Code" buildaction="Nothing" />
+    <File name="NeatUpload/Error413.aspx" subtype="Code" buildaction="Nothing" />
+    <File name="MyLog4net.cs" subtype="Code" buildaction="Compile" />
+    <File name="MockWorkerRequest.cs" subtype="Code" buildaction="Compile" />
+    <File name="FilterTester.cs" subtype="Code" buildaction="Compile" />
+    <File name="ConfigSectionHandler.cs" subtype="Code" buildaction="Compile" />
+    <File name="Config.cs" subtype="Code" buildaction="Compile" />
+    <File name="MoveToOptions.cs" subtype="Code" buildaction="Compile" />
+    <File name="UploadStorageProvider.cs" subtype="Code" buildaction="Compile" />
+    <File name="UploadStorage.cs" subtype="Code" buildaction="Compile" />
+    <File name="FilesystemUploadedFile.cs" subtype="Code" buildaction="Compile" />
+    <File name="FilesystemUploadStorageProvider.cs" subtype="Code" buildaction="Compile" />
+    <File name="UploadStorageProviderCollection.cs" subtype="Code" buildaction="Compile" />
+    <File name="UploadException.cs" subtype="Code" buildaction="Compile" />
+    <File name="UploadTooLargeException.cs" subtype="Code" buildaction="Compile" />
+    <File name="PreBuild.sh" subtype="Code" buildaction="Nothing" />
+    <File name="DetailsControl.cs" subtype="Code" buildaction="Compile" />
+    <File name="DetailsDiv.cs" subtype="Code" buildaction="Compile" />
+    <File name="DetailsSpan.cs" subtype="Code" buildaction="Compile" />
+    <File name="NeatUpload/Progress.js" subtype="Code" buildaction="FileCopy" />
+    <File name="ProgressPage.cs" subtype="Code" buildaction="Compile" />
+    <File name="Progress-1.0.aspx.cs" subtype="Code" buildaction="Compile" />
+    <File name="Strings.resx" subtype="Code" buildaction="Nothing" />
+    <File name="NeatUpload.Strings.resources" subtype="Code" buildaction="EmbedAsResource" />
+    <File name="NeatUpload.sln" subtype="Code" buildaction="Nothing" />
+    <File name="InvalidStorageConfigException.cs" subtype="Code" buildaction="Compile" />
+    <File name="UploadStorageConfig.cs" subtype="Code" buildaction="Compile" />
+    <File name="NeatUpload.csproj" subtype="Code" buildaction="Nothing" />
+    <File name="FieldNameTranslator.cs" subtype="Code" buildaction="Compile" />
+    <File name="tests/MultipleBars.aspx" subtype="Code" buildaction="Nothing" />
+    <File name="tests/MultipleBars.aspx.cs" subtype="Code" buildaction="Nothing" />
+    <File name="tests/Web.config" subtype="Code" buildaction="Nothing" />
+    <File name="tests/HideFallback.aspx" subtype="Code" buildaction="Nothing" />
+    <File name="tests/TriggerChildren.aspx" subtype="Code" buildaction="Nothing" />
+    <File name="tests/TriggerChildren.aspx.cs" subtype="Code" buildaction="Nothing" />
+    <File name="tests/InlineProgressBarsInOpera.aspx" subtype="Code" buildaction="Nothing" />
+    <File name="tests/Bugs.aspx" subtype="Code" buildaction="Nothing" />
   </Contents>
   <References>
     <ProjectReference type="Gac" localcopy="True" refto="System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
@@ -88,6 +91,7 @@
     <ProjectReference type="Gac" localcopy="True" refto="System.Xml, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
     <ProjectReference type="Gac" localcopy="True" refto="System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   </References>
+  <DeployTargets />
   <DeploymentInformation strategy="File">
     <excludeFiles />
   </DeploymentInformation>
