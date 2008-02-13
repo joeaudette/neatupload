@@ -118,20 +118,20 @@ CREATE TABLE [FileTable] (
 
 GO
 
-Alter Procedure CreateBlob
+CREATE Procedure CreateBlob
 	@Identity Numeric Output,
 	@Pointer Binary(16) Output,
 	@FileName VarChar(250) = null,
 	@MIMEType VarChar(250) = null
 As Begin Set NoCount ON;
-	Insert Into VerboseTable2 (Datafield,FileName,MimeType,PartiallyUploaded) Values ('',@FileName,@MimeType,1)
+	Insert Into VerboseTable2 (Datafield,FileName,MimeType,Partial) Values ('',@FileName,@MimeType,1)
 	Select @Identity = SCOPE_IDENTITY()
 	Select @Pointer = TEXTPTR(DataField) From VerboseTable2 Where $IDENTITY = @Identity
 End
 
 Go
 
-Alter Procedure OpenBlob
+CREATE Procedure OpenBlob
 	@Identity Numeric,
 	@Pointer VarBinary(max) Output,
 	@Size Int Output,
@@ -147,7 +147,7 @@ End
 
 Go
 
-Alter Procedure ReadBlob
+CREATE Procedure ReadBlob
 	@Identity Numeric, --ignored in this implementation, here for reference
 	@Pointer Binary(16),
 	@Offset Int,
@@ -158,7 +158,7 @@ End
 
 Go
 
-Alter Procedure WriteBlob
+CREATE Procedure WriteBlob
 	@Identity Numeric, --ignored in this implementation, here for reference
 	@Pointer Binary(16),
 	@Bytes VarBinary(max),
@@ -170,15 +170,15 @@ End
 
 Go
 
-Alter Procedure CleanUpBlob
+CREATE Procedure CleanUpBlob
 	@Identity Numeric
 As Begin Set NoCount On
-	Update VerboseTable2 Set PartiallyUploaded=0 Where $Identity=@Identity
+	Update VerboseTable2 Set Partial=0 Where $Identity=@Identity
 End
 
 Go
 
-Alter Procedure DeleteBlob
+CREATE Procedure DeleteBlob
 	@Identity Numeric
 As Begin Set NoCount On
 	Delete From VerboseTable2 Where $Identity=@Identity
@@ -186,7 +186,7 @@ End
 
 Go
 
-Alter Procedure RenameBlob
+CREATE Procedure RenameBlob
 	@Identity Numeric,
 	@FileName VarChar(250)
 As Begin Set NoCount On
@@ -195,7 +195,7 @@ End
 
 Go
 
-Alter Procedure FinalizeBlob
+CREATE Procedure FinalizeBlob
 	@Identity Numeric,
 	@Hash VarChar(250)
 As Begin Set NoCount On

@@ -1,28 +1,30 @@
 <Project name="HashedInputFile" fileversion="2.0" language="C#" clr-version="Net_1_1" ctype="DotNetProject">
-  <Configurations active="Debug">
+  <Configurations active="Release">
     <Configuration name="Debug" ctype="DotNetProjectConfiguration">
-      <Output directory="./bin/Debug" assembly="Brettle.Web.NeatUpload.HashedInputFile" />
+      <Output directory="bin/Debug" assembly="Brettle.Web.NeatUpload.HashedInputFile" />
       <Build debugmode="True" target="Library" />
       <Execution runwithwarnings="True" consolepause="False" runtime="MsNet" clr-version="Net_1_1" />
       <CodeGeneration compiler="Csc" warninglevel="4" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" generatexmldocumentation="False" ctype="CSharpCompilerParameters" />
     </Configuration>
     <Configuration name="Release" ctype="DotNetProjectConfiguration">
-      <Output directory="./bin/Release" assembly="Brettle.Web.NeatUpload.HashedInputFile" />
-      <Build executeAfterBuild="./PostBuild.sh" debugmode="False" target="Library" />
+      <CustomCommands>
+        <Command type="AfterBuild" command="PostBuild.sh" />
+      </CustomCommands>
+      <Output directory="bin/Release" assembly="Brettle.Web.NeatUpload.HashedInputFile" />
+      <Build executeAfterBuild="PostBuild.sh" debugmode="False" target="Library" />
       <Execution runwithwarnings="True" consolepause="False" runtime="MsNet" clr-version="Net_1_1" />
       <CodeGeneration compiler="Csc" warninglevel="4" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" generatexmldocumentation="False" ctype="CSharpCompilerParameters" />
     </Configuration>
   </Configurations>
-  <DeployTargets />
   <Contents>
-    <File name="./AssemblyInfo.cs" subtype="Code" buildaction="Compile" />
-    <File name="./HashedInputFile.cs" subtype="Code" buildaction="Compile" />
-    <File name="./HashingFilesystemUploadedFile.cs" subtype="Code" buildaction="Compile" />
-    <File name="./HashingFilesystemUploadStorageProvider.cs" subtype="Code" buildaction="Compile" />
-    <File name="./HashedDemo.aspx" subtype="Code" buildaction="Nothing" />
-    <File name="./HashedDemo.aspx.cs" subtype="Code" buildaction="Nothing" />
-    <File name="./Web.config" subtype="Code" buildaction="Nothing" />
-    <File name="./HashedInputFile.csproj" subtype="Code" buildaction="Nothing" />
+    <File name="AssemblyInfo.cs" subtype="Code" buildaction="Compile" />
+    <File name="HashedInputFile.cs" subtype="Code" buildaction="Compile" />
+    <File name="HashingFilesystemUploadedFile.cs" subtype="Code" buildaction="Compile" />
+    <File name="HashingFilesystemUploadStorageProvider.cs" subtype="Code" buildaction="Compile" />
+    <File name="HashedDemo.aspx" subtype="Code" buildaction="Nothing" />
+    <File name="HashedDemo.aspx.cs" subtype="Code" buildaction="Nothing" />
+    <File name="Web.config" subtype="Code" buildaction="Nothing" />
+    <File name="HashedInputFile.csproj" subtype="Code" buildaction="Nothing" />
   </Contents>
   <References>
     <ProjectReference type="Gac" localcopy="True" refto="System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
@@ -32,6 +34,7 @@
     <ProjectReference type="Gac" localcopy="True" refto="System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <ProjectReference type="Gac" localcopy="True" refto="System.Security, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   </References>
+  <DeployTargets />
   <DeploymentInformation strategy="File">
     <excludeFiles />
   </DeploymentInformation>

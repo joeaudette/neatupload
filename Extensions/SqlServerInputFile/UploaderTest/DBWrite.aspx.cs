@@ -97,6 +97,17 @@ namespace UploaderTest
                 string filename = System.IO.Path.Combine("c:\\temp", inputFile.FileName);
                 inputFile.MoveTo(filename, MoveToOptions.Overwrite);
                 */
+                
+                // Test FileContent property by reading (but ignoring) the whole stream.
+                System.IO.Stream content = inputFile.FileContent;
+                int bytesToRead = (int)inputFile.ContentLength;
+                byte[] buf = new byte[4096];
+                while (bytesToRead > 0)
+                {
+                	bytesToRead -= content.Read(buf, 0, Math.Min(bytesToRead, buf.Length));
+                }
+                content.Close();
+                
                 inputFile.Verify();
 
                 bodyPre.InnerHtml += "File #1:\n";
