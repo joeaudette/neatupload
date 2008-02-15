@@ -153,13 +153,45 @@ namespace Brettle.Web.NeatUpload
 		{
 			// We register the on submit statement here in hopes that it will be the last on submit statement.
 			// Other on submit statements will generally be added during PreRender.
+			RegisterOnSubmitStatement(null, null);
+			return base.SaveViewState();
+		}
+		
+		/// <summary>
+		/// Registers an OnSubmit statement to ensure that this ProgressBar will start when the page is
+		/// submitted.</summary>
+		/// <param name="source">Ignored</param>
+		/// <param name="e">Ignored</param>
+		/// <remarks>
+		/// You only need to call this method if your page has EnableViewViewState=false.  In that case, you
+		/// should call this method after all PreRender handlers have been called, but before Page.Render() has
+		/// been called.  In .NET 2.0, that can be achieved by adding this as a PreRenderComplete handler for
+		/// your page:
+		/// 
+		/// <code>
+		/// PreRenderComplete += new System.EventHandler(progressBar.RegisterOnSubmitStatement);
+		/// </code>
+		/// 
+		/// In .NET 1.1, you can override your Page's OnPreRender() method, like this:
+		/// <code>
+		/// protected override void OnPreRender(EventArgs e)
+		/// {
+		/// 	base.OnPreRender(e);
+		/// 	progressBar.RegisterOnSubmitStatement(null, null);
+		/// }
+		/// </code>
+		/// </remarks>
+		public void RegisterOnSubmitStatement(object source, EventArgs e)
+		{
 			if (!IsDesignTime && Config.Current.UseHttpModule && Visible)
 			{
 				HtmlControl formControl = GetFormControl(this);
 				this.Page.RegisterOnSubmitStatement(formControl.UniqueID + "-OnSubmitStatement", "NeatUpload_OnSubmitForm_" + formControl.ClientID + @"();");
 			}
-			return base.SaveViewState();
+			IsOnSubmitStatementRegistered = true;
 		}
+		
+		private bool IsOnSubmitStatementRegistered = false;
 		
 		private void InitializeComponent()
 		{
@@ -368,6 +400,13 @@ function NeatUpload_OnSubmitForm_" + formControl.ClientID + @"()
 			
 			if (!IsDesignTime)
 			{
+				if (!IsOnSubmitStatementRegistered)
+				{
+					throw new InvalidOperationException("ProgressBar.RegisterOnSubmitStatement() never called.  "
+					                                    + "Either set EnableViewState=\"true\" or call "
+					                                    + "ProgressBar.RegisterOnSubmitStatement() after PreRender"
+					                                    + "handlers and before Page.Render().");
+				}
 				// We can't register these scripts during PreRender because if we do there will be no way to
 				// programmatically add triggers that are in data-bound controls that occur after the ProgressBar.
 				RegisterScripts();
