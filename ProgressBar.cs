@@ -178,6 +178,17 @@ namespace Brettle.Web.NeatUpload
 			base.OnPreRender(e);
 		}
 		
+		/// <summary>
+		/// This method does nothing.  It is only provided to ensure API compatibility with earlier NeatUpload
+		/// versions.  In those earlier versions, this method registered an OnSubmit statement to
+		/// ensure that this ProgressBar will start when the page is submitted.</summary>
+		/// <param name="source">Ignored</param>
+		/// <param name="e">Ignored</param>
+		[Obsolete("No longer necessary")]
+		public void RegisterOnSubmitStatement(object source, EventArgs e)
+		{
+		}
+				
 		private void InitializeComponent()
 		{
 		}
