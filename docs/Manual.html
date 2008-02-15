@@ -91,7 +91,9 @@ Issues</a>
       <li><a href="#IIS7">NeatUpload does not work in IIS7's default application pool</a></li>
       <li><a href="#AspNetTrace">ASP.NET application-wide tracing disables NeatUpload</a></li>
       <li><a href="#WebGardenIssue">ProgressBar doesn't work with web gardens/farms</a></li>
-      <li><a href="#Permissions">Permissions on uploaded files depends on temporary directory</a></li>
+      <li><a href="#Permissions">Permissions on uploaded files depend on temporary directory</a></li>
+      <li><a href="#ProgressBarViewState"><code>InvalidOperationException</code> when using <code>ProgressBar</code> 
+      with <code>EnableViewState="false"</code></a></li>
       <li><a href="#mozTocId766780">HttpResponse.AppendToLog()
 does nothing when UploadHttpModule is used</a></li>
       <li><a href="#mozTocId752771">Inline
@@ -2958,6 +2960,39 @@ temporary directory are not readable by web applications, and as a result upload
 by the web application.  To avoid this issue, simply <a href="#mozTocId905959">change the temporary
 directory used by NeatUpload</a> to a directory that has the permissions you desire.
 </p>
+
+
+<h3><a class="mozTocH3" name="ProgressBarViewState"></a><code>InvalidOperationException</code> when using <code>ProgressBar</code> 
+      with <code>EnableViewState="false"</code></a></h3>
+<p>
+In order to start the progress display only if client-side validation succeeds and the form is submitted to the
+server, NeatUpload needs to register an onsubmit statement that executes after other onsubmit statements such as
+those that do client-side validation.  Most controls (e.g. validators) register their onsubmit statements during the
+<code>PreRender</code> event.  To ensure that NeatUpload's onsubmit statement is executed later, it needs to be
+registered after <code>PreRender</code> handlers have been called, but before <code>Render()</code> is 
+called.  The <code>PreRenderComplete</code> event would be an good candidate, but unfortunately it is not available
+in .NET 1.1.  Instead, NeatUpload registers its onsubmit statement in
+<code>ProgressBar.SaveViewState()</code>.  Unfortunately, ASP.NET does not call <code>SaveViewState()</code>
+if <code>EnableViewState</code> is "false" for the page.  To avoid silent failure when viewstate is disabled,
+<code>ProgressBar.Render()</code> throws an <code>InvalidOperationException</code> if the onsubmit 
+statement was not registered.
+</p>
+<p>
+If you see the <code>InvalidOperationException</code> error thrown from <code>ProgressBar.Render()</code>, 
+the simplest workaround is to enable viewstate for the page containing the <code>ProgressBar</code>.  However, if that is
+not desirable, you can explicitly call <code>ProgressBar's</code> <code>RegisterOnSubmitStatement()</code> method
+after other <code>PreRender</code> handlers.  Under .NET 2.0 you can add it as a <code>PreRenderComplete</code>
+event handler like this:<br/>
+<pre>PreRenderComplete += new System.EventHandler(progressBar.RegisterOnSubmitStatement);
+</pre>
+Under .NET 1.1, you can override <code>Page.OnPreRender()</code> like this:<br/>
+<pre>protected override void OnPreRender(EventArgs e)
+{
+    base.OnPreRender(e);
+    progressBar.RegisterOnSubmitStatement(null, null);
+}
+</pre>
+</p>     
 
 <h3><a class="mozTocH3" name="mozTocId766780"></a><code>HttpResponse.AppendToLog()</code>
 does nothing when <code>UploadHttpModule</code> is used</h3>
