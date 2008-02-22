@@ -34,6 +34,7 @@ namespace UploaderTest
 
             //Make sure there is no crap in the HTTP headers that would be sent
             Response.ClearHeaders();
+			Response.BufferOutput = false;
 
             //Get ID of file to load form the database
             int id = int.Parse(Request.QueryString["id"]);
