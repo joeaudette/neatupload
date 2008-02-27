@@ -5,18 +5,18 @@
 <dc:title>NeatUpload™ Manual</dc:title>
 <meta:creation-date>2007-08-10T02:24:38</meta:creation-date>
 <dc:creator>Dean Brettle</dc:creator>
-<dc:date>2008-02-12T21:59:22</dc:date>
-<meta:editing-cycles>17</meta:editing-cycles>
-<meta:editing-duration>PT4H25M45S</meta:editing-duration>
+<dc:date>2008-02-24T16:39:21</dc:date>
+<meta:editing-cycles>18</meta:editing-cycles>
+<meta:editing-duration>PT4H56M21S</meta:editing-duration>
 <meta:user-defined meta:name="Info 1"/>
 <meta:user-defined meta:name="Info 2"/>
 <meta:user-defined meta:name="Info 3"/>
 <meta:user-defined meta:name="Info 4"/>
-<meta:document-statistic meta:table-count="1" meta:image-count="0" meta:object-count="0" meta:page-count="2" meta:paragraph-count="484" meta:word-count="13295" meta:character-count="93561"/>
+<meta:document-statistic meta:table-count="1" meta:image-count="0" meta:object-count="0" meta:page-count="1" meta:paragraph-count="484" meta:word-count="13295" meta:character-count="93608"/>
 </office:meta>
 <office:settings>
 <config:config-item-set config:name="ooo:view-settings">
-<config:config-item config:name="ViewAreaTop" config:type="int">641929</config:config-item>
+<config:config-item config:name="ViewAreaTop" config:type="int">115725</config:config-item>
 <config:config-item config:name="ViewAreaLeft" config:type="int">1002</config:config-item>
 <config:config-item config:name="ViewAreaWidth" config:type="int">32625</config:config-item>
 <config:config-item config:name="ViewAreaHeight" config:type="int">15030</config:config-item>
@@ -25,12 +25,12 @@
 <config:config-item-map-indexed config:name="Views">
 <config:config-item-map-entry>
 <config:config-item config:name="ViewId" config:type="string">view2</config:config-item>
-<config:config-item config:name="ViewLeft" config:type="int">9178</config:config-item>
-<config:config-item config:name="ViewTop" config:type="int">645760</config:config-item>
+<config:config-item config:name="ViewLeft" config:type="int">28549</config:config-item>
+<config:config-item config:name="ViewTop" config:type="int">124160</config:config-item>
 <config:config-item config:name="VisibleLeft" config:type="int">1002</config:config-item>
-<config:config-item config:name="VisibleTop" config:type="int">641929</config:config-item>
+<config:config-item config:name="VisibleTop" config:type="int">115725</config:config-item>
 <config:config-item config:name="VisibleRight" config:type="int">33625</config:config-item>
-<config:config-item config:name="VisibleBottom" config:type="int">656957</config:config-item>
+<config:config-item config:name="VisibleBottom" config:type="int">130754</config:config-item>
 <config:config-item config:name="ZoomType" config:type="short">0</config:config-item>
 <config:config-item config:name="ZoomFactor" config:type="short">100</config:config-item>
 <config:config-item config:name="IsSelectedFrame" config:type="boolean">false</config:config-item>
@@ -362,114 +362,108 @@
 <style:style style:name="P9" style:family="paragraph" style:parent-style-name="Title" style:master-page-name="">
 <style:paragraph-properties style:page-number="auto"/>
 </style:style>
-<style:style style:name="P10" style:family="paragraph" style:parent-style-name="Contents_20_2">
-<style:paragraph-properties>
-<style:tab-stops/>
-</style:paragraph-properties>
-</style:style>
-<style:style style:name="P11" style:family="paragraph" style:parent-style-name="Contents_20_3">
-<style:paragraph-properties>
-<style:tab-stops/>
-</style:paragraph-properties>
-</style:style>
-<style:style style:name="P12" style:family="paragraph" style:parent-style-name="Contents_20_4">
-<style:paragraph-properties>
-<style:tab-stops/>
-</style:paragraph-properties>
-</style:style>
-<style:style style:name="P13" style:family="paragraph" style:parent-style-name="Title" style:master-page-name="HTML">
+<style:style style:name="P10" style:family="paragraph" style:parent-style-name="Title" style:master-page-name="">
 <style:paragraph-properties style:page-number="auto"/>
 </style:style>
-<style:style style:name="P14" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L8"/>
-<style:style style:name="P15" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L9"/>
+<style:style style:name="P11" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L8"/>
+<style:style style:name="P12" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L9"/>
+<style:style style:name="P13" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L10"/>
+<style:style style:name="P14" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L10"/>
+<style:style style:name="P15" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L10"/>
 <style:style style:name="P16" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L10"/>
 <style:style style:name="P17" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L10"/>
-<style:style style:name="P18" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L10"/>
-<style:style style:name="P19" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L10"/>
-<style:style style:name="P20" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L10"/>
-<style:style style:name="P21" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L11"/>
-<style:style style:name="P22" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L19"/>
-<style:style style:name="P23" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L8">
+<style:style style:name="P18" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L11"/>
+<style:style style:name="P19" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L19"/>
+<style:style style:name="P20" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L8">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0.2in"/>
 </style:style>
-<style:style style:name="P24" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L8">
+<style:style style:name="P21" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L8">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0.2in"/>
 </style:style>
-<style:style style:name="P25" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L8">
+<style:style style:name="P22" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L8">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0.2in"/>
 </style:style>
-<style:style style:name="P26" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L10">
+<style:style style:name="P23" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L10">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0.2in"/>
 </style:style>
-<style:style style:name="P27" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L17">
+<style:style style:name="P24" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L17">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0.2in"/>
 </style:style>
-<style:style style:name="P28" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L19">
+<style:style style:name="P25" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L19">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0.2in"/>
 </style:style>
-<style:style style:name="P29" style:family="paragraph" style:parent-style-name="Preformatted_20_Text">
-<style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0.1965in"/>
-</style:style>
-<style:style style:name="P30" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L17">
+<style:style style:name="P26" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L17">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0.1965in"/>
 <style:text-properties style:font-name="Nimbus Mono L1"/>
 </style:style>
-<style:style style:name="P31" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L19">
+<style:style style:name="P27" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L19">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0.1965in"/>
 </style:style>
-<style:style style:name="P32" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L24">
+<style:style style:name="P28" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L24">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0.1965in"/>
 </style:style>
-<style:style style:name="P33" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L24">
+<style:style style:name="P29" style:family="paragraph" style:parent-style-name="Preformatted_20_Text" style:list-style-name="L24">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0.1965in"/>
 </style:style>
-<style:style style:name="P34" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1"/>
-<style:style style:name="P35" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L2"/>
-<style:style style:name="P36" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L3"/>
-<style:style style:name="P37" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L4"/>
-<style:style style:name="P38" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L5"/>
-<style:style style:name="P39" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L6"/>
-<style:style style:name="P40" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L7"/>
+<style:style style:name="P30" style:family="paragraph" style:parent-style-name="Title" style:master-page-name="HTML">
+<style:paragraph-properties style:page-number="auto"/>
+</style:style>
+<style:style style:name="P31" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1"/>
+<style:style style:name="P32" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L2"/>
+<style:style style:name="P33" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L3"/>
+<style:style style:name="P34" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L4"/>
+<style:style style:name="P35" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L5"/>
+<style:style style:name="P36" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L6"/>
+<style:style style:name="P37" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L7"/>
+<style:style style:name="P38" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L8"/>
+<style:style style:name="P39" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L8"/>
+<style:style style:name="P40" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L8"/>
 <style:style style:name="P41" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L8"/>
-<style:style style:name="P42" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L8"/>
-<style:style style:name="P43" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L8"/>
-<style:style style:name="P44" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L8"/>
-<style:style style:name="P45" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L9"/>
+<style:style style:name="P42" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L9"/>
+<style:style style:name="P43" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L10"/>
+<style:style style:name="P44" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L10"/>
+<style:style style:name="P45" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L10"/>
 <style:style style:name="P46" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L10"/>
 <style:style style:name="P47" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L10"/>
 <style:style style:name="P48" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L10"/>
-<style:style style:name="P49" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L10"/>
-<style:style style:name="P50" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L10"/>
-<style:style style:name="P51" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L10"/>
-<style:style style:name="P52" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L11"/>
-<style:style style:name="P53" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L11"/>
-<style:style style:name="P54" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L12"/>
-<style:style style:name="P55" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L13"/>
-<style:style style:name="P56" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L14"/>
-<style:style style:name="P57" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L15"/>
-<style:style style:name="P58" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L16"/>
-<style:style style:name="P59" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L17"/>
-<style:style style:name="P60" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L17"/>
-<style:style style:name="P61" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L17"/>
+<style:style style:name="P49" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L11"/>
+<style:style style:name="P50" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L11"/>
+<style:style style:name="P51" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L12"/>
+<style:style style:name="P52" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L13"/>
+<style:style style:name="P53" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L14"/>
+<style:style style:name="P54" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L15"/>
+<style:style style:name="P55" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L16"/>
+<style:style style:name="P56" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L17"/>
+<style:style style:name="P57" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L17"/>
+<style:style style:name="P58" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L17"/>
+<style:style style:name="P59" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L18"/>
+<style:style style:name="P60" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L19"/>
+<style:style style:name="P61" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L19"/>
 <style:style style:name="P62" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L19"/>
-<style:style style:name="P63" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L19"/>
-<style:style style:name="P64" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L19"/>
-<style:style style:name="P65" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L20"/>
-<style:style style:name="P66" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L21"/>
-<style:style style:name="P67" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L22"/>
-<style:style style:name="P68" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L23"/>
-<style:style style:name="P69" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L24"/>
-<style:style style:name="P70" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L25"/>
+<style:style style:name="P63" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L20"/>
+<style:style style:name="P64" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L21"/>
+<style:style style:name="P65" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L22"/>
+<style:style style:name="P66" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L23"/>
+<style:style style:name="P67" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L24"/>
+<style:style style:name="P68" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1">
+<style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
+</style:style>
+<style:style style:name="P69" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1">
+<style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
+</style:style>
+<style:style style:name="P70" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1">
+<style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
+</style:style>
 <style:style style:name="P71" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P72" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1">
+<style:style style:name="P72" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L2">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P73" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1">
+<style:style style:name="P73" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L2">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P74" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1">
+<style:style style:name="P74" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L2">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
 <style:style style:name="P75" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L2">
@@ -481,16 +475,16 @@
 <style:style style:name="P77" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L2">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P78" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L2">
+<style:style style:name="P78" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L3">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P79" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L2">
+<style:style style:name="P79" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L4">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P80" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L2">
+<style:style style:name="P80" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L4">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P81" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L3">
+<style:style style:name="P81" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L4">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
 <style:style style:name="P82" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L4">
@@ -499,13 +493,13 @@
 <style:style style:name="P83" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L4">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P84" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L4">
+<style:style style:name="P84" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L5">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P85" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L4">
+<style:style style:name="P85" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L5">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P86" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L4">
+<style:style style:name="P86" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L5">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
 <style:style style:name="P87" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L5">
@@ -529,28 +523,28 @@
 <style:style style:name="P93" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L5">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P94" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L5">
+<style:style style:name="P94" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L6">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P95" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L5">
+<style:style style:name="P95" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L6">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P96" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L5">
+<style:style style:name="P96" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L7">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P97" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L6">
+<style:style style:name="P97" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L7">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P98" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L6">
+<style:style style:name="P98" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L7">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P99" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L7">
+<style:style style:name="P99" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L8">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P100" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L7">
+<style:style style:name="P100" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L8">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P101" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L7">
+<style:style style:name="P101" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L8">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
 <style:style style:name="P102" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L8">
@@ -589,49 +583,49 @@
 <style:style style:name="P113" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L8">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P114" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L8">
+<style:style style:name="P114" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L9">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P115" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L8">
+<style:style style:name="P115" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L9">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P116" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L8">
+<style:style style:name="P116" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L9">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P117" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L9">
+<style:style style:name="P117" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L10">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P118" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L9">
+<style:style style:name="P118" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L10">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P119" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L9">
+<style:style style:name="P119" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L11">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P120" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L10">
+<style:style style:name="P120" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L11">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P121" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L10">
+<style:style style:name="P121" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L12">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P122" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L11">
+<style:style style:name="P122" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L12">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P123" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L11">
+<style:style style:name="P123" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L13">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P124" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L12">
+<style:style style:name="P124" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L14">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P125" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L12">
+<style:style style:name="P125" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L14">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P126" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L13">
+<style:style style:name="P126" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L15">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P127" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L14">
+<style:style style:name="P127" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L15">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P128" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L14">
+<style:style style:name="P128" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L15">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
 <style:style style:name="P129" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L15">
@@ -646,13 +640,13 @@
 <style:style style:name="P132" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L15">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P133" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L15">
+<style:style style:name="P133" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L16">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P134" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L15">
+<style:style style:name="P134" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L16">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P135" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L15">
+<style:style style:name="P135" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L16">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
 <style:style style:name="P136" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L16">
@@ -661,16 +655,16 @@
 <style:style style:name="P137" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L16">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P138" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L16">
+<style:style style:name="P138" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L17">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P139" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L16">
+<style:style style:name="P139" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L18">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P140" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L16">
+<style:style style:name="P140" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L18">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P141" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L17">
+<style:style style:name="P141" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L19">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
 <style:style style:name="P142" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L19">
@@ -685,13 +679,13 @@
 <style:style style:name="P145" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L19">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P146" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L19">
+<style:style style:name="P146" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L20">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
 <style:style style:name="P147" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L20">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P148" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L20">
+<style:style style:name="P148" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L21">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
 <style:style style:name="P149" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L21">
@@ -703,19 +697,19 @@
 <style:style style:name="P151" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L21">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P152" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L21">
+<style:style style:name="P152" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L22">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
 <style:style style:name="P153" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L22">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P154" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L22">
+<style:style style:name="P154" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L23">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
 <style:style style:name="P155" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L23">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
-<style:style style:name="P156" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L23">
+<style:style style:name="P156" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L24">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
 <style:style style:name="P157" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L24">
@@ -737,15 +731,6 @@
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
 <style:style style:name="P163" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L24">
-<style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
-</style:style>
-<style:style style:name="P164" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L24">
-<style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
-</style:style>
-<style:style style:name="P165" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L25">
-<style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
-</style:style>
-<style:style style:name="P166" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L25">
 <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in"/>
 </style:style>
 <style:style style:name="T1" style:family="text">
@@ -1670,38 +1655,6 @@
 <style:list-level-properties text:space-before="4.7134in" text:min-label-width="0.1965in"/>
 </text:list-level-style-number>
 </text:list-style>
-<text:list-style style:name="L25">
-<text:list-level-style-number text:level="1" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-<style:list-level-properties text:space-before="0.2945in" text:min-label-width="0.1965in"/>
-</text:list-level-style-number>
-<text:list-level-style-number text:level="2" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-<style:list-level-properties text:space-before="0.7854in" text:min-label-width="0.1965in"/>
-</text:list-level-style-number>
-<text:list-level-style-number text:level="3" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-<style:list-level-properties text:space-before="1.2764in" text:min-label-width="0.1965in"/>
-</text:list-level-style-number>
-<text:list-level-style-number text:level="4" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-<style:list-level-properties text:space-before="1.7673in" text:min-label-width="0.1965in"/>
-</text:list-level-style-number>
-<text:list-level-style-number text:level="5" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-<style:list-level-properties text:space-before="2.2583in" text:min-label-width="0.1965in"/>
-</text:list-level-style-number>
-<text:list-level-style-number text:level="6" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-<style:list-level-properties text:space-before="2.7492in" text:min-label-width="0.1965in"/>
-</text:list-level-style-number>
-<text:list-level-style-number text:level="7" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-<style:list-level-properties text:space-before="3.2402in" text:min-label-width="0.1965in"/>
-</text:list-level-style-number>
-<text:list-level-style-number text:level="8" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-<style:list-level-properties text:space-before="3.7315in" text:min-label-width="0.1965in"/>
-</text:list-level-style-number>
-<text:list-level-style-number text:level="9" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-<style:list-level-properties text:space-before="4.2224in" text:min-label-width="0.1965in"/>
-</text:list-level-style-number>
-<text:list-level-style-number text:level="10" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-<style:list-level-properties text:space-before="4.7134in" text:min-label-width="0.1965in"/>
-</text:list-level-style-number>
-</text:list-style>
 <style:page-layout style:name="pm1">
 <style:page-layout-properties fo:page-width="8.5in" fo:page-height="11in" style:num-format="1" style:print-orientation="portrait" fo:margin-top="0.7874in" fo:margin-bottom="0.7874in" fo:margin-left="0.7874in" fo:margin-right="0.7874in" style:writing-mode="lr-tb" style:footnote-max-height="0in">
 <style:footnote-sep style:width="0.0071in" style:distance-before-sep="0.0398in" style:distance-after-sep="0.0398in" style:adjustment="left" style:rel-width="25%" style:color="#000000"/>
@@ -1731,7 +1684,7 @@
 <style:master-page style:name="Endnote" style:page-layout-name="pm3"/>
 </office:master-styles>
 <office:body>
-<office:text text:use-soft-page-breaks="true">
+<office:text>
 <office:forms form:automatic-focus="false" form:apply-design-mode="false"/>
 <text:sequence-decls>
 <text:sequence-decl text:display-outline-level="0" text:name="Illustration"/>
@@ -1739,7 +1692,7 @@
 <text:sequence-decl text:display-outline-level="0" text:name="Text"/>
 <text:sequence-decl text:display-outline-level="0" text:name="Drawing"/>
 </text:sequence-decls>
-<text:p text:style-name="P13">
+<text:p text:style-name="P30">
 <text:bookmark text:name="mozTocId101532"/>NeatUpload™ Manual</text:p>
 <text:table-of-content text:style-name="Sect1" text:protected="true" text:name="Table of Contents1">
 <text:table-of-content-source text:outline-level="10" text:index-scope="chapter">
@@ -1975,21 +1928,21 @@
 <text:p text:style-name="Text_20_body">The only compatiblity exceptions are: </text:p>
 <text:list text:style-name="L1">
 <text:list-item>
-<text:p text:style-name="P71">The <text:span text:style-name="Source_20_Text">InputFile</text:span> control is now "branded" unless you are using a version that someone has modified to remove the branding. The branding looks like this:  (Powered by <text:a xlink:type="simple" xlink:href="http://www.brettle.com/neatupload" office:target-frame-name="_blank" xlink:show="new">NeatUpload</text:a>) For more information on the branding and having it removed, see <text:a xlink:type="simple" xlink:href="#Branding">Branding, Licensing, and the Trademark</text:a>
+<text:p text:style-name="P68">The <text:span text:style-name="Source_20_Text">InputFile</text:span> control is now "branded" unless you are using a version that someone has modified to remove the branding. The branding looks like this:  (Powered by <text:a xlink:type="simple" xlink:href="http://www.brettle.com/neatupload" office:target-frame-name="_blank" xlink:show="new">NeatUpload</text:a>) For more information on the branding and having it removed, see <text:a xlink:type="simple" xlink:href="#Branding">Branding, Licensing, and the Trademark</text:a>
 </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P71">If you don't specify a temporary directory for use by the default <text:span text:style-name="Source_20_Text">FileSystemUploadStorageProvider</text:span>, it will first try to use the directory <text:span text:style-name="Source_20_Text">app_data\NeatUpload_Temp</text:span> within your application directory. If that directory exists (or can be created) and is writable, NeatUpload will use it. Otherwise, it will revert to the old behavior of using the system-wide temporary directory. This change was made to make it easier to configure NeatUpload in environments which use a Medium trust-level. In such an environment, the server administrator typically doesn't want to give applications access to the system-wide directory. Without this change, you would need to explicitly specify a temporary directory for NeatUpload to work in such an environment. With this change, you at most need to create <text:span text:style-name="Source_20_Text">app_data\NeatUpload_Temp</text:span> and grant write permissions to the account that your app runs under. If you aren't in a Medium trust environment, you don't even need to do that. NeatUpload will probably be unable to create the directory and will fallback to using the system-wide temporary directory. </text:p>
+<text:p text:style-name="P68">If you don't specify a temporary directory for use by the default <text:span text:style-name="Source_20_Text">FileSystemUploadStorageProvider</text:span>, it will first try to use the directory <text:span text:style-name="Source_20_Text">app_data\NeatUpload_Temp</text:span> within your application directory. If that directory exists (or can be created) and is writable, NeatUpload will use it. Otherwise, it will revert to the old behavior of using the system-wide temporary directory. This change was made to make it easier to configure NeatUpload in environments which use a Medium trust-level. In such an environment, the server administrator typically doesn't want to give applications access to the system-wide directory. Without this change, you would need to explicitly specify a temporary directory for NeatUpload to work in such an environment. With this change, you at most need to create <text:span text:style-name="Source_20_Text">app_data\NeatUpload_Temp</text:span> and grant write permissions to the account that your app runs under. If you aren't in a Medium trust environment, you don't even need to do that. NeatUpload will probably be unable to create the directory and will fallback to using the system-wide temporary directory. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P71">
+<text:p text:style-name="P68">
 <text:span text:style-name="Source_20_Text">UploadException</text:span> is no longer a subclass of <text:span text:style-name="Source_20_Text">HttpException</text:span>. It is now just a subclass of <text:span text:style-name="Source_20_Text">Exception</text:span>. This changes was necessary to allow <text:span text:style-name="Source_20_Text">UploadException</text:span>s to be serialized so they can be passed to the progress bar in a web garden/farm environment. Custom error pages should still work because when an <text:span text:style-name="Source_20_Text">UploadException</text:span> occurs during an upload, NeatUpload now wraps it in an <text:span text:style-name="Source_20_Text">HttpException</text:span> with the same HTTP status code and throws the <text:span text:style-name="Source_20_Text">HttpException</text:span>. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P71">For upload requests where the non-file portion exceeds the <text:span text:style-name="Source_20_Text">maxNormalRequestLength</text:span> limit, NeatUpload now throws a <text:span text:style-name="Source_20_Text">NonfilePortionTooLargeException</text:span> instead of an <text:span text:style-name="Source_20_Text">UploadTooLargeException</text:span>. </text:p>
+<text:p text:style-name="P68">For upload requests where the non-file portion exceeds the <text:span text:style-name="Source_20_Text">maxNormalRequestLength</text:span> limit, NeatUpload now throws a <text:span text:style-name="Source_20_Text">NonfilePortionTooLargeException</text:span> instead of an <text:span text:style-name="Source_20_Text">UploadTooLargeException</text:span>. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P34">If you use ASP.NET 2.0 themes, those themes will now be applied to the default progress display page (<text:span text:style-name="Source_20_Text">Progress.aspx</text:span>) and the sample custom error page (<text:span text:style-name="Source_20_Text">Error413.aspx</text:span>). </text:p>
+<text:p text:style-name="P31">If you use ASP.NET 2.0 themes, those themes will now be applied to the default progress display page (<text:span text:style-name="Source_20_Text">Progress.aspx</text:span>) and the sample custom error page (<text:span text:style-name="Source_20_Text">Error413.aspx</text:span>). </text:p>
 </text:list-item>
 </text:list>
 <text:h text:style-name="Heading_20_3" text:outline-level="3">
@@ -2001,7 +1954,7 @@
 <text:bookmark text:name="NewFeatures1dot3"/>New Features in NeatUpload-1.3</text:h>
 <text:list text:style-name="L2">
 <text:list-item>
-<text:p text:style-name="P75">Added support for <text:a xlink:type="simple" xlink:href="#ShowingProcessingProgress">using a </text:a>
+<text:p text:style-name="P72">Added support for <text:a xlink:type="simple" xlink:href="#ShowingProcessingProgress">using a </text:a>
 <text:a xlink:type="simple" xlink:href="#ShowingProcessingProgress">
 <text:span text:style-name="Source_20_Text">ProgressBar</text:span>
 </text:a>
@@ -2009,36 +1962,36 @@
 <text:a xlink:type="simple" xlink:href="#ShowingProcessingProgress">to show processing progress</text:a>. This can be used to display the progress of a long-running task even when no files are uploaded. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P75">Added support for <text:a xlink:type="simple" xlink:href="#UploadingWithoutInputFile">uploading without using </text:a>
+<text:p text:style-name="P72">Added support for <text:a xlink:type="simple" xlink:href="#UploadingWithoutInputFile">uploading without using </text:a>
 <text:a xlink:type="simple" xlink:href="#UploadingWithoutInputFile">
 <text:span text:style-name="Source_20_Text">InputFile</text:span>
 </text:a>
 <text:a xlink:type="simple" xlink:href="#UploadingWithoutInputFile"/>. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P75">Added support for using NeatUpload in a web garden or web farm if you have ASP.NET configured to share session state across the servers in your garden/farm. </text:p>
+<text:p text:style-name="P72">Added support for using NeatUpload in a web garden or web farm if you have ASP.NET configured to share session state across the servers in your garden/farm. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P75">Added support for <text:a xlink:type="simple" xlink:href="#MediumTrust">Using NeatUpload in a Medium Trust Environment</text:a> when installed in the GAC. </text:p>
+<text:p text:style-name="P72">Added support for <text:a xlink:type="simple" xlink:href="#MediumTrust">Using NeatUpload in a Medium Trust Environment</text:a> when installed in the GAC. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P75">Added the MultiFile control for uploading multiple files.</text:p>
+<text:p text:style-name="P72">Added the MultiFile control for uploading multiple files.</text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P75">Added support for styling the MultiFile control.</text:p>
+<text:p text:style-name="P72">Added support for styling the MultiFile control.</text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P35">Added support for <text:a xlink:type="simple" xlink:href="#MaxUploadRate">Limiting the Upload Rate</text:a>.</text:p>
+<text:p text:style-name="P32">Added support for <text:a xlink:type="simple" xlink:href="#MaxUploadRate">Limiting the Upload Rate</text:a>.</text:p>
 </text:list-item>
 </text:list>
 <text:h text:style-name="Heading_20_3" text:outline-level="3" text:is-list-header="true">
 <text:bookmark text:name="mozTocId432817"/>New Features in NeatUpload-1.2</text:h>
 <text:list text:style-name="L3">
 <text:list-item>
-<text:p text:style-name="P81">Added support for <text:a xlink:type="simple" xlink:href="Manual.html#mozTocId652103">Configuring Individual InputFile Controls Programmatically</text:a>. </text:p>
+<text:p text:style-name="P78">Added support for <text:a xlink:type="simple" xlink:href="Manual.html#mozTocId652103">Configuring Individual InputFile Controls Programmatically</text:a>. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P36">Added support for <text:a xlink:type="simple" xlink:href="Manual.html#mozTocId483750">Uploading from a Client Application</text:a>. </text:p>
+<text:p text:style-name="P33">Added support for <text:a xlink:type="simple" xlink:href="Manual.html#mozTocId483750">Uploading from a Client Application</text:a>. </text:p>
 </text:list-item>
 </text:list>
 <text:h text:style-name="Heading_20_3" text:outline-level="3" text:is-list-header="true">
@@ -2046,58 +1999,58 @@
 <text:p text:style-name="Text_20_body">New features for end-users: </text:p>
 <text:list text:style-name="L4">
 <text:list-item>
-<text:p text:style-name="P82">Added more upload details to the default progress display, including total upload size, amount and percent already uploaded, and upload rate. </text:p>
+<text:p text:style-name="P79">Added more upload details to the default progress display, including total upload size, amount and percent already uploaded, and upload rate. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P82">Improved user experience when uploads are too large.  The progress bar now indicates that the upload was rejected and whenever practical the upload is stopped by the browser so that the user remains on the original form. </text:p>
+<text:p text:style-name="P79">Improved user experience when uploads are too large.  The progress bar now indicates that the upload was rejected and whenever practical the upload is stopped by the browser so that the user remains on the original form. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P82">Added support for <text:a xlink:type="simple" xlink:href="http://en.wikipedia.org/wiki/AJAX">AJAX</text:a> refreshless updates of the progress bar. </text:p>
+<text:p text:style-name="P79">Added support for <text:a xlink:type="simple" xlink:href="http://en.wikipedia.org/wiki/AJAX">AJAX</text:a> refreshless updates of the progress bar. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P82">Prevented file upload and progress display when client-side validation fails. </text:p>
+<text:p text:style-name="P79">Prevented file upload and progress display when client-side validation fails. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P82">Prevented file upload and progress display when form submission is initiated by a non-trigger control.  At least one trigger control must be specified for this to work. </text:p>
+<text:p text:style-name="P79">Prevented file upload and progress display when form submission is initiated by a non-trigger control.  At least one trigger control must be specified for this to work. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P37">Added support for <text:a xlink:type="simple" xlink:href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpgenref/html/cpconlinkbuttonwebcontrol.asp">LinkButtons</text:a>. </text:p>
+<text:p text:style-name="P34">Added support for <text:a xlink:type="simple" xlink:href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpgenref/html/cpconlinkbuttonwebcontrol.asp">LinkButtons</text:a>. </text:p>
 </text:list-item>
 </text:list>
 <text:p text:style-name="Text_20_body">New features for developers:</text:p>
 <text:list text:style-name="L5">
 <text:list-item>
-<text:p text:style-name="P87">Added support for <text:span text:style-name="Source_20_Text">&lt;neatUpload&gt;</text:span> configuration section which can be placed either in the <text:span text:style-name="Source_20_Text">&lt;brettle.web&gt;</text:span> or the <text:span text:style-name="Source_20_Text">&lt;system.web&gt;</text:span> section group, either of which can be put inside of the <text:span text:style-name="Source_20_Text">&lt;location&gt;</text:span> element to apply configuration settings to specific pages. </text:p>
+<text:p text:style-name="P84">Added support for <text:span text:style-name="Source_20_Text">&lt;neatUpload&gt;</text:span> configuration section which can be placed either in the <text:span text:style-name="Source_20_Text">&lt;brettle.web&gt;</text:span> or the <text:span text:style-name="Source_20_Text">&lt;system.web&gt;</text:span> section group, either of which can be put inside of the <text:span text:style-name="Source_20_Text">&lt;location&gt;</text:span> element to apply configuration settings to specific pages. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P87">Added support for custom <text:span text:style-name="Source_20_Text">UploadStorageProvider</text:span>s. </text:p>
+<text:p text:style-name="P84">Added support for custom <text:span text:style-name="Source_20_Text">UploadStorageProvider</text:span>s. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P87">Added support for more flexible progress display customization using new <text:span text:style-name="Source_20_Text">&lt;Upload:DetailsSpan&gt;</text:span> and <text:span text:style-name="Source_20_Text">&lt;Upload:DetailsDiv&gt;</text:span> elements. </text:p>
+<text:p text:style-name="P84">Added support for more flexible progress display customization using new <text:span text:style-name="Source_20_Text">&lt;Upload:DetailsSpan&gt;</text:span> and <text:span text:style-name="Source_20_Text">&lt;Upload:DetailsDiv&gt;</text:span> elements. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P87">Added <text:span text:style-name="Source_20_Text">Url</text:span> property to <text:span text:style-name="Source_20_Text">ProgressBar</text:span> control to specify location of progress display page (defaults to <text:span text:style-name="Source_20_Text">NeatUpload/Progress.aspx</text:span>). </text:p>
+<text:p text:style-name="P84">Added <text:span text:style-name="Source_20_Text">Url</text:span> property to <text:span text:style-name="Source_20_Text">ProgressBar</text:span> control to specify location of progress display page (defaults to <text:span text:style-name="Source_20_Text">NeatUpload/Progress.aspx</text:span>). </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P87">Added Visual Studio designer support. </text:p>
+<text:p text:style-name="P84">Added Visual Studio designer support. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P87">Added support for accessing uploaded files from server event handlers (e.g. <text:span text:style-name="Source_20_Text">Button.Click</text:span> handlers). </text:p>
+<text:p text:style-name="P84">Added support for accessing uploaded files from server event handlers (e.g. <text:span text:style-name="Source_20_Text">Button.Click</text:span> handlers). </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P87">Added <text:span text:style-name="Source_20_Text">Triggers</text:span> property to <text:span text:style-name="Source_20_Text">ProgressBar</text:span> which can be used instead of the <text:span text:style-name="Source_20_Text">ProgressBar.AddTrigger()</text:span> method. </text:p>
+<text:p text:style-name="P84">Added <text:span text:style-name="Source_20_Text">Triggers</text:span> property to <text:span text:style-name="Source_20_Text">ProgressBar</text:span> which can be used instead of the <text:span text:style-name="Source_20_Text">ProgressBar.AddTrigger()</text:span> method. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P87">Changed the <text:span text:style-name="Source_20_Text">InputFile.FileName</text:span> property to always return just the client-side file name (e.g. <text:span text:style-name="Source_20_Text">foo.txt</text:span>), even if the browser sends the full path (e.g. <text:span text:style-name="Source_20_Text">C:\dir\foo.txt</text:span>).   Since, Internet Explorer is the only popular browser to send the full path, and the full path is difficult to handle reliably on non-Windows servers which don't use backslash ("\") as a path separator, returning the full path was likely to result in code which is browser-specific and not portable. </text:p>
+<text:p text:style-name="P84">Changed the <text:span text:style-name="Source_20_Text">InputFile.FileName</text:span> property to always return just the client-side file name (e.g. <text:span text:style-name="Source_20_Text">foo.txt</text:span>), even if the browser sends the full path (e.g. <text:span text:style-name="Source_20_Text">C:\dir\foo.txt</text:span>).   Since, Internet Explorer is the only popular browser to send the full path, and the full path is difficult to handle reliably on non-Windows servers which don't use backslash ("\") as a path separator, returning the full path was likely to result in code which is browser-specific and not portable. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P87">Removed dependency on <text:a xlink:type="simple" xlink:href="http://logging.apache.org/log4net/">log4net</text:a>.  NeatUpload can still be built to use log4net if you want.  The dependency was removed to simplify installation/usage. </text:p>
+<text:p text:style-name="P84">Removed dependency on <text:a xlink:type="simple" xlink:href="http://logging.apache.org/log4net/">log4net</text:a>.  NeatUpload can still be built to use log4net if you want.  The dependency was removed to simplify installation/usage. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P87">Moved progress display Javascript to <text:span text:style-name="Source_20_Text">Progress.js</text:span> to reduce bandwidth required to download <text:span text:style-name="Source_20_Text">Progress.aspx</text:span> repeatedly. </text:p>
+<text:p text:style-name="P84">Moved progress display Javascript to <text:span text:style-name="Source_20_Text">Progress.js</text:span> to reduce bandwidth required to download <text:span text:style-name="Source_20_Text">Progress.aspx</text:span> repeatedly. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P38">Removed <text:span text:style-name="Source_20_Text">Demo.aspx.cs</text:span> from <text:span text:style-name="Source_20_Text">Brettle.Web.NeatUpload.dll</text:span>.  It is now compiled on the fly when <text:span text:style-name="Source_20_Text">Demo.aspx</text:span> is requested. </text:p>
+<text:p text:style-name="P35">Removed <text:span text:style-name="Source_20_Text">Demo.aspx.cs</text:span> from <text:span text:style-name="Source_20_Text">Brettle.Web.NeatUpload.dll</text:span>.  It is now compiled on the fly when <text:span text:style-name="Source_20_Text">Demo.aspx</text:span> is requested. </text:p>
 </text:list-item>
 </text:list>
 <text:h text:style-name="Heading_20_2" text:outline-level="2" text:is-list-header="true">
@@ -2141,13 +2094,13 @@
 <text:p text:style-name="Text_20_body">To use NeatUpload you will need: </text:p>
 <text:list text:style-name="L6">
 <text:list-item>
-<text:p text:style-name="P97">.NET Framework (1.1, 2.0, 3.0, or 3.5), or Mono (1.1 or 1.2). Mono users that are using the mod_mono Apache module should use mod_mono 1.1.14 or later. </text:p>
+<text:p text:style-name="P94">.NET Framework (1.1, 2.0, 3.0, or 3.5), or Mono (1.1 or 1.2). Mono users that are using the mod_mono Apache module should use mod_mono 1.1.14 or later. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P97">A working web application. </text:p>
+<text:p text:style-name="P94">A working web application. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P39">Either "Full" <text:a xlink:type="simple" xlink:href="http://msdn2.microsoft.com/en-us/library/tkscy493.aspx">trust</text:a> or, if NeatUpload is installed in the GAC, at least "Medium" trust. "Full" trust level is the ASP.NET default, but some hosting providers force web applications to run with "Medium" trust. </text:p>
+<text:p text:style-name="P36">Either "Full" <text:a xlink:type="simple" xlink:href="http://msdn2.microsoft.com/en-us/library/tkscy493.aspx">trust</text:a> or, if NeatUpload is installed in the GAC, at least "Medium" trust. "Full" trust level is the ASP.NET default, but some hosting providers force web applications to run with "Medium" trust. </text:p>
 </text:list-item>
 </text:list>
 <text:h text:style-name="Heading_20_2" text:outline-level="2" text:is-list-header="true">
@@ -2155,16 +2108,16 @@
 <text:p text:style-name="Text_20_body">Some NeatUpload controls display a "Powered by <text:a xlink:type="simple" xlink:href="http://www.brettle.com/neatupload" office:target-frame-name="_blank" xlink:show="new">NeatUpload</text:a>" branding unless you are using a version that someone has modified to remove the branding. This branding is designed to encourage you to contribute to NeatUpload in one of the following ways: </text:p>
 <text:list text:style-name="L7">
 <text:list-item>
-<text:p text:style-name="P99">spread the word by leaving the branding in place, or </text:p>
+<text:p text:style-name="P96">spread the word by leaving the branding in place, or </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P99">becoming familiar enough with NeatUpload (as evidenced by your ability to find and remove the branding) that you could contribute code in the future, or </text:p>
+<text:p text:style-name="P96">becoming familiar enough with NeatUpload (as evidenced by your ability to find and remove the branding) that you could contribute code in the future, or </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P99">help fund NeatUpload by <text:a xlink:type="simple" xlink:href="mailto:dean@brettle.com?subject=How%20to%20buy%20unbranded%20NeatUpload%3F">purchasing an unbranded version</text:a>, or </text:p>
+<text:p text:style-name="P96">help fund NeatUpload by <text:a xlink:type="simple" xlink:href="mailto:dean@brettle.com?subject=How%20to%20buy%20unbranded%20NeatUpload%3F">purchasing an unbranded version</text:a>, or </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P40">make a substantial non-monetary contribution (e.g. fix a bug, help with testing, or manually translate documentation), in return for which I will typically provide an unbranded version </text:p>
+<text:p text:style-name="P37">make a substantial non-monetary contribution (e.g. fix a bug, help with testing, or manually translate documentation), in return for which I will typically provide an unbranded version </text:p>
 </text:list-item>
 </text:list>
 <text:p text:style-name="Text_20_body">Note that both the branded and unbranded versions are licensed under the <text:a xlink:type="simple" xlink:href="http://www.brettle.com/neatupload#License">GNU Lesser General Public License (LGPL)</text:a>. The only difference is whether the branding is present. That means you can legally redistribute (or fork) the unbranded version. Note however that "NeatUpload" is a trademark for the combination of the code I distribute and my support of it. As such, you are not allowed to promote your redistribution of the unbranded version (or a derivative of either version) in a way that could imply my endorsement without my permission. For example, don't call it "Unbranded NeatUpload" or say that it is "based on NeatUpload", because I don't want to get support requests from folks using it. </text:p>
@@ -2175,34 +2128,33 @@
 <text:p text:style-name="Text_20_body">Installing NeatUpload is pretty straightforward. Just copy the necessary assemblies and subdirectories into your application and make some modifications to your <text:span text:style-name="Source_20_Text">Web.config</text:span>.  Specifically: </text:p>
 <text:list text:style-name="L8">
 <text:list-item>
-<text:p text:style-name="P102">If you haven't already, download the release and extract it wherever you want. All the files will be extracted into a subdirectory named <text:span text:style-name="Source_20_Text">NeatUpload-</text:span>
-<text:span text:style-name="Emphasis">version</text:span>
-<text:span text:style-name="Source_20_Text">/</text:span>, where version is the version of the release you are installing. </text:p>
+<text:p text:style-name="P99">If you haven't already, download the release and extract it wherever you want. All the files will be extracted into a subdirectory named <text:span text:style-name="Source_20_Text">NeatUpload-</text:span>
+<text:span text:style-name="Emphasis">version</text:span>, where version is the version of the release you are installing. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P102">
+<text:p text:style-name="P99">
 <text:bookmark text:name="MediumTrust"/>If your application has "Full" trust, you can safely skip this step. If your application does not have "Full" trust, a server administrator (e.g. your hosting provider) needs to install NeatUpload in the GAC. This is necessary because NeatUpload (and all other similar components) needs to access the underlying <text:span text:style-name="Source_20_Text">HttpWorkerRequest</text:span> object. To install NeatUpload in the GAC, the server administrator should: </text:p>
 <text:list>
 <text:list-item>
-<text:p text:style-name="P102">Use Windows Explorer to open <text:span text:style-name="Source_20_Text">%WINDIR%\assembly</text:span>. The window will list the assemblies currently in the GAC along with their version number, etc. </text:p>
+<text:p text:style-name="P99">Use Windows Explorer to open <text:span text:style-name="Source_20_Text">%WINDIR%\assembly</text:span>. The window will list the assemblies currently in the GAC along with their version number, etc. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P102">In another Windows Explorer window, open the <text:span text:style-name="Source_20_Text">NeatUpload-</text:span>
+<text:p text:style-name="P99">In another Windows Explorer window, open the <text:span text:style-name="Source_20_Text">NeatUpload-</text:span>
 <text:span text:style-name="Emphasis">version</text:span>
 <text:span text:style-name="Source_20_Text">\bin</text:span> folder. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P102">Drag and drop <text:span text:style-name="Source_20_Text">Brettle.Web.NeatUpload.dll</text:span> and (if present) <text:span text:style-name="Source_20_Text">Policy.</text:span>
+<text:p text:style-name="P99">Drag and drop <text:span text:style-name="Source_20_Text">Brettle.Web.NeatUpload.dll</text:span> and (if present) <text:span text:style-name="Source_20_Text">Policy.</text:span>
 <text:span text:style-name="Emphasis">major.minor</text:span>
 <text:span text:style-name="Source_20_Text">.Brettle.Web.NeatUpload.dll</text:span> from the <text:span text:style-name="Source_20_Text">NeatUpload-</text:span>
 <text:span text:style-name="Emphasis">version</text:span>
 <text:span text:style-name="Source_20_Text">\bin</text:span> folder into the GAC window to add them to the GAC. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P102">Find the Brettle.Web.NeatUpload assembly that was just added and note the value in the "Version" column. </text:p>
+<text:p text:style-name="P99">Find the Brettle.Web.NeatUpload assembly that was just added and note the value in the "Version" column. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P102">Tell NeatUpload users that the full strong name for the Brettle.Web.NeatUpload assembly is <text:span text:style-name="Source_20_Text">Brettle.Web.NeatUpload, Version=</text:span>
+<text:p text:style-name="P99">Tell NeatUpload users that the full strong name for the Brettle.Web.NeatUpload assembly is <text:span text:style-name="Source_20_Text">Brettle.Web.NeatUpload, Version=</text:span>
 <text:span text:style-name="Emphasis">
 <text:span text:style-name="T1">value in version column</text:span>
 </text:span>
@@ -2210,41 +2162,41 @@
 <text:span text:style-name="Source_20_Text">, Culture=neutral, PublicKeyToken=C95290D92C5893C8"</text:span>. </text:p>
 </text:list-item>
 </text:list>
-<text:p text:style-name="P102">To use NeatUpload after it has been installed in the GAC, you need to: Use the full strong name wherever the assembly is referenced in your application's <text:span text:style-name="Source_20_Text">Web.config</text:span>. For example, if this documentation says to use:</text:p>
+<text:p text:style-name="P99">To use NeatUpload after it has been installed in the GAC, you need to: Use the full strong name wherever the assembly is referenced in your application's <text:span text:style-name="Source_20_Text">Web.config</text:span>. For example, if this documentation says to use:</text:p>
 <text:list>
 <text:list-header>
-<text:p text:style-name="P23">type="Brettle.Web.NeatUpload.UploadHttpModule,<text:span text:style-name="T1">Brettle.Web.NeatUpload</text:span>"</text:p>
+<text:p text:style-name="P20">type="Brettle.Web.NeatUpload.UploadHttpModule,<text:span text:style-name="T1">Brettle.Web.NeatUpload</text:span>"</text:p>
 </text:list-header>
 </text:list>
-<text:p text:style-name="P41">you would use:</text:p>
+<text:p text:style-name="P38">you would use:</text:p>
 <text:list>
 <text:list-header>
-<text:p text:style-name="P23">type="Brettle.Web.NeatUpload.UploadHttpModule,<text:span text:style-name="T1">Brettle.Web.NeatUpload,Version=valuefromadmin,Culture=neutral,PublicKeyToken=C95290D92C5893C8"</text:span>
+<text:p text:style-name="P20">type="Brettle.Web.NeatUpload.UploadHttpModule,<text:span text:style-name="T1">Brettle.Web.NeatUpload,Version=valuefromadmin,Culture=neutral,PublicKeyToken=C95290D92C5893C8"</text:span>
 </text:p>
 </text:list-header>
 </text:list>
-<text:p text:style-name="P102">The server administrator will provide the "Version" portion of the strong name. </text:p>
+<text:p text:style-name="P99">The server administrator will provide the "Version" portion of the strong name. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P102">Either create <text:span text:style-name="Source_20_Text">app_data/NeatUpload_Temp</text:span> under your application root and make it writable by the account that your application is running as, or <text:a xlink:type="simple" xlink:href="#TempDirectory">change the temporary directory</text:a> used by the default provider. </text:p>
+<text:p text:style-name="P99">Either create <text:span text:style-name="Source_20_Text">app_data/NeatUpload_Temp</text:span> under your application root and make it writable by the account that your application is running as, or <text:a xlink:type="simple" xlink:href="#TempDirectory">change the temporary directory</text:a> used by the default provider. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P102">(Optional) To see the demo running on your server, configure IIS, mod_mono, or XSP so that <text:span text:style-name="Source_20_Text">NeatUpload-</text:span>
+<text:p text:style-name="P99">(Optional) To see the demo running on your server, configure IIS, mod_mono, or XSP so that <text:span text:style-name="Source_20_Text">NeatUpload-</text:span>
 <text:span text:style-name="Emphasis">version</text:span>
 <text:span text:style-name="Source_20_Text">/</text:span> is a web application. Then point your browser at the <text:span text:style-name="Source_20_Text">Demo.aspx</text:span> on that website. To use NeatUpload in your own web application, continue with the remaining installation steps. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P102">If you will be using the Visual Studio Web Form Designer, add the NeatUpload controls to your toolbox.  To do that, right-click on the Toolbox, click Add/Remove Items, Browse to  <text:span text:style-name="Source_20_Text">NeatUpload-</text:span>
+<text:p text:style-name="P99">If you will be using the Visual Studio Web Form Designer, add the NeatUpload controls to your toolbox.  To do that, right-click on the Toolbox, click Add/Remove Items, Browse to  <text:span text:style-name="Source_20_Text">NeatUpload-</text:span>
 <text:span text:style-name="Emphasis">version</text:span>
 <text:span text:style-name="Source_20_Text">/bin/Brettle.Web.NeatUpload.dll</text:span>, click Open, and then click OK.  A reference to <text:span text:style-name="Source_20_Text">Brettle.Web.NeatUpload.dll</text:span> will automatically be added to your project the first time you use the designer to add one of the NeatUpload controls to a form. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P102">If you won't be using the Visual Studio Web Form Designer, add a reference to your web application that refers to the <text:span text:style-name="Source_20_Text">Brettle.Web.NeatUpload.dll</text:span> in the <text:span text:style-name="Source_20_Text">NeatUpload-</text:span>
+<text:p text:style-name="P99">If you won't be using the Visual Studio Web Form Designer, add a reference to your web application that refers to the <text:span text:style-name="Source_20_Text">Brettle.Web.NeatUpload.dll</text:span> in the <text:span text:style-name="Source_20_Text">NeatUpload-</text:span>
 <text:span text:style-name="Emphasis">version</text:span>
 <text:span text:style-name="Source_20_Text">/bin</text:span> directory. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P102">Create a <text:span text:style-name="Source_20_Text">NeatUpload/</text:span> subdirectory in your web application by copying <text:span text:style-name="Source_20_Text">NeatUpload-</text:span>
+<text:p text:style-name="P99">Create a <text:span text:style-name="Source_20_Text">NeatUpload/</text:span> subdirectory in your web application by copying <text:span text:style-name="Source_20_Text">NeatUpload-</text:span>
 <text:span text:style-name="Emphasis">version</text:span>
 <text:span text:style-name="Source_20_Text">/NeatUpload/</text:span> and its contents.  Don't copy the whole <text:span text:style-name="Source_20_Text">NeatUpload-</text:span>
 <text:span text:style-name="Emphasis">version</text:span>
@@ -2253,16 +2205,16 @@
 <text:span text:style-name="Source_20_Text">/NeatUpload/</text:span>subdirectory.  That subdirectory contains <text:span text:style-name="Source_20_Text">Progress.aspx</text:span> and associated files. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P41">Add the following line to your <text:span text:style-name="Source_20_Text">Web.config</text:span> under <text:span text:style-name="Source_20_Text">configuration/system.web/httpModules</text:span>: </text:p>
-<text:p text:style-name="P14">&lt;add name="UploadHttpModule" type="Brettle.Web.NeatUpload.UploadHttpModule, Brettle.Web.NeatUpload" /&gt;</text:p>
+<text:p text:style-name="P38">Add the following line to your <text:span text:style-name="Source_20_Text">Web.config</text:span> under <text:span text:style-name="Source_20_Text">configuration/system.web/httpModules</text:span>: </text:p>
+<text:p text:style-name="P11">&lt;add name="UploadHttpModule" type="Brettle.Web.NeatUpload.UploadHttpModule, Brettle.Web.NeatUpload" /&gt;</text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P41">(Optional) To allow larger uploads than the default of 4 Mbytes under Microsoft's ASP.NET,  you <text:span text:style-name="T3">might</text:span> need to add or modify the following element in your <text:span text:style-name="Source_20_Text">Web.config</text:span> under <text:span text:style-name="Source_20_Text">configuration/system.web</text:span>: </text:p>
-<text:p text:style-name="P23">&lt;httpRuntime maxRequestLength="<text:span text:style-name="Variable">size_in_kbytes</text:span>" /&gt;</text:p>
-<text:p text:style-name="P102">At the moment, both .NET and Mono seem to ignore that setting when NeatUpload is being used, but there is no official documentation specifying exactly when that limit is enforced, so a future version of .NET or Mono might enforce the limit even when NeatUpload is being used.   Setting the <text:span text:style-name="Source_20_Text">&lt;httpRuntime&gt;</text:span> element's <text:span text:style-name="Source_20_Text">maxRequestLength</text:span> attribute simply provides insurance against such future changes.  Note that since that attribute is currently ignored when NeatUpload is used, you can't use it to actually restrict the size of uploads.  To do that, see <text:a xlink:type="simple" xlink:href="#Limiting_the_Size_of_Upload_Requests">Limiting the Size of Upload Requests</text:a> below.</text:p>
+<text:p text:style-name="P38">(Optional) To allow larger uploads than the default of 4 Mbytes under Microsoft's ASP.NET,  you <text:span text:style-name="T3">might</text:span> need to add or modify the following element in your <text:span text:style-name="Source_20_Text">Web.config</text:span> under <text:span text:style-name="Source_20_Text">configuration/system.web</text:span>: </text:p>
+<text:p text:style-name="P20">&lt;httpRuntime maxRequestLength="<text:span text:style-name="Variable">size_in_kbytes</text:span>" /&gt;</text:p>
+<text:p text:style-name="P99">At the moment, both .NET and Mono seem to ignore that setting when NeatUpload is being used, but there is no official documentation specifying exactly when that limit is enforced, so a future version of .NET or Mono might enforce the limit even when NeatUpload is being used.   Setting the <text:span text:style-name="Source_20_Text">&lt;httpRuntime&gt;</text:span> element's <text:span text:style-name="Source_20_Text">maxRequestLength</text:span> attribute simply provides insurance against such future changes.  Note that since that attribute is currently ignored when NeatUpload is used, you can't use it to actually restrict the size of uploads.  To do that, see <text:a xlink:type="simple" xlink:href="#Limiting_the_Size_of_Upload_Requests">Limiting the Size of Upload Requests</text:a> below.</text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P41">(Optional) Copy <text:span text:style-name="Source_20_Text">Demo.aspx</text:span> and <text:span text:style-name="Source_20_Text">Demo.aspx.cs</text:span> from <text:span text:style-name="Source_20_Text">NeatUpload-</text:span>
+<text:p text:style-name="P38">(Optional) Copy <text:span text:style-name="Source_20_Text">Demo.aspx</text:span> and <text:span text:style-name="Source_20_Text">Demo.aspx.cs</text:span> from <text:span text:style-name="Source_20_Text">NeatUpload-</text:span>
 <text:span text:style-name="Emphasis">version</text:span>
 <text:span text:style-name="Source_20_Text">/</text:span> into your application. Point your browser at <text:span text:style-name="Source_20_Text">Demo.aspx</text:span> and verify that the demo functions properly. </text:p>
 </text:list-item>
@@ -2282,22 +2234,21 @@
 <text:p text:style-name="Text_20_body">To use the Visual Studio web form designer to add NeatUpload to a web form, follow these steps: </text:p>
 <text:list text:style-name="L9">
 <text:list-item>
-<text:p text:style-name="P117">Drag the following controls from the toolbox onto your web form: <text:span text:style-name="Source_20_Text">InputFile</text:span>, <text:span text:style-name="Source_20_Text">ProgressBar</text:span>, and <text:span text:style-name="Source_20_Text">Button</text:span>. </text:p>
+<text:p text:style-name="P114">Drag the following controls from the toolbox onto your web form: <text:span text:style-name="Source_20_Text">InputFile</text:span>, <text:span text:style-name="Source_20_Text">ProgressBar</text:span>, and <text:span text:style-name="Source_20_Text">Button</text:span>. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P117">(Optional) If you want an inline progress bar, set the <text:span text:style-name="Source_20_Text">ProgressBar</text:span>'s <text:span text:style-name="Source_20_Text">Inline</text:span> property to <text:span text:style-name="Source_20_Text">true</text:span>. </text:p>
+<text:p text:style-name="P114">(Optional) If you want an inline progress bar, set the <text:span text:style-name="Source_20_Text">ProgressBar</text:span>'s <text:span text:style-name="Source_20_Text">Inline</text:span> property to <text:span text:style-name="Source_20_Text">true</text:span>. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P117">(Optional) If you want to customize the <text:span text:style-name="Source_20_Text">ProgressBar</text:span> fallback behavior, drag whatever control(s) you want displayed as a fallback onto the <text:span text:style-name="Source_20_Text">ProgressBar</text:span> control.  For example, to just change the fallback text, you could drag a <text:span text:style-name="Source_20_Text">Label</text:span> control onto the ProgressBar and edit its contents. </text:p>
+<text:p text:style-name="P114">(Optional) If you want to customize the <text:span text:style-name="Source_20_Text">ProgressBar</text:span> fallback behavior, drag whatever control(s) you want displayed as a fallback onto the <text:span text:style-name="Source_20_Text">ProgressBar</text:span> control.  For example, to just change the fallback text, you could drag a <text:span text:style-name="Source_20_Text">Label</text:span> control onto the ProgressBar and edit its contents. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P45">In your codebehind file, process the uploaded file.  The uploaded file's client-specified name, MIME type, and contents can be accessed via <text:span text:style-name="Variable">inputFileId</text:span>
+<text:p text:style-name="P42">In your codebehind file, process the uploaded file.  The uploaded file's client-specified name, MIME type, and contents can be accessed via <text:span text:style-name="Variable">inputFileId</text:span>
 <text:span text:style-name="Source_20_Text">.FileName</text:span>, <text:span text:style-name="Variable">inputFileId</text:span>
 <text:span text:style-name="Source_20_Text">.ContentType</text:span>, and <text:span text:style-name="Source_20_Text">
 <text:span text:style-name="T3">inputFileId</text:span>
 </text:span>
-<text:span text:style-name="Source_20_Text"> .FileContent</text:span>, respectively.  <text:span text:style-name="Strong_20_Emphasis"/>
-<text:span text:style-name="Strong_20_Emphasis">
+<text:span text:style-name="Source_20_Text"> .FileContent</text:span>, respectively.   <text:span text:style-name="Strong_20_Emphasis">
 <text:span text:style-name="T1">If you want to keep the uploaded file, you must use the </text:span>
 </text:span>
 <text:span text:style-name="Strong_20_Emphasis">
@@ -2308,7 +2259,7 @@
 <text:span text:style-name="T1">.MoveTo() method to move the uploaded file to a permanent location.  If you do not, NeatUpload will automatically remove the uploaded file at the end of the request</text:span>
 </text:span>
 <text:span text:style-name="Strong_20_Emphasis"/>to ensure that unwanted files are not left on the filesystem.  The following code will put the uploaded file in the application's root directory (assuming sufficient permissions): </text:p>
-<text:p text:style-name="P15">using Brettle.Web.NeatUpload;<text:line-break/>...<text:line-break/>using System.IO;<text:line-break/>...<text:line-break/>public class YourPage : System.Web.UI.Page<text:line-break/>{<text:line-break/>
+<text:p text:style-name="P12">using Brettle.Web.NeatUpload;<text:line-break/>...<text:line-break/>using System.IO;<text:line-break/>...<text:line-break/>public class YourPage : System.Web.UI.Page<text:line-break/>{<text:line-break/>
 <text:s text:c="7"/>private void Page_Load(object sender, EventArgs e)<text:line-break/>
 <text:s text:c="7"/>{<text:line-break/>
 <text:s text:c="7"/>...<text:line-break/>
@@ -2334,39 +2285,38 @@
 <text:p text:style-name="Text_20_body">To use NeatUpload on a web form <text:span text:style-name="T3">without</text:span> using the Visual Studio designer, follow these steps: </text:p>
 <text:list text:style-name="L10">
 <text:list-item>
-<text:p text:style-name="P46">Add the following to the top of your page: </text:p>
-<text:p text:style-name="P16">&lt;%@ Register TagPrefix="Upload" Namespace="Brettle.Web.NeatUpload" Assembly="Brettle.Web.NeatUpload" %&gt;</text:p>
+<text:p text:style-name="P43">Add the following to the top of your page: </text:p>
+<text:p text:style-name="P13">&lt;%@ Register TagPrefix="Upload" Namespace="Brettle.Web.NeatUpload" Assembly="Brettle.Web.NeatUpload" %&gt;</text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P46">Add an <text:span text:style-name="Source_20_Text">InputFile</text:span> control to your aspx page wherever you want the user to choose a file, using something like this: </text:p>
-<text:p text:style-name="P16">&lt;Upload:InputFile id="<text:span text:style-name="Variable">inputFileId</text:span>" runat="server" /&gt;</text:p>
-<text:p text:style-name="P120">Feel free to add any attributes that you would normally add to an <text:span text:style-name="Source_20_Text">HtmlInputFile</text:span> tag. </text:p>
+<text:p text:style-name="P43">Add an <text:span text:style-name="Source_20_Text">InputFile</text:span> control to your aspx page wherever you want the user to choose a file, using something like this: </text:p>
+<text:p text:style-name="P13">&lt;Upload:InputFile id="<text:span text:style-name="Variable">inputFileId</text:span>" runat="server" /&gt;</text:p>
+<text:p text:style-name="P117">Feel free to add any attributes that you would normally add to an <text:span text:style-name="Source_20_Text">HtmlInputFile</text:span> tag. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P46">Add a <text:span text:style-name="Source_20_Text">ProgressBar</text:span> control to your aspx page wherever you want to display an inline progress bar or, in the case of a popup progress bar, add it wherever you want the fallback link to be displayed.  Use something like this: </text:p>
-<text:p text:style-name="P16">&lt;Upload:ProgressBar id="<text:span text:style-name="Variable">progressBarId</text:span>" runat="server" inline="<text:span text:style-name="Variable">true|false</text:span>" /&gt;</text:p>
-<text:p text:style-name="P120">The inline attribute defaults to false. </text:p>
+<text:p text:style-name="P43">Add a <text:span text:style-name="Source_20_Text">ProgressBar</text:span> control to your aspx page wherever you want to display an inline progress bar or, in the case of a popup progress bar, add it wherever you want the fallback link to be displayed.  Use something like this: </text:p>
+<text:p text:style-name="P13">&lt;Upload:ProgressBar id="<text:span text:style-name="Variable">progressBarId</text:span>" runat="server" inline="<text:span text:style-name="Variable">true|false</text:span>" /&gt;</text:p>
+<text:p text:style-name="P117">The inline attribute defaults to false. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P46">Add a submit button to your aspx page. For example: </text:p>
-<text:p text:style-name="P26">&lt;asp:Button id="<text:span text:style-name="Variable">submitButtonId</text:span>" runat="server" Text="<text:span text:style-name="Variable">Submit</text:span>" /&gt;</text:p>
+<text:p text:style-name="P43">Add a submit button to your aspx page. For example: </text:p>
+<text:p text:style-name="P23">&lt;asp:Button id="<text:span text:style-name="Variable">submitButtonId</text:span>" runat="server" Text="<text:span text:style-name="Variable">Submit</text:span>" /&gt;</text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P46">In your codebehind file, declare each <text:span text:style-name="Source_20_Text">InputFile</text:span>, <text:span text:style-name="Source_20_Text">ProgressBar</text:span>, and <text:span text:style-name="Source_20_Text">Button</text:span> control using code like this: </text:p>
-<text:p text:style-name="P16">using Brettle.Web.NeatUpload;<text:line-break/>...<text:line-break/>using System.Web.UI.WebControls;<text:line-break/>...<text:line-break/>public class YourPage : System.Web.UI.Page<text:line-break/>{<text:line-break/>
+<text:p text:style-name="P43">In your codebehind file, declare each <text:span text:style-name="Source_20_Text">InputFile</text:span>, <text:span text:style-name="Source_20_Text">ProgressBar</text:span>, and <text:span text:style-name="Source_20_Text">Button</text:span> control using code like this: </text:p>
+<text:p text:style-name="P13">using Brettle.Web.NeatUpload;<text:line-break/>...<text:line-break/>using System.Web.UI.WebControls;<text:line-break/>...<text:line-break/>public class YourPage : System.Web.UI.Page<text:line-break/>{<text:line-break/>
 <text:s text:c="7"/>...<text:line-break/>
 <text:s text:c="7"/>protected InputFile <text:span text:style-name="Variable">inputFileId</text:span>;<text:line-break/>
 <text:s text:c="7"/>protected ProgressBar <text:span text:style-name="Variable">progressBarId</text:span>; <text:line-break/>
 <text:s text:c="7"/>protected Button <text:span text:style-name="T3">submitButtonId</text:span>;</text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P46">In your codebehind file, process the uploaded file.  The uploaded file's client-specified name, MIME type, and contents can be accessed via <text:span text:style-name="Variable">inputFileId</text:span>
+<text:p text:style-name="P43">In your codebehind file, process the uploaded file.  The uploaded file's client-specified name, MIME type, and contents can be accessed via <text:span text:style-name="Variable">inputFileId</text:span>
 <text:span text:style-name="Source_20_Text">.FileName</text:span>, <text:span text:style-name="Variable">inputFileId</text:span>
 <text:span text:style-name="Source_20_Text">.ContentType</text:span>, and <text:span text:style-name="Source_20_Text">
 <text:span text:style-name="T3">inputFileId</text:span>
 </text:span>
-<text:span text:style-name="Source_20_Text"> .FileContent</text:span>, respectively.  <text:span text:style-name="Strong_20_Emphasis"/>
-<text:span text:style-name="Strong_20_Emphasis">
+<text:span text:style-name="Source_20_Text"> .FileContent</text:span>, respectively.   <text:span text:style-name="Strong_20_Emphasis">
 <text:span text:style-name="T1">If you want to keep the uploaded file, you must use the </text:span>
 </text:span>
 <text:span text:style-name="Source_20_Text">
@@ -2381,7 +2331,7 @@
 <text:span text:style-name="T1">method to move the uploaded file to a permanent location.  If you do not, NeatUpload will automatically remove the uploaded file at the end of the request</text:span>
 </text:span>
 <text:span text:style-name="Strong_20_Emphasis"/>to ensure that unwanted files do not fill up the filesystem.  The following code will put the uploaded file in the application's root directory (assuming sufficient permissions): </text:p>
-<text:p text:style-name="P16">using Brettle.Web.NeatUpload;<text:line-break/>...<text:line-break/>using System.IO;<text:line-break/>...<text:line-break/>public class YourPage : System.Web.UI.Page<text:line-break/>{<text:line-break/>
+<text:p text:style-name="P13">using Brettle.Web.NeatUpload;<text:line-break/>...<text:line-break/>using System.IO;<text:line-break/>...<text:line-break/>public class YourPage : System.Web.UI.Page<text:line-break/>{<text:line-break/>
 <text:s text:c="7"/>private void Page_Load(object sender, EventArgs e)<text:line-break/>
 <text:s text:c="7"/>{<text:line-break/>
 <text:s text:c="11"/>...<text:line-break/>
@@ -2415,8 +2365,8 @@
 <text:p text:style-name="Text_20_body">To display the progress of a long-running task, you first must set some properties on your page and the <text:span text:style-name="Source_20_Text">ProgressBar</text:span> control. Specifically: </text:p>
 <text:list text:style-name="L11">
 <text:list-item>
-<text:p text:style-name="P52">Use <text:span text:style-name="Source_20_Text">EnableSessionState="false"</text:span> in your <text:span text:style-name="Source_20_Text">&lt;%@Page ...%&gt;</text:span> directive. If you don't do that your page will hold a lock on the session for the duration of your long-running task. That will block the display of any other pages which need access to the session until your long-running task completes. More importantly, NeatUpload's progress display will not update because it needs access to the session to determine how the upload is progressing. If you need to access the session from your page, NeatUpload provides a way to do that without holding a lock on the session for the duration of the page. To do that, pass a <text:span text:style-name="Source_20_Text">SessionAccessCallback</text:span> to <text:span text:style-name="Source_20_Text">UploadHttpModule.AccessSession()</text:span>, like this: </text:p>
-<text:p text:style-name="P21">using System.Web;<text:line-break/>using System.Web.SessionState;<text:line-break/>using Brettle.Web.NeatUpload;<text:line-break/>...<text:line-break/>namespace YourNamepace<text:line-break/>{<text:line-break/>
+<text:p text:style-name="P49">Use <text:span text:style-name="Source_20_Text">EnableSessionState="false"</text:span> in your <text:span text:style-name="Source_20_Text">&lt;%@Page ...%&gt;</text:span> directive. If you don't do that your page will hold a lock on the session for the duration of your long-running task. That will block the display of any other pages which need access to the session until your long-running task completes. More importantly, NeatUpload's progress display will not update because it needs access to the session to determine how the upload is progressing. If you need to access the session from your page, NeatUpload provides a way to do that without holding a lock on the session for the duration of the page. To do that, pass a <text:span text:style-name="Source_20_Text">SessionAccessCallback</text:span> to <text:span text:style-name="Source_20_Text">UploadHttpModule.AccessSession()</text:span>, like this: </text:p>
+<text:p text:style-name="P18">using System.Web;<text:line-break/>using System.Web.SessionState;<text:line-break/>using Brettle.Web.NeatUpload;<text:line-break/>...<text:line-break/>namespace YourNamepace<text:line-break/>{<text:line-break/>
 <text:s text:c="7"/>public class YourPage : System.Web.UI.Page<text:line-break/>
 <text:s text:c="7"/>{<text:line-break/>
 <text:s text:c="15"/>...<text:line-break/>
@@ -2436,25 +2386,25 @@
 <text:s text:c="15"/>}<text:line-break/>
 <text:s text:c="15"/>...<text:line-break/>
 <text:s text:c="7"/>}<text:line-break/>}</text:p>
-<text:p text:style-name="P122">Note that <text:span text:style-name="Source_20_Text">UploadHttpModule.AccessSession()</text:span> creates a subrequest to run your <text:span text:style-name="Source_20_Text">SessionAccessCallback</text:span>. This is considerably more expensive than a normal method call so you should try to avoid calling <text:span text:style-name="Source_20_Text">UploadHttpModule.AccessSession()</text:span> unnecessarily. </text:p>
+<text:p text:style-name="P119">Note that <text:span text:style-name="Source_20_Text">UploadHttpModule.AccessSession()</text:span> creates a subrequest to run your <text:span text:style-name="Source_20_Text">SessionAccessCallback</text:span>. This is considerably more expensive than a normal method call so you should try to avoid calling <text:span text:style-name="Source_20_Text">UploadHttpModule.AccessSession()</text:span> unnecessarily. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P122">If you're form doesn't contain any <text:span text:style-name="Source_20_Text">InputFile</text:span> controls you need to add a <text:span text:style-name="Source_20_Text">HiddenPostBackID</text:span> control at the top of the form so that NeatUpload can associate the form submission with the progress display. </text:p>
+<text:p text:style-name="P119">If you're form doesn't contain any <text:span text:style-name="Source_20_Text">InputFile</text:span> controls you need to add a <text:span text:style-name="Source_20_Text">HiddenPostBackID</text:span> control at the top of the form so that NeatUpload can associate the form submission with the progress display. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P52">If you want to display progress even if the user doesn't upload a file (either because your form doesn't have a way to select file or because the user chose not to select a file), you need to set the <text:span text:style-name="Source_20_Text">ProgressBar</text:span>'s <text:span text:style-name="Source_20_Text">AutoStartCondition</text:span> property to the string <text:span text:style-name="Source_20_Text">"true"</text:span>. </text:p>
+<text:p text:style-name="P49">If you want to display progress even if the user doesn't upload a file (either because your form doesn't have a way to select file or because the user chose not to select a file), you need to set the <text:span text:style-name="Source_20_Text">ProgressBar</text:span>'s <text:span text:style-name="Source_20_Text">AutoStartCondition</text:span> property to the string <text:span text:style-name="Source_20_Text">"true"</text:span>. </text:p>
 </text:list-item>
 </text:list>
 <text:p text:style-name="Text_20_body">To actually update the progress display from the your page: </text:p>
 <text:list text:style-name="L12">
 <text:list-item>
-<text:p text:style-name="P124">Set the <text:span text:style-name="Source_20_Text">ProgressBar</text:span>'s <text:span text:style-name="Source_20_Text">ProcessingProgress</text:span> property to a new <text:span text:style-name="Source_20_Text">ProgressInfo</text:span> object, passing to the constructor the maximum number of work units that will be performed and a string describing those units. </text:p>
+<text:p text:style-name="P121">Set the <text:span text:style-name="Source_20_Text">ProgressBar</text:span>'s <text:span text:style-name="Source_20_Text">ProcessingProgress</text:span> property to a new <text:span text:style-name="Source_20_Text">ProgressInfo</text:span> object, passing to the constructor the maximum number of work units that will be performed and a string describing those units. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P124">Update the <text:span text:style-name="Source_20_Text">ProgressInfo</text:span>'s <text:span text:style-name="Source_20_Text">Value</text:span> property as the task progresses. The <text:span text:style-name="Source_20_Text">Value</text:span> property will control the position of the bar. If <text:span text:style-name="Source_20_Text">Value</text:span> is 0, no bar will be shown. If it is equal to the <text:span text:style-name="Source_20_Text">Maximum</text:span> property (initialized via the constructor), a full bar will be shown. </text:p>
+<text:p text:style-name="P121">Update the <text:span text:style-name="Source_20_Text">ProgressInfo</text:span>'s <text:span text:style-name="Source_20_Text">Value</text:span> property as the task progresses. The <text:span text:style-name="Source_20_Text">Value</text:span> property will control the position of the bar. If <text:span text:style-name="Source_20_Text">Value</text:span> is 0, no bar will be shown. If it is equal to the <text:span text:style-name="Source_20_Text">Maximum</text:span> property (initialized via the constructor), a full bar will be shown. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P54">Optionally, update the <text:span text:style-name="Source_20_Text">ProgressInfo</text:span>'s <text:span text:style-name="Source_20_Text">Text</text:span> property. By default, when a <text:span text:style-name="Source_20_Text">ProgressBar</text:span>'s <text:span text:style-name="Source_20_Text">ProcessingProgress</text:span> property has been set, it will display "<text:span text:style-name="T3">Value</text:span>/<text:span text:style-name="T3">Maximum</text:span>
+<text:p text:style-name="P51">Optionally, update the <text:span text:style-name="Source_20_Text">ProgressInfo</text:span>'s <text:span text:style-name="Source_20_Text">Text</text:span> property. By default, when a <text:span text:style-name="Source_20_Text">ProgressBar</text:span>'s <text:span text:style-name="Source_20_Text">ProcessingProgress</text:span> property has been set, it will display "<text:span text:style-name="T3">Value</text:span>/<text:span text:style-name="T3">Maximum</text:span>
 <text:span text:style-name="T3">Units</text:span> processed" where <text:span text:style-name="T3">Value</text:span>, <text:span text:style-name="T3">Maximum</text:span>, and <text:span text:style-name="T3">Units</text:span> are the corresponding properties of the <text:span text:style-name="Source_20_Text">ProgressInfo</text:span> object. You can localize that text via the <text:span text:style-name="Source_20_Text">ProgressInfoFormat</text:span> resource in <text:span text:style-name="Source_20_Text">Strings.resx</text:span> or you can replace that text completely by setting the <text:span text:style-name="Source_20_Text">ProgressInfo</text:span>'s <text:span text:style-name="Source_20_Text">Text</text:span> property. </text:p>
 </text:list-item>
 </text:list>
@@ -2577,8 +2527,8 @@
 <text:p text:style-name="Text_20_body">That configuration will cause the <text:span text:style-name="Source_20_Text">UploadHttpModule</text:span> to only be used for requests to <text:span text:style-name="Source_20_Text">Demo.aspx</text:span> and <text:span text:style-name="Source_20_Text">Special.aspx</text:span>.  In addition, ASP.NET's <text:span text:style-name="Source_20_Text">maxRequestLength</text:span> is set to only 100 KBytes for all requests other than those two pages.  For those two pages, the <text:span text:style-name="Source_20_Text">maxRequestLength</text:span> is increased to 2 GBytes and the <text:span text:style-name="Source_20_Text">executionTimeout</text:span> is increased to 1 hour.  Also, requests for <text:span text:style-name="Source_20_Text">Special.aspx</text:span> use the "special" provider which is configured to use the "<text:span text:style-name="Source_20_Text">SpecialTempDirectory</text:span>", while requests for <text:span text:style-name="Source_20_Text">Demo.aspx</text:span> use the default provider and the default temporary directory.<text:line-break/>
 <text:line-break/>Note that you still need to add the <text:span text:style-name="Source_20_Text">UploadHttpModule</text:span> in the <text:span text:style-name="Source_20_Text">&lt;httpModules&gt;</text:span> section so that it will be available to your application.  Location filtering just gives you finer control over which requests the <text:span text:style-name="Source_20_Text">UploadHttpModule</text:span> actually touches.</text:p>
 <text:h text:style-name="Heading_20_3" text:outline-level="3" text:is-list-header="true">
-<text:bookmark text:name="mozTocId970185"/>
-<text:bookmark text:name="Limiting_the_Size_of_Upload_Requests"/>Limiting the Size of Upload Requests</text:h>
+<text:bookmark text:name="Limiting_the_Size_of_Upload_Requests"/>
+<text:bookmark text:name="mozTocId970185"/>Limiting the Size of Upload Requests</text:h>
 <text:p text:style-name="Text_20_body">By default, NeatUpload does not directly limit the size of uploads.  To limit upload size, use the <text:span text:style-name="Source_20_Text">&lt;neatUpload&gt;</text:span> element's <text:span text:style-name="Source_20_Text">maxRequestLength </text:span>attribute: </text:p>
 <text:p text:style-name="P5">&lt;neatUpload ... maxRequestLength="<text:span text:style-name="Emphasis">sizeInKBytes</text:span>" ... /&gt;</text:p>
 <text:p text:style-name="Text_20_body">If a user attempts to upload a file larger than the specified size, NeatUpload will update the progress bar to indicate that the upload was rejected because it was too large.  If the progress bar is in a pop-up window, it will leave the window open to ensure that the user sees why the upload was rejected.   Next it will attempt to stop the upload by asking the browser to run JavaScript that simulates clicking the browser's Stop button.  If JavaScript is enabled, most modern browsers (including recent versions of IE, Firefox, and Opera) will be able to stop the upload and the user will simply see the original form along with the progress bar displaying the reason the upload was rejected.  The remainder of this section only affects the user when the browser is <text:span text:style-name="T3">not</text:span> able to stop the upload.</text:p>
@@ -2593,10 +2543,10 @@
 <text:p text:style-name="Text_20_body">The behavior when this value is exceeded is similar to the behavior when the <text:span text:style-name="Source_20_Text">maxRequestLength</text:span> is exceeded.  See the preceding section for details.  The only differences are: </text:p>
 <text:list text:style-name="L13">
 <text:list-item>
-<text:p text:style-name="P126">For upload requests where the non-file portion exceeds the <text:span text:style-name="Source_20_Text">maxNormalRequestLength</text:span> limit, NeatUpload throws a <text:span text:style-name="Source_20_Text">NonfilePortionTooLargeException</text:span> instead of an <text:span text:style-name="Source_20_Text">UploadTooLargeException</text:span>. </text:p>
+<text:p text:style-name="P123">For upload requests where the non-file portion exceeds the <text:span text:style-name="Source_20_Text">maxNormalRequestLength</text:span> limit, NeatUpload throws a <text:span text:style-name="Source_20_Text">NonfilePortionTooLargeException</text:span> instead of an <text:span text:style-name="Source_20_Text">UploadTooLargeException</text:span>. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P55">For non-upload requests that exceed the <text:span text:style-name="Source_20_Text">maxNormalRequestLength</text:span> limit, NeatUpload does not attempt to use JavaScript to interrupt the browser and the exception that is thrown is an <text:span text:style-name="Source_20_Text">HttpException(413, "Request Entity Too Large")</text:span> instead of an <text:span text:style-name="Source_20_Text">UploadTooLargeException()</text:span>. </text:p>
+<text:p text:style-name="P52">For non-upload requests that exceed the <text:span text:style-name="Source_20_Text">maxNormalRequestLength</text:span> limit, NeatUpload does not attempt to use JavaScript to interrupt the browser and the exception that is thrown is an <text:span text:style-name="Source_20_Text">HttpException(413, "Request Entity Too Large")</text:span> instead of an <text:span text:style-name="Source_20_Text">UploadTooLargeException()</text:span>. </text:p>
 </text:list-item>
 </text:list>
 <text:h text:style-name="Heading_20_3" text:outline-level="3" text:is-list-header="true">
@@ -2607,8 +2557,7 @@
 <text:h text:style-name="Heading_20_3" text:outline-level="3" text:is-list-header="true">
 <text:bookmark text:name="mozTocId991184"/>Changing the Query String Parameter Used When Uploading From Client Applications</text:h>
 <text:p text:style-name="Text_20_body">If you are <text:a xlink:type="simple" xlink:href="#mozTocId483750">uploading from a client application</text:a> other than a browser, you might not have control over the name of the query string parameter that the application uses to identify each upload.  To configure NeatUpload to look for a query string parameter with a particular name, the <text:span text:style-name="Source_20_Text">&lt;neatUpload&gt;</text:span> element's <text:span text:style-name="Source_20_Text">postBackIDQueryParam</text:span> attribute:</text:p>
-<text:p text:style-name="P5">&lt;neatUpload ... postBackIDQueryParam="<text:span text:style-name="Emphasis"/>
-<text:span text:style-name="Emphasis">
+<text:p text:style-name="P5">&lt;neatUpload ... postBackIDQueryParam=" <text:span text:style-name="Emphasis">
 <text:span text:style-name="T5">parameterName</text:span>
 </text:span>
 <text:span text:style-name="Emphasis"/>" ... /&gt;</text:p>
@@ -2622,13 +2571,13 @@
 <text:line-break/>Encrypting and signing the <text:span text:style-name="Source_20_Text">StorageConfig</text:span> prevents an attacker from examining and modifying it.  However, <text:span text:style-name="T1">it does not prevent replay attacks and it will cause uploads to be rejected if the server uses different keys for validation/decryption than it did for signing/encryption</text:span>.  Follow the following rules to avoid these problems:</text:p>
 <text:list text:style-name="L14">
 <text:list-item>
-<text:p text:style-name="P127">Only use <text:span text:style-name="Source_20_Text">StorageConfig</text:span> to configure an <text:span text:style-name="Source_20_Text">InputFile</text:span> control if you don't mind an attacker associating that <text:span text:style-name="Source_20_Text">StorageConfig</text:span> with other <text:span text:style-name="Source_20_Text">InputFile</text:span> controls while the same validation key is being used.  This is not typically a problem for <text:span text:style-name="Source_20_Text">StorageConfig["tempDirectory"]</text:span> because it is mostly used to specify a temporary directory on the same drive as the final location of the file to improve performance.  If an attacker used a  <text:span text:style-name="Source_20_Text">StorageConfig</text:span> from a different control, they would typically just get poor performance.  Note, however, that if you decide to stop using a temporary directory, you should either change the validation key or use some other mechanism (e.g. change the permissions on the directory) to ensure that an upload that uses an old <text:span text:style-name="Source_20_Text">StorageConfig</text:span> can not write to the old directory. </text:p>
+<text:p text:style-name="P124">Only use <text:span text:style-name="Source_20_Text">StorageConfig</text:span> to configure an <text:span text:style-name="Source_20_Text">InputFile</text:span> control if you don't mind an attacker associating that <text:span text:style-name="Source_20_Text">StorageConfig</text:span> with other <text:span text:style-name="Source_20_Text">InputFile</text:span> controls while the same validation key is being used.  This is not typically a problem for <text:span text:style-name="Source_20_Text">StorageConfig["tempDirectory"]</text:span> because it is mostly used to specify a temporary directory on the same drive as the final location of the file to improve performance.  If an attacker used a  <text:span text:style-name="Source_20_Text">StorageConfig</text:span> from a different control, they would typically just get poor performance.  Note, however, that if you decide to stop using a temporary directory, you should either change the validation key or use some other mechanism (e.g. change the permissions on the directory) to ensure that an upload that uses an old <text:span text:style-name="Source_20_Text">StorageConfig</text:span> can not write to the old directory. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P127">Only use <text:span text:style-name="Source_20_Text">StorageConfig</text:span> to configure an <text:span text:style-name="Source_20_Text">InputFile</text:span> control if you don't mind having uploads rejected while transitioning from old to new keys.  NeatUpload will reject any uploads from forms rendered with the old key.  The default rejection message is the value of the <text:span text:style-name="Source_20_Text">InvalidStorageConfigMessageFormat</text:span> resource in <text:span text:style-name="Source_20_Text">Strings.resx</text:span>.  It defaults to "Please refresh the page and try again." </text:p>
+<text:p text:style-name="P124">Only use <text:span text:style-name="Source_20_Text">StorageConfig</text:span> to configure an <text:span text:style-name="Source_20_Text">InputFile</text:span> control if you don't mind having uploads rejected while transitioning from old to new keys.  NeatUpload will reject any uploads from forms rendered with the old key.  The default rejection message is the value of the <text:span text:style-name="Source_20_Text">InvalidStorageConfigMessageFormat</text:span> resource in <text:span text:style-name="Source_20_Text">Strings.resx</text:span>.  It defaults to "Please refresh the page and try again." </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P56">Don't use <text:span text:style-name="Source_20_Text">StorageConfig</text:span> in an environment (e.g. a web farm) where the server rendering the form could be different from the server that receives the upload request, unless you manually configure all servers to use the same keys. </text:p>
+<text:p text:style-name="P53">Don't use <text:span text:style-name="Source_20_Text">StorageConfig</text:span> in an environment (e.g. a web farm) where the server rendering the form could be different from the server that receives the upload request, unless you manually configure all servers to use the same keys. </text:p>
 </text:list-item>
 </text:list>
 <text:h text:style-name="Heading_20_2" text:outline-level="2" text:is-list-header="true">
@@ -2671,28 +2620,28 @@
 <text:p text:style-name="Text_20_body">The <text:span text:style-name="Source_20_Text">SqlServerUploadStorageProvider</text:span> can either generate SQL itself or use stored procedures on the database server for all tasks. This is controlled by the attributes you specify when you add the provider to your <text:span text:style-name="Source_20_Text">Web.config</text:span>. When the provider needs to do something, it first checks to see if you have specified a stored procedure to do it using one of the following attributes: </text:p>
 <text:list text:style-name="L15">
 <text:list-item>
-<text:p text:style-name="P129">
+<text:p text:style-name="P126">
 <text:span text:style-name="Source_20_Text">createProcedure</text:span> - Procedure that takes @FileName and @MIMEType (both varchars) input parameters, and sets @Identity (Numeric) and @Pointer (Binary(16)) output parameters. The @Identity and @Pointer values that are returned will be passed to the <text:span text:style-name="Source_20_Text">writeProcedure</text:span> as the file is received. The @Identity value will also be passed to the <text:span text:style-name="Source_20_Text">deleteProcedure</text:span>, <text:span text:style-name="Source_20_Text">cleanupProcedure</text:span>, <text:span text:style-name="Source_20_Text">renameProcedure</text:span>, and <text:span text:style-name="Source_20_Text">storeHashProcedure</text:span>. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P129">
+<text:p text:style-name="P126">
 <text:span text:style-name="Source_20_Text">writeProcedure</text:span> - Procedure that takes @Identity (Numeric), @Pointer (Binary(16)), @Offset (Int), @Delete (Int), and @Bytes (varbinary) input parameters. It should replace the @Delete bytes at position @Offset in the file identified by @Identity and @Pointer with the bytes in @Bytes. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P129">
+<text:p text:style-name="P126">
 <text:span text:style-name="Source_20_Text">cleanupProcedure</text:span> - The provider calls this procedure with @Identity (Numeric) when an upload is no longer in progress and it will not call <text:span text:style-name="Source_20_Text">writeProcedure</text:span> anymore. Note that this procedure is called even if the upload did not complete successfully for some reason. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P129">
+<text:p text:style-name="P126">
 <text:span text:style-name="Source_20_Text">storeHashProcedure</text:span> - If the <text:span text:style-name="Source_20_Text">hashAlgorithm</text:span> attribute is set, the provider calls this procedure with @Identity (Numeric) and @Hash (varchar). @Hash is the hash value computed for the file identified by @Identity. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P129">
+<text:p text:style-name="P126">
 <text:span text:style-name="Source_20_Text">renameProcedure</text:span> - The provider calls this procedure with @Identity (Numeric) and @FileName (varchar) to indicate that the application has requested that the name of the file identified by @Identity be changed to @FileName. This happens when you call <text:span text:style-name="Emphasis">inputFileId</text:span>
 <text:span text:style-name="Source_20_Text">.MoveTo()</text:span>. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P129">
+<text:p text:style-name="P126">
 <text:span text:style-name="Source_20_Text">deleteProcedure</text:span> - Procedure that takes @Identity (Numeric) input parameter and deletes the specified file. This is called at the end of the request if your application called neither <text:span text:style-name="Emphasis">inputFileId</text:span>
 <text:span text:style-name="Source_20_Text">.MoveTo() nor </text:span>
 <text:span text:style-name="Emphasis">inputFileId</text:span>
@@ -2700,12 +2649,12 @@
 </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P129">
+<text:p text:style-name="P126">
 <text:span text:style-name="Source_20_Text">openProcedure</text:span> - This procedure is called if you use <text:span text:style-name="Emphasis">inputFileId</text:span>
 <text:span text:style-name="Source_20_Text">.FileContent</text:span> to access the uploaded file as a stream. It takes an @Identity (Numeric) input parameter, and sets @Pointer (Binary(16)), @FileName (varchar), and @MIMEType (varchar) output parameters. The @Pointer value that is returned will be passed to the <text:span text:style-name="Source_20_Text">readProcedure</text:span> as content is read from the stream. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P57">
+<text:p text:style-name="P54">
 <text:span text:style-name="Source_20_Text">readProcedure</text:span> - This procedure is called if you use <text:span text:style-name="Emphasis">inputFileId</text:span>
 <text:span text:style-name="Source_20_Text">.FileContent</text:span> to access the uploaded file as a stream. It takes @Identity (Numeric), @Pointer (Binary(16)), @Offset (Int), and @Size (Int) input parameters and returns the @Size bytes starting at position @Offset in the file identified by @Identity and @Pointer. </text:p>
 </text:list-item>
@@ -2713,27 +2662,27 @@
 <text:p text:style-name="Text_20_body">If you don't provide a stored procedure for what the provider needs to do, it will generate the SQL to do it. When generating SQL queries, the provider uses the values you specify with the following attributes: </text:p>
 <text:list text:style-name="L16">
 <text:list-item>
-<text:p text:style-name="P136">
+<text:p text:style-name="P133">
 <text:span text:style-name="Source_20_Text">tableName</text:span> - Name of the table to contain the files. "FileTable" in the example below. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P136">
+<text:p text:style-name="P133">
 <text:span text:style-name="Source_20_Text">dataColumnName</text:span> - Name of an image/varbinary column for the contents of the uploaded file. "DataField" in the example below. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P136">
+<text:p text:style-name="P133">
 <text:span text:style-name="Source_20_Text">partialFlagColumnName</text:span> - Name of a tinyint column that the provider will set to 1 while the upload is being received and set to 0 when the upload is complete. "Partial" in the example below. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P136">
+<text:p text:style-name="P133">
 <text:span text:style-name="Source_20_Text">fileNameColumnName</text:span> - Name of a nvarchar column for the name of the uploaded file. While the upload is being received, the provider will set the column to the name (excluding path provided by the browser). If you call <text:span text:style-name="Emphasis">inputFileId</text:span>.MoveTo(), the new name will be stored in this column. "FileName" in the example below. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P136">
+<text:p text:style-name="P133">
 <text:span text:style-name="Source_20_Text">mimeTypeColumnName</text:span> - Name of a nvarchar column for the browser-provided MIME content type of the file "MimeType" in the example below. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P58">
+<text:p text:style-name="P55">
 <text:span text:style-name="Source_20_Text">hashColumnName</text:span> - Name of a nvarchar column for the hash of the file contents (as a hex string). "FileHash" in the example below. </text:p>
 </text:list-item>
 </text:list>
@@ -2745,18 +2694,18 @@
 <text:p text:style-name="Text_20_body">To add the <text:span text:style-name="Source_20_Text">SqlServerInputFile</text:span> to your forms:</text:p>
 <text:list text:style-name="L17">
 <text:list-item>
-<text:p text:style-name="P59">
+<text:p text:style-name="P56">
 <text:span text:style-name="T7">If you are using Visual Studio Web Form Designer</text:span>, simply drag the <text:span text:style-name="Source_20_Text">SqlServerInputFile</text:span> control from your Toolbox and drop it on the form.<text:line-break/>
 <text:span text:style-name="T7">If you are not using Visual Studio Web Form Designer</text:span>, add the following line at the top of your form:</text:p>
-<text:p text:style-name="P30">&lt;%@ Register TagPrefix="SqlUpload" Namespace="Hitone.Web.SqlServerUploader" Assembly="Hitone.Web.SqlServerUploader"%&gt;</text:p>
-<text:p text:style-name="P59">and add an <text:span text:style-name="Source_20_Text">SqlServerInputFile</text:span> control to your aspx page wherever you want the user to choose a file, using something like this: </text:p>
-<text:p text:style-name="P27">&lt;SqlUpload:SqlServerInputFile id="<text:span text:style-name="Variable">inputFileId</text:span>" runat="server" /&gt;</text:p>
+<text:p text:style-name="P26">&lt;%@ Register TagPrefix="SqlUpload" Namespace="Hitone.Web.SqlServerUploader" Assembly="Hitone.Web.SqlServerUploader"%&gt;</text:p>
+<text:p text:style-name="P56">and add an <text:span text:style-name="Source_20_Text">SqlServerInputFile</text:span> control to your aspx page wherever you want the user to choose a file, using something like this: </text:p>
+<text:p text:style-name="P24">&lt;SqlUpload:SqlServerInputFile id="<text:span text:style-name="Variable">inputFileId</text:span>" runat="server" /&gt;</text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P141">Set any properties that you would normally set on an <text:span text:style-name="Source_20_Text">InputFile or HtmlInputFile</text:span> control. </text:p>
+<text:p text:style-name="P138">Set any properties that you would normally set on an <text:span text:style-name="Source_20_Text">InputFile or HtmlInputFile</text:span> control. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P59">In your code-behind class, you can use the methods properties you would normally use on an <text:span text:style-name="Source_20_Text">InputFile</text:span> object. In addition, <text:span text:style-name="Source_20_Text">SqlServerInputFile</text:span> offers a <text:span text:style-name="Source_20_Text">Verify()</text:span> method that tells the <text:span text:style-name="Source_20_Text">SqlServerUploadStorageProvider</text:span> not to delete the uploaded file at the end of the request. <text:span text:style-name="Source_20_Text">Verify()</text:span> is equivalent to calling <text:span text:style-name="Emphasis">inputFileId</text:span>
+<text:p text:style-name="P56">In your code-behind class, you can use the methods properties you would normally use on an <text:span text:style-name="Source_20_Text">InputFile</text:span> object. In addition, <text:span text:style-name="Source_20_Text">SqlServerInputFile</text:span> offers a <text:span text:style-name="Source_20_Text">Verify()</text:span> method that tells the <text:span text:style-name="Source_20_Text">SqlServerUploadStorageProvider</text:span> not to delete the uploaded file at the end of the request. <text:span text:style-name="Source_20_Text">Verify()</text:span> is equivalent to calling <text:span text:style-name="Emphasis">inputFileId</text:span>
 <text:span text:style-name="Source_20_Text">.MoveTo(</text:span>
 <text:span text:style-name="Emphasis">inputFileId</text:span>
 <text:span text:style-name="Source_20_Text">.FileName, MoveToOptions.Overwrite)</text:span> but doesn't cause the extra database update. <text:span text:style-name="Source_20_Text">SqlServerInputFile</text:span> also adds <text:span text:style-name="Source_20_Text">Hash</text:span>, <text:span text:style-name="Source_20_Text">HashSize</text:span>, and <text:span text:style-name="Source_20_Text">HashAlgorithm</text:span> properties which return information about the cryptographic hash (if any) computed for the uploaded file.</text:p>
@@ -2765,15 +2714,15 @@
 <text:h text:style-name="Heading_20_3" text:outline-level="3" text:is-list-header="true">
 <text:bookmark text:name="SqlServerInputFileExample"/>Example</text:h>
 <text:p text:style-name="Text_20_body">There is a demo at <text:span text:style-name="Source_20_Text">Extensions/SqlServerInputFile/UploaderTest/DBWrite.aspx</text:span>. Before using it for the first time, you need to: </text:p>
-<text:list text:style-name="L25">
+<text:list text:style-name="L18">
 <text:list-item>
-<text:p text:style-name="P165">Create a database named "FileStorageTest" on an SQL Server. </text:p>
+<text:p text:style-name="P139">Create a database named "FileStorageTest" on an SQL Server. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P165">Create the table and stored procedures by running the query below corresponding to your version of SQL Server. </text:p>
+<text:p text:style-name="P139">Create the table and stored procedures by running the query below corresponding to your version of SQL Server. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P70">If necessary, change the connection strings in <text:span text:style-name="Source_20_Text">Extensions/SqlServerInputFile/UploaderTest/Web.config</text:span> to point to your database. For example, if you are using SQL Server Express on your local machine, you'll need to change <text:span text:style-name="Source_20_Text">"Server=.;"</text:span> to <text:span text:style-name="Source_20_Text">"Server=.\SQLEXPRESS;"</text:span> in several places.</text:p>
+<text:p text:style-name="P59">If necessary, change the connection strings in <text:span text:style-name="Source_20_Text">Extensions/SqlServerInputFile/UploaderTest/Web.config</text:span> to point to your database. For example, if you are using SQL Server Express on your local machine, you'll need to change <text:span text:style-name="Source_20_Text">"Server=.;"</text:span> to <text:span text:style-name="Source_20_Text">"Server=.\SQLEXPRESS;"</text:span> in several places.</text:p>
 </text:list-item>
 </text:list>
 <text:h text:style-name="Heading_20_4" text:outline-level="4" text:is-list-header="true">Example Setup Query for SQL Server 2005</text:h>
@@ -2985,8 +2934,8 @@
 <text:p text:style-name="Text_20_body">HashedInputFile is a NeatUpload extension that computes the cryptographic hash of each uploaded file while the upload is in progress.   It consists of the <text:span text:style-name="Source_20_Text">HashedInputFile</text:span> web control and a custom <text:span text:style-name="Source_20_Text">UploadStorageProvider</text:span> called <text:span text:style-name="Source_20_Text">HashingFilesystemUploadStorageProvider</text:span>.  The <text:span text:style-name="Source_20_Text">HashedInputFile</text:span> control is a subclass of <text:span text:style-name="Source_20_Text">InputFile</text:span> that adds a <text:span text:style-name="Source_20_Text">Hash</text:span> property which returns the cryptographic hash of the uploaded file computed by the <text:span text:style-name="Source_20_Text">HashingFilesystemUploadStorageProvider</text:span>.  To use the HashedInputFile extension:</text:p>
 <text:list text:style-name="L19">
 <text:list-item>
-<text:p text:style-name="P142">Install HashedInputFile:</text:p>
-<text:p text:style-name="P142">
+<text:p text:style-name="P141">Install HashedInputFile:</text:p>
+<text:p text:style-name="P141">
 <text:span text:style-name="T7">If you will be using the Visual Studio Web Form Designer</text:span>, add the <text:span text:style-name="Source_20_Text">HashedInputFile</text:span> control to your toolbox.  To do that, right-click on the Toolbox, click Add/Remove Items, Browse to  <text:span text:style-name="Source_20_Text">NeatUpload-</text:span>
 <text:span text:style-name="Emphasis">version</text:span>
 <text:span text:style-name="Source_20_Text">/HashedInputFile/bin/Brettle.Web.NeatUpload.HashedInputFile.dll</text:span>, click Open, and then click OK.  A reference to <text:span text:style-name="Source_20_Text">Brettle.Web.NeatUpload.HashedInputFile.dll</text:span> will automatically be added to your project the first time you use the designer to a HashedInputFile to a form.<text:line-break/>
@@ -2995,8 +2944,8 @@
 <text:span text:style-name="Source_20_Text">/HashedInputFile/bin</text:span> directory.</text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P142">Configure your web application to use the <text:span text:style-name="Source_20_Text">HashingFilesystemUploadStorageProvider</text:span>.  The simplest way to do that is to add the following to your <text:span text:style-name="Source_20_Text">Web.config</text:span> (see <text:a xlink:type="simple" xlink:href="Manual.html#mozTocId221000">Configuration</text:a> for more options):</text:p>
-<text:p text:style-name="P22">&lt;configuration&gt;<text:line-break/> &lt;configSections&gt;<text:line-break/>
+<text:p text:style-name="P141">Configure your web application to use the <text:span text:style-name="Source_20_Text">HashingFilesystemUploadStorageProvider</text:span>.  The simplest way to do that is to add the following to your <text:span text:style-name="Source_20_Text">Web.config</text:span> (see <text:a xlink:type="simple" xlink:href="Manual.html#mozTocId221000">Configuration</text:a> for more options):</text:p>
+<text:p text:style-name="P19">&lt;configuration&gt;<text:line-break/> &lt;configSections&gt;<text:line-break/>
 <text:s/>&lt;sectionGroup name="system.web"&gt;<text:line-break/>
 <text:s text:c="2"/>&lt;section name="neatUpload" type="Brettle.Web.NeatUpload.ConfigSectionHandler, Brettle.Web.NeatUpload"<text:line-break/>
 <text:s text:c="16"/>allowLocation="true" /&gt;<text:line-break/>
@@ -3012,21 +2961,21 @@
 <text:s text:c="2"/>&lt;/providers&gt;<text:line-break/>
 <text:s/>&lt;/neatUpload&gt;<text:line-break/>
 <text:s/>...<text:line-break/> &lt;/system.web&gt;<text:line-break/> ...<text:line-break/>&lt;/configuration&gt;</text:p>
-<text:p text:style-name="P142">Note: the value of the <text:span text:style-name="Source_20_Text">algorithm</text:span> attribute above is passed to <text:a xlink:type="simple" xlink:href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfsystemsecuritycryptographyhashalgorithmclasscreatetopic2.asp">HashAlgorithm.Create()</text:a>.  The default value is "MD5", so the attribute could have been omitted above. </text:p>
+<text:p text:style-name="P141">Note: the value of the <text:span text:style-name="Source_20_Text">algorithm</text:span> attribute above is passed to <text:a xlink:type="simple" xlink:href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfsystemsecuritycryptographyhashalgorithmclasscreatetopic2.asp">HashAlgorithm.Create()</text:a>.  The default value is "MD5", so the attribute could have been omitted above. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P62">Add the HashedInputFile to your forms:<text:line-break/>
+<text:p text:style-name="P60">Add the HashedInputFile to your forms:<text:line-break/>
 <text:span text:style-name="T7">If you are using Visual Studio Web Form Designer</text:span>, simply drag the <text:span text:style-name="Source_20_Text">HashedInputFile</text:span> control from your Toolbox and drop it on the form.<text:line-break/>
 <text:span text:style-name="T7">If you are not using Visual Studio Web Form Designer</text:span>, add the following line at the top of your form:</text:p>
-<text:p text:style-name="P31">&lt;%@ Register TagPrefix="HashedUpload" Namespace="Brettle.Web.NeatUpload" Assembly="Brettle.Web.NeatUpload.HashedInputFile"%&gt;</text:p>
-<text:p text:style-name="P62">and add an <text:span text:style-name="Source_20_Text">HashedInputFile</text:span> control to your aspx page wherever you want the user to choose a file, using something like this: </text:p>
-<text:p text:style-name="P28">&lt;HashedUpload:HashedInputFile id="<text:span text:style-name="Variable">inputFileId</text:span>" runat="server" /&gt;</text:p>
+<text:p text:style-name="P27">&lt;%@ Register TagPrefix="HashedUpload" Namespace="Brettle.Web.NeatUpload" Assembly="Brettle.Web.NeatUpload.HashedInputFile"%&gt;</text:p>
+<text:p text:style-name="P60">and add an <text:span text:style-name="Source_20_Text">HashedInputFile</text:span> control to your aspx page wherever you want the user to choose a file, using something like this: </text:p>
+<text:p text:style-name="P25">&lt;HashedUpload:HashedInputFile id="<text:span text:style-name="Variable">inputFileId</text:span>" runat="server" /&gt;</text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P142">Set any properties that you would normally set on an <text:span text:style-name="Source_20_Text">InputFile or HtmlInputFile</text:span> control. </text:p>
+<text:p text:style-name="P141">Set any properties that you would normally set on an <text:span text:style-name="Source_20_Text">InputFile or HtmlInputFile</text:span> control. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P62">In your code-behind class, use the <text:span text:style-name="Source_20_Text">
+<text:p text:style-name="P60">In your code-behind class, use the <text:span text:style-name="Source_20_Text">
 <text:span text:style-name="T10">inputFileId</text:span>
 </text:span>
 <text:span text:style-name="Source_20_Text"/>
@@ -3041,8 +2990,8 @@
 <text:h text:style-name="Heading_20_2" text:outline-level="2" text:is-list-header="true">
 <text:bookmark text:name="mozTocId250326"/>Customization</text:h>
 <text:h text:style-name="Heading_20_3" text:outline-level="3" text:is-list-header="true">
-<text:bookmark text:name="mozTocId628349"/>
-<text:bookmark text:name="Customizing_Progress_aspx"/>Customizing <text:span text:style-name="Source_20_Text">Progress.aspx</text:span>
+<text:bookmark text:name="Customizing_Progress_aspx"/>
+<text:bookmark text:name="mozTocId628349"/>Customizing <text:span text:style-name="Source_20_Text">Progress.aspx</text:span>
 </text:h>
 <text:p text:style-name="Text_20_body">The <text:span text:style-name="Source_20_Text">Progress.aspx</text:span> page that comes with NeatUpload is just an example. You can modify it to suit your needs.  For example, you could change the color scheme with minor modification to the <text:span text:style-name="Source_20_Text">default.css</text:span> stylesheet that is included, or you could change the text or images that are used by modifying <text:span text:style-name="Source_20_Text">Progress.aspx</text:span> itself.  You could even rearrange the layout entirely or create a new page derived from <text:span text:style-name="Source_20_Text">ProgressPage</text:span> and use the <text:span text:style-name="Source_20_Text">Url</text:span> property of the <text:span text:style-name="Source_20_Text">ProgressBar</text:span> to refer to it.  To allow AJAX refreshless updates, you must include at least one <text:span text:style-name="Source_20_Text">DetailsSpan</text:span> or <text:span text:style-name="Source_20_Text">DetailsDiv</text:span> control.  Those controls render as like <text:span text:style-name="Source_20_Text">div</text:span> and <text:span text:style-name="Source_20_Text">span</text:span> controls, respectively.  Use data-binding expressions within those controls (either the in the content or properties) to access the details of the upload at runtime.  Below is a list of the properties and methods that NeatUpload provides for use in data-binding expressions.   Refer to the default <text:span text:style-name="Source_20_Text">Progress.aspx</text:span> for an example of how each of these is used. </text:p>
 <table:table table:name="Table1" table:style-name="Table1">
@@ -3269,13 +3218,13 @@
 <text:p text:style-name="Text_20_body">For AJAX refreshless updates to work, your <text:span text:style-name="Source_20_Text">ProgressPage</text:span> subclass must render as a well-formed XML document.  Here are a few tips to avoid the most common problems:</text:p>
 <text:list text:style-name="L20">
 <text:list-item>
-<text:p text:style-name="P147">Use all lowercase for HTML element names (ie '<text:span text:style-name="Source_20_Text">&lt;body&gt;</text:span>' instead of '<text:span text:style-name="Source_20_Text">&lt;BODY&gt;</text:span>' or '<text:span text:style-name="Source_20_Text">&lt;Body&gt;</text:span>'). </text:p>
+<text:p text:style-name="P146">Use all lowercase for HTML element names (ie '<text:span text:style-name="Source_20_Text">&lt;body&gt;</text:span>' instead of '<text:span text:style-name="Source_20_Text">&lt;BODY&gt;</text:span>' or '<text:span text:style-name="Source_20_Text">&lt;Body&gt;</text:span>'). </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P147">If your page contains HTML-specific entities replace them with their numeric equivalents.  For example, replace '<text:span text:style-name="Source_20_Text">&amp;nbsp;</text:span>' with '<text:span text:style-name="Source_20_Text">&amp;#160;</text:span>'. </text:p>
+<text:p text:style-name="P146">If your page contains HTML-specific entities replace them with their numeric equivalents.  For example, replace '<text:span text:style-name="Source_20_Text">&amp;nbsp;</text:span>' with '<text:span text:style-name="Source_20_Text">&amp;#160;</text:span>'. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P65">Use <text:span text:style-name="Source_20_Text">&lt;asp:HyperLink&gt;</text:span> instead of <text:span text:style-name="Source_20_Text">&lt;a&gt;</text:span> for links, especially for links that use <text:span text:style-name="Source_20_Text">CancelUrl</text:span>, <text:span text:style-name="Source_20_Text">StartRefreshUrl</text:span>, and <text:span text:style-name="Source_20_Text">StopRefreshUrl</text:span>.  Some <text:span text:style-name="Source_20_Text">HtmlAnchor</text:span> (i.e. <text:span text:style-name="Source_20_Text">&lt;a&gt;</text:span>) implementations, notably Microsoft's ASP.NET 2.0, do not HTML encode the value of the <text:span text:style-name="Source_20_Text">href</text:span> attribute.  If the URLs contain ampersands, the XML will not be considered well-formed unless they are encoded. </text:p>
+<text:p text:style-name="P63">Use <text:span text:style-name="Source_20_Text">&lt;asp:HyperLink&gt;</text:span> instead of <text:span text:style-name="Source_20_Text">&lt;a&gt;</text:span> for links, especially for links that use <text:span text:style-name="Source_20_Text">CancelUrl</text:span>, <text:span text:style-name="Source_20_Text">StartRefreshUrl</text:span>, and <text:span text:style-name="Source_20_Text">StopRefreshUrl</text:span>.  Some <text:span text:style-name="Source_20_Text">HtmlAnchor</text:span> (i.e. <text:span text:style-name="Source_20_Text">&lt;a&gt;</text:span>) implementations, notably Microsoft's ASP.NET 2.0, do not HTML encode the value of the <text:span text:style-name="Source_20_Text">href</text:span> attribute.  If the URLs contain ampersands, the XML will not be considered well-formed unless they are encoded. </text:p>
 </text:list-item>
 </text:list>
 <text:p text:style-name="Text_20_body">One final note: By default, <text:span text:style-name="Source_20_Text">DetailsDiv</text:span> and <text:span text:style-name="Source_20_Text">DetailsSpan</text:span> controls (like regular <text:span text:style-name="Source_20_Text">div</text:span> and <text:span text:style-name="Source_20_Text">span</text:span> controls) will not render as simple <text:span text:style-name="Source_20_Text">&lt;div&gt;</text:span> and <text:span text:style-name="Source_20_Text">&lt;span&gt;</text:span> elements in browsers that ASP.NET considers "downlevel".  Instead, <text:span text:style-name="Source_20_Text">div</text:span> controls are rendered as tables and <text:span text:style-name="Source_20_Text">span</text:span> controls may render with extra font tags, etc.  The <text:span text:style-name="Source_20_Text">Machine.config</text:span> shipped with ASP.NET 1.1 contains a <text:a xlink:type="simple" xlink:href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpgenref/html/gngrfbrowsercapssection.asp">
@@ -3307,32 +3256,32 @@
 <text:line-break/>Your provider can "reject" an upload at any time (eg based on MIME type, size, or content), by throwing an exception derived from <text:span text:style-name="Source_20_Text">UploadException</text:span>.  When NeatUpload detects such an exception, it:</text:p>
 <text:list text:style-name="L21">
 <text:list-item>
-<text:p text:style-name="P149">updates the progress bar to indicate that the upload was rejected (i.e. sets <text:span text:style-name="Source_20_Text">Status</text:span> to <text:span text:style-name="Source_20_Text">Rejected</text:span> and <text:span text:style-name="Source_20_Text">Rejection</text:span> to the <text:span text:style-name="Source_20_Text">UploadException</text:span> that occured) </text:p>
+<text:p text:style-name="P148">updates the progress bar to indicate that the upload was rejected (i.e. sets <text:span text:style-name="Source_20_Text">Status</text:span> to <text:span text:style-name="Source_20_Text">Rejected</text:span> and <text:span text:style-name="Source_20_Text">Rejection</text:span> to the <text:span text:style-name="Source_20_Text">UploadException</text:span> that occured) </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P149">if the progress bar is in a pop-up window, leaves the pop-up open so that the user can see the message </text:p>
+<text:p text:style-name="P148">if the progress bar is in a pop-up window, leaves the pop-up open so that the user can see the message </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P149">asks the browser to stop the upload using javascript to simulate clicking the browser's Stop button </text:p>
+<text:p text:style-name="P148">asks the browser to stop the upload using javascript to simulate clicking the browser's Stop button </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P149">waits 5 seconds to give the browser and opportunity to stop the upload </text:p>
+<text:p text:style-name="P148">waits 5 seconds to give the browser and opportunity to stop the upload </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P66">rethrows the exception </text:p>
+<text:p text:style-name="P64">rethrows the exception </text:p>
 </text:list-item>
 </text:list>
 <text:p text:style-name="Text_20_body">NeatUpload has no way of knowing for sure whether the browser stopped the upload, so it always rethrows the exception.  If the browser did stop the upload, it will ignore any response that the application generates because of the error.  If the browser didn't stop the upload, it will display the response that the application generates.  You can customize that response by handling the <text:span text:style-name="Source_20_Text">Application.Error</text:span> event or by using custom error pages. NeatUpload responds to  <text:span text:style-name="Source_20_Text">UploadException</text:span>s by throwing an <text:span text:style-name="Source_20_Text">HttpException</text:span> with the same HTTP error code and the <text:span text:style-name="Source_20_Text">UploadException</text:span> as the <text:span text:style-name="Source_20_Text">InnerException</text:span>. This allows you to control which custom error page is used by specifying the corresponding HTTP error code when you construct your <text:span text:style-name="Source_20_Text">UploadException</text:span>.<text:line-break/>
 <text:line-break/>When NeatUpload detects an exception that is <text:span text:style-name="T3">not</text:span> derived from <text:span text:style-name="Source_20_Text">UploadException</text:span>, it assumes that it is an unexpected error, so it:</text:p>
 <text:list text:style-name="L22">
 <text:list-item>
-<text:p text:style-name="P153">updates the progress bar to indicate that an error occurred (i.e. sets <text:span text:style-name="Source_20_Text">Status</text:span> to <text:span text:style-name="Source_20_Text">Failed</text:span> and <text:span text:style-name="Source_20_Text">Failure</text:span> to the <text:span text:style-name="Source_20_Text">Exception</text:span> that occured) </text:p>
+<text:p text:style-name="P152">updates the progress bar to indicate that an error occurred (i.e. sets <text:span text:style-name="Source_20_Text">Status</text:span> to <text:span text:style-name="Source_20_Text">Failed</text:span> and <text:span text:style-name="Source_20_Text">Failure</text:span> to the <text:span text:style-name="Source_20_Text">Exception</text:span> that occured) </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P153">if the progress bar is in a pop-up window, leaves the pop-up open so that the user can see the message </text:p>
+<text:p text:style-name="P152">if the progress bar is in a pop-up window, leaves the pop-up open so that the user can see the message </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P67">rethrows the exception </text:p>
+<text:p text:style-name="P65">rethrows the exception </text:p>
 </text:list-item>
 </text:list>
 <text:p text:style-name="Text_20_body">ASP.NET will handled the exception the same way any other exception is handled.  It will fire the <text:span text:style-name="Source_20_Text">Application.Error</text:span> event and use custom error pages if they are configured.<text:line-break/>
@@ -3390,49 +3339,48 @@
 <text:p text:style-name="Text_20_body">If you think NeatUpload's <text:span text:style-name="Source_20_Text">UploadHttpModule</text:span> might be causing a problem, the first thing you should do is set the <text:span text:style-name="Source_20_Text">&lt;neatUpload&gt;</text:span> element's <text:span text:style-name="Source_20_Text">useHttpModule</text:span> attribute to "false" (or remove the <text:span text:style-name="Source_20_Text">UploadHttpModule</text:span> from the <text:span text:style-name="Source_20_Text">&lt;httpModules&gt;</text:span> section) and try to reproduce the problem.  All of your existing code should continue to work - you just won't get progress bars and streaming of files to disk.  If the problem goes away when you remove the <text:span text:style-name="Source_20_Text">UploadHttpModule</text:span>, it is a bug so please <text:a xlink:type="simple" xlink:href="http://www.brettle.com/neatupload_bugs">report it</text:a>.  You can help me diagnosis the problem by doing the following:</text:p>
 <text:list text:style-name="L23">
 <text:list-item>
-<text:p text:style-name="P155">Set the <text:span text:style-name="Source_20_Text">debugDirectory</text:span> attribute of the <text:span text:style-name="Source_20_Text">&lt;neatUpload&gt;</text:span> element in your <text:span text:style-name="Source_20_Text">Web.config</text:span> to the name of a directory in your webapp where NeatUpload can store copies of the request bodies it processes.  For example,<text:span text:style-name="Source_20_Text"> &lt;neatUpload ... debugDirectory="MyDebugDir" ...&gt; </text:span>would cause NeatUpload to store copies of the request bodies in the "MyDebugDir" directory under you application root. </text:p>
+<text:p text:style-name="P154">Set the <text:span text:style-name="Source_20_Text">debugDirectory</text:span> attribute of the <text:span text:style-name="Source_20_Text">&lt;neatUpload&gt;</text:span> element in your <text:span text:style-name="Source_20_Text">Web.config</text:span> to the name of a directory in your webapp where NeatUpload can store copies of the request bodies it processes.  For example,<text:span text:style-name="Source_20_Text"> &lt;neatUpload ... debugDirectory="MyDebugDir" ...&gt; </text:span>would cause NeatUpload to store copies of the request bodies in the "MyDebugDir" directory under you application root. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P155">Reproduce the problem. </text:p>
+<text:p text:style-name="P154">Reproduce the problem. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P68">Send me (dean at brettle dot com) a zip file containing the files from debug directory with the extensions ".body" and ".sizes".  Each ".body" file contains the body of a request you sent when reproducing the problem.  The corresponding ".sizes" file contains the MIME type of the request and the size of each chunk that NeatUpload read.  I can use the <text:span text:style-name="Source_20_Text">TestFilter.exe</text:span> program to reproduce how the <text:span text:style-name="Source_20_Text">UploadHttpModule</text:span> processed the request and (hopefully) determine exactly what went wrong. </text:p>
+<text:p text:style-name="P66">Send me (dean at brettle dot com) a zip file containing the files from debug directory with the extensions ".body" and ".sizes".  Each ".body" file contains the body of a request you sent when reproducing the problem.  The corresponding ".sizes" file contains the MIME type of the request and the size of each chunk that NeatUpload read.  I can use the <text:span text:style-name="Source_20_Text">TestFilter.exe</text:span> program to reproduce how the <text:span text:style-name="Source_20_Text">UploadHttpModule</text:span> processed the request and (hopefully) determine exactly what went wrong. </text:p>
 </text:list-item>
 </text:list>
 <text:p text:style-name="Text_20_body"> NeatUpload is capable of logging debug and error messages using log4net, but that capability is disabled by default to simplify installation and use of NeatUpload.  To enable logging with <text:a xlink:type="simple" xlink:href="http://logging.apache.org/log4net/">log4net</text:a>:</text:p>
 <text:list text:style-name="L24">
 <text:list-item>
-<text:p text:style-name="P157">If your web application is not already using log4net: </text:p>
+<text:p text:style-name="P156">If your web application is not already using log4net: </text:p>
 <text:list>
 <text:list-item>
-<text:p text:style-name="P157">
+<text:p text:style-name="P156">
 <text:a xlink:type="simple" xlink:href="http://logging.apache.org/log4net/downloads.html">Download</text:a> and <text:a xlink:type="simple" xlink:href="http://logging.apache.org/log4net/release/building.html">build</text:a> log4net. </text:p>
 </text:list-item>
 </text:list>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P157">
-<text:soft-page-break/>Add a reference to your web application that refers to the log4net.dll you built. </text:p>
+<text:p text:style-name="P156">Add a reference to your web application that refers to the log4net.dll you built. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P157">Copy <text:span text:style-name="Source_20_Text">NeatUpload-</text:span>
+<text:p text:style-name="P156">Copy <text:span text:style-name="Source_20_Text">NeatUpload-</text:span>
 <text:span text:style-name="Emphasis">version</text:span>
 <text:span text:style-name="Source_20_Text">/log4net.config</text:span> to the root directory of your web application. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P157">Add the following line to your <text:span text:style-name="Source_20_Text">Global.asax.cs</text:span> before the <text:span text:style-name="Source_20_Text">namespace</text:span> keyword: </text:p>
-<text:p text:style-name="P32">[assembly: log4net.Config.XmlConfigurator(ConfigFile="log4net.config", Watch=true)]</text:p>
-<text:p text:style-name="P157">or if you are using VB.NET, add the following to your Global.asax.vb:</text:p>
-<text:p text:style-name="P32">&lt;assembly: log4net.Config.XmlConfigurator(ConfigFile:="log4net.config", Watch:=true)&gt;</text:p>
+<text:p text:style-name="P156">Add the following line to your <text:span text:style-name="Source_20_Text">Global.asax.cs</text:span> before the <text:span text:style-name="Source_20_Text">namespace</text:span> keyword: </text:p>
+<text:p text:style-name="P28">[assembly: log4net.Config.XmlConfigurator(ConfigFile="log4net.config", Watch=true)]</text:p>
+<text:p text:style-name="P156">or if you are using VB.NET, add the following to your Global.asax.vb:</text:p>
+<text:p text:style-name="P28">&lt;assembly: log4net.Config.XmlConfigurator(ConfigFile:="log4net.config", Watch:=true)&gt;</text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P157">Add a reference to the NeatUpload project that refers to log4net.dll. </text:p>
+<text:p text:style-name="P156">Add a reference to the NeatUpload project that refers to log4net.dll. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P157">Change the properties/options for the NeatUpload project to define USE_LOG4NET. </text:p>
+<text:p text:style-name="P156">Change the properties/options for the NeatUpload project to define USE_LOG4NET. </text:p>
 </text:list-item>
 <text:list-item>
-<text:p text:style-name="P69">Rebuild NeatUpload. </text:p>
+<text:p text:style-name="P67">Rebuild NeatUpload. </text:p>
 </text:list-item>
 </text:list>
 </office:text>
