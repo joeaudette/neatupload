@@ -420,7 +420,9 @@ if (!NeatUploadPB.prototype.FirstBarID)
 				}
 			    
 				writer.AddAttribute("id", ClientID + "_fallback_link");
-				writer.AddAttribute("href", UploadProgressPath + "&postBackID=" + FormContext.Current.PostBackID + "&refresher=server&canScript=false&canCancel=false");
+				writer.AddAttribute("href", UploadProgressPath 
+				                    + "&postBackID=" + (this.IsDesignTime ? "" : FormContext.Current.PostBackID)
+				                    + "&refresher=server&canScript=false&canCancel=false");
 				string target = IsDesignTime ? "_blank" : FormContext.Current.PostBackID;
 				writer.AddAttribute("target", target);
 				writer.RenderBeginTag(HtmlTextWriterTag.A);
@@ -458,6 +460,7 @@ if (!NeatUploadPB.prototype.FirstBarID)
 			}
 		}
 		
+		[Browsable(false)]
 		public string PostBackID
 		{
 			get { return FormContext.Current.PostBackID; }
