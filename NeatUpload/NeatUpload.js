@@ -483,17 +483,10 @@ NeatUploadForm.prototype.AddHandler = function(elem, eventName, handler, useCapt
 	}
 };
 
-NeatUploadForm.prototype.AddSubmitHandler = function(prepend, handler)
+NeatUploadForm.prototype.AddSubmitHandler = function(handler)
 {
 	var elem = this.FormElem;
-	if (prepend)
-	{
-		elem.NeatUpload_OnSubmitHandlers.unshift(handler);
-	}
-	else
-	{
-		elem.NeatUpload_OnSubmitHandlers.push(handler);
-	}	
+	elem.NeatUpload_OnSubmitHandlers.unshift(handler);
 };
 
 NeatUploadForm.prototype.AddSubmittingHandler = function(handler)
@@ -627,7 +620,7 @@ NeatUploadForm.prototype.GetFor = function (elem, postBackID)
 	return formElem.NeatUpload_NUForm;
 };
 
-function NeatUploadPB(id, postBackID, uploadProgressPath, inline, popupWidth, popupHeight, triggerIDs, autoStartCondition)
+function NeatUploadPB(id, postBackID, uploadProgressPath, popupWidth, popupHeight, triggerIDs, autoStartCondition)
 {
 	if (!document.getElementById)
 		return;
@@ -643,43 +636,23 @@ function NeatUploadPB(id, postBackID, uploadProgressPath, inline, popupWidth, po
 		elem = document.getElementById(id + '_NeatUpload_dummyspan');
 	this.UploadForm = NeatUploadForm.prototype.GetFor(elem, postBackID);
 	this.debugMessage("GetFor returned");
-	var displayFunc;
-	if (inline)
-	{
-		displayFunc = function () {
-								setTimeout( 
-									function () {
-										frames[pb.ClientID].location.href 
-											= pb.UploadProgressPath + '&postBackID=' + pb.UploadForm.GetPostBackID() + '&refresher=client&canScript=true&canCancel=' + NeatUploadPB.prototype.CanCancel();
-										},
-								0);
-							};
-		if (frames[pb.ClientID]) 
-		{
-			frames[pb.ClientID].location.replace(pb.UploadProgressPath + '&postBackID=' + pb.UploadForm.GetPostBackID() + '&canScript=true&canCancel=' + NeatUploadPB.prototype.CanCancel());
-		}
-	}
-	else
-	{
-		displayFunc = function () {
-			pb.debugMessage("Calling window.open");
-			window.open(pb.UploadProgressPath + '&postBackID=' + pb.UploadForm.GetPostBackID() + '&refresher=client&canScript=true&canCancel=' + NeatUploadPB.prototype.CanCancel(),
-				pb.UploadForm.GetPostBackID(), 'width=' + pb.PopupWidth + ',height=' + pb.PopupHeight
-				+ ',directories=no,location=no,menubar=no,resizable=yes,scrollbars=auto,status=no,toolbar=no');
-		}
-	}
 	
 	var fallbackLink = document.getElementById(id + '_fallback_link');
 	if (fallbackLink)
 		fallbackLink.setAttribute('href', 'javascript:' + popupDisplayStatement);
 	this.TriggerIDs = new Object();
 	this.TriggerIDs.NeatUpload_length = 0;
-	this.Display = displayFunc;
+	this.DisplayUrl = function (progressUrl) {
+		pb.debugMessage("Calling window.open");
+		window.open(progressUrl,
+			pb.UploadForm.GetPostBackID(), 'width=' + pb.PopupWidth + ',height=' + pb.PopupHeight
+			+ ',directories=no,location=no,menubar=no,resizable=yes,scrollbars=auto,status=no,toolbar=no');
+	};
 	this.AutoStartCondition = autoStartCondition;
 
 	this.UploadForm.AddNonuploadHandler(function () { pb.ClearFileInputs(pb.UploadForm.FormElem); });
 
-	this.UploadForm.AddSubmitHandler(!inline, function (ev) {
+	this.UploadForm.AddSubmitHandler(function (ev) {
 		pb.debugMessage("In NeatUploadPB SubmitHandler");
 		// If there are files to upload and either no trigger controls were specified for this progress bar or
 		// a specified trigger control was triggered, then start the progress display.
@@ -704,6 +677,10 @@ function NeatUploadPB(id, postBackID, uploadProgressPath, inline, popupWidth, po
 NeatUploadPB.prototype.debugMessage = NeatUploadConsole.debugMessage;
 
 NeatUploadPB.prototype.Bars = new Object();
+
+NeatUploadPB.prototype.Display = function() {
+	this.DisplayUrl(this.UploadProgressPath + '&postBackID=' + this.UploadForm.GetPostBackID() + '&refresher=client&canScript=true&canCancel=' + NeatUploadPB.prototype.CanCancel());
+};
 
 NeatUploadPB.prototype.CanCancel = function()
 {
@@ -901,7 +878,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	});
 	
 	// Hookup the upload trigger.
-	nuf.AddSubmitHandler(true, function () {
+	nuf.AddSubmitHandler(function () {
 	    if (numf.IsFlashLoaded && numf.Swfu)
 	    {
 		    numf.Swfu.startUpload();
