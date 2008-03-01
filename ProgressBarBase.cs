@@ -47,12 +47,9 @@ namespace Brettle.Web.NeatUpload
 	[DefaultProperty("Inline")]
 	[ParseChildren(false)]
 	[PersistChildren(true)]
+	[Designer(typeof(ProgressBarBaseDesigner))]
 	public class ProgressBarBase : System.Web.UI.WebControls.WebControl
 	{
-		/// <summary>
-		/// Whether the progress bar is being displayed in the designer</summary>
-		protected bool IsDesignTime = (HttpContext.Current == null);
-
 		protected string UploadProgressPath;
 		private ArrayList otherTriggers = new ArrayList(); // Controls passed to AddTrigger()
 
@@ -117,7 +114,7 @@ namespace Brettle.Web.NeatUpload
 		
 		protected override void OnPreRender (EventArgs e)
 		{
-			if (!IsDesignTime && Config.Current.UseHttpModule)
+			if (Config.Current.UseHttpModule)
 			{
                 // If we don't have a session yet and the session mode is not "Off", we need to create a
                 // session so that it can be used to pass information between the progress display and the 
@@ -195,7 +192,7 @@ namespace Brettle.Web.NeatUpload
 		
 		private void InitializeVars()
 		{
-			if (IsDesignTime || !Config.Current.UseHttpModule)
+			if (!Config.Current.UseHttpModule)
 				return;
 
 			if (AutoStartCondition == null)
@@ -322,25 +319,22 @@ if (!NeatUploadPB.prototype.FirstBarID)
 		
 		public override void RenderBeginTag(HtmlTextWriter writer)
 		{
-			if (!IsDesignTime && !Config.Current.UseHttpModule)
+			if (!Config.Current.UseHttpModule)
 			{
 				return;
 			}
 			
-			if (!IsDesignTime)
-			{
-				// We can't register these scripts during PreRender because if we do there will be no way to
-				// programmatically add triggers that are in data-bound controls that occur after the ProgressBar.
-				RegisterScripts();
+			// We can't register these scripts during PreRender because if we do there will be no way to
+			// programmatically add triggers that are in data-bound controls that occur after the ProgressBar.
+			RegisterScripts();
 
-				// Add an empty <span> element with an ID, so that the JS will know where to find this ProgressBar
-				// so it know where to start looking for the containing form.
-				writer.Write("<span id='" + ClientID + @"_NeatUpload_dummyspan'/>");
-				// Enclose the pop-up fallback div in a <noscript> tag to ensure that it is not visible, even during
-				// page load.  Note: we can't put the above dummy ID on the noscript element because Safari doesn't
-				// include the noscript element in the DOM.
-				writer.Write("<noscript>");
-			}
+			// Add an empty <span> element with an ID, so that the JS will know where to find this ProgressBar
+			// so it know where to start looking for the containing form.
+			writer.Write("<span id='" + ClientID + @"_NeatUpload_dummyspan'/>");
+			// Enclose the pop-up fallback div in a <noscript> tag to ensure that it is not visible, even during
+			// page load.  Note: we can't put the above dummy ID on the noscript element because Safari doesn't
+			// include the noscript element in the DOM.
+			writer.Write("<noscript>");
 			base.AddAttributesToRender(writer);
 			writer.RenderBeginTag(HtmlTextWriterTag.Div);
 		}
@@ -348,17 +342,12 @@ if (!NeatUploadPB.prototype.FirstBarID)
 		protected override void RenderContents(HtmlTextWriter writer)
 		{
 			EnsureChildControls();
-		    if (IsDesignTime)
-			{
-				writer.Write("<i>ProgressBar - no-Javascript fallback = {</i>");
-			}
 		    
 			writer.AddAttribute("id", ClientID + "_fallback_link");
 			writer.AddAttribute("href", UploadProgressPath 
-			                    + "&postBackID=" + (this.IsDesignTime ? "" : FormContext.Current.PostBackID)
+			                    + "&postBackID=" + FormContext.Current.PostBackID
 			                    + "&refresher=server&canScript=false&canCancel=false");
-			string target = IsDesignTime ? "_blank" : FormContext.Current.PostBackID;
-			writer.AddAttribute("target", target);
+			writer.AddAttribute("target", FormContext.Current.PostBackID);
 			writer.RenderBeginTag(HtmlTextWriterTag.A);
 			if (!HasControls())
 			{
@@ -366,19 +355,12 @@ if (!NeatUploadPB.prototype.FirstBarID)
 			}
 			base.RenderChildren(writer);
 			writer.RenderEndTag();
-			if (IsDesignTime)
-			{
-				writer.Write("<i>}</i>");
-			}
 		}
 
 		public override void RenderEndTag(HtmlTextWriter writer)
 		{
 			writer.RenderEndTag();
-			if (!IsDesignTime)
-			{
-				writer.Write("</noscript>");
-			}
+			writer.Write("</noscript>");
 		}
 		
 		private ProgressInfo _ProcessingProgress;

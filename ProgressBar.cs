@@ -66,7 +66,7 @@ namespace Brettle.Web.NeatUpload
 			get
 			{
 				// Return false when browser is Opera because Opera won't refresh the iframe until the upload completes.
-				if (!IsDesignTime)
+				if (HttpContext.Current != null)
 				{
 					string userAgent = HttpContext.Current.Request.UserAgent;
 					if (userAgent != null && userAgent.ToLower().IndexOf("opera") != -1)
@@ -88,7 +88,7 @@ namespace Brettle.Web.NeatUpload
 			if (!InlineRequested && !Height.IsEmpty && (Height.Type != UnitType.Pixel || Height.Value < 100))
 				throw new System.ArgumentOutOfRangeException("Height must be at least 100 pixels and must use pixel(px) units when using a popup ProgressBar.");
 
-			if (!IsDesignTime && Inline)
+			if (Inline)
 			{
 				Tag = HtmlTextWriterTag.Iframe;
 				Attributes["src"] = UploadProgressPath + "&canScript=false&canCancel=false&postBackID=" + FormContext.Current.PostBackID;
@@ -107,20 +107,14 @@ namespace Brettle.Web.NeatUpload
 				return;
 			}
 			
-			if (IsDesignTime)
-			{
-				Tag = HtmlTextWriterTag.Div;
-			}
-			else if (!Config.Current.UseHttpModule)
+			if (!Config.Current.UseHttpModule)
 			{
 				return;
 			}
-			if (!IsDesignTime)
-			{
-				// We can't register these scripts during PreRender because if we do there will be no way to
-				// programmatically add triggers that are in data-bound controls that occur after the ProgressBar.
-				RegisterScripts();
-				this.Page.RegisterStartupScript("NeatUploadProgressBar-" + this.UniqueID, @"
+			// We can't register these scripts during PreRender because if we do there will be no way to
+			// programmatically add triggers that are in data-bound controls that occur after the ProgressBar.
+			RegisterScripts();
+			this.Page.RegisterStartupScript("NeatUploadProgressBar-" + this.UniqueID, @"
 <script type='text/javascript' language='javascript'>
 <!--
 NeatUploadPB.prototype.Bars['" + this.ClientID + @"'].DisplayUrl = function(progressUrl) {
@@ -135,7 +129,6 @@ NeatUploadPB.prototype.Bars['" + this.ClientID + @"'].DisplayUrl = function(prog
 })();
 // -->
 </script>");
-			}
 			base.AddAttributesToRender(writer);
 			writer.RenderBeginTag(Tag);
 		}
@@ -144,7 +137,7 @@ NeatUploadPB.prototype.Bars['" + this.ClientID + @"'].DisplayUrl = function(prog
 		{
 			// Don't render the no-iframe fallback if the browser supports frames because there have been reports
 			// that the fallback is briefly visible in some browsers.
-			if (Inline && !IsDesignTime && Context != null && Context.Request != null && Context.Request.Browser != null && Context.Request.Browser.Frames)
+			if (Inline && Context != null && Context.Request != null && Context.Request.Browser != null && Context.Request.Browser.Frames)
 			{
 		    	return;
 		    }
@@ -159,7 +152,7 @@ NeatUploadPB.prototype.Bars['" + this.ClientID + @"'].DisplayUrl = function(prog
 				base.RenderEndTag(writer);
 				return;
 			}
-			if (!IsDesignTime && !Config.Current.UseHttpModule)
+			if (!Config.Current.UseHttpModule)
 				return;
 			
 			writer.RenderEndTag();
