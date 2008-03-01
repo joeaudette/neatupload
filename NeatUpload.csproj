@@ -229,6 +229,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ProgressBarBase.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ProgressBarBaseDesigner.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ProgressInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
