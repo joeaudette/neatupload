@@ -48,6 +48,7 @@ namespace Brettle.Web.NeatUpload
 	[DefaultProperty("Inline")]
 	[ParseChildren(false)]
 	[PersistChildren(true)]
+	[ToolboxData("<{0}:ProgressBar runat='server'/>")]
 	public class ProgressBar : ProgressBarBase
 	{
 		private bool InlineRequested
