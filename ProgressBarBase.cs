@@ -44,11 +44,10 @@ namespace Brettle.Web.NeatUpload
 	/// </remarks>
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	[DefaultProperty("Inline")]
 	[ParseChildren(false)]
 	[PersistChildren(true)]
 	[Designer(typeof(ProgressBarBaseDesigner))]
-	public class ProgressBarBase : System.Web.UI.WebControls.WebControl
+	public abstract class ProgressBarBase : System.Web.UI.WebControls.WebControl
 	{
 		protected string UploadProgressPath;
 		private ArrayList otherTriggers = new ArrayList(); // Controls passed to AddTrigger()
@@ -355,6 +354,11 @@ if (!NeatUploadPB.prototype.FirstBarID)
 			}
 			base.RenderChildren(writer);
 			writer.RenderEndTag();
+		}
+		
+		internal void RenderChildControls(HtmlTextWriter writer)
+		{
+			RenderChildren(writer);
 		}
 
 		public override void RenderEndTag(HtmlTextWriter writer)

@@ -25,12 +25,7 @@ using System.Web.UI;
 
 namespace Brettle.Web.NeatUpload
 {
-	public class ProgressBarBaseDesigner 
-#if NET_2_0
-			: ContainerControlDesigner
-#else
-			: ControlDesigner
-#endif
+	public class ProgressBarBaseDesigner : ControlDesigner
 	{
 		
 		public override string GetDesignTimeHtml()
@@ -43,7 +38,7 @@ namespace Brettle.Web.NeatUpload
 				writer.Write("Check Upload Progress");
 			else
 			{
-				writer.Write(base.GetDesignTimeHtml());
+				control.RenderChildControls(writer);
 			}
 						
 			writer.Write("</a><i>}</i>");
