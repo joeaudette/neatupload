@@ -112,9 +112,6 @@ namespace Brettle.Web.NeatUpload
 			{
 				return;
 			}
-			// We can't register these scripts during PreRender because if we do there will be no way to
-			// programmatically add triggers that are in data-bound controls that occur after the ProgressBar.
-			RegisterScripts();
 			this.Page.RegisterStartupScript("NeatUploadProgressBar-" + this.UniqueID, @"
 <script type='text/javascript' language='javascript'>
 <!--

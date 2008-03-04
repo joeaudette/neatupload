@@ -143,6 +143,7 @@ namespace Brettle.Web.NeatUpload
 	</script>
 	");
 				}
+                RegisterScripts();
             }
 			base.OnPreRender(e);
 		}
@@ -248,31 +249,40 @@ namespace Brettle.Web.NeatUpload
 		public void AddTrigger(Control control)
 		{
 			otherTriggers.Add(control);
-		}
+            Page.RegisterClientScriptBlock(String.Format("NeatUploadProgressBar-{0}-{1}", ClientID, control.ClientID),
+                String.Format(@"<script type='text/javascript' language='javascript'>
+	if (typeof(NeatUploadPB_{0}_Triggers) == 'undefined') NeatUploadPB_{0}_Triggers = [];
+    NeatUploadPB_{0}_Triggers.push('{1}');
+	// -->
+	</script>
+	", ClientID, control.ClientID));
+        }
 
 		// This is used to ensure that the browser gets the latest NeatUpload.js each time this assembly is
 		// reloaded.  Strictly speaking the browser only needs to get the latest when NeatUpload.js changes,
 		// but computing a hash on that file everytime this assembly is loaded strikes me as overkill.
 		private static Guid CacheBustingGuid = System.Guid.NewGuid();
 		
-		protected void RegisterScripts()
+		private void RegisterScripts()
 		{
 			string allTriggerClientIDs = "[]";
 			if (Config.Current.UseHttpModule)
 			{
-				allTriggerClientIDs = GetClientIDsAsJSArray(Triggers, otherTriggers);
+				allTriggerClientIDs = GetClientIDsAsJSArray(Triggers);
 			}
 						
 			this.Page.RegisterStartupScript("NeatUploadProgressBarBase-" + this.UniqueID, @"
 <script type='text/javascript' language='javascript'>
 <!--
+if (typeof(NeatUploadPB_" + this.ClientID + @"_Triggers) == 'undefined') NeatUploadPB_" + this.ClientID + @"_Triggers = [];
+NeatUploadPB_" + this.ClientID + @"_Triggers = NeatUploadPB_" + this.ClientID + @"_Triggers.concat(" + allTriggerClientIDs + @");
 NeatUploadPB.prototype.Bars['" + this.ClientID + @"'] 
 	= new NeatUploadPB('" + this.ClientID + @"','" 
 						+ FormContext.Current.PostBackID + @"','"
 	                    + this.UploadProgressPath + @"','"
 	                    + this.GetPopupDimension("Width", Width, 500) + @"','"
-	                    + this.GetPopupDimension("Height", Height, 100) + @"',"
-	                    + allTriggerClientIDs + @", '"
+                        + this.GetPopupDimension("Height", Height, 100) 
+                        + @"',NeatUploadPB_" + this.ClientID + @"_Triggers, '"
 	                    + AutoStartCondition.Replace(@"'", @"\'") + @"');
 if (!NeatUploadPB.prototype.FirstBarID)
 	NeatUploadPB.prototype.FirstBarID = '" + this.ClientID + @"';
@@ -281,7 +291,7 @@ if (!NeatUploadPB.prototype.FirstBarID)
                                                                                
 		}
 		
-		private string GetClientIDsAsJSArray(string idsString, ArrayList controls)
+		private string GetClientIDsAsJSArray(string idsString)
 		{
 			ArrayList ids = new ArrayList(); // IDs of buttons listed in idsString
 			if (idsString != null)
@@ -305,10 +315,6 @@ if (!NeatUploadPB.prototype.FirstBarID)
 				}
 				
 			}
-			foreach (Control c in controls)
-			{
-				clientIDs.Add(c.ClientID);
-			}
 			if (clientIDs.Count == 0)
 			{
 				return "[]";
@@ -323,10 +329,6 @@ if (!NeatUploadPB.prototype.FirstBarID)
 				return;
 			}
 			
-			// We can't register these scripts during PreRender because if we do there will be no way to
-			// programmatically add triggers that are in data-bound controls that occur after the ProgressBar.
-			RegisterScripts();
-
 			// Add an empty <span> element with an ID, so that the JS will know where to find this ProgressBar
 			// so it know where to start looking for the containing form.
 			writer.Write("<span id='" + ClientID + @"_NeatUpload_dummyspan'/>");
