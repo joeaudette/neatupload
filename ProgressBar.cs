@@ -105,16 +105,16 @@ namespace Brettle.Web.NeatUpload
 			if (Inline)
 				script += String.Format(@"<script type='text/javascript' language='javascript'>
 <!--
-NeatUploadPB.prototype.Bars['{0}'].DisplayUrl = function(progressUrl) {
+NeatUploadPB.prototype.Bars['{0}'].DisplayUrl = function(progressUrl) {{
 	var pb = this;
-	setTimeout(function () { frames[pb.ClientID].location.href = progressUrl; }, 0);
-};
+	setTimeout(function () {{ frames[pb.ClientID].location.href = progressUrl; }}, 0);
+}};
 
-(function() {
+(function() {{
 	var pb = NeatUploadPB.prototype.Bars['{0}'];
 	if (frames[pb.ClientID]) 
 		frames[pb.ClientID].location.replace(pb.UploadProgressPath + '&postBackID=' + pb.UploadForm.GetPostBackID() + '&canScript=true&canCancel=' + NeatUploadPB.prototype.CanCancel());
-})();
+}})();
 // -->
 </script>", ClientID);
 			return script;
