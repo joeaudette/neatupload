@@ -102,6 +102,9 @@ NeatUploadPB.prototype.Bars['{0}'].DisplayUrl = function(progressUrl) {{
 	var pb = this;
 	GB_showCenter('', progressUrl, {1}, {2});
 }};
+NeatUploadPB.prototype.Bars['{0}'].Close = function() {{
+	GB_hide();
+}};
 // -->
 </script>", ClientID, (Height.IsEmpty ? 100 : Height.Value), (Width.IsEmpty ? 500 : Width.Value));
 		}

@@ -190,7 +190,7 @@ window.onload = function() {
 				{
 					RegisterStartupScript("scrNeatUploadClose", @"<script type='text/javascript' language='javascript'>
 <!--
-window.close();
+NeatUploadMainWindow.NeatUploadPB.prototype.Bars['" + ProgressBarID + @"'].Close();
 // -->
 </script>");
 				}

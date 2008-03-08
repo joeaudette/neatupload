@@ -644,9 +644,10 @@ function NeatUploadPB(id, postBackID, uploadProgressPath, popupWidth, popupHeigh
 	this.TriggerIDs.NeatUpload_length = 0;
 	this.DisplayUrl = function (progressUrl) {
 		pb.debugMessage("Calling window.open");
-		window.open(progressUrl,
+		var popup = window.open(progressUrl,
 			pb.UploadForm.GetPostBackID(), 'width=' + pb.PopupWidth + ',height=' + pb.PopupHeight
 			+ ',directories=no,location=no,menubar=no,resizable=yes,scrollbars=auto,status=no,toolbar=no');
+		this.Close = function () { popup.close(); };
 	};
 	this.AutoStartCondition = autoStartCondition;
 
@@ -744,6 +745,9 @@ NeatUploadPB.prototype.ClearFileInputs = function(elem)
 		}
 	}
 	return true;
+};
+
+NeatUploadPB.prototype.Close = function() {	
 };
 
 NeatUploadForm.prototype.EventData.NeatUploadPBAlertShown = false;
