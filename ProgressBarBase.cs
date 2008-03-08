@@ -143,7 +143,7 @@ namespace Brettle.Web.NeatUpload
 	</script>
 	");
 				}
-                RegisterScripts();
+				this.Page.RegisterStartupScript("NeatUploadProgressBarBase-" + this.UniqueID, GetStartupScript());
             }
 			base.OnPreRender(e);
 		}
@@ -263,7 +263,7 @@ namespace Brettle.Web.NeatUpload
 		// but computing a hash on that file everytime this assembly is loaded strikes me as overkill.
 		private static Guid CacheBustingGuid = System.Guid.NewGuid();
 		
-		private void RegisterScripts()
+		protected virtual string GetStartupScript()
 		{
 			string allTriggerClientIDs = "[]";
 			if (Config.Current.UseHttpModule)
@@ -271,23 +271,23 @@ namespace Brettle.Web.NeatUpload
 				allTriggerClientIDs = GetClientIDsAsJSArray(Triggers);
 			}
 						
-			this.Page.RegisterStartupScript("NeatUploadProgressBarBase-" + this.UniqueID, @"
+			return String.Format(@"
 <script type='text/javascript' language='javascript'>
 <!--
-if (typeof(NeatUploadPB_" + this.ClientID + @"_Triggers) == 'undefined') NeatUploadPB_" + this.ClientID + @"_Triggers = [];
-NeatUploadPB_" + this.ClientID + @"_Triggers = NeatUploadPB_" + this.ClientID + @"_Triggers.concat(" + allTriggerClientIDs + @");
-NeatUploadPB.prototype.Bars['" + this.ClientID + @"'] 
-	= new NeatUploadPB('" + this.ClientID + @"','" 
+if (typeof(NeatUploadPB_{0}_Triggers) == 'undefined') NeatUploadPB_{0}_Triggers = [];
+NeatUploadPB_{0}_Triggers = NeatUploadPB_{0}_Triggers.concat(" + allTriggerClientIDs + @");
+NeatUploadPB.prototype.Bars['{0}'] 
+	= new NeatUploadPB('{0}','" 
 						+ FormContext.Current.PostBackID + @"','"
 	                    + this.UploadProgressPath + @"','"
 	                    + this.GetPopupDimension("Width", Width, 500) + @"','"
                         + this.GetPopupDimension("Height", Height, 100) 
-                        + @"',NeatUploadPB_" + this.ClientID + @"_Triggers, '"
+                        + @"',NeatUploadPB_{0}_Triggers, '"
 	                    + AutoStartCondition.Replace(@"'", @"\'") + @"');
 if (!NeatUploadPB.prototype.FirstBarID)
-	NeatUploadPB.prototype.FirstBarID = '" + this.ClientID + @"';
+	NeatUploadPB.prototype.FirstBarID = '{0}';
 // -->
-</script>");
+</script>", ClientID);
                                                                                
 		}
 		
@@ -342,6 +342,11 @@ if (!NeatUploadPB.prototype.FirstBarID)
 		
 		protected override void RenderContents(HtmlTextWriter writer)
 		{
+			if (!Config.Current.UseHttpModule)
+			{
+				return;
+			}
+
 			EnsureChildControls();
 		    
 			writer.AddAttribute("id", ClientID + "_fallback_link");
@@ -365,6 +370,10 @@ if (!NeatUploadPB.prototype.FirstBarID)
 
 		public override void RenderEndTag(HtmlTextWriter writer)
 		{
+			if (!Config.Current.UseHttpModule)
+			{
+				return;
+			}
 			writer.RenderEndTag();
 			writer.Write("</noscript>");
 		}

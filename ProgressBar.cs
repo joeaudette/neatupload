@@ -98,7 +98,28 @@ namespace Brettle.Web.NeatUpload
 				Attributes["name"] = this.ClientID;
 			}
 		}
-		
+
+		protected override string GetStartupScript()
+		{
+			string script = base.GetStartupScript();
+			if (Inline)
+				script += String.Format(@"<script type='text/javascript' language='javascript'>
+<!--
+NeatUploadPB.prototype.Bars['{0}'].DisplayUrl = function(progressUrl) {
+	var pb = this;
+	setTimeout(function () { frames[pb.ClientID].location.href = progressUrl; }, 0);
+};
+
+(function() {
+	var pb = NeatUploadPB.prototype.Bars['{0}'];
+	if (frames[pb.ClientID]) 
+		frames[pb.ClientID].location.replace(pb.UploadProgressPath + '&postBackID=' + pb.UploadForm.GetPostBackID() + '&canScript=true&canCancel=' + NeatUploadPB.prototype.CanCancel());
+})();
+// -->
+</script>", ClientID);
+			return script;
+		}
+
 			
 		public override void RenderBeginTag(HtmlTextWriter writer)
 		{
@@ -112,21 +133,6 @@ namespace Brettle.Web.NeatUpload
 			{
 				return;
 			}
-			this.Page.RegisterStartupScript("NeatUploadProgressBar-" + this.UniqueID, @"
-<script type='text/javascript' language='javascript'>
-<!--
-NeatUploadPB.prototype.Bars['" + this.ClientID + @"'].DisplayUrl = function(progressUrl) {
-	var pb = this;
-	setTimeout(function () { frames[pb.ClientID].location.href = progressUrl; }, 0);
-};
-
-(function() {
-	var pb = NeatUploadPB.prototype.Bars['" + this.ClientID + @"'];
-	if (frames[pb.ClientID]) 
-		frames[pb.ClientID].location.replace(pb.UploadProgressPath + '&postBackID=' + pb.UploadForm.GetPostBackID() + '&canScript=true&canCancel=' + NeatUploadPB.prototype.CanCancel());
-})();
-// -->
-</script>");
 			base.AddAttributesToRender(writer);
 			writer.RenderBeginTag(Tag);
 		}

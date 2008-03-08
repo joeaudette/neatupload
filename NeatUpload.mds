@@ -1,41 +1,47 @@
-<Combine name="NeatUpload" fileversion="2.0" outputpath="./build/bin/">
+<Combine name="NeatUpload" fileversion="2.0" outputpath="build/bin/">
   <Configurations active="Signed Debug">
     <Configuration name="Debug" ctype="CombineConfiguration">
       <Entry build="True" name="NeatUpload" configuration="Debug" />
       <Entry build="True" name="TestFilter" configuration="Debug" />
       <Entry build="True" name="HashedInputFile" configuration="Debug" />
       <Entry build="True" name="SqlServerUploader" configuration="Debug" />
+      <Entry build="True" name="GreyBoxProgressBar" configuration="Debug" />
     </Configuration>
     <Configuration name="Release" ctype="CombineConfiguration">
       <Entry build="True" name="NeatUpload" configuration="Release" />
       <Entry build="True" name="TestFilter" configuration="Release" />
       <Entry build="True" name="HashedInputFile" configuration="Release" />
       <Entry build="True" name="SqlServerUploader" configuration="Release" />
+      <Entry build="True" name="GreyBoxProgressBar" configuration="Release" />
     </Configuration>
     <Configuration name="Signed Debug" ctype="CombineConfiguration">
       <Entry build="True" name="NeatUpload" configuration="Signed Debug" />
       <Entry build="True" name="TestFilter" configuration="Debug" />
       <Entry build="True" name="HashedInputFile" configuration="Debug" />
       <Entry build="True" name="SqlServerUploader" configuration="Debug" />
+      <Entry build="True" name="GreyBoxProgressBar" configuration="Debug" />
     </Configuration>
     <Configuration name="Signed Release" ctype="CombineConfiguration">
       <Entry build="True" name="NeatUpload" configuration="Signed Release" />
       <Entry build="True" name="TestFilter" configuration="Release" />
       <Entry build="True" name="HashedInputFile" configuration="Release" />
       <Entry build="True" name="SqlServerUploader" configuration="Release" />
+      <Entry build="True" name="GreyBoxProgressBar" configuration="Debug" />
     </Configuration>
   </Configurations>
-  <DeployTargets />
   <StartMode startupentry="NeatUpload" single="True">
     <Execute type="None" entry="NeatUpload" />
     <Execute type="None" entry="TestFilter" />
     <Execute type="None" entry="HashedInputFile" />
     <Execute type="None" entry="SqlServerUploader" />
+    <Execute type="None" entry="GreyBoxProgressBar" />
   </StartMode>
+  <DeployTargets />
   <Entries>
-    <Entry filename="./NeatUpload.mdp" />
-    <Entry filename="./TestFilter/TestFilter.mdp" />
-    <Entry filename="./HashedInputFile/HashedInputFile.mdp" />
-    <Entry filename="./Extensions/SqlServerInputFile/SqlServerUploader/SqlServerUploader.mdp" />
+    <Entry filename="NeatUpload.mdp" />
+    <Entry filename="TestFilter/TestFilter.mdp" />
+    <Entry filename="HashedInputFile/HashedInputFile.mdp" />
+    <Entry filename="Extensions/SqlServerInputFile/SqlServerUploader/SqlServerUploader.mdp" />
+    <Entry filename="Extensions/GreyBoxProgressBar/GreyBoxProgressBar.mdp" />
   </Entries>
 </Combine>
