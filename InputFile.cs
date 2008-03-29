@@ -335,6 +335,7 @@ namespace Brettle.Web.NeatUpload
 		private void InitializeComponent()
 		{
 			this.Load += new System.EventHandler(this.Control_Load);
+			this.Unload += new System.EventHandler(this.Control_Unload);
 		}
 				
 		private void Control_Load(object sender, EventArgs e)
@@ -353,6 +354,12 @@ namespace Brettle.Web.NeatUpload
 			form.Method = "post";
 		}
 				
+		private void Control_Unload(object sender, EventArgs e)
+		{
+			if (_file != null && !Config.Current.UseHttpModule)
+				_file.Dispose();
+		}
+
 		protected override void Render(HtmlTextWriter writer)
 		{
 			string name;
