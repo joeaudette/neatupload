@@ -259,7 +259,7 @@ namespace Brettle.Web.NeatUpload
 		{
 			if (log.IsDebugEnabled) log.Debug("In CreateUploadedFile() controlUniqueID=" + controlUniqueID);
 			UploadedFile uploadedFile 
-				= UploadStorage.CreateUploadedFile(this, controlUniqueID, fileName, contentType, storageConfig);			
+				= UploadStorage.CreateUploadedFile(this, controlUniqueID, fileName, contentType, storageConfig);
 			Files.Add(controlUniqueID, uploadedFile);
 			
 			if (fileName != null && fileName != string.Empty)
@@ -277,8 +277,6 @@ namespace Brettle.Web.NeatUpload
 		{
 			if (!IsAsyncRequest)
 			{
-				RemoveUploadedFiles();
-
 				// Move the current UploadContext from the ApplicationState to the Cache so that we don't leak memory.
 				// We only need it in the Cache briefly because it is only used by the inline ProgressBar to display
 				// the status of the upload that just completed.
@@ -305,20 +303,6 @@ namespace Brettle.Web.NeatUpload
 				// This async upload is complete, so decrement NumAsyncFilesRemaining and sync to session.
 				NumAsyncFilesReceived++;
 				UploadHttpModule.AccessSession(new SessionAccessCallback(this.SyncWithSession));
-			}
-		}
-		
-		private void RemoveUploadedFiles()
-		{
-			if (log.IsDebugEnabled) log.Debug("In RemoveUploadedFiles");
-			lock (Files.SyncRoot)
-			{
-				for (int i = 0; i < Files.Count; i++)
-				{
-					Files[i].Dispose();
-				}
-				// Don't clear the File collection, because we use it to determine the number of files uploaded in the
-				// last postback.
 			}
 		}
 		

@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Reflection;
+using System.Web;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -30,21 +31,24 @@ namespace Brettle.Web.NeatUpload
 		public static UploadedFile CreateUploadedFile(UploadContext context, string controlUniqueID, string fileName,
 		                                              string contentType, UploadStorageConfig storageConfig)
 		{
-			
+			UploadedFile file = null;
 			if (storageConfig == null || storageConfig.Count == 0)
 			{
-				return Provider.CreateUploadedFile(context, controlUniqueID, fileName, contentType);
+				file = Provider.CreateUploadedFile(context, controlUniqueID, fileName, contentType);
 			}
-		                                              		
-		    UploadedFile file = Provider.CreateUploadedFile(context, controlUniqueID, fileName, contentType, storageConfig);
+		    else
+			{
+				file = Provider.CreateUploadedFile(context, controlUniqueID, fileName, contentType, storageConfig);
+			}
 			
+			DisposeAtEndOfRequest(file);
 			return file;
 		}
 
 		public static UploadedFile CreateUploadedFile(UploadContext context, string controlUniqueID, string fileName,
 		                                              string contentType)
 		{
-			return Provider.CreateUploadedFile(context, controlUniqueID, fileName, contentType);
+			return CreateUploadedFile(context, controlUniqueID, fileName, contentType, null);
 		}
 
 		public static UploadStorageConfig CreateUploadStorageConfig()
@@ -116,6 +120,48 @@ namespace Brettle.Web.NeatUpload
 			UploadStorageProvider provider = (UploadStorageProvider)constructor.Invoke(new object[0]);
 			provider.Initialize(providerName, configAttrs);
 			return provider;
+		}
+		
+		private static void DisposeAtEndOfRequest(UploadedFile file)
+		{
+			HttpContext ctx = HttpContext.Current;
+			if (ctx == null) return; // Not in an ASP.NET request, so nothing to do
+			
+			// Register the end-of-request handlers if they haven't been registered yet.
+			HttpApplicationState appState = ctx.Application;
+			appState.Lock();
+			if (appState["NeatUpload_EndOfRequestHandlersRegistered"] == null)
+			{
+				appState["NeatUpload_EndOfRequestHandlersRegistered"] = true;
+				HttpApplication app = ctx.ApplicationInstance;
+				app.EndRequest += new EventHandler(Application_EndRequestOrError);
+				app.Error += new EventHandler(Application_EndRequestOrError);
+			}
+			appState.UnLock();
+			
+			// Add a list of files to dispose to the current context if one hasn't been added yet
+			ArrayList filesToDispose = ctx.Items["NeatUpload_FilesToDispose"] as ArrayList;
+			if (filesToDispose == null)
+			{
+				filesToDispose = new ArrayList();
+				ctx.Items["NeatUpload_FilesToDispose"] = filesToDispose;
+			}
+			
+			// Add the file to the list of files
+			filesToDispose.Add(file);
+		}
+		
+		private static void Application_EndRequestOrError(object sender, EventArgs args)
+		{
+			HttpContext ctx = HttpContext.Current;
+			if (ctx == null) return; // Not in an ASP.NET request, so nothing to do
+			
+			// Get the list of files to dispose to the current context if one hasn't been added yet
+			ArrayList filesToDispose = ctx.Items["NeatUpload_FilesToDispose"] as ArrayList;
+			if (filesToDispose == null) return; // Nothing to dispose, so return
+			
+			foreach (UploadedFile file in filesToDispose)
+				file.Dispose();
 		}
 	}
 }
