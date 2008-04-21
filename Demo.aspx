@@ -100,7 +100,7 @@
 			<div id="inlineProgressBarDiv" runat="server">
 			<h2>Inline Progress Bar</h2>
 			<p>
-			Here's the inline progress bar:
+			The inline progress bar will be displayed here:
 			<div style="display: none">
 			<Upload:ProgressBar id="inlineProgressBar" runat="server" inline="true" Triggers="submitButton linkButton commandButton htmlInputButtonButton htmlInputButtonSubmit" />
 			</div>
@@ -115,8 +115,13 @@ window.onload = function()
 		elem.parentNode.style.display = "block";
 		origDisplay.call(this);
 	}
+	inlineProgressBar.EvalOnClose = "NeatUploadMainWindow.document.getElementById('" 
+		+ inlineProgressBar.ClientID + "').parentNode.style.display = \"none\";";
 }
 </script>
+			By default, an inline progress bar is always displayed.  The inline progress bar above has been 
+			customized with javascript (see HTML source for this page) to hide the progress bar except when the
+			upload is in progress or an error has occurred.
 			The inline progress bar is an IFRAME.  If your browser doesn't support IFRAMEs, you'll see a link to
 			display the progress bar in a new window.  The text of that link is configurable.
 			</p>

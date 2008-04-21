@@ -642,13 +642,6 @@ function NeatUploadPB(id, postBackID, uploadProgressPath, popupWidth, popupHeigh
 		fallbackLink.setAttribute('href', 'javascript:' + popupDisplayStatement);
 	this.TriggerIDs = new Object();
 	this.TriggerIDs.NeatUpload_length = 0;
-	this.DisplayUrl = function (progressUrl) {
-		pb.debugMessage("Calling window.open");
-		var popup = window.open(progressUrl,
-			pb.UploadForm.GetPostBackID(), 'width=' + pb.PopupWidth + ',height=' + pb.PopupHeight
-			+ ',directories=no,location=no,menubar=no,resizable=yes,scrollbars=auto,status=no,toolbar=no');
-		this.Close = function () { popup.close(); };
-	};
 	this.AutoStartCondition = autoStartCondition;
 
 	this.UploadForm.AddNonuploadHandler(function () { pb.ClearFileInputs(pb.UploadForm.FormElem); });
@@ -683,6 +676,15 @@ NeatUploadPB.prototype.Display = function() {
 	this.DisplayUrl(this.UploadProgressPath + '&postBackID=' + this.UploadForm.GetPostBackID() + '&refresher=client&canScript=true&canCancel=' + NeatUploadPB.prototype.CanCancel());
 };
 
+NeatUploadPB.prototype.DisplayUrl = function (progressUrl) {
+	var pb = this;
+	window.open(progressUrl,
+		pb.UploadForm.GetPostBackID(), 'width=' + pb.PopupWidth + ',height=' + pb.PopupHeight
+		+ ',directories=no,location=no,menubar=no,resizable=yes,scrollbars=auto,status=no,toolbar=no');
+};
+	
+NeatUploadPB.prototype.EvalOnClose = "window.close();";
+	
 NeatUploadPB.prototype.CanCancel = function()
 {
 	try
@@ -745,9 +747,6 @@ NeatUploadPB.prototype.ClearFileInputs = function(elem)
 		}
 	}
 	return true;
-};
-
-NeatUploadPB.prototype.Close = function() {	
 };
 
 NeatUploadForm.prototype.EventData.NeatUploadPBAlertShown = false;

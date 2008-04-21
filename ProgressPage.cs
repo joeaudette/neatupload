@@ -61,6 +61,11 @@ namespace Brettle.Web.NeatUpload
 		protected string StartRefreshUrl;
 		protected string StopRefreshUrl;
 		
+		// This is used to ensure that the browser gets the latest NeatUpload.js each time this assembly is
+		// reloaded.  Strictly speaking the browser only needs to get the latest when NeatUpload.js changes,
+		// but computing a hash on that file everytime this assembly is loaded strikes me as overkill.
+		private static Guid CacheBustingGuid = System.Guid.NewGuid();
+
 		protected virtual string GetResourceString(string resourceName)
 		{
 			return Config.Current.GetResourceString(resourceName);
@@ -138,7 +143,8 @@ namespace Brettle.Web.NeatUpload
 		
 		protected override void OnLoad(EventArgs e)
 		{
-			RegisterClientScriptBlock("NeatUpload-ProgressPage", "<script type='text/javascript' language='javascript' src='Progress.js'></script>");
+			RegisterClientScriptBlock("NeatUpload-ProgressPage", "<script type='text/javascript' language='javascript' src='Progress.js?guid=" 
+			                          + CacheBustingGuid + @"'></script>");
 			SetupContext();
 			SetupBindableProps();
 			
@@ -190,7 +196,8 @@ window.onload = function() {
 				{
 					RegisterStartupScript("scrNeatUploadClose", @"<script type='text/javascript' language='javascript'>
 <!--
-NeatUploadMainWindow.NeatUploadPB.prototype.Bars['" + ProgressBarID + @"'].Close();
+if (NeatUploadMainWindow.NeatUploadPB.prototype.Bars['" + ProgressBarID + @"'].EvalOnClose)
+	eval(NeatUploadMainWindow.NeatUploadPB.prototype.Bars['" + ProgressBarID + @"'].EvalOnClose);
 // -->
 </script>");
 				}

@@ -110,6 +110,8 @@ NeatUploadPB.prototype.Bars['{0}'].DisplayUrl = function(progressUrl) {{
 	setTimeout(function () {{ frames[pb.ClientID].location.href = progressUrl; }}, 0);
 }};
 
+NeatUploadPB.prototype.Bars['{0}'].EvalOnClose = null;
+
 (function() {{
 	var pb = NeatUploadPB.prototype.Bars['{0}'];
 	if (frames[pb.ClientID]) 
