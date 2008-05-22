@@ -115,13 +115,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					Error: <%# Failure != null ? Failure.Message : "" %>
 				</Upload:DetailsSpan>
 				<Upload:DetailsDiv id="barDetailsDiv" runat="server" UseHtml4="true"
-					 Width='<%# Unit.Percentage(Math.Floor(100*FractionComplete)) %>' class="ProgressBar"></Upload:DetailsDiv>	
+					 Width='<%# Unit.Percentage(Math.Floor(100*FractionComplete)) %>' CssClass="ProgressBar"></Upload:DetailsDiv>	
 			</div>
 		</td>
 		<td>
-			<asp:HyperLink id="cancel" runat="server" Visible='<%# CancelVisible %>' NavigateUrl='<%# CancelUrl %>' title="Cancel Upload" class="ImageButton" ><img id="cancelImage" src="cancel.png" alt="Cancel Upload" /></asp:HyperLink>
-			<asp:HyperLink id="refresh" runat="server" Visible='<%# StartRefreshVisible %>' NavigateUrl='<%# StartRefreshUrl %>' title="Refresh" class="ImageButton" ><img id="refreshImage" src="refresh.png" alt="Refresh" /></asp:HyperLink>
-			<asp:HyperLink id="stopRefresh" runat="server" Visible='<%# StopRefreshVisible %>' NavigateUrl='<%# StopRefreshUrl %>' title="Stop Refreshing" class="ImageButton"><img id="stopRefreshImage" src="stop_refresh.png" alt="Stop Refreshing" /></asp:HyperLink>
+			<asp:HyperLink id="cancel" runat="server" Visible='<%# CancelVisible %>' NavigateUrl='<%# CancelUrl %>' ToolTip="Cancel Upload" CssClass="ImageButton" ><img id="cancelImage" src="cancel.png" alt="Cancel Upload" /></asp:HyperLink>
+			<asp:HyperLink id="refresh" runat="server" Visible='<%# StartRefreshVisible %>' NavigateUrl='<%# StartRefreshUrl %>' ToolTip="Refresh" CssClass="ImageButton" ><img id="refreshImage" src="refresh.png" alt="Refresh" /></asp:HyperLink>
+			<asp:HyperLink id="stopRefresh" runat="server" Visible='<%# StopRefreshVisible %>' NavigateUrl='<%# StopRefreshUrl %>' ToolTip="Stop Refreshing" CssClass="ImageButton"><img id="stopRefreshImage" src="stop_refresh.png" alt="Stop Refreshing" /></asp:HyperLink>
 		</td>
 		</tr>
 		</table>
