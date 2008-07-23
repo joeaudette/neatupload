@@ -330,6 +330,7 @@ Issues</a>
       <li><a href="#AspNetTrace">ASP.NET application-wide tracing disables NeatUpload</a></li>
       <li><a href="#WebGardenIssue">ProgressBar doesn't work with web gardens/farms</a></li>
       <li><a href="#Permissions">Permissions on uploaded files depend on temporary directory</a></li>
+      <li><a href="#UploadHttpModuleFirst">Module conflicts can cause data length is shorter than Content-Length errors</a></li>
       <li><a href="#ProgressBarViewState"><code>InvalidOperationException</code> when using <code>ProgressBar</code> 
       with <code>EnableViewState="false"</code></a></li>
       <li><a href="#mozTocId766780">HttpResponse.AppendToLog()
@@ -5218,6 +5219,25 @@ by the web application.  To avoid this issue, simply <a href="#mozTocId905959">c
 directory used by NeatUpload</a> to a directory that has the permissions you desire.
 </p>
 
+<h3><a class="mozTocH3" name="UploadHttpModuleFirst"></a>Module conflicts can cause data length is shorter 
+than Content-Length errors</h3>
+<p>
+When certain 3rd-party HttpModules are used along with NeatUpload a "Data length (xxx) is shorter than 
+Content-Length (yyy) error" can occur.  To avoid this place NeatUpload's UploadHttpModule <em>first</em>
+in the &lt;httpModules&gt; section, before all other modules.  This problem has been reported with both 
+<a href="http://www.snapsis.com/PageBlaster.aspx">PageBlaster</a> and 
+<a href="http://www.ifinity.com.au/Products/Url_Master_DNN_SEO_Urls/">UrlMaster</a>.
+It is often encountered on sites that installed NeatUpload as part of 
+<a href="http://www.bizmodules.net/Products/UltraVideoGallery2/Overview/tabid/124/Default.aspx">Ultra
+Video Gallery (UVG)</a>.
+</p>
+<p>
+This issue is caused by the fact that NeatUpload (and any other module that monitors upload progress) needs to
+intercept the request before ASP.NET reads the request body.  ASP.NET needs to read the request body in order
+to compute certain properties of the Request object (e.g. Request.Params).  So if another module accesses
+one of those properties before NeatUpload intercepts the request, ASP.NET will read the request body and when
+NeatUpload tries to read the request body, there won't be anything there.
+</p>
 
 <h3><a class="mozTocH3" name="ProgressBarViewState"></a><code>InvalidOperationException</code> when using <code>ProgressBar</code> 
       with <code>EnableViewState="false"</code></a></h3>

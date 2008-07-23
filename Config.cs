@@ -189,13 +189,13 @@ namespace Brettle.Web.NeatUpload
                         continue;
                     }
 					string tagName = providerActionElem.LocalName;
-					string providerName = providerActionElem.Attributes["name"].Value;
 					if (tagName == "add")
 					{
 						config.Providers.Add(UploadStorage.CreateProvider(providerActionElem));
 					}
 					else if (tagName == "remove")
 					{
+						string providerName = providerActionElem.Attributes["name"].Value;
 						config.Providers.Remove(providerName);
 					}
 					else if (tagName == "clear")

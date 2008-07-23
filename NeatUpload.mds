@@ -11,15 +11,15 @@
       <Entry build="True" name="HashedInputFile" configuration="Release" />
     </Configuration>
   </Configurations>
-  <DeployTargets />
   <StartMode startupentry="NeatUpload" single="True">
     <Execute type="None" entry="NeatUpload" />
     <Execute type="None" entry="TestFilter" />
     <Execute type="None" entry="HashedInputFile" />
   </StartMode>
+  <DeployTargets />
   <Entries>
-    <Entry filename="./NeatUpload.mdp" />
-    <Entry filename="./TestFilter/TestFilter.mdp" />
-    <Entry filename="./HashedInputFile/HashedInputFile.mdp" />
+    <Entry filename="NeatUpload.mdp" />
+    <Entry filename="TestFilter/TestFilter.mdp" />
+    <Entry filename="HashedInputFile/HashedInputFile.mdp" />
   </Entries>
 </Combine>
