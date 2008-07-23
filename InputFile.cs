@@ -63,7 +63,7 @@ namespace Brettle.Web.NeatUpload
 		{
 			get 
 			{
-				if (_file == null)
+				if (_file == null && UniqueID != null)
 				{
 					if (IsDesignTime) return null;
 					_file = UploadHttpModule.Files[this.UniqueID];
@@ -219,6 +219,7 @@ namespace Brettle.Web.NeatUpload
 		}
 		
 		
+		private UploadStorageConfig _NewStorageConfig;
 		private UploadStorageConfig _StorageConfig;
 		public UploadStorageConfig StorageConfig
 		{
@@ -234,14 +235,22 @@ namespace Brettle.Web.NeatUpload
 						{
 							_StorageConfig = UploadStorage.CreateUploadStorageConfig();
 							_StorageConfig.Unprotect(secureStorageConfig);
+							// Replace any values set before this control had a fully qualified name.
+							if (_NewStorageConfig != null)
+							{
+								foreach (string key in _NewStorageConfig.AllKeys)
+									_StorageConfig[key] = _NewStorageConfig[key];
+							}
 						}
 					}
-					else
-					{
-						_StorageConfig = UploadStorage.CreateUploadStorageConfig();
-					}
 				}
-				return _StorageConfig;
+				if (_StorageConfig != null)
+					return _StorageConfig;
+				if (_NewStorageConfig == null)
+				{
+					_NewStorageConfig = UploadStorage.CreateUploadStorageConfig();
+				}
+				return _NewStorageConfig;
 			}
 		}
 		
