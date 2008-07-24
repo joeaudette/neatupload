@@ -260,6 +260,7 @@ namespace Brettle.Web.NeatUpload
 			if (log.IsDebugEnabled) log.Debug("In CreateUploadedFile() controlUniqueID=" + controlUniqueID);
 			UploadedFile uploadedFile 
 				= UploadStorage.CreateUploadedFile(this, controlUniqueID, fileName, contentType, storageConfig);
+			UploadStorage.DisposeAtEndOfRequest(uploadedFile);
 			Files.Add(controlUniqueID, uploadedFile);
 			
 			if (fileName != null && fileName != string.Empty)

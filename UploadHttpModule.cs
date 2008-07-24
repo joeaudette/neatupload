@@ -24,6 +24,7 @@ using System.Web;
 using System.Threading;
 using System.Security.Permissions;
 using System.Collections.Specialized;
+using System.Collections;
 using System.Text.RegularExpressions;
 
 namespace Brettle.Web.NeatUpload
@@ -163,6 +164,8 @@ namespace Brettle.Web.NeatUpload
 			app.ReleaseRequestState += new System.EventHandler(Application_ReleaseRequestState);
 			app.PreRequestHandlerExecute += new System.EventHandler(Application_PreRequestHandlerExecute);
 			app.Error += new System.EventHandler(Application_Error);
+			app.EndRequest += new EventHandler(Application_EndRequestOrError);
+			app.Error += new EventHandler(Application_EndRequestOrError);
 			RememberErrorHandler = new System.EventHandler(RememberError);
 			
 			lock (typeof(UploadHttpModule))
@@ -503,6 +506,19 @@ namespace Brettle.Web.NeatUpload
 			{
 				uploadContext.CompleteRequest();
 			}
+		}
+
+		private void Application_EndRequestOrError(object sender, EventArgs args)
+		{
+			if (!Config.Current.UseHttpModule)
+				return;
+			HttpContext ctx = HttpContext.Current;
+			// Get the list of files to dispose to the current context if one hasn't been added yet
+			ArrayList filesToDispose = ctx.Items["NeatUpload_FilesToDispose"] as ArrayList;
+			if (filesToDispose == null) return; // Nothing to dispose, so return
+			
+			foreach (UploadedFile file in filesToDispose)
+				file.Dispose();
 		}
 		
 		public static void AccessSession(SessionAccessCallback accessor)

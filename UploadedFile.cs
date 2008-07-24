@@ -26,7 +26,7 @@ using System.Configuration;
 namespace Brettle.Web.NeatUpload
 {
 	[Serializable]
-	public abstract class UploadedFile
+	public abstract class UploadedFile : IDisposable
 	{
 		private UploadedFile() {}
 

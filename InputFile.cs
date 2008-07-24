@@ -296,6 +296,7 @@ namespace Brettle.Web.NeatUpload
 		private void InitializeComponent()
 		{
 			this.Load += new System.EventHandler(this.Control_Load);
+			this.Unload += new System.EventHandler(this.Control_Unload);
 		}
 				
 		private void Control_Load(object sender, EventArgs e)
@@ -319,6 +320,12 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 
+		private void Control_Unload(object sender, EventArgs e)
+		{
+			if (File != null)
+				File.Dispose();
+		}
+		
 		// This is used to ensure that the browser gets the latest NeatUpload.js each time this assembly is
 		// reloaded.  Strictly speaking the browser only needs to get the latest when NeatUpload.js changes,
 		// but computing a hash on that file everytime this assembly is loaded strikes me as overkill.
