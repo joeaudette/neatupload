@@ -335,6 +335,8 @@ Issues</a>
       with <code>EnableViewState="false"</code></a></li>
       <li><a href="#mozTocId766780">HttpResponse.AppendToLog()
 does nothing when UploadHttpModule is used</a></li>
+      <li><a href="#HeaderEncoding">Setting HttpResponse.HeaderEncoding
+does nothing when UploadHttpModule is used</a></li>
       <li><a href="#mozTocId752771">Inline
 ProgressBars don't work with Opera</a></li>
       <li><a href="#mozTocId181845">Non-absolute path in IE7 causes the progress display to start even though no upload occurs</a></li>
@@ -5291,6 +5293,109 @@ with <code>Brettle.Web.NeatUpload.UploadHttpModule.AppendToLog()</code>.
 is used or not.</p>
 
 
+<h3><a class="mozTocH3" name="HeaderEncoding"></a>Setting <code>HttpResponse.HeaderEncoding</code>
+does nothing when <code>UploadHttpModule</code> is used</h3>
+
+
+<p>Due to the design of NeatUpload this bug will not be fixed,
+however if the pages that need to set <code>Response.HeaderEncoding</code> are not pages to which 
+the user will be uploading files, you can use <a href="#mozTocId134915">location filtering</a> to 
+disable the <code>UploadHttpModule</code> for those pages.  Also, if you are setting 
+<code>Response.HeaderEncoding</code> so that you can specify a non-ASCII 
+filename for a downloaded file via the filename parameter of the Content-Disposition header,
+you should consider other approaches.  Even without the 
+<code>UploadHttpModule</code>, setting <code>Response.HeaderEncoding</code> will only work if you 
+set it to the encoding that the browser happens to be using.  For example, setting it to "big5" will
+not cause the file to have a name with Chinese characters if the user is using
+the UTF-8 encoding.  Also, if you set <code>Response.HeaderEncoding</code> to a value that is different
+from the encoding used by the browser, you could create a security hole.
+</p>
+<p>There are two better approaches.  For both approaches, the filename needs to be encoded using the
+<code>HttpUtility.UrlPathEncode()</code> method.  That encodes non-ASCII characters using the %XX 
+notation you often see in URLs.  Once you have the UrlPathEncoded filename, you have 2 options.
+</p>
+<ul>
+<li>Option 1:  Set the Content-Disposition header to simply "attachment", and place the encoded 
+filename in the "path info" part of the download URL.  So, instead of using a download URL of 
+"http://tempuri.org/DownloadFile.ashx",
+you would use a download URL of "http://tempuri.org/DownloadFile.ashx/<i>YourUrlPathEncodedFilename</i>".  
+If you are using IIS or some other webserver that supports path info, this approach will work
+under at least the latest versions of IE, Firefox, Opera, and Safari.  However, this approach does
+not work if you are using Visual Studio's Development Web Server because it doesn't support path info.
+If your server does support path info, you can implement this approach easily by changing your download 
+page to redirect the browser to a page which has the necessary path info, like this:
+<pre>
+&lt;%@ WebHandler Language="C#" Class="Handler" %&gt;
+using System;
+using System.Web;
+
+public class Handler : IHttpHandler {
+    public void ProcessRequest (HttpContext context) 
+    {
+        string filename = &quot;&#20013;&#25991;&#27284;&#21517;.doc&quot; //  or some other file name
+        string encodedFilename = HttpUtility.UrlPathEncode(filename);
+        if (context.Request.PathInfo == null || context.Request.PathInfo.Length == 0)
+        {
+            string query = context.Request.Url.Query;
+            context.Response.Redirect(context.Request.Path + &quot;/&quot; + encodedFilename + query);
+        }
+        else
+        {
+            context.Response.Clear();
+    	    context.Response.ContentType = &quot;application/octet-stream&quot;;
+            context.Response.AddHeader(&quot;Content-Disposition&quot;, &quot;attachment&quot;);
+            FileInfo fi = new FileInfo(context.Server.MapPath(filename));
+            context.Response.WriteFile(fi.FullName);
+            context.Response.Flush();
+            context.Response.End();
+        }
+    }
+    
+    public bool IsReusable { get { return false; } }
+}
+</pre>
+</li>
+
+<li>Option 2:  Set the Content-Disposition header's filename parameter to the UrlPathEncoded filename,
+but do so in a way that is supported by the browser.  According to 
+<a href="http://www.faqs.org/rfcs/rfc2231.html">RFC 2231</a>, the correct way to do this
+is to set the Content-Disposition header to "<code>attachment;&nbsp;filename*=utf-8''<i>YourUrlPathEncodedFilename</i></code>".
+That works for the latest versions of Firefox and Opera, but not IE and Safari.  Both IE and Safari 
+will ignore the filename parameter and use the name of your download page (e.g. DownloadFile.ashx).  
+There is no way to set the filename parameter to work with Safari, but for IE you can set Content-Disposition header to 
+"<code>attachment;&nbsp;filename=<i>YourUrlPathEncodedFilename</i></code>".  That doesn't work for Firefox or Safari though.
+So, you need to treat it as a special IE-only case.  Here is an example:
+<pre>
+<pre>
+&lt;%@ WebHandler Language="C#" Class="Handler" %&gt;
+using System;
+using System.Web;
+
+public class Handler : IHttpHandler {
+    public void ProcessRequest (HttpContext context) 
+    {
+        string filename = &quot;&#20013;&#25991;&#27284;&#21517;.doc&quot; //  or some other file name
+        string encodedFilename = HttpUtility.UrlPathEncode(filename);
+        context.Response.Clear();
+	    context.Response.ContentType = &quot;application/octet-stream&quot;;
+        string contentDisposition = &quot;attachment&quot;;
+        if (context.Request.Browser.IsBrowser(&quot;IE&quot;))
+            contentDisposition += &quot;; filename=&quot; + encodedFilename;
+        else
+            contentDisposition += &quot;; filename*=utf-8''&quot; + encodedFilename;
+        context.Response.AddHeader(&quot;Content-Disposition&quot;, contentDisposition);
+        FileInfo fi = new FileInfo(context.Server.MapPath(filename));
+        context.Response.WriteFile(fi.FullName);
+        context.Response.Flush();
+        context.Response.End();
+    }
+    
+    public bool IsReusable { get { return false; } }
+}
+</pre>
+</pre>
+</li>
+</ul>
 
 
 
