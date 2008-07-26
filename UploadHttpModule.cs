@@ -137,10 +137,12 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 
+		private static object StaticSync = new object();
+		
 		private static bool _isInited = false;		
 		internal static bool IsInited
 		{
-			get { lock (typeof(UploadHttpModule)) { return _isInited;} }
+			get { lock (StaticSync) { return _isInited;} }
 		}
 						
 		public void Init(HttpApplication app)
@@ -151,7 +153,7 @@ namespace Brettle.Web.NeatUpload
 			bool isTracingEnabled = HttpContext.Current.Trace.IsEnabled;
 			if (isTracingEnabled)
 			{
-				lock (typeof(UploadHttpModule))
+				lock (StaticSync)
 				{
 					_isInited = false;
 				}
@@ -168,7 +170,7 @@ namespace Brettle.Web.NeatUpload
 			app.Error += new EventHandler(Application_EndRequestOrError);
 			RememberErrorHandler = new System.EventHandler(RememberError);
 			
-			lock (typeof(UploadHttpModule))
+			lock (StaticSync)
 			{
 				_isInited = true;
 			}

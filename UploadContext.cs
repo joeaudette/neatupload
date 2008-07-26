@@ -127,8 +127,8 @@ namespace Brettle.Web.NeatUpload
 		
 		internal string PostBackID
 		{
-			get { lock(this) { return postBackID; } }
-			set { lock(this) { postBackID = value; } }
+			get { lock(Sync) { return postBackID; } }
+			set { lock(Sync) { postBackID = value; } }
 		}
 				
 		internal void RegisterPostBack(string postBackID)
@@ -157,7 +157,7 @@ namespace Brettle.Web.NeatUpload
 		private bool NeverSynced = true;
 		
 		private bool _IsSessionAvailable = true;
-		public bool IsSessionAvailable { get { lock(this) { return _IsSessionAvailable; } } } 
+		public bool IsSessionAvailable { get { lock(Sync) { return _IsSessionAvailable; } } } 
 		
 		internal void SyncWithSession(HttpSessionState session)
 		{
@@ -175,7 +175,7 @@ namespace Brettle.Web.NeatUpload
 			if (session == null || session.IsReadOnly 
 				|| session.Mode == System.Web.SessionState.SessionStateMode.Off)
 			{
-				lock (this)
+				lock (Sync)
 				{
 					_IsSessionAvailable = false;
 					NeverSynced = false;
@@ -190,7 +190,7 @@ namespace Brettle.Web.NeatUpload
 			{
 				ctxInSession = new UploadContext();
 			}
-			lock (ctxInSession)
+			lock (ctxInSession.Sync)
 			{
 				if (ctxInSession.Status != UploadStatus.Cancelled)
 				{
@@ -235,7 +235,7 @@ namespace Brettle.Web.NeatUpload
 			{
 				return;
 			}
-			lock (ctxInSession)
+			lock (ctxInSession.Sync)
 			{
 				FileBytesRead = ctxInSession.FileBytesRead;
 				SyncBytesRead = ctxInSession.SyncBytesRead;
@@ -311,7 +311,7 @@ namespace Brettle.Web.NeatUpload
 		{
 			get 
 			{
-				lock (this)
+				lock (Sync)
 				{
 					if (BytesTotal <= 0)
 					{
@@ -325,36 +325,36 @@ namespace Brettle.Web.NeatUpload
 		private DateTime startTime;
 		internal DateTime StartTime
 		{
-			get { lock(this) { return startTime; } }
-			set { lock(this) { startTime = value; } }
+			get { lock(Sync) { return startTime; } }
+			set { lock(Sync) { startTime = value; } }
 		}
 		
 		private DateTime stopTime;
 		internal DateTime StopTime
 		{
-			get { lock(this) { return stopTime; } }
-			set { lock(this) { stopTime = value; } }
+			get { lock(Sync) { return stopTime; } }
+			set { lock(Sync) { stopTime = value; } }
 		}
 		
 		private long fileBytesRead;
 		internal long FileBytesRead
 		{
-			get { lock(this) { return fileBytesRead; } }
-			set { lock(this) { fileBytesRead = value; } }
+			get { lock(Sync) { return fileBytesRead; } }
+			set { lock(Sync) { fileBytesRead = value; } }
 		}
 
 		internal long BytesRead
 		{
-			get { lock(this) { return SyncBytesRead + AsyncBytesRead; } }
+			get { lock(Sync) { return SyncBytesRead + AsyncBytesRead; } }
 		}
 
 		private long syncBytesRead;
 		internal long SyncBytesRead
 		{
-			get { lock(this) { return syncBytesRead; } }
+			get { lock(Sync) { return syncBytesRead; } }
 			set
 			{
-				lock(this)
+				lock(Sync)
 				{
 					syncBytesRead = value;
 				}
@@ -364,10 +364,10 @@ namespace Brettle.Web.NeatUpload
 		private long asyncBytesRead;
 		internal long AsyncBytesRead
 		{
-			get { lock(this) { return asyncBytesRead; } }
+			get { lock(Sync) { return asyncBytesRead; } }
 			set
 			{
-				lock(this)
+				lock(Sync)
 				{
 					asyncBytesRead = value;
 				}
@@ -376,16 +376,16 @@ namespace Brettle.Web.NeatUpload
 
 		internal long BytesTotal
 		{
-			get { lock(this) { return SyncBytesTotal + AsyncBytesTotal; } }
+			get { lock(Sync) { return SyncBytesTotal + AsyncBytesTotal; } }
 		}
 
 		private long syncBytesTotal;
 		internal long SyncBytesTotal
 		{
-			get { lock(this) { return syncBytesTotal; } }
+			get { lock(Sync) { return syncBytesTotal; } }
 			set
 			{
-				lock(this)
+				lock(Sync)
 				{
 					syncBytesTotal = value;
 				}
@@ -395,10 +395,10 @@ namespace Brettle.Web.NeatUpload
 		private long asyncBytesTotal;
 		internal long AsyncBytesTotal
 		{
-			get { lock(this) { return asyncBytesTotal; } }
+			get { lock(Sync) { return asyncBytesTotal; } }
 			set
 			{
-				lock(this)
+				lock(Sync)
 				{
 					asyncBytesTotal = value;
 				}
@@ -408,12 +408,12 @@ namespace Brettle.Web.NeatUpload
 		private long contentLength;
 		public long ContentLength
 		{
-			get { lock(this) { return contentLength; } }
+			get { lock(Sync) { return contentLength; } }
 		}
 
 		internal void SetContentLength(long val)
 		{
-			lock(this)
+			lock(Sync)
 			{
 				contentLength = val;
 			}
@@ -422,10 +422,10 @@ namespace Brettle.Web.NeatUpload
 		private UploadStatus status = UploadStatus.NormalInProgress;
 		internal UploadStatus Status
 		{
-			get { lock(this) { return status; } }
+			get { lock(Sync) { return status; } }
 			set
 			{
-				lock(this)
+				lock(Sync)
 				{
 					status = value;
 					if (value != UploadStatus.NormalInProgress && value != UploadStatus.ChunkedInProgress)
@@ -444,7 +444,7 @@ namespace Brettle.Web.NeatUpload
 		{
 			get 
 			{
-				lock(this) 
+				lock(Sync) 
 				{
 					if (exception == null)
 					{
@@ -455,7 +455,7 @@ namespace Brettle.Web.NeatUpload
 			}
 			set
 			{
-				lock(this)
+				lock(Sync)
 				{
 					exception = value;
 					if (IsSerializable(exception))
@@ -505,7 +505,7 @@ namespace Brettle.Web.NeatUpload
 		{
 			get
 			{
-				lock(this) 
+				lock(Sync) 
 				{
 					if (BytesRead == 0 || BytesTotal < 0)
 					{
@@ -525,7 +525,7 @@ namespace Brettle.Web.NeatUpload
 		internal TimeSpan TimeElapsed
 		{
 			get {
-				lock(this) 
+				lock(Sync) 
 				{
 					if (StopTime == DateTime.MaxValue)
 						return DateTime.Now - StartTime;
@@ -538,8 +538,8 @@ namespace Brettle.Web.NeatUpload
 		private string currentFileName = "";
 		internal string CurrentFileName
 		{
-			get { lock(this) { return currentFileName; } }
-			set { lock(this) { currentFileName = value; } }
+			get { lock(Sync) { return currentFileName; } }
+			set { lock(Sync) { currentFileName = value; } }
 		}
 		
 		private long BytesReadAtLastRateUpdate;
@@ -576,5 +576,43 @@ namespace Brettle.Web.NeatUpload
 		internal Hashtable ProgressInfoByID = new Hashtable();
 		
 		internal bool IsAsyncRequest = false;
+		
+		private object Sync = new object();
+		
+		internal void SetProgressProps(ProgressPage p, string progressBarID)
+		{
+			lock (Sync)
+			{
+				ProgressInfo progress = null;
+				if (progressBarID != null)
+				{
+					progress = (ProgressInfo)ProgressInfoByID[progressBarID];
+				}
+				if (progress != null)
+				{
+					p.FractionComplete = 1.0 * progress.Value / progress.Maximum;
+					p.ProcessingHtml = progress.ToHtml();
+				}
+				else
+				{
+					p.FractionComplete = FractionComplete;
+				}
+				p.BytesRead = BytesRead;
+				p.BytesTotal = BytesTotal;
+				p.BytesPerSec = BytesPerSec;
+				if (this.Exception is UploadException)
+				{
+					p.Rejection = (UploadException)this.Exception;
+				}
+				else
+				{
+					p.Failure = this.Exception;
+				}
+				p.TimeRemaining = TimeRemaining;
+				p.TimeElapsed = TimeElapsed;
+				p.CurrentFileName = CurrentFileName;
+				p.Status = Status;
+			}
+		}
 	}
 }

@@ -41,18 +41,18 @@ namespace Brettle.Web.NeatUpload
 		{
 		}
 		
-		protected long BytesRead;
-		protected long BytesTotal;
-		protected double FractionComplete;
-		protected int BytesPerSec;
-		protected UploadException Rejection;
-		protected Exception Failure;
-		protected TimeSpan TimeRemaining;
-		protected TimeSpan TimeElapsed;
-		protected string CurrentFileName;
-		protected string ProcessingHtml;		
+		public long BytesRead;
+		public long BytesTotal;
+		public double FractionComplete;
+		public int BytesPerSec;
+		public UploadException Rejection;
+		public Exception Failure;
+		public TimeSpan TimeRemaining;
+		public TimeSpan TimeElapsed;
+		public string CurrentFileName;
+		public string ProcessingHtml;		
 		
-		protected UploadStatus Status = UploadStatus.Unknown;
+		public UploadStatus Status = UploadStatus.Unknown;
 		
 		protected bool CancelVisible;
 		protected bool StartRefreshVisible;
@@ -73,17 +73,14 @@ namespace Brettle.Web.NeatUpload
 		
 		protected string FormatCount(long count)
 		{
-			lock(this)
-			{
-				string format;
-				if (UnitSelector < 1000)
-					format = GetResourceString("ByteCountFormat");
-				else if (UnitSelector < 1000*1000)
-					format = GetResourceString("KBCountFormat");
-				else
-					format = GetResourceString("MBCountFormat");
-				return String.Format(format, count);
-			}
+			string format;
+			if (UnitSelector < 1000)
+				format = GetResourceString("ByteCountFormat");
+			else if (UnitSelector < 1000*1000)
+				format = GetResourceString("KBCountFormat");
+			else
+				format = GetResourceString("MBCountFormat");
+			return String.Format(format, count);
 		}
 		
 		private long UnitSelector
@@ -249,42 +246,12 @@ if (NeatUploadMainWindow.NeatUploadPB.prototype.Bars['" + ProgressBarID + @"'].E
 		
 		private void SetupBindableProps()
 		{
+			ProcessingHtml = GetResourceString("ProcessingMessage");
 			if (this.UploadContext != null)
 			{
-				lock (this.UploadContext)
-				{
-					ProgressInfo progress = null;
-					if (ProgressBarID != null)
-					{
-						progress = (ProgressInfo)this.UploadContext.ProgressInfoByID[ProgressBarID];
-					}
-					if (progress != null)
-					{
-						FractionComplete = 1.0 * progress.Value / progress.Maximum;
-						ProcessingHtml = progress.ToHtml();
-					}
-					else
-					{
-						FractionComplete = this.UploadContext.FractionComplete;
-						ProcessingHtml = GetResourceString("ProcessingMessage");
-					}
-					BytesRead = this.UploadContext.BytesRead;
-					BytesTotal = this.UploadContext.BytesTotal;
-					BytesPerSec = this.UploadContext.BytesPerSec;
-					if (this.UploadContext.Exception is UploadException)
-					{
-						Rejection = (UploadException)this.UploadContext.Exception;
-					}
-					else
-					{
-						Failure = this.UploadContext.Exception;
-					}
-					TimeRemaining = this.UploadContext.TimeRemaining;
-					TimeElapsed = this.UploadContext.TimeElapsed;
-					CurrentFileName = this.UploadContext.CurrentFileName;
-					Status = this.UploadContext.Status;
-				}
+				this.UploadContext.SetProgressProps(this, ProgressBarID);
 			}
+
 			CanScript = (Request.Params["canScript"] != null && Boolean.Parse(Request.Params["canScript"]));
 			CanCancel = (Request.Params["canCancel"] != null && Boolean.Parse(Request.Params["canCancel"]));
 			IsRefreshing = (Request.Params["refresh"] != "false" && Request.Params["refresher"] != null);
