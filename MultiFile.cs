@@ -376,7 +376,7 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
 		'" + Config.Current.PostBackIDQueryParam + @"',
 		{" + Config.Current.PostBackIDQueryParam + @" : '" + FormContext.Current.PostBackID + @"',
 		 NeatUpload_AsyncControlID : '" + this.ClientID + @"',
-		 ASPNET_SESSIONID : '" + (session != null ? session.SessionID : "") + @"',
+		 ASPNET_SESSIONID : '" + (session != null ? session.SessionID : "") + @"'
 		},
 		 " + (UseFlashIfAvailable ? "true" : "false") + @",
 		 '" + FileQueueControlID + @"',

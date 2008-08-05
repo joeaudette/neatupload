@@ -33,7 +33,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     The console is automatically scrolled as messages appear.
    ********************************** */
 
-
 NeatUploadConsole = {};
 NeatUploadConsole.debug_enabled = true;
 NeatUploadConsole.InitialMessage = "";
@@ -895,7 +894,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 				queue_complete_handler : QueueCompleted,
 				flash_ready_handler : FlashReady,
 				file_types : flashFilterExtensions,
-				file_types_description : flashFilterDescription,
+				file_types_description : flashFilterDescription
 			});
 	});
 	
