@@ -49,9 +49,10 @@ namespace Brettle.Web.NeatUpload
 			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
 		private string Page;
+		private string QueryString;
 		internal SessionAccessCallback Accessor;
 
-		internal static SessionAccessingWorkerRequest Create(HttpWorkerRequest worker, string page, SessionAccessCallback accessor)
+		internal static SessionAccessingWorkerRequest Create(HttpWorkerRequest worker, string page, string queryString, SessionAccessCallback accessor)
 		{
 			string sessionIDHeader = worker.GetUnknownRequestHeader("AspFilterSessionId");
 			string appPath = worker.GetAppPath();
@@ -74,14 +75,16 @@ namespace Brettle.Web.NeatUpload
 			}
 			page = appPath + page;
 			if (log.IsDebugEnabled) log.Debug("page = " + page);
-			return new SessionAccessingWorkerRequest(worker, page, accessor);
+			return new SessionAccessingWorkerRequest(worker, page, queryString, accessor);
 		}
 
 		protected SessionAccessingWorkerRequest (HttpWorkerRequest worker, 
-													string page, SessionAccessCallback accessor)
+		                                         string page, string queryString, 
+		                                         SessionAccessCallback accessor)
 													: base(worker)
 		{
 			Page = page;
+			QueryString = queryString;
 			Accessor = accessor;
 		}
 		
@@ -148,7 +151,7 @@ namespace Brettle.Web.NeatUpload
 
 		public override string GetQueryString ()
 		{
-			return null;
+			return QueryString;
 		}
 
 		public override byte[] GetQueryStringRawBytes ()
@@ -158,7 +161,7 @@ namespace Brettle.Web.NeatUpload
 
 		public override string GetRawUrl ()
 		{
-			return Page;
+			return Page + (QueryString != null ? ("?" + QueryString) : "");
 		}
 
 		public override string GetUriPath ()

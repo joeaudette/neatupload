@@ -263,12 +263,14 @@ class SWFUpload {
 
 	// Opens a file browser dialog.  Once files are selected the "onselect" event is triggered.
 	function SelectFiles():Void {
-		var allowed_file_types:String = "*.*";
-		var allowed_file_types_description:String = "All Files";
-		if (this.fileTypes.length > 0) allowed_file_types = this.fileTypes;
-		if (this.fileTypesDescription.length > 0)  allowed_file_types_description = this.fileTypesDescription;
-
-		this.fileBrowser.browse([{description: allowed_file_types_description, extension: allowed_file_types}]);
+		if (this.fileTypes.length > 0) {
+			var allowed_file_types:String = this.fileTypes;
+			var allowed_file_types_description:String = "All Files";
+			if (this.fileTypesDescription.length > 0)  allowed_file_types_description = this.fileTypesDescription;
+			this.fileBrowser.browse([{description: allowed_file_types_description, extension: allowed_file_types}]);
+		} else {
+			this.fileBrowser.browse();
+		}
 
 		this.Debug("UploadFile: Browsing files. " + allowed_file_types);
 	}

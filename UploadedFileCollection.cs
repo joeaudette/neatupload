@@ -128,7 +128,7 @@ namespace Brettle.Web.NeatUpload
 				// UploadStorageProvider.  Note that unlike when the UploadHttpModule is used,
 				// this temporary context is not shared between uploaded files.
 				ctx = new UploadContext();
-				ctx.SetContentLength(HttpContext.Current.Request.ContentLength);
+				ctx.SyncBytesTotal = HttpContext.Current.Request.ContentLength;
 				ctx.Status = UploadStatus.NormalInProgress;
 			}
 			UploadStorageConfig storageConfig = UploadStorage.CreateUploadStorageConfig();

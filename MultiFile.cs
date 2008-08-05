@@ -202,15 +202,45 @@ namespace Brettle.Web.NeatUpload
 		{
 			get
 			{
-				string val = Attributes["UseFlashIfAvailable"];
+				object val = ViewState["UseFlashIfAvailable"];
 				if (val == null)
 					return false;
 				else
-					return Convert.ToBoolean(val);
+					return (bool)val;
 			}
 			set
 			{
-				Attributes["UseFlashIfAvailable"] = value.ToString();
+				ViewState["UseFlashIfAvailable"] = value;
+			}
+		}
+
+		public string FlashFilterExtensions
+		{
+			get
+			{
+				string val = (string)ViewState["FlashFilterExtensions"];
+				if (val == null || val.Length == 0)
+					return "";
+				return val;
+			}
+			set
+			{
+				ViewState["FlashFilterExtensions"] = value;
+			}
+		}
+
+		public string FlashFilterDescription
+		{
+			get
+			{
+				string val = (string)ViewState["FlashFilterDescription"];
+				if (val == null || val.Length == 0)
+					return "";
+				return val;
+			}
+			set
+			{
+				ViewState["FlashFilterDescription"] = value;
 			}
 		}
 
@@ -330,8 +360,12 @@ namespace Brettle.Web.NeatUpload
 				// Generate a special name recognized by the UploadHttpModule
 				name = FormContext.Current.GenerateFileID(this.UniqueID);
 				storageConfigName = FormContext.Current.GenerateStorageConfigID(this.UniqueID);
+				System.Web.SessionState.HttpSessionState session = null;
+				if (HttpContext.Current != null)
+					session = HttpContext.Current.Session;
 
 #warning TODO: Do not use Flash on Linux Firefox because it is currently unstable (i.e. crashes FF).
+#warning TODO: Encrypt session ID.
 				this.Page.RegisterStartupScript("NeatUploadMultiFile-" + this.UniqueID, @"
 <script type='text/javascript' language='javascript'>
 <!--
@@ -341,9 +375,14 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
 		'" + AppPath + @"/NeatUpload/AsyncUpload.aspx',
 		'" + Config.Current.PostBackIDQueryParam + @"',
 		{" + Config.Current.PostBackIDQueryParam + @" : '" + FormContext.Current.PostBackID + @"',
-		 NeatUpload_AsyncControlID : '" + this.ClientID + @"'},
+		 NeatUpload_AsyncControlID : '" + this.ClientID + @"',
+		 ASPNET_SESSIONID : '" + (session != null ? session.SessionID : "") + @"',
+		},
 		 " + (UseFlashIfAvailable ? "true" : "false") + @",
-		 '" + FileQueueControlID + @"');
+		 '" + FileQueueControlID + @"',
+		 '" + FlashFilterExtensions + @"',
+		 '" + FlashFilterDescription + @"'
+);
 // -->
 </script>");
 			}

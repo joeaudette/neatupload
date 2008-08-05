@@ -120,7 +120,26 @@ namespace Brettle.Web.NeatUpload
 		
 		internal UploadedFileCollection Files = new UploadedFileCollection();
 		
-		internal long[] FileSizes = null;
+		private long[] fileSizes = null;
+		internal long[] FileSizes
+		{
+			get { lock(Sync) { return fileSizes; } }
+			set 
+			{
+				lock(Sync) 
+				{ 
+					fileSizes = value;
+					if (fileSizes == null) return;
+					AsyncBytesTotal = 0;
+					foreach (long f in fileSizes)
+					{
+						if (f > 0)
+							AsyncBytesTotal += f;
+					}
+				}
+			}
+		}
+				
 		internal int NumAsyncFilesReceived = 0;
 
 		private string postBackID;
@@ -142,7 +161,6 @@ namespace Brettle.Web.NeatUpload
 				if (HttpContext.Current.Session != null)
 				{
 					if (log.IsDebugEnabled) log.Debug("Storing UploadContext in Session[" + UploadContext.NamePrefix + PostBackID + "] for SessionID=" + HttpContext.Current.Session.SessionID);
-					if (log.IsDebugEnabled) log.Debug("Storing UploadContext in Session[" + UploadContext.NamePrefix + PostBackID + "]");
 					HttpContext.Current.Session[UploadContext.NamePrefix + PostBackID] = this;
 				}
 				else
@@ -199,7 +217,6 @@ namespace Brettle.Web.NeatUpload
 					ctxInSession.AsyncBytesRead = AsyncBytesRead;
 					ctxInSession.SyncBytesTotal = SyncBytesTotal;
 					ctxInSession.AsyncBytesTotal = AsyncBytesTotal;
-					ctxInSession.SetContentLength(ContentLength);
 					ctxInSession.Status = Status;
 					ctxInSession.Exception = Exception;
 					ctxInSession.StartTime = StartTime;
@@ -226,7 +243,7 @@ namespace Brettle.Web.NeatUpload
 			{
 				throw new NullReferenceException("PostBackID");
 			}
-			if (session == null || session.Mode == System.Web.SessionState.SessionStateMode.Off)
+  			if (session == null || session.Mode == System.Web.SessionState.SessionStateMode.Off)
 			{
 				return;
 			}
@@ -242,7 +259,6 @@ namespace Brettle.Web.NeatUpload
 				AsyncBytesRead = ctxInSession.AsyncBytesRead;
 				SyncBytesTotal = ctxInSession.SyncBytesTotal;
 				AsyncBytesTotal = ctxInSession.AsyncBytesTotal;
-				SetContentLength(ctxInSession.ContentLength);
 				Status = ctxInSession.Status;
 				Exception = ctxInSession.Exception;
 				StartTime = ctxInSession.StartTime;
@@ -405,18 +421,9 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 
-		private long contentLength;
 		public long ContentLength
 		{
-			get { lock(Sync) { return contentLength; } }
-		}
-
-		internal void SetContentLength(long val)
-		{
-			lock(Sync)
-			{
-				contentLength = val;
-			}
+			get { lock(Sync) { return BytesTotal; } }
 		}
 		
 		private UploadStatus status = UploadStatus.NormalInProgress;

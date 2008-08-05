@@ -213,10 +213,23 @@ namespace Brettle.Web.NeatUpload
 		private void Application_BeginRequest(object sender, EventArgs e)
 		{
 			if (log.IsDebugEnabled) log.Debug("In Application_BeginRequest");
+			// Restore the Session ID
+			string qs = GetCurrentWorkerRequest().GetQueryString();
+			if (qs != null)
+			{
+				string sessionID = UploadHttpModule.GetAsyncSessionIDFromQueryString(qs);
+				if (sessionID != null && sessionID.Length > 0)
+				{
+					SetCookie("ASP.NET_SESSIONID", sessionID);
+					SetCookie("ASPSESSION", sessionID);
+				}
+			}
+			
 			if (!Config.Current.UseHttpModule)
 			{
 				return;
 			}
+
 			HttpWorkerRequest origWorker = GetCurrentWorkerRequest();
 			if (origWorker == null)
 			{
@@ -366,6 +379,20 @@ namespace Brettle.Web.NeatUpload
 				UploadHttpModule.AccessSession(new SessionAccessCallback(uploadContext.SyncWithSession));
             }
         }
+
+		private static void SetCookie(string name, string val)
+		{
+			HttpCookieCollection cookies = HttpContext.Current.Request.Cookies;
+			HttpCookie cookie = cookies[name];
+			if (cookie == null)
+			{
+				cookie = new HttpCookie(name);
+				cookies.Add(cookie);
+			}
+			cookie.Value = val;
+			cookies.Set(cookie);
+		}
+		
         
 		private UploadContext CreateUploadContextFromQueryString()
 		{
@@ -379,7 +406,7 @@ namespace Brettle.Web.NeatUpload
 
 			UploadContext uploadContext;
 			uploadContext = new UploadContext();
-			uploadContext.SetContentLength(HttpContext.Current.Request.ContentLength);
+			uploadContext.SyncBytesTotal = HttpContext.Current.Request.ContentLength;
 			uploadContext.RegisterPostBack(postBackID);
 			UploadContext.Current = uploadContext;
 			return uploadContext;
@@ -407,6 +434,33 @@ namespace Brettle.Web.NeatUpload
 			if (!match.Success)
 				return null;
 			return HttpUtility.UrlDecode(match.Groups[2].Value);
+		}
+
+        internal static string GetAsyncSessionIDFromQueryString(string qs)
+        {
+#warning TODO: Use encrypted session ID, but only for async upload pages to minimize security hole
+            if (qs == null)
+                return null;
+			Match match = Regex.Match(qs, @"(^|\?|&)ASPNET_SESSIONID=([^&]+)");
+			if (!match.Success)
+				return null;
+			return HttpUtility.UrlDecode(match.Groups[2].Value);
+		}
+
+        internal static long[] GetFileSizesFromQueryString(string qs)
+        {
+            if (qs == null)
+                return null;
+			Match match = Regex.Match(qs, @"(^|\?|&)FileSizes=([^&]+)");
+			if (!match.Success)
+				return null;
+			string[] fileSizeStrings = HttpUtility.UrlDecode(match.Groups[2].Value).Split(' ');
+			long[] fileSizes = new long[fileSizeStrings.Length];
+			for (int i = 0; i < fileSizes.Length; i++)
+			{
+				fileSizes[i] = Int64.Parse(fileSizeStrings[i]);
+			}
+			return fileSizes;
 		}
 
 		private void Application_AcquireRequestState(object sender, EventArgs e)
@@ -539,8 +593,18 @@ namespace Brettle.Web.NeatUpload
             }
 			
 			string page = "NeatUpload/AccessSession.aspx";
+			string qs = GetCurrentWorkerRequest().GetQueryString();
+			if (qs != null)
+			{
+				string sessionID = UploadHttpModule.GetAsyncSessionIDFromQueryString(qs);
+				if (sessionID != null && sessionID.Length > 0)
+				{
+					qs = "ASPNET_SESSIONID=" + sessionID;
+				}
+			}
+
 			SessionAccessingWorkerRequest req 
-				= SessionAccessingWorkerRequest.Create(GetOrigWorkerRequest(), page, accessor);
+				= SessionAccessingWorkerRequest.Create(GetOrigWorkerRequest(), page, qs, accessor);
 			try
 			{
 				req.ProcessRequest(null);

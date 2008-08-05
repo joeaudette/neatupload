@@ -207,8 +207,9 @@ function NeatUploadForm(formElem, postBackID)
 		f.FormElem.submit = function () {
 			f.debugMessage("In submit()");
 			f.FormElem.NeatUpload_OnSubmitting();
-			f.FormElem.NeatUpload_OrigSubmit();
-			f.FormElem.NeatUpload_OnSubmit();
+			var status = f.FormElem.NeatUpload_OnSubmit();
+			if (status)
+				f.FormElem.NeatUpload_OrigSubmit();
 			f.debugMessage("Leaving submit()");
 		};
 		this.OnUnloadHandlers.push(function() 
@@ -286,7 +287,9 @@ function NeatUploadForm(formElem, postBackID)
 				if (typeof(Page_IsValid) != "undefined" && !Page_IsValid) 
 				    return false;
 				f.debugMessage("Calling NeatUpload_OnSubmit");
-				return f.FormElem.NeatUpload_OnSubmit();
+				var retVal = f.FormElem.NeatUpload_OnSubmit(ev);
+				f.debugMessage("returned " + retVal);
+				return retVal;
 			});
 		}, 1);
 	});
@@ -311,25 +314,9 @@ function NeatUploadForm(formElem, postBackID)
 			NeatUpload_LastEventType = ev.type;
 			NeatUpload_LastEventSource = src;
 			NeatUploadForm.prototype.EventData = new Object();
-			if (ev.type != 'click') // Note: pressing enter or space on a button causes a click event.
-			{
-				return true;
-			}
-			var tagName = src.tagName;
-			if (!tagName)
-			{
-				return true;
-			}
-			tagName = tagName.toLowerCase();
-			if (tagName == 'input' || tagName == 'button')
-			{
-				var inputType = src.getAttribute('type');
-				if (inputType) inputType = inputType.toLowerCase();
-				if (!inputType || inputType == 'submit' || inputType == 'image')
-				{
-					f.FormElem.NeatUpload_OnSubmitting();
-				}
-			}
+			if (f.GetSubmittingElem())
+				f.FormElem.NeatUpload_OnSubmitting();
+			
 			return true;
 		}, true);
 	}
@@ -372,6 +359,32 @@ NeatUploadForm.prototype.debugMessage = NeatUploadConsole.debugMessage;
 NeatUpload_LastEventSource = null;
 NeatUpload_LastEventType = null;
 NeatUploadForm.prototype.EventData = new Object();
+
+NeatUploadForm.prototype.GetSubmittingElem = function()
+{
+	var src = NeatUpload_LastEventSource;
+	var evType = NeatUpload_LastEventType;
+	if (evType != 'click') // Note: pressing enter or space on a button causes a click event.
+	{
+		return null;
+	}
+	var tagName = src.tagName;
+	if (!tagName)
+	{
+		return null;
+	}
+	tagName = tagName.toLowerCase();
+	if (tagName == 'input' || tagName == 'button')
+	{
+		var inputType = src.getAttribute('type');
+		if (inputType) inputType = inputType.toLowerCase();
+		if (!inputType || inputType == 'submit' || inputType == 'image')
+		{
+			return src;
+		}
+	}
+	return null;
+}
 
 NeatUploadForm.prototype.ChangePostBackIDInUrl = function(url, queryParam)
 {
@@ -504,7 +517,9 @@ NeatUploadForm.prototype.OnSubmitting = function()
 	return true;
 };
 
-NeatUploadForm.prototype.OnSubmit = function()
+NeatUploadForm.FINISH_HANDLERS_BUT_DONT_SUBMIT = "finish handlers but don't submit";
+
+NeatUploadForm.prototype.OnSubmit = function(ev)
 {
 	// To avoid having OnSubmit() run twice for the same click
 	// (once from our form.submit() and again from our onsubmit handler),
@@ -516,14 +531,18 @@ NeatUploadForm.prototype.OnSubmit = function()
 	formElem.NeatUpload_OnSubmitCalled = true;
 	window.setTimeout(function () { formElem.NeatUpload_OnSubmitCalled = false; }, 1);
 
+	var retVal = true;
 	for (var i=0; i < this.NeatUpload_OnSubmitHandlers.length; i++)
 	{
-		if (!this.NeatUpload_OnSubmitHandlers[i].call(this))
-		{
+		var status = this.NeatUpload_OnSubmitHandlers[i].call(this, ev);
+		if (status === true)
+			continue;
+		if (status === false)
 			return false;
-		}
+		else if (status === NeatUploadForm.FINISH_HANDLERS_BUT_DONT_SUBMIT)
+			retVal = false;
 	}
-	return true;
+	return retVal;
 };
 
 NeatUploadForm.prototype.OnUnload = function()
@@ -785,16 +804,19 @@ NeatUploadInputFile.prototype.Controls = new Object();
 /* ******************************************************************************************* */
 
 function NeatUploadMultiFileCreate(clientID, postBackID, appPath, uploadScript, postBackIDQueryParam, uploadParams,
-									useFlashIfAvailable, fileQueueControlID)
+									useFlashIfAvailable, fileQueueControlID, 
+									flashFilterExtensions, flashFilterDescription)
 {
 	NeatUploadMultiFile.prototype.Controls[clientID] 
 		= new NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBackIDQueryParam, uploadParams,
-									useFlashIfAvailable, fileQueueControlID);
+									useFlashIfAvailable, fileQueueControlID, 
+									flashFilterExtensions, flashFilterDescription);
 	return NeatUploadMultiFile.prototype.Controls[clientID];
 }
 
 function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBackIDQueryParam, uploadParams,
-							useFlashIfAvailable, fileQueueControlID)
+							useFlashIfAvailable, fileQueueControlID, 
+							flashFilterExtensions, flashFilterDescription)
 {
 	var numf = this;
 	this.ClientID = clientID;
@@ -859,12 +881,6 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	if (!useFlashIfAvailable)
 		return;
 	
-	// Only use SWFUpload in non-Mozilla browsers because bugs in the Firefox Flash 9 plugin cause it to
-	// crash the browser on Linux and send IE cookies on Windows.  
-	// TODO: Workaround cookies issue.
-	if (navigator.plugins && navigator.mimeTypes && navigator.mimeTypes.length) 
-		return;
-
 	nuf.AddHandler(window, "load", function ()	{
 		numf.Swfu = new SWFUpload({
 				debug : numf.debug_enabled,
@@ -876,15 +892,34 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 				file_queued_handler : FileQueued,
 				file_cancelled_handler : FileCancelled,
 				queue_stopped_handler : QueueCancelled,
-				flash_ready_handler : function () { numf.IsFlashLoaded = true; }
-		});
+				queue_complete_handler : QueueCompleted,
+				flash_ready_handler : FlashReady,
+				file_types : flashFilterExtensions,
+				file_types_description : flashFilterDescription,
+			});
 	});
 	
 	// Hookup the upload trigger.
-	nuf.AddSubmitHandler(function () {
-	    if (numf.IsFlashLoaded && numf.Swfu)
+	nuf.AddSubmitHandler(function (ev) {
+	    if (numf.IsFlashLoaded && numf.Swfu && numf.FilesToUpload.length > 0)
 	    {
+	    	numf.UploadParams["FileSizes"] = nuf.GetFileSizes().join(" ");
+			numf.Swfu.setUploadParams(numf.UploadParams);
+			numf.Swfu.updateUploadStrings();
 		    numf.Swfu.startUpload();
+		    numf.SubmittingElem = null;
+	    	// Don't submit the form yet.  We do that after SWFUpload finishes uploading.
+		    ev = ev || window.event;
+		    if (ev)
+		    {
+		    	ev.returnValue = false;
+		    	if (ev.preventDefault)
+				    ev.preventDefault();
+				// Remember the button that was clicked to submit the form so we can fake it
+				// when we submit the form with the original submit().
+				numf.SubmittingElem = nuf.GetSubmittingElem();
+			}
+			return NeatUploadForm.FINISH_HANDLERS_BUT_DONT_SUBMIT;
 		}
 		return true;
 	});
@@ -933,7 +968,42 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
         }
 	};
 	
-	/* PRIVATE FUNCTIONS */
+	/* PRIVATE FUNCTIONS */	
+	
+	function FlashReady()
+	{ 
+		numf.IsFlashLoaded = true;
+		// Change the <input type='file'> to an innocuous <input type='button'> so that
+		// clicking on it doesn't bring up an extra file selection dialog.
+		var inputFileElem = document.getElementById(numf.ClientID);
+		inputFileElem.type = 'button';
+		inputFileElem.value = 'Pick Files...';
+	}
+	
+	function QueueCompleted()
+	{
+		numf.debugMessage("QueueCompleted(): calling NeatUpload_OrigSubmit().");
+		// If the form was submitted via a submit button, we need to fake that it was
+		// pressed when submitting the form.  We do this be creating a hidden form
+		// field with the same name and value.
+		if (numf.SubmittingElem)
+		{
+			var submitHiddenField = document.createElement("input");
+			submitHiddenField.type = "hidden"
+			submitHiddenField.name = numf.SubmittingElem.name;
+			var val = numf.SubmittingElem.value;
+			if (typeof(val) == "undefined" || val == null || val == "")
+				val = submitHiddenField.name;
+			submitHiddenField.value = val;
+			numf.SubmittingElem.parentNode.insertBefore(submitHiddenField, numf.SubmittingElem);
+			// Remove the field after giving tiem for the original submit() to be called so it
+			// doesn't stick around if the user stops the upload.
+			window.setTimeout(function() {
+				numf.SubmittingElem.parentNode.removeChild(submitHiddenField);
+			}, 1);
+		}
+		nuf.FormElem.NeatUpload_OrigSubmit();
+	}
 	
 	function FileQueued(file) {
 		numf.FilesToUpload.push(file);
