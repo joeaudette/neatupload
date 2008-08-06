@@ -913,7 +913,6 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 				begin_upload_on_queue : false,
 				file_queued_handler : FileQueued,
 				file_cancelled_handler : FileCancelled,
-				queue_stopped_handler : QueueCancelled,
 				queue_complete_handler : QueueCompleted,
 				flash_ready_handler : FlashReady,
 				file_types : flashFilterExtensions,
@@ -947,8 +946,8 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	});
 	
 	// Hookup the non-upload handler.
-	nuf.AddNonuploadHandler(CancelQueue);
-	nuf.AddCancelUploadHandler(CancelQueue);
+	nuf.AddNonuploadHandler(ClearQueue);
+	nuf.AddCancelUploadHandler(CancelUpload);
 	
 	// Add the GetFileSizes callback.
 	nuf.AddGetFileSizesCallback(function () {
@@ -988,13 +987,21 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	
 	/* PRIVATE FUNCTIONS */	
 	
-	function CancelQueue() 
+	function ClearQueue() 
 	{
 	    for (var i = 0; i < numf.FilesToUpload.length; i++)
 	    {
 	        numf.FilesToUpload[i].Delete();
 	    }
-        QueueCancelled();
+        QueueCleared();
+	}
+	
+	function CancelUpload()
+	{
+	    if (numf.IsFlashLoaded && numf.Swfu)
+	    {
+			numf.Swfu.stopUpload();
+		}
 	}
 
 	function FlashReady()
@@ -1048,7 +1055,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 		numf.OnFileQueued(file);
 	}
 
-	function QueueCancelled() {
+	function QueueCleared() {
 		numf.FilesToUpload = [];
 		var fqc = numf.GetFileQueueControl();
 		while (fqc.hasChildNodes())

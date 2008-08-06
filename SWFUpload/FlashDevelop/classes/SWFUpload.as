@@ -27,7 +27,9 @@ class SWFUpload {
 
 	var file_queue:Array = new Array();		// holds a list of all items that are to be uploaded.
 	var current_file_item:FileItem = null;	// the item that is currently being uploaded.
+	var current_file_index:Number = 0;		// the index of the item that is currently being uploaded.
 	var single_upload:Boolean = false;		// Indicates whether a single file is being upload or the entire queue
+	var remove_uploads:Boolean = false;		// Indicates whether files should be removed from the queue upon upload
 	var completed_uploads:Number = 0;		// Tracks the uploads that have been completed (no errors, not cancelled, not too big)
 	var queued_uploads:Number = 0;			// Tracks the FileItems that are waiting to be uploaded.
 
@@ -272,7 +274,6 @@ class SWFUpload {
 			this.fileBrowser.browse();
 		}
 
-		this.Debug("UploadFile: Browsing files. " + allowed_file_types);
 	}
 
 
@@ -281,6 +282,7 @@ class SWFUpload {
 	function StartUpload(file_id:String):Void {
 		if (this.current_file_item == null) {
 			this.Debug("StartUpload(): Starting Upload. File ID: " + file_id);
+			this.current_file_index = 0;
 			this.StartFile(file_id);
 		} else {
 			this.Debug("StartUpload(): Upload run already in progress");
@@ -292,7 +294,8 @@ class SWFUpload {
 		if (this.current_file_item != null) {
 			// Cancel the upload and re-queue the FileItem
 			this.current_file_item.file_reference.cancel();
-			this.file_queue.unshift(this.current_file_item);
+			if (this.remove_uploads)
+				this.file_queue.unshift(this.current_file_item);
 			ExternalInterface.call(this.queueStopped_Callback, this.current_file_item.ToJavaScriptObject());
 
 			this.current_file_item = null;
@@ -402,9 +405,16 @@ class SWFUpload {
 		// Get the next file to upload
 		if (!file_id) {
 			this.single_upload = false;
-			while (this.file_queue.length > 0 && this.current_file_item == null) {
+			while ((this.remove_uploads && this.file_queue.length > 0 && this.current_file_item == null)
+				|| (!this.remove_uploads && this.current_file_index < this.file_queue.length && this.current_file_item == null)) {
 				// Check that File Reference is valid (if not make sure it's deleted and get the next one on the next loop)
-				this.current_file_item = FileItem(this.file_queue.shift());	// Cast back to a FileItem
+				if (this.remove_uploads)
+					this.current_file_item = FileItem(this.file_queue.shift());	// Cast back to a FileItem
+				else
+				{
+					this.Debug("StartFile(): typeof(file_queue[" + this.current_file_index + "]) = " + typeof(this.file_queue[this.current_file_index]));
+					this.current_file_item = this.file_queue[this.current_file_index++];
+				}
 				if (typeof(this.current_file_item) == "undefined") {
 					this.current_file_item = null;
 					continue;
@@ -473,10 +483,12 @@ class SWFUpload {
 	function UploadComplete() {
 		this.Debug("UploadComplete(): Upload complete. Removing File Reference and starting the next upload.");
 
-		// Remove the pointer, the space in the array still exists
-		delete this.current_file_item;
+		if (this.remove_uploads) {
+			// Remove the pointer, the space in the array still exists
+			delete this.current_file_item;
+			this.queued_uploads--;
+		}
 		this.current_file_item = null;
-		this.queued_uploads--;
 
 		// Start the next file upload
 		if (!this.single_upload) {
