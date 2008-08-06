@@ -638,6 +638,24 @@ NeatUploadForm.prototype.GetFor = function (elem, postBackID)
 	return formElem.NeatUpload_NUForm;
 };
 
+NeatUploadForm.prototype.OnCancelUploadHandlers = new Array();
+
+NeatUploadForm.prototype.AddCancelUploadHandler = function(handler)
+{
+	NeatUploadForm.prototype.OnCancelUploadHandlers.push(handler);
+};
+
+NeatUploadForm.prototype.CancelUpload = function() {
+	for (var i=0; i < NeatUploadForm.prototype.OnCancelUploadHandlers.length; i++)
+	{
+		NeatUploadForm.prototype.OnCancelUploadHandlers[i].call();
+	}
+	if (window.stop)
+		window.stop();
+	else if (window.document && window.document.execCommand)
+		window.document.execCommand('Stop');
+};
+
 function NeatUploadPB(id, postBackID, uploadProgressPath, popupWidth, popupHeight, triggerIDs, autoStartCondition)
 {
 	if (!document.getElementById)
@@ -765,6 +783,11 @@ NeatUploadPB.prototype.ClearFileInputs = function(elem)
 		}
 	}
 	return true;
+};
+
+
+NeatUploadPB.prototype.CancelUpload = function() {
+	NeatUploadForm.prototype.CancelUpload();
 };
 
 NeatUploadForm.prototype.EventData.NeatUploadPBAlertShown = false;
@@ -924,13 +947,9 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	});
 	
 	// Hookup the non-upload handler.
-	nuf.AddNonuploadHandler(function () {
-	    if (numf.IsFlashLoaded && numf.Swfu)
-	    {
-    		numf.Swfu.cancelQueue();
-    	}
-	});
-
+	nuf.AddNonuploadHandler(CancelQueue);
+	nuf.AddCancelUploadHandler(CancelQueue);
+	
 	// Add the GetFileSizes callback.
 	nuf.AddGetFileSizesCallback(function () {
 	    if (numf.IsFlashLoaded && numf.Swfu)
@@ -969,6 +988,15 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	
 	/* PRIVATE FUNCTIONS */	
 	
+	function CancelQueue() 
+	{
+	    for (var i = 0; i < numf.FilesToUpload.length; i++)
+	    {
+	        numf.FilesToUpload[i].Delete();
+	    }
+        QueueCancelled();
+	}
+
 	function FlashReady()
 	{ 
 		numf.IsFlashLoaded = true;
@@ -1020,8 +1048,11 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 		numf.OnFileQueued(file);
 	}
 
-	function QueueCancelled(file) {
+	function QueueCancelled() {
 		numf.FilesToUpload = [];
+		var fqc = numf.GetFileQueueControl();
+		while (fqc.hasChildNodes())
+			fqc.removeChild(fqc.firstChild);
 	}
 
 	function FileCancelled(file) {

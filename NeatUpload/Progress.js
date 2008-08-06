@@ -38,9 +38,13 @@ function NeatUploadCancel()
 {
 	NeatUploadCancelled = true;
 	var mainWindow = NeatUploadGetMainWindow();
-	if (mainWindow && mainWindow.stop)
+	if (!mainWindow)
+		return;
+	if (mainWindow.NeatUploadPB)
+		mainWindow.NeatUploadPB.prototype.CancelUpload();
+	else if (mainWindow.stop)
 		mainWindow.stop();
-	else if (mainWindow && mainWindow.document && mainWindow.document.execCommand)
+	else if (mainWindow.document && mainWindow.document.execCommand)
 		mainWindow.document.execCommand('Stop');
 }
 
