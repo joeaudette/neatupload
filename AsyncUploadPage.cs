@@ -52,7 +52,7 @@ namespace Brettle.Web.NeatUpload
 			// storage config and file sizes.
 			if (uploadContext == null && controlID != null && postBackID != null)
 			{
-				uploadContext = UploadContext.FindByID(postBackID);
+				uploadContext = UploadContext.FindByIDAllServers(postBackID);
 				if (uploadContext == null)
 				{
 					uploadContext = new UploadContext();

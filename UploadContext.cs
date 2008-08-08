@@ -85,6 +85,21 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 		
+		internal static UploadContext FindByIDAllServers(string postBackID)
+		{
+			UploadContext uploadContext = FindByID(postBackID);
+			if (uploadContext == null)
+			{
+				uploadContext = new UploadContext();
+				uploadContext.PostBackID = postBackID;
+				UploadHttpModule.AccessSession(new SessionAccessCallback(uploadContext.SyncFromSession));
+				// If we couldn't find one, return null.
+				if (uploadContext.Status == UploadStatus.Unknown)
+					return null;
+			}
+			return uploadContext;
+		}
+		
 		internal static UploadContext FindByID(string postBackID)
 		{
 			if (postBackID == null)

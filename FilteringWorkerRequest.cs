@@ -57,7 +57,7 @@ namespace Brettle.Web.NeatUpload
 			if (UploadHttpModule.GetAsyncControlIDFromQueryString(qs) != null)
 			{				
 				string postBackID = UploadHttpModule.GetPostBackIDFromQueryString(qs);
-				uploadContext = UploadContext.FindByID(postBackID);
+				uploadContext = UploadContext.FindByIDAllServers(postBackID);
 				if (uploadContext == null)
 				{
 					uploadContext = new UploadContext();
@@ -587,7 +587,7 @@ namespace Brettle.Web.NeatUpload
 					long syncBytesTotal = uploadContext.SyncBytesTotal;
 					UploadContext newContext = null;
 					if (!uploadContext.IsAsyncRequest 
-					    && null != (newContext = UploadContext.FindByID(uploadContext.PostBackID)))
+					    && null != (newContext = UploadContext.FindByIDAllServers(uploadContext.PostBackID)))
 					{
 						uploadContext = newContext;
 						uploadContext.SyncBytesRead = syncBytesRead;
