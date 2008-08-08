@@ -42,10 +42,15 @@
 			<a href="javascript:NeatUploadConsole.open('Console opened')">Show NeatUpload Console (for debugging)</a>
 			</p>
 			<p>
-			Now either select and upload files using the following MultiFile control:
+			Now either select and upload files using the following MultiFile controls:
 			</p>
 			<p>File(s) to upload: 
 			<Upload:MultiFile id="multiFile" runat="server" useFlashIfAvailable="true">
+				<input type="button" id="multiFileButton" value="Add File..." />
+			</Upload:MultiFile>
+			</p>
+			<p>Other file(s) to upload (just to demonstrate multiple MultiFileControls on the same page): 
+			<Upload:MultiFile id="multiFile2" runat="server" useFlashIfAvailable="true">
 				<input type="button" id="multiFileButton" value="Add File..." />
 			</Upload:MultiFile>
 			</p>

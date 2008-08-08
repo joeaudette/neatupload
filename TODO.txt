@@ -1,7 +1,9 @@
 MultiFile support with web farms/gardens.  Replace FindByID()s in FilteringWorkerRequest with SyncFromSession();
 Encrypt the session id passed by MultiFile.
+Remove MultiFile async files if no request are received for some time (e.g. 60 secs).
 Pass the auth cookie via a query param as well.
-Support multiple MultiFile controls.
+Validation for MultiFile controls.
+
 Support FileAdded handlers that takes the file object (with a Delete() function) as a parameter and returns 
 a handler to be called when the file is deleted.  Those handlers would be used to update the file list.
 Support Init handler which could be used to add the FileAdded handler as well as the element(s) for displaying

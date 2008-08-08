@@ -52,8 +52,12 @@ namespace Brettle.Web.NeatUpload
 			// storage config and file sizes.
 			if (uploadContext == null && controlID != null && postBackID != null)
 			{
-				uploadContext = new UploadContext();
-				uploadContext.RegisterPostBack(postBackID);
+				uploadContext = UploadContext.FindByID(postBackID);
+				if (uploadContext == null)
+				{
+					uploadContext = new UploadContext();
+					uploadContext.RegisterPostBack(postBackID); // Do this first so that progress display sees errors
+				}
 				Console.WriteLine("uploadContext={0}", uploadContext);
 				FieldNameTranslator translator = UploadStorage.CreateFieldNameTranslator();
 				Console.WriteLine("translator={0}", translator);
