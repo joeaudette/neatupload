@@ -43,6 +43,38 @@ namespace Brettle.Web.NeatUpload
 				
 		protected override void OnLoad(EventArgs e)
 		{
+			string controlID = Request.Params["NeatUpload_AsyncControlID"];
+			Console.WriteLine("controlID={0}", controlID);
+			string postBackID = Request.Params[Config.Current.PostBackIDQueryParam];
+			Console.WriteLine("postBackID={0}", postBackID);
+			UploadContext uploadContext = UploadContext.Current;
+			// If we don't have an uploadContext then this is the pre-upload POST that contains the
+			// storage config and file sizes.
+			if (uploadContext == null && controlID != null && postBackID != null)
+			{
+				uploadContext = new UploadContext();
+				uploadContext.RegisterPostBack(postBackID);
+				Console.WriteLine("uploadContext={0}", uploadContext);
+				FieldNameTranslator translator = UploadStorage.CreateFieldNameTranslator();
+				Console.WriteLine("translator={0}", translator);
+				string secureStorageConfigString 
+					= Request.Params[translator.FormatConfigFieldName(postBackID, controlID)];
+				Console.WriteLine("secureStorageConfigString={0}", secureStorageConfigString);
+				if (secureStorageConfigString != null)
+					uploadContext.SecureStorageConfigString = secureStorageConfigString;
+				string fileSizesString = Request.Params[UploadContext.FileSizesName];
+				Console.WriteLine("fileSizesString={0}", fileSizesString);
+				if (fileSizesString != null && fileSizesString.Length > 0)
+				{
+					string[] fileSizeStrings = fileSizesString.Split(' ');
+					long[] fileSizes = new long[fileSizeStrings.Length];
+					for (int i = 0; i < fileSizes.Length; i++)
+						fileSizes[i] = Int64.Parse(fileSizeStrings[i]);
+					uploadContext.FileSizes = fileSizes;
+				}
+				UploadHttpModule.AccessSession(new SessionAccessCallback(uploadContext.SyncWithSession));
+			}
+
 			base.OnLoad(e);
 		}		
 	}

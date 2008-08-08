@@ -109,6 +109,10 @@ namespace Brettle.Web.NeatUpload
 				inputFile2.StorageConfig["tempDirectory"] = "file2temp";
 			}
 */
+			if (!IsPostBack)
+			{
+				multiFile.StorageConfig["tempDirectory"] = "file1temp";
+			}
 		}
 
 		private void Button_Clicked(object sender, EventArgs e)

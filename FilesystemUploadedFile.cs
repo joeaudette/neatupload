@@ -53,6 +53,7 @@ namespace Brettle.Web.NeatUpload
 		                                UploadStorageConfig storageConfig)
 		{
 			DirectoryInfo tmpDirInfo = provider.GetTempDirectory(storageConfig);
+			Console.WriteLine("tmpDirInfo={0}", tmpDirInfo.FullName);
 			if (!tmpDirInfo.Exists)
 			{
 				tmpDirInfo.Create();

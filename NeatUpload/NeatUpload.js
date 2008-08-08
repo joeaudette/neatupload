@@ -320,18 +320,8 @@ function NeatUploadForm(formElem, postBackID)
 		}, true);
 	}
 
-	// Add a hidden field at the beginning of the form that will be used to pass the sizes of all files to be
-	// uploaded (-1 for each file where that can't be determined)
-	var fileSizesField = document.createElement("input");
-	fileSizesField.type = "hidden"
-	fileSizesField.name = "NeatUploadFileSizes";
-	fileSizesField.value = "";
-	f.FormElem.insertBefore(fileSizesField, f.FormElem.firstChild);
-	f.FileSizesField = fileSizesField;
-
 	this.debugMessage("Adding submitting handler");	
 	this.AddSubmittingHandler(function () {
-		f.FileSizesField.value = f.GetFileSizes().join(" ");
 		f.SubmitCount++;
 		var url = f.FormElem.getAttribute('action');
 		url = f.ChangePostBackIDInUrl(url, NeatUploadForm.prototype.PostBackIDQueryParam);
@@ -877,7 +867,8 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 		for (var n = inputFile.parentNode.firstChild; n; n = n.nextSibling)
 		{
 			if (n.tagName && n.tagName.toLowerCase() == "input" 
-				&& n.getAttribute && n.getAttribute('type') == "file" 
+				&& n.getAttribute 
+				&& (n.getAttribute('type') == "file" || n.getAttribute('type') == "hidden")
 				&& n.getAttribute('name') == oldName)
 			{
 				n.setAttribute('name', newName);
@@ -899,8 +890,8 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	// then use a variant of McGrady's technique to make the input file control look like those children.
 	StyleInputFile(numf.ClientID); 
 	
-	// Don't use SWFUpload if Flash support wasn't requested
-	if (!useFlashIfAvailable)
+	// Don't use SWFUpload if Flash support wasn't requested or XMLHttpRequest isn't supported
+	if (!useFlashIfAvailable || !GetXHR())
 		return;
 	
 	nuf.AddHandler(window, "load", function ()	{
@@ -924,10 +915,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	nuf.AddSubmitHandler(function (ev) {
 	    if (numf.IsFlashLoaded && numf.Swfu && numf.FilesToUpload.length > 0)
 	    {
-	    	numf.UploadParams["FileSizes"] = nuf.GetFileSizes().join(" ");
-			numf.Swfu.setUploadParams(numf.UploadParams);
-			numf.Swfu.updateUploadStrings();
-		    numf.Swfu.startUpload();
+	    	StartAsyncUploads();
 		    numf.SubmittingElem = null;
 	    	// Don't submit the form yet.  We do that after SWFUpload finishes uploading.
 		    ev = ev || window.event;
@@ -986,6 +974,59 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	};
 	
 	/* PRIVATE FUNCTIONS */	
+
+	function StartAsyncUploads()
+	{
+		numf.debugMessage("StartAsyncUploads(): Entered.");
+		var postParams = numf.Swfu.buildQueryString();
+		var fileSizes = nuf.GetFileSizes().join(" ");
+		postParams += "&NeatUploadFileSizes=" + encodeURIComponent(fileSizes);
+		var storageConfigFieldName = "NeatUploadConfig_" + numf.ClientID;
+		var storageConfigElem = nuf.FormElem.elements[storageConfigFieldName];
+		if (storageConfigElem)
+		{
+			postParams += "&" + encodeURIComponent(storageConfigFieldName) + "=" + encodeURIComponent(storageConfigElem.value);
+		}
+		var req = GetXHR();
+		req.open('POST', numf.UploadScript);
+		req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		req.setRequestHeader("Content-length", postParams.length);
+		req.onreadystatechange = function () {
+			numf.debugMessage("onreadstatechange(): Entered.");
+			if (req.readyState == 4)
+			{
+				numf.debugMessage("onreadstatechange(): req.status=" + req.status);
+				numf.debugMessage("onreadstatechange(): req.responseText=" + req.responseText);
+				if (req.status == 200)
+					StartSWFUploads();
+			}
+		};
+		numf.debugMessage("StartAsyncUploads(): calling req.send(" + postParams + ")");
+		req.send(postParams);
+		function StartSWFUploads()
+		{
+			numf.debugMessage("StartSWFUploads(): Entered.");
+		    numf.Swfu.startUpload();
+		}
+	}
+			
+			
+	function GetXHR()
+	{
+		var req = null;
+		try
+		{
+			req = new ActiveXObject('Microsoft.XMLHTTP');
+		}
+		catch (ex)
+		{
+			if (typeof(XMLHttpRequest) != 'undefined')
+			{
+				req = new XMLHttpRequest();
+			}
+		}
+		return req;
+	}
 	
 	function ClearQueue() 
 	{
@@ -1005,13 +1046,27 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	}
 
 	function FlashReady()
-	{ 
-		numf.IsFlashLoaded = true;
-		// Change the <input type='file'> to an innocuous <input type='button'> so that
-		// clicking on it doesn't bring up an extra file selection dialog.
-		var inputFileElem = document.getElementById(numf.ClientID);
-		inputFileElem.type = 'button';
-		inputFileElem.value = 'Pick Files...';
+	{
+		window.setTimeout(function () {
+			numf.IsFlashLoaded = true;
+			var inputFileElem = document.getElementById(numf.ClientID);
+
+			// Add a hidden field with the same name as the input file to tell
+			// the UploadHttpModule that the form submission is the final request
+			// associated with the control.
+			var hiddenField = document.createElement("input");
+			hiddenField.type = "hidden"
+			hiddenField.name = inputFileElem.name;
+			hiddenField.value = "not empty";
+			numf.debugMessage("FlashReady(): inputFileElem.name = " + inputFileElem.name);
+			inputFileElem.parentNode.insertBefore(hiddenField, inputFileElem);
+
+			// Change the <input type='file'> to an innocuous <input type='button'> so that
+			// clicking on it doesn't bring up an extra file selection dialog.
+			inputFileElem.type = 'button';
+			inputFileElem.value = 'Pick Files...';
+
+		}, 0);
 	}
 	
 	function QueueCompleted()

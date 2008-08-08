@@ -139,6 +139,13 @@ namespace Brettle.Web.NeatUpload
 				}
 			}
 		}
+		
+		internal string secureStorageConfigString = null;
+		internal string SecureStorageConfigString
+		{
+			get { lock(Sync) { return secureStorageConfigString; } }
+			set { lock(Sync) { secureStorageConfigString = value; } }
+		}
 				
 		internal int NumAsyncFilesReceived = 0;
 
@@ -225,6 +232,7 @@ namespace Brettle.Web.NeatUpload
 					ctxInSession.ProgressInfoByID = ProgressInfoByID;
 					ctxInSession.Files = Files;
 					ctxInSession.FileSizes = FileSizes;
+					ctxInSession.SecureStorageConfigString = SecureStorageConfigString;
 					ctxInSession.NumAsyncFilesReceived = NumAsyncFilesReceived;
 					ctxInSession.RegisterPostBack(PostBackID);
 				}
@@ -267,6 +275,7 @@ namespace Brettle.Web.NeatUpload
 				ProgressInfoByID = ctxInSession.ProgressInfoByID;
 				Files = ctxInSession.Files;
 				FileSizes = ctxInSession.FileSizes;
+				SecureStorageConfigString = ctxInSession.SecureStorageConfigString;
 				NumAsyncFilesReceived = ctxInSession.NumAsyncFilesReceived;
 			}
 		}
@@ -276,13 +285,29 @@ namespace Brettle.Web.NeatUpload
 			if (log.IsDebugEnabled) log.Debug("In CreateUploadedFile() controlUniqueID=" + controlUniqueID);
 			UploadedFile uploadedFile 
 				= UploadStorage.CreateUploadedFile(this, controlUniqueID, fileName, contentType, storageConfig);
-			UploadStorage.DisposeAtEndOfRequest(uploadedFile);
+			
 			Files.Add(controlUniqueID, uploadedFile);
+
+			if (!IsAsyncRequest)
+				RegisterFilesForDisposal(controlUniqueID);
 			
 			if (fileName != null && fileName != string.Empty)
 				CurrentFileName = fileName;
 			
 			return uploadedFile;
+		}
+		
+		internal void RegisterFilesForDisposal(string controlUniqueID)
+		{
+			foreach (UploadedFile f in Files)
+			{
+				Console.WriteLine("Checking {0} == {1}", f.ControlUniqueID, controlUniqueID);
+				if (f.ControlUniqueID == controlUniqueID)
+				{
+					Console.WriteLine("DisposeAtEndOfRequest({0})", f);
+					UploadStorage.DisposeAtEndOfRequest(f);
+				}
+			}
 		}
 		
 		internal void CreateAspNetUploadedFile(string name)
@@ -317,7 +342,7 @@ namespace Brettle.Web.NeatUpload
 			}
 			else
 			{
-				// This async upload is complete, so decrement NumAsyncFilesRemaining and sync to session.
+				// This async upload is complete, so increment NumAsyncFilesReceived and sync to session.
 				NumAsyncFilesReceived++;
 				UploadHttpModule.AccessSession(new SessionAccessCallback(this.SyncWithSession));
 			}
