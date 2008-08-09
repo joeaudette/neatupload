@@ -213,15 +213,28 @@ namespace Brettle.Web.NeatUpload
 		private void Application_BeginRequest(object sender, EventArgs e)
 		{
 			if (log.IsDebugEnabled) log.Debug("In Application_BeginRequest");
-			// Restore the Session ID
-			string qs = GetCurrentWorkerRequest().GetQueryString();
-			if (qs != null)
+
+			// Restore the cookies for pages in the /NeatUpload folder (particularly AsyncUpload.aspx
+			// and AccessSession.aspx).
+			HttpWorkerRequest wr = GetCurrentWorkerRequest();
+			string filePath = wr.GetFilePath().ToLower();
+			Console.WriteLine("filePath={0}", filePath);
+			if (filePath.StartsWith("/neatupload/"))
 			{
-				string sessionID = UploadHttpModule.GetAsyncSessionIDFromQueryString(qs);
-				if (sessionID != null && sessionID.Length > 0)
+				string qs = wr.GetQueryString();
+				if (qs != null)
 				{
-					SetCookie("ASP.NET_SESSIONID", sessionID);
-					SetCookie("ASPSESSION", sessionID);
+					HttpCookieCollection cookies = UploadHttpModule.GetCookiesFromQueryString(qs);
+					Console.WriteLine("cookies={0}", cookies);
+					if (cookies != null)
+					{
+						foreach (string k in cookies.AllKeys)
+						{
+							HttpCookie c = cookies[k];
+							Console.WriteLine("Calling SetCookie({0}, {1})", c.Name, c.Value);
+							SetCookie(c.Name, c.Value);
+						}
+					}
 				}
 			}
 			
@@ -436,15 +449,33 @@ namespace Brettle.Web.NeatUpload
 			return HttpUtility.UrlDecode(match.Groups[2].Value);
 		}
 
-        internal static string GetAsyncSessionIDFromQueryString(string qs)
-        {
-#warning TODO: Use encrypted session ID, but only for async upload pages to minimize security hole
+		internal static string GetArmoredCookiesStringFromQueryString(string qs)
+		{
             if (qs == null)
                 return null;
-			Match match = Regex.Match(qs, @"(^|\?|&)ASPNET_SESSIONID=([^&]+)");
+			Match match = Regex.Match(qs, @"(^|\?|&)NeatUpload_ArmoredCookies=([^&]+)");
 			if (!match.Success)
 				return null;
 			return HttpUtility.UrlDecode(match.Groups[2].Value);
+		}
+		
+        internal static HttpCookieCollection GetCookiesFromQueryString(string qs)
+        {
+#warning TODO: Use encrypted session ID, but only for async upload pages to minimize security hole
+			string armoredCookiesString = GetArmoredCookiesStringFromQueryString(qs);
+			Console.WriteLine("armoredCookiesString={0}", armoredCookiesString);
+			HttpCookieCollection cookies = new HttpCookieCollection();
+			if (armoredCookiesString != null && armoredCookiesString.Length > 0)
+			{
+				ArmoredNameValueCollection armoredCookies = new ArmoredNameValueCollection();
+				armoredCookies.Unprotect(armoredCookiesString);
+				foreach (string k in armoredCookies.AllKeys)
+				{
+					Console.WriteLine("armoredCookies[{0}]={1}", k, armoredCookies[k]);
+					cookies.Add(new HttpCookie(k, armoredCookies[k]));
+				}
+			}
+			return cookies;
 		}
 
         internal static long[] GetFileSizesFromQueryString(string qs)
@@ -596,10 +627,10 @@ namespace Brettle.Web.NeatUpload
 			string qs = GetCurrentWorkerRequest().GetQueryString();
 			if (qs != null)
 			{
-				string sessionID = UploadHttpModule.GetAsyncSessionIDFromQueryString(qs);
-				if (sessionID != null && sessionID.Length > 0)
+				string armoredCookiesString = UploadHttpModule.GetArmoredCookiesStringFromQueryString(qs);
+				if (armoredCookiesString != null && armoredCookiesString.Length > 0)
 				{
-					qs = "ASPNET_SESSIONID=" + sessionID;
+					qs = "NeatUpload_ArmoredCookies=" + HttpUtility.UrlEncode(armoredCookiesString);
 				}
 			}
 

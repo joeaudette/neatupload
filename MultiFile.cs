@@ -30,6 +30,7 @@ using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 using System.Security.Permissions;
 using System.Text.RegularExpressions;
+using System.Web.Security;
 
 namespace Brettle.Web.NeatUpload
 {	
@@ -360,12 +361,20 @@ namespace Brettle.Web.NeatUpload
 				// Generate a special name recognized by the UploadHttpModule
 				name = FormContext.Current.GenerateFileID(this.UniqueID);
 				storageConfigName = FormContext.Current.GenerateStorageConfigID(this.UniqueID);
-				System.Web.SessionState.HttpSessionState session = null;
+				ArmoredNameValueCollection armoredCookies = new ArmoredNameValueCollection();
 				if (HttpContext.Current != null)
-					session = HttpContext.Current.Session;
-
-#warning TODO: Do not use Flash on Linux Firefox because it is currently unstable (i.e. crashes FF).
-#warning TODO: Encrypt session ID.
+				{
+					HttpCookieCollection cookies = HttpContext.Current.Request.Cookies;
+					string[] cookieNames 
+						= new string[] {"ASP.NET_SESSIONID", "ASPSESSION", FormsAuthentication.FormsCookieName};
+					foreach (string cookieName in cookieNames)
+					{
+						HttpCookie cookie = cookies[cookieName];
+						if (cookie != null)
+							armoredCookies[cookieName] = cookie.Value;
+					}
+				}
+					
 				this.Page.RegisterStartupScript("NeatUploadMultiFile-" + this.UniqueID, @"
 <script type='text/javascript' language='javascript'>
 <!--
@@ -376,7 +385,7 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
 		'" + Config.Current.PostBackIDQueryParam + @"',
 		{" + Config.Current.PostBackIDQueryParam + @" : '" + FormContext.Current.PostBackID + @"',
 		 NeatUpload_AsyncControlID : '" + this.ClientID + @"',
-		 ASPNET_SESSIONID : '" + (session != null ? session.SessionID : "") + @"'
+		 NeatUpload_ArmoredCookies : '" + armoredCookies.Protect() + @"'
 		},
 		 " + (UseFlashIfAvailable ? "true" : "false") + @",
 		 '" + FileQueueControlID + @"',

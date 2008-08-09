@@ -1,6 +1,4 @@
-Encrypt the session id passed by MultiFile.
 Remove MultiFile async files if no request are received for some time (e.g. 60 secs).
-Pass the auth cookie via a query param as well.
 Validation for MultiFile controls.
 
 Support FileAdded handlers that takes the file object (with a Delete() function) as a parameter and returns 

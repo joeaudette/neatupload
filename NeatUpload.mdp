@@ -142,6 +142,7 @@
     <File name="tests/TriggerInGridViewAfterProgressBar.aspx" subtype="Code" buildaction="Nothing" />
     <File name="tests/StorageConfig.aspx" subtype="Code" buildaction="Nothing" />
     <File name="NeatUpload/Web.config" subtype="Code" buildaction="Nothing" />
+    <File name="ArmoredNameValueCollection.cs" subtype="Code" buildaction="Compile" />
   </Contents>
   <References>
     <ProjectReference type="Gac" localcopy="True" refto="System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
