@@ -48,6 +48,13 @@
 			<Upload:MultiFile id="multiFile" runat="server" useFlashIfAvailable="true">
 				<input type="button" id="multiFileButton" value="Add File..." />
 			</Upload:MultiFile>
+			<asp:RegularExpressionValidator id="RegularExpressionValidator2" 
+				ControlToValidate="multiFile"
+				ValidationExpression="([^.]+[.](jpg|gif|png); *)*$"
+				Display="Static"
+				ErrorMessage="Only jpg, gif, and png extensions allowed"
+				EnableClientScript="True" 
+				runat="server"/><br />
 			</p>
 			<p>Other file(s) to upload (just to demonstrate multiple MultiFileControls on the same page): 
 			<Upload:MultiFile id="multiFile2" runat="server" useFlashIfAvailable="true">

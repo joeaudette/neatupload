@@ -1,5 +1,6 @@
 Remove MultiFile async files if no request are received for some time (e.g. 60 secs).
-Validation for MultiFile controls.
+	This will need to wait until web client-service access to the session is available, because the timer
+	callback can't safely reference the worker request associated with the original request.
 
 Support FileAdded handlers that takes the file object (with a Delete() function) as a parameter and returns 
 a handler to be called when the file is deleted.  Those handlers would be used to update the file list.

@@ -623,7 +623,10 @@ namespace Brettle.Web.NeatUpload
 						storageConfig.Unprotect(secureStorageConfigString);
 						
 						// Write out a part for the config hidden field
+						Console.WriteLine("Calling WriteReplacementFormField({0}, {1})", configID, secureStorageConfigString);
 						WriteReplacementFormField(configID, secureStorageConfigString);
+						// Remove the stream from the table, so we don't write the replacement field again.
+						storageConfigStreamTable.Remove(configID);
 					}
 					
 					if (fileName != null)

@@ -260,6 +260,7 @@ namespace Brettle.Web.NeatUpload
 						if (secureStorageConfig != null)
 						{
 							_StorageConfig = UploadStorage.CreateUploadStorageConfig();
+							Console.WriteLine("Calling Unprotect({0})", secureStorageConfig);
 							_StorageConfig.Unprotect(secureStorageConfig);
 						}
 					}

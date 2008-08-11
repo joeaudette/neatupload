@@ -893,12 +893,14 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	this.FilesToUpload = [];
 	this.FileID = 0;
 	this.FileQueueControlID = fileQueueControlID;
+	
+	AddFileNamesElem();
 
 	// If no Flash, the following onchange handler will make it appear that multiple files can be selected from
 	// one file input by just repeated clicking Browse... and selecting a file.
 	// In reality, each time a file is selected, the file input is hidden and a new empty clone is created to
 	// take its place.
-	document.getElementById(numf.ClientID).onchange = function(ev) {
+	GetInputFileElem().onchange = function(ev) {
 	    if (numf.IsFlashLoaded && numf.Swfu)
 	    {
 		    return true;
@@ -913,9 +915,9 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	};	
 
 	// Use the latest postback ID when the form is submitted.
-	var nuf = NeatUploadForm.prototype.GetFor(document.getElementById(this.ClientID), postBackID);
+	var nuf = NeatUploadForm.prototype.GetFor(GetInputFileElem(), postBackID);
 	nuf.AddSubmittingHandler(function () {
-		var inputFile = document.getElementById(numf.ClientID);
+		var inputFile = GetInputFileElem();
 		var oldName = inputFile.getAttribute('name');
 		var newName = oldName.replace(/^[^-]+/, 'NeatUpload_' + nuf.GetPostBackID());
 		for (var n = inputFile.parentNode.firstChild; n; n = n.nextSibling)
@@ -938,11 +940,11 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 
 	// Insert a default file queue control immediately before the input file control
 	this.fqc = document.createElement('div');
-	document.getElementById(this.ClientID).parentNode.insertBefore(this.fqc, document.getElementById(this.ClientID));
+	GetInputFileElem().parentNode.insertBefore(this.fqc, GetInputFileElem());
 	
 	// If the browser supports opacity and the div after the input file control has children,
 	// then use a variant of McGrady's technique to make the input file control look like those children.
-	StyleInputFile(numf.ClientID); 
+	StyleInputFile(GetInputFileElem()); 
 	
 	// Don't use SWFUpload if Flash support wasn't requested or XMLHttpRequest isn't supported
 	if (!useFlashIfAvailable || !GetXHR())
@@ -999,7 +1001,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	});
 
 	// Make clicking 'Browse...' on the <input type='file'> call SWFUpload.browse().
-	document.getElementById(numf.ClientID).onclick = function(ev) {
+	GetInputFileElem().onclick = function(ev) {
 	    if (numf.IsFlashLoaded && numf.Swfu)
 	    {
 		    numf.Swfu.browse();
@@ -1018,6 +1020,41 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	};
 	
 	/* PRIVATE FUNCTIONS */	
+	
+	function AddFileNamesElem()
+	{
+		var inputFileElem = document.getElementById(numf.ClientID);
+		inputFileElem.setAttribute("id", numf.ClientID + "_NeatUploadInternalInputFile");
+		var fileNamesElem = document.createElement("input");
+		fileNamesElem.setAttribute("id", numf.ClientID);
+		fileNamesElem.type = "hidden";
+		fileNamesElem.name = "NeatUploadInternalFileNames_" + numf.ClientID;
+		fileNamesElem.value = "";
+		inputFileElem.parentNode.insertBefore(fileNamesElem, inputFileElem);
+	}
+	
+	function UpdateFileNamesElem()
+	{
+		var fileNames = "";
+		for (var i = 0; i < numf.FilesToUpload.length; i++)
+		{
+			fileNames = fileNames + numf.FilesToUpload[i].name + "; ";
+		}
+		numf.debugMessage("UpdateFileNamesElem(): fileNames = " + fileNames);
+		GetFileNamesElem().value = fileNames;
+	}
+
+	function GetInputFileElem()
+	{
+		return document.getElementById(numf.ClientID + "_NeatUploadInternalInputFile");
+	}
+
+	function GetFileNamesElem()
+	{
+		var fileNamesElem = document.getElementById(numf.ClientID);
+		numf.debugMessage("GetFileNamesElem(): returning " + fileNamesElem);
+		return fileNamesElem;
+	}
 
 	function StartAsyncUploads()
 	{
@@ -1093,7 +1130,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	{
 		window.setTimeout(function () {
 			numf.IsFlashLoaded = true;
-			var inputFileElem = document.getElementById(numf.ClientID);
+			var inputFileElem = GetInputFileElem();
 
 			// Add a hidden field with the same name as the input file to tell
 			// the UploadHttpModule that the form submission is the final request
@@ -1120,7 +1157,11 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	}
 	
 	function FileQueued(file) {
+		numf.debugMessage("FileQueued(): Entered");
 		numf.FilesToUpload.push(file);
+		numf.debugMessage("FileQueued(): Calling UpdateFileNamesElem()");
+		UpdateFileNamesElem();
+		numf.debugMessage("FileQueued(): UpdateFileNamesElem() returned");
 		file.Delete = function() {
 		    if (numf.IsFlashLoaded && numf.Swfu)
 		    {
@@ -1137,6 +1178,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 
 	function QueueCleared() {
 		numf.FilesToUpload = [];
+		UpdateFileNamesElem();
 		var fqc = numf.GetFileQueueControl();
 		while (fqc.hasChildNodes())
 			fqc.removeChild(fqc.firstChild);
@@ -1159,11 +1201,11 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 			return;
 		}
 		numf.FilesToUpload.splice(fileIndex, 1);
+		UpdateFileNamesElem();		
 	}
 	
-	function StyleInputFile(clientID)
+	function StyleInputFile(inputFile)
 	{
-		var inputFile = document.getElementById(clientID);
 		var replacementDiv = inputFile.nextSibling;
 		if (!replacementDiv || !replacementDiv.tagName || replacementDiv.tagName.toLowerCase() != "div" 
 			|| !replacementDiv.firstChild)
