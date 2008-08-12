@@ -843,6 +843,33 @@ NeatUploadPB.prototype.CancelUpload = function() {
 NeatUploadForm.prototype.EventData.NeatUploadPBAlertShown = false;
 
 /* ******************************************************************************************* */
+/* NeatUploadHiddenPostBackID - JS support for NeatUpload's HiddenPostBackID control
+/* ******************************************************************************************* */
+
+function NeatUploadHiddenPostBackIDCreate(clientID, postBackID)
+{
+	NeatUploadHiddenPostBackID.prototype.Controls[clientID] 
+		= new NeatUploadHiddenPostBackID(clientID, postBackID);
+	return NeatUploadHiddenPostBackID.prototype.Controls[clientID];
+}
+
+function NeatUploadHiddenPostBackID(clientID, postBackID)
+{
+	this.ClientID = clientID;
+	var nuhpi = this;
+	// Use the latest postback ID when the form is submitted.
+	var nuf = NeatUploadForm.prototype.GetFor(document.getElementById(this.ClientID), postBackID);
+	nuf.AddSubmittingHandler(function () {
+		var hpi = document.getElementById(nuhpi.ClientID);
+		hpi.setAttribute('value', nuf.GetPostBackID());
+	});
+}
+
+
+NeatUploadHiddenPostBackID.prototype.Controls = new Object();
+
+
+/* ******************************************************************************************* */
 /* NeatUploadInputFile - JS support for NeatUpload's InputFile control
 /* ******************************************************************************************* */
 
