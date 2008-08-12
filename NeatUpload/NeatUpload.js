@@ -324,8 +324,12 @@ function NeatUploadForm(formElem, postBackID)
 	this.AddSubmittingHandler(function () {
 		f.SubmitCount++;
 		var url = f.FormElem.getAttribute('action');
+		f.debugMessage("url=" + url);
+		f.debugMessage("PostBackIDQueryParam=" + NeatUploadForm.prototype.PostBackIDQueryParam);
 		url = f.ChangePostBackIDInUrl(url, NeatUploadForm.prototype.PostBackIDQueryParam);
 		f.FormElem.setAttribute('action', url);
+		f.debugMessage("url=" + url);
+		f.debugMessage("action=" + f.FormElem.getAttribute('action'));
 		
 		if (!NeatUpload_LastEventSource)
 		{
@@ -388,7 +392,7 @@ NeatUploadForm.prototype.ChangePostBackIDInUrl = function(url, queryParam)
 		{
 			return url;
 		}
-		postBackIDStart += qp.length;
+		postBackIDStart += 1+qp.length;
 		var postBackIDEnd = url.indexOf('&', postBackIDStart);
 		if (postBackIDEnd == -1)
 		{
@@ -699,6 +703,8 @@ NeatUploadForm.prototype.CancelUpload = function() {
 	else if (window.document && window.document.execCommand)
 		window.document.execCommand('Stop');
 };
+
+NeatUploadForm.prototype.PostBackIDQueryParam = "NeatUpload_PostBackID";
 
 function NeatUploadPB(id, postBackID, uploadProgressPath, popupWidth, popupHeight, triggerIDs, autoStartCondition)
 {

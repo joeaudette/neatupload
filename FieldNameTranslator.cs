@@ -61,16 +61,21 @@ namespace Brettle.Web.NeatUpload
 			{
 				return AsyncControlID;
 			}
-			// Otherwise, if a PostBackID was speified in the query string just use the field name as is.
+			
+			// If this is a the name of a file field that we created, return the associated control ID
+			if (name != null && name.StartsWith(UploadContext.NamePrefix))
+			{
+				int dashIndex = name.IndexOf('-');
+				return name.Substring(dashIndex + 1);
+			}
+				
+			// Otherwise, if a PostBackID was specified in the query string just use the field name as is.
 			if (PostBackID != null)
 			{
 				return name;
 			}
 			
-			if (name == null || !name.StartsWith(UploadContext.NamePrefix))
-				return null;
-			int dashIndex = name.IndexOf('-');
-			return name.Substring(dashIndex + 1);
+			return null;
 		}
 		
 		
