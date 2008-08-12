@@ -56,10 +56,8 @@ namespace Brettle.Web.NeatUpload
 	{
 
 		// Create a logger for use in this class
-		/*
 		private static readonly log4net.ILog log
 			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-		*/
 		
 		private bool IsDesignTime = (HttpContext.Current == null);
 
@@ -260,7 +258,7 @@ namespace Brettle.Web.NeatUpload
 						if (secureStorageConfig != null)
 						{
 							_StorageConfig = UploadStorage.CreateUploadStorageConfig();
-							Console.WriteLine("Calling Unprotect({0})", secureStorageConfig);
+							if (log.IsDebugEnabled) log.DebugFormat("Calling Unprotect({0})", secureStorageConfig);
 							_StorageConfig.Unprotect(secureStorageConfig);
 						}
 					}

@@ -316,10 +316,10 @@ namespace Brettle.Web.NeatUpload
 		{
 			foreach (UploadedFile f in Files)
 			{
-				Console.WriteLine("Checking {0} == {1}", f.ControlUniqueID, controlUniqueID);
+				if (log.IsDebugEnabled) log.DebugFormat("Checking {0} == {1}", f.ControlUniqueID, controlUniqueID);
 				if (f.ControlUniqueID == controlUniqueID)
 				{
-					Console.WriteLine("DisposeAtEndOfRequest({0})", f);
+					if (log.IsDebugEnabled) log.DebugFormat("DisposeAtEndOfRequest({0})", f);
 					UploadStorage.DisposeAtEndOfRequest(f);
 				}
 			}

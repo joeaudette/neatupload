@@ -562,8 +562,8 @@ namespace Brettle.Web.NeatUpload
 				}
 				if (log.IsDebugEnabled) log.Debug("name = " + name);
 				if (log.IsDebugEnabled) log.Debug("fileName = " + fileName);
-				Console.WriteLine("name = " + name);
-				Console.WriteLine("fileName = " + fileName);
+				if (log.IsDebugEnabled) log.DebugFormat("name = " + name);
+				if (log.IsDebugEnabled) log.DebugFormat("fileName = " + fileName);
 				string controlID = null;
 				if (name == Config.Current.PostBackIDQueryParam && postBackIDStream == null)
 				{
@@ -579,7 +579,7 @@ namespace Brettle.Web.NeatUpload
 				else if (name != null
 				         && null != (controlID = translator.FileFieldNameToControlID(name)))
 				{
-					Console.WriteLine("name != null && controlID != null");
+					if (log.IsDebugEnabled) log.DebugFormat("name != null && controlID != null");
 					uploadContext.PostBackID = translator.FileFieldNameToPostBackID(name);
 					// If this isn't an async request but there are some async files, get the existing upload state
 					// except for SyncBytesRead and SyncBytesTotal.
@@ -606,7 +606,7 @@ namespace Brettle.Web.NeatUpload
 					{
 						storageConfig = UploadStorage.CreateUploadStorageConfig();
 						storageConfig.Unprotect(uploadContext.SecureStorageConfigString);
-						Console.WriteLine("storageConfig[tempDirectory]={0}", storageConfig["tempDirectory"]);
+						if (log.IsDebugEnabled) log.DebugFormat("storageConfig[tempDirectory]={0}", storageConfig["tempDirectory"]);
 					}
 					string configID = translator.FileIDToConfigID(controlID);
 					MemoryStream storageConfigStream = storageConfigStreamTable[configID] as MemoryStream;
@@ -623,7 +623,7 @@ namespace Brettle.Web.NeatUpload
 						storageConfig.Unprotect(secureStorageConfigString);
 						
 						// Write out a part for the config hidden field
-						Console.WriteLine("Calling WriteReplacementFormField({0}, {1})", configID, secureStorageConfigString);
+						if (log.IsDebugEnabled) log.DebugFormat("Calling WriteReplacementFormField({0}, {1})", configID, secureStorageConfigString);
 						WriteReplacementFormField(configID, secureStorageConfigString);
 						// Remove the stream from the table, so we don't write the replacement field again.
 						storageConfigStreamTable.Remove(configID);
@@ -631,7 +631,7 @@ namespace Brettle.Web.NeatUpload
 					
 					if (fileName != null)
 					{
-						Console.WriteLine("filename != null");
+						if (log.IsDebugEnabled) log.DebugFormat("filename != null");
 						if (log.IsDebugEnabled) log.Debug("Calling UploadContext.Current.CreateUploadedFile(" + controlID + "...)");
 						UploadedFile uploadedFile = uploadContext.CreateUploadedFile(controlID, fileName, contentType, storageConfig);
 						outputStream = fileStream = uploadedFile.CreateStream();
@@ -652,13 +652,13 @@ namespace Brettle.Web.NeatUpload
 					}
 					else
 					{
-						Console.WriteLine("filename !== null");
+						if (log.IsDebugEnabled) log.DebugFormat("filename !== null");
 						// Since filename==null this must just be a hidden field with a name that
 						// looks like a file field.  It is just an indication that when this request
 						// ends, the associated uploaded files should be disposed.
 						if (!uploadContext.IsAsyncRequest)
 						{
-							Console.WriteLine("IsASyncRequest == false");
+							if (log.IsDebugEnabled) log.DebugFormat("IsASyncRequest == false");
 							uploadContext.RegisterFilesForDisposal(controlID);
 						}
 						outputStream = preloadedEntityBodyStream;

@@ -218,20 +218,20 @@ namespace Brettle.Web.NeatUpload
 			// and AccessSession.aspx).
 			HttpWorkerRequest wr = GetCurrentWorkerRequest();
 			string filePath = wr.GetFilePath().ToLower();
-			Console.WriteLine("filePath={0}", filePath);
+			if (log.IsDebugEnabled) log.DebugFormat("filePath={0}", filePath);
 			if (filePath.StartsWith("/neatupload/"))
 			{
 				string qs = wr.GetQueryString();
 				if (qs != null)
 				{
 					HttpCookieCollection cookies = UploadHttpModule.GetCookiesFromQueryString(qs);
-					Console.WriteLine("cookies={0}", cookies);
+					if (log.IsDebugEnabled) log.DebugFormat("cookies={0}", cookies);
 					if (cookies != null)
 					{
 						foreach (string k in cookies.AllKeys)
 						{
 							HttpCookie c = cookies[k];
-							Console.WriteLine("Calling SetCookie({0}, {1})", c.Name, c.Value);
+							if (log.IsDebugEnabled) log.DebugFormat("Calling SetCookie({0}, {1})", c.Name, c.Value);
 							SetCookie(c.Name, c.Value);
 						}
 					}
@@ -463,7 +463,7 @@ namespace Brettle.Web.NeatUpload
         {
 #warning TODO: Use encrypted session ID, but only for async upload pages to minimize security hole
 			string armoredCookiesString = GetArmoredCookiesStringFromQueryString(qs);
-			Console.WriteLine("armoredCookiesString={0}", armoredCookiesString);
+			if (log.IsDebugEnabled) log.DebugFormat("armoredCookiesString={0}", armoredCookiesString);
 			HttpCookieCollection cookies = new HttpCookieCollection();
 			if (armoredCookiesString != null && armoredCookiesString.Length > 0)
 			{
@@ -471,7 +471,7 @@ namespace Brettle.Web.NeatUpload
 				armoredCookies.Unprotect(armoredCookiesString);
 				foreach (string k in armoredCookies.AllKeys)
 				{
-					Console.WriteLine("armoredCookies[{0}]={1}", k, armoredCookies[k]);
+					if (log.IsDebugEnabled) log.DebugFormat("armoredCookies[{0}]={1}", k, armoredCookies[k]);
 					cookies.Add(new HttpCookie(k, armoredCookies[k]));
 				}
 			}
