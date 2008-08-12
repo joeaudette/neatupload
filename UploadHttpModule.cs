@@ -608,7 +608,7 @@ namespace Brettle.Web.NeatUpload
 				file.Dispose();
 		}
 		
-		public static void AccessSession(SessionAccessCallback accessor)
+		internal static void AccessSession(SessionAccessCallback accessor)
 		{
 			if (log.IsDebugEnabled) log.Debug("In AccessSession");
 			HttpContext savedContext = HttpContext.Current;

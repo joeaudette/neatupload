@@ -25,5 +25,5 @@ namespace Brettle.Web.NeatUpload
 {
 	/// <summary>
 	/// A delegate that is run in a subrequest to access the session.</summary>
-	public delegate void SessionAccessCallback(System.Web.SessionState.HttpSessionState session);
+	internal delegate void SessionAccessCallback(System.Web.SessionState.HttpSessionState session);
 }
