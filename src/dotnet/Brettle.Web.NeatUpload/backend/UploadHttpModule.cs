@@ -26,6 +26,7 @@ using System.Security.Permissions;
 using System.Collections.Specialized;
 using System.Collections;
 using System.Text.RegularExpressions;
+using Brettle.Web.Upload;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -47,11 +48,27 @@ namespace Brettle.Web.NeatUpload
 	/// </code>
 	/// </example>
 	/// </remarks>
-	public class UploadHttpModule : IHttpModule
+	public class UploadHttpModule : IHttpModule, IUploadModule
 	{
 		// Create a logger for use in this class
 		private static readonly log4net.ILog log 
 			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+		string IUploadModule.PostBackIDQueryParam { 
+			get { return Config.Current.PostBackIDQueryParam; } 
+		}
+
+		string IUploadModule.FileFieldNamePrefix { 
+			get { return UploadContext.NamePrefix; } 
+		}
+
+		string IUploadModule.ConfigFieldNamePrefix { 
+			get { return UploadContext.ConfigNamePrefix; } 
+		}
+
+		bool IUploadModule.IsEnabled { 
+			get { return Config.Current.UseHttpModule; } 
+		}
 
 		public static void AppendToLog(string param)
 		{

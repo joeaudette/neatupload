@@ -44,7 +44,6 @@
     <Compile Include="FilesystemUploadedFile.cs" />
     <Compile Include="FilesystemUploadStorageProvider.cs" />
     <Compile Include="FilteringWorkerRequest.cs" />
-    <Compile Include="FormContext.cs" />
     <Compile Include="InvalidStorageConfigException.cs" />
     <Compile Include="MoveToOptions.cs" />
     <Compile Include="MyLog4net.cs" />
@@ -66,6 +65,8 @@
     <Compile Include="UploadTooLargeException.cs" />
     <Compile Include="IUploadProgressState.cs" />
     <Compile Include="ProgressInfo.cs" />
+    <Compile Include="IUploadModule.cs" />
+    <Compile Include="UploadModule.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

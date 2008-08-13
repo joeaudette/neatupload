@@ -21,16 +21,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.IO;
 using System.Web;
+using Brettle.Web.Upload;
 
 namespace Brettle.Web.NeatUpload
 {
 	public class FormContext
 	{
 		// Create a logger for use in this class
-		private static readonly log4net.ILog log 
-			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+//		private static readonly log4net.ILog log 
+//			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-		private const string formContextKey = UploadContext.ContextItemKeyPrefix + "FormContext";
+		private const string formContextKey = "NeatUploadFormContext";
 		
 		internal static FormContext Current
 		{
@@ -46,7 +47,6 @@ namespace Brettle.Web.NeatUpload
 		}
 		
 		internal string PostBackID;
-		internal FieldNameTranslator Translator;
 		
 		internal FormContext()
 		{
@@ -62,18 +62,17 @@ namespace Brettle.Web.NeatUpload
 			}			
 			string guid = sb.ToString();
 			PostBackID = guid;
-			log.Debug("PostBackID=" + PostBackID);
-			Translator = UploadStorage.CreateFieldNameTranslator();
+//			log.Debug("PostBackID=" + PostBackID);
 		}
 		
 		internal string GenerateFileID(string controlUniqueID)
 		{
-			return Translator.FormatFileFieldName(PostBackID, controlUniqueID);
+			return UploadModule.FileFieldNamePrefix + PostBackID + "-" + controlUniqueID;
 		}
 		
 		internal string GenerateStorageConfigID(string controlUniqueID)
 		{
-			return Translator.FormatConfigFieldName(PostBackID, controlUniqueID);
+			return UploadModule.ConfigFieldNamePrefix + controlUniqueID;
 		}
 	}
 }

@@ -30,6 +30,7 @@ using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 using System.Security.Permissions;
 using System.Text.RegularExpressions;
+using Brettle.Web.Upload;
 
 namespace Brettle.Web.NeatUpload
 {	
@@ -108,7 +109,7 @@ namespace Brettle.Web.NeatUpload
 		
 		protected override void OnPreRender (EventArgs e)
 		{
-			if (!IsDesignTime && Config.Current.UseHttpModule)
+			if (!IsDesignTime && UploadModule.IsEnabled)
 			{
 				if (!Page.IsClientScriptBlockRegistered("NeatUploadJs"))
 				{
@@ -122,7 +123,7 @@ namespace Brettle.Web.NeatUpload
 		
 		protected override void Render(HtmlTextWriter writer)
 		{
-			if (!IsDesignTime && Config.Current.UseHttpModule)
+			if (!IsDesignTime && UploadModule.IsEnabled)
 			{
 
 				this.Page.RegisterStartupScript("NeatUploadHiddenPostBackID-" + this.UniqueID, @"
@@ -135,7 +136,7 @@ NeatUploadHiddenPostBackIDCreate('" + this.ClientID + @"','"
 			}
 			writer.AddAttribute(HtmlTextWriterAttribute.Id, ClientID);
 			writer.AddAttribute(HtmlTextWriterAttribute.Type, "hidden");
-			writer.AddAttribute(HtmlTextWriterAttribute.Name, Config.Current.PostBackIDQueryParam);
+			writer.AddAttribute(HtmlTextWriterAttribute.Name, UploadModule.PostBackIDQueryParam);
 			if (!IsDesignTime)
 			{
 				writer.AddAttribute(HtmlTextWriterAttribute.Value, FormContext.Current.PostBackID);

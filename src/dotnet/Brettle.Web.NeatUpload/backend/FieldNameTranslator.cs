@@ -101,15 +101,5 @@ namespace Brettle.Web.NeatUpload
 		{
 			return UploadContext.ConfigNamePrefix + fileID;
 		}
-		
-		internal virtual string FormatFileFieldName(string postBackID, string controlID)
-		{
-			return UploadContext.NamePrefix + postBackID + "-" + controlID;
-		}
-		
-		internal virtual string FormatConfigFieldName(string postBackID, string controlID)
-		{
-			return UploadContext.ConfigNamePrefix + controlID;
-		}
 	}
 }

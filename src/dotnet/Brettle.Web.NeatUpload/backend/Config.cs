@@ -30,13 +30,13 @@ using System.Security.Permissions;
 
 namespace Brettle.Web.NeatUpload
 {
-	public class Config
+	internal class Config
 	{
 		// Create a logger for use in this class
 		private static readonly log4net.ILog log 
 			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-		public static Config Current 
+		internal static Config Current 
 		{
 			get
 			{
@@ -278,7 +278,7 @@ namespace Brettle.Web.NeatUpload
 		internal long MaxRequestLength = 2097151 * 1024;
 		internal int MaxUploadRate = -1;
         private bool _UseHttpModule = UploadHttpModule.IsInited;
-        public bool UseHttpModule
+        internal bool UseHttpModule
         {
 //            set { _UseHttpModule = value; }
             get { return _UseHttpModule && CanGetWorkerRequest; }
