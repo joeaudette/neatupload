@@ -19,8 +19,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Web;
+using System.Collections.Specialized;
 
-namespace Brettle.Web.Upload
+namespace Brettle.Web.NeatUpload
 {
 	public class UploadModule
 	{		
@@ -40,6 +41,20 @@ namespace Brettle.Web.Upload
 			get { return (InstalledModule != null && InstalledModule.IsEnabled); }
 		}
 
+		public static NameValueCollection Unprotect(string armoredString)
+		{
+			return InstalledModule.Unprotect(armoredString);
+		}
+
+		public static string Protect(NameValueCollection nvc)
+		{
+			return InstalledModule.Protect(nvc);
+		}
+
+		public static IUploadedFileCollection Files {
+			get { return InstalledModule.Files; }
+		}
+		
 		private static bool _IsInstalled = true;
 		private static IUploadModule _InstalledModule;
 		private static IUploadModule InstalledModule {
@@ -61,6 +76,6 @@ namespace Brettle.Web.Upload
 				}
 				return _InstalledModule;
 			}
-		}			
+		}
 	}
 }

@@ -66,7 +66,7 @@ namespace Brettle.Web.NeatUpload
 				if (_file == null && UniqueID != null)
 				{
 					if (IsDesignTime) return null;
-					_file = UploadHttpModule.Files[this.UniqueID];
+					_file = UploadModule.Files[this.UniqueID];
 				}
 				return _file;
 			}
@@ -230,11 +230,12 @@ namespace Brettle.Web.NeatUpload
 					// Keep the storage config associated with the previous upload, if any
 					if (file != null && !IsDesignTime && HttpContext.Current != null)
 					{
-						string secureStorageConfig = HttpContext.Current.Request.Form[FormContext.Current.Translator.FileIDToConfigID(UniqueID)];
+						string secureStorageConfig = HttpContext.Current.Request.Form[FormContext.Current.GenerateStorageConfigID(UniqueID)];
 						if (secureStorageConfig != null)
 						{
+							NameValueCollection nvc = UploadModule.Unprotect(secureStorageConfig);
 							_StorageConfig = UploadStorage.CreateUploadStorageConfig();
-							_StorageConfig.Unprotect(secureStorageConfig);
+							_StorageConfig.Add(nvc);
 							// Replace any values set before this control had a fully qualified name.
 							if (_NewStorageConfig != null)
 							{
@@ -346,7 +347,7 @@ namespace Brettle.Web.NeatUpload
 				
 		protected override void OnPreRender (EventArgs e)
 		{
-			if (!IsDesignTime && Config.Current.UseHttpModule)
+			if (!IsDesignTime && UploadModule.IsEnabled)
 			{
 				if (!Page.IsClientScriptBlockRegistered("NeatUploadJs"))
 				{
@@ -363,7 +364,7 @@ namespace Brettle.Web.NeatUpload
 		{
 			string name;
 			string storageConfigName;
-			if (!IsDesignTime && Config.Current.UseHttpModule)
+			if (!IsDesignTime && UploadModule.IsEnabled)
 			{
 				// Generate a special name recognized by the UploadHttpModule
 				name = FormContext.Current.GenerateFileID(this.UniqueID);
@@ -380,8 +381,7 @@ NeatUploadInputFileCreate('" + this.ClientID + @"','"
 			else
 			{
 				name = this.UniqueID;
-				storageConfigName = UploadContext.ConfigNamePrefix + "-" + this.UniqueID;
-				
+				storageConfigName = FormContext.Current.GenerateStorageConfigID(this.UniqueID);
 			}
 			// Store the StorageConfig in a hidden form field with a related name
 			if (StorageConfig != null && StorageConfig.Count > 0)
@@ -389,7 +389,7 @@ NeatUploadInputFileCreate('" + this.ClientID + @"','"
 				writer.AddAttribute(HtmlTextWriterAttribute.Type, "hidden");
 				writer.AddAttribute(HtmlTextWriterAttribute.Name, storageConfigName);
 				
-				writer.AddAttribute(HtmlTextWriterAttribute.Value, StorageConfig.Protect());				
+				writer.AddAttribute(HtmlTextWriterAttribute.Value, UploadModule.Protect(StorageConfig));				
 				writer.RenderBeginTag(HtmlTextWriterTag.Input);
 				writer.RenderEndTag();
 			}
@@ -399,7 +399,7 @@ NeatUploadInputFileCreate('" + this.ClientID + @"','"
 			writer.RenderBeginTag(HtmlTextWriterTag.Input);
 			writer.RenderEndTag();
 
-			if (Config.Current.UseHttpModule)
+			if (UploadModule.IsEnabled)
 			{
 				// The constant strings below are broken apart so that you couldn't just search for the text and
 				// remove it.  To find this code, you probably had to understand enough about custom web controls

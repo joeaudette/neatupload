@@ -26,7 +26,6 @@ using System.Security.Permissions;
 using System.Collections.Specialized;
 using System.Collections;
 using System.Text.RegularExpressions;
-using Brettle.Web.Upload;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -70,6 +69,20 @@ namespace Brettle.Web.NeatUpload
 			get { return Config.Current.UseHttpModule; } 
 		}
 
+		NameValueCollection IUploadModule.Unprotect(string armoredString)
+		{
+			ArmoredNameValueCollection result = new ArmoredNameValueCollection();
+			result.Unprotect(armoredString);
+			return result;
+		}
+
+		string IUploadModule.Protect(NameValueCollection nvc)
+		{
+			ArmoredNameValueCollection anvc = new ArmoredNameValueCollection();
+			anvc.Add(nvc);
+			return anvc.Protect();
+		}
+
 		public static void AppendToLog(string param)
 		{
 			HttpContext context = HttpContext.Current;
@@ -84,8 +97,12 @@ namespace Brettle.Web.NeatUpload
 			}
 			context.Response.AppendToLog(param);
 		}
-		
-		public static UploadedFileCollection Files
+
+		IUploadedFileCollection IUploadModule.Files {
+			get { return UploadHttpModule.Files; }
+		}
+
+		internal static UploadedFileCollection Files
 		{
 			get 
 			{

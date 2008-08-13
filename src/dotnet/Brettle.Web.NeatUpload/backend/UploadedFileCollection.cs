@@ -29,7 +29,7 @@ using System.Runtime.Serialization;
 namespace Brettle.Web.NeatUpload
 {
     [Serializable]
-    public class UploadedFileCollection : NameObjectCollectionBase
+    public class UploadedFileCollection : NameObjectCollectionBase, IUploadedFileCollection
 	{
 		internal UploadedFileCollection() {}
 

@@ -50,5 +50,6 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="HiddenPostBackID.cs" />
     <Compile Include="FormContext.cs" />
+    <Compile Include="InputFile.cs" />
   </ItemGroup>
 </Project>

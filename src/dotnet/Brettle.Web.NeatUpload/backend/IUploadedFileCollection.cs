@@ -1,5 +1,6 @@
 /*
-NeatUpload - an HttpModule and User Control for uploading large files
+
+NeatUpload - an HttpModule and User Controls for uploading large files
 Copyright (C) 2008  Dean Brettle
 
 This library is free software; you can redistribute it and/or
@@ -18,18 +19,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 using System;
-using System.Collections.Specialized;
+using System.Collections;
 
 namespace Brettle.Web.NeatUpload
-{
-	public interface IUploadModule
+{		
+	public interface IUploadedFileCollection: IEnumerable
 	{
-		string PostBackIDQueryParam { get; }
-		string FileFieldNamePrefix { get; }
-		string ConfigFieldNamePrefix { get; }
-		bool IsEnabled { get; }
-		NameValueCollection Unprotect(string armoredString);
-		string Protect(NameValueCollection nvc);
-		IUploadedFileCollection Files { get; }
+		UploadedFile this[string key] {	get ; }				
 	}
 }

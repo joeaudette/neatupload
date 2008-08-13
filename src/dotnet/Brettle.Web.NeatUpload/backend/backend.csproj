@@ -67,6 +67,7 @@
     <Compile Include="ProgressInfo.cs" />
     <Compile Include="IUploadModule.cs" />
     <Compile Include="UploadModule.cs" />
+    <Compile Include="IUploadedFileCollection.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
