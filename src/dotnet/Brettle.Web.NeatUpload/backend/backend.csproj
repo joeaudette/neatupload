@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <ProjectGuid>{566F12E2-F371-4169-832B-E3C97DB58656}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AssemblyName>backend</AssemblyName>
+    <SchemaVersion>2.0</SchemaVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AccessSessionPage.cs" />
+    <Compile Include="ArmoredNameValueCollection.cs" />
+    <Compile Include="AspNetUploadedFile.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="ConfigSectionHandler.cs" />
+    <Compile Include="DecoratedWorkerRequest.cs" />
+    <Compile Include="FieldNameTranslator.cs" />
+    <Compile Include="FilesystemUploadedFile.cs" />
+    <Compile Include="FilesystemUploadStorageProvider.cs" />
+    <Compile Include="FilteringWorkerRequest.cs" />
+    <Compile Include="FormContext.cs" />
+    <Compile Include="InvalidStorageConfigException.cs" />
+    <Compile Include="MoveToOptions.cs" />
+    <Compile Include="MyLog4net.cs" />
+    <Compile Include="NonfilePortionTooLargeException.cs" />
+    <Compile Include="SessionAccessCallback.cs" />
+    <Compile Include="SessionAccessingWorkerRequest.cs" />
+    <Compile Include="SessionPreservingWorkerRequest.cs" />
+    <Compile Include="SizeLimitingWorkerRequest.cs" />
+    <Compile Include="UploadContext.cs" />
+    <Compile Include="UploadedFile.cs" />
+    <Compile Include="UploadedFileCollection.cs" />
+    <Compile Include="UploadException.cs" />
+    <Compile Include="UploadHttpModule.cs" />
+    <Compile Include="UploadStatus.cs" />
+    <Compile Include="UploadStorage.cs" />
+    <Compile Include="UploadStorageConfig.cs" />
+    <Compile Include="UploadStorageProvider.cs" />
+    <Compile Include="UploadStorageProviderCollection.cs" />
+    <Compile Include="UploadTooLargeException.cs" />
+    <Compile Include="IUploadProgressState.cs" />
+    <Compile Include="ProgressInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <GtkDesignInfo gtkVersion="2.10.3" />
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
+</Project>

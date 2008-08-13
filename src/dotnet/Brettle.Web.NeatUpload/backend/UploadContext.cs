@@ -626,7 +626,7 @@ namespace Brettle.Web.NeatUpload
 		
 		private object Sync = new object();
 		
-		internal void SetProgressProps(ProgressPage p, string progressBarID)
+		internal void SetProgressProps(IUploadProgressState p, string progressBarID)
 		{
 			lock (Sync)
 			{
