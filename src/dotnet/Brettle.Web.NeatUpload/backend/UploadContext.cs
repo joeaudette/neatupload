@@ -244,7 +244,7 @@ namespace Brettle.Web.NeatUpload
 					ctxInSession.StartTime = StartTime;
 					ctxInSession.StopTime = StopTime;
 					ctxInSession.CurrentFileName = CurrentFileName;
-					ctxInSession.ProgressInfoByID = ProgressInfoByID;
+					ctxInSession.ProcessingStateByID = ProcessingStateByID;
 					ctxInSession.Files = Files;
 					ctxInSession.FileSizes = FileSizes;
 					ctxInSession.SecureStorageConfigString = SecureStorageConfigString;
@@ -287,7 +287,7 @@ namespace Brettle.Web.NeatUpload
 				StartTime = ctxInSession.StartTime;
 				StopTime = ctxInSession.StopTime;
 				CurrentFileName = ctxInSession.CurrentFileName;
-				ProgressInfoByID = ctxInSession.ProgressInfoByID;
+				ProcessingStateByID = ctxInSession.ProcessingStateByID;
 				Files = ctxInSession.Files;
 				FileSizes = ctxInSession.FileSizes;
 				SecureStorageConfigString = ctxInSession.SecureStorageConfigString;
@@ -620,7 +620,7 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 		
-		internal Hashtable ProgressInfoByID = new Hashtable();
+		internal Hashtable ProcessingStateByID = new Hashtable();
 		
 		internal bool IsAsyncRequest = false;
 		
@@ -630,21 +630,14 @@ namespace Brettle.Web.NeatUpload
 		{
 			lock (Sync)
 			{
-				ProgressInfo progress = null;
+				object processingState = null;
 				if (progressBarID != null)
 				{
-					progress = (ProgressInfo)ProgressInfoByID[progressBarID];
+					p.ProcessingState = (object)ProcessingStateByID[progressBarID];
 				}
-				if (progress != null)
-				{
-					p.FractionComplete = 1.0 * progress.Value / progress.Maximum;
-					p.ProcessingHtml = progress.ToHtml();
-				}
-				else
-				{
-					p.FractionComplete = FractionComplete;
-				}
+				p.FractionComplete = FractionComplete;
 				p.BytesRead = BytesRead;
+				p.FileBytesRead = FileBytesRead;
 				p.BytesTotal = BytesTotal;
 				p.BytesPerSec = BytesPerSec;
 				if (this.Exception is UploadException)

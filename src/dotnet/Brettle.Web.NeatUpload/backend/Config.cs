@@ -87,40 +87,6 @@ namespace Brettle.Web.NeatUpload
 			this.ResourceManager = ResourceManagerSingleton.ResourceManager;
 		}
 
-		static class ResourceManagerSingleton
-		{
-			public static readonly ResourceManager ResourceManager;
-			
-			static ResourceManagerSingleton()
-			{
-				try
-				{
-					try
-					{
-						ResourceManager = new ResourceManager("Brettle.Web.NeatUpload.Strings",
-						                                      System.Reflection.Assembly.GetExecutingAssembly());
-						// Force an exception if the resources aren't there because...
-						ResourceManager.GetString("UploadTooLargeMessageFormat");
-					}
-					catch (MissingManifestResourceException)
-					{
-						// ...the namespace qualifier was not used until VS2005, and the assembly might have been built
-						// with VS2003.
-						ResourceManager = new ResourceManager("NeatUpload.Strings",
-						                                      System.Reflection.Assembly.GetExecutingAssembly());
-						ResourceManager.GetString("UploadTooLargeMessageFormat");
-					}
-				}
-				catch (System.Security.SecurityException)
-				{
-					// This happens when running with medium trust outside the GAC under .NET 2.0, because
-					// NeatUpload is compiled against .NET 1.1.  In that environment we almost never need the
-					// ResourceManager so we set it to null which will cause GetResourceString() to return a
-					// message indicating what the developer needs to do.
-					ResourceManager = null;
-				}
-			}
-		}
 
 		private static Config CreateFromAppSettings(System.Collections.Specialized.NameValueCollection appSettings)
 		{

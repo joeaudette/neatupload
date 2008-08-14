@@ -25,6 +25,7 @@ namespace Brettle.Web.NeatUpload
 	public interface IUploadProgressState
 	{
 		UploadStatus Status { get; set; }
+		long FileBytesRead { get; set; }
 		long BytesRead { get; set; }
 		long BytesTotal { get; set; }
 		double FractionComplete { get; set; }
@@ -34,6 +35,6 @@ namespace Brettle.Web.NeatUpload
 		TimeSpan TimeRemaining { get; set; }
 		TimeSpan TimeElapsed { get; set; }
 		string CurrentFileName { get; set; }
-		string ProcessingHtml { get; set; }	
+		object ProcessingState { get; set; }
 	}
 }

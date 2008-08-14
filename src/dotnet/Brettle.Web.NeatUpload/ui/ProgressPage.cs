@@ -25,7 +25,7 @@ using Brettle.Web.NeatUpload;
 
 namespace Brettle.Web.NeatUpload
 {
-	public class ProgressPage : Page
+	public class ProgressPage : Page, IUploadProgressState
 	{
 		// Create a logger for use in this class
 		private static readonly log4net.ILog log 
@@ -41,19 +41,79 @@ namespace Brettle.Web.NeatUpload
 		{
 		}
 		
-		public long BytesRead;
-		public long BytesTotal;
-		public double FractionComplete;
-		public int BytesPerSec;
-		public UploadException Rejection;
-		public Exception Failure;
-		public TimeSpan TimeRemaining;
-		public TimeSpan TimeElapsed;
-		public string CurrentFileName;
-		public string ProcessingHtml;		
-		
-		public UploadStatus Status = UploadStatus.Unknown;
-		
+		private UploadStatus _Status = UploadStatus.Unknown;
+		public UploadStatus Status {
+			get { return _Status; } 
+			set { _Status = value; } 
+		}
+
+		private long _BytesRead;
+		public long BytesRead {
+			get { return _BytesRead; }
+			set { _BytesRead = value; }
+		}
+
+		private long _FileBytesRead;
+		public long FileBytesRead {
+			get { return _FileBytesRead; }
+			set { _FileBytesRead = value; }
+		}
+
+		private long _BytesTotal;
+		public long BytesTotal {
+			get { return _BytesTotal; }
+			set { _BytesTotal = value; }
+		}
+
+		private double _FractionComplete;
+		public double FractionComplete {
+			get { return _FractionComplete; }
+			set { _FractionComplete = value; }
+		}
+
+		private int _BytesPerSec;
+		public int BytesPerSec {
+			get { return _BytesPerSec; }
+			set { _BytesPerSec = value; }
+		}
+
+		private UploadException _Rejection;
+		public UploadException Rejection {
+			get { return _Rejection; }
+			set { _Rejection = value; }
+		}
+
+		private Exception _Failure;
+		public Exception Failure {
+			get { return _Failure; }
+			set { _Failure = value; }
+		}
+
+		private TimeSpan _TimeRemaining;
+		public TimeSpan TimeRemaining {
+			get { return _TimeRemaining; }
+			set { _TimeRemaining = value; }
+		}
+
+		private TimeSpan _TimeElapsed;
+		public TimeSpan TimeElapsed {
+			get { return _TimeElapsed; }
+			set { _TimeElapsed = value; }
+		}
+
+		private string _CurrentFileName;
+		public string CurrentFileName {
+			get { return _CurrentFileName; }
+			set { _CurrentFileName = value; }
+		}
+
+		private object _ProcessingState;
+		public object ProcessingState {
+			get { return _ProcessingState; }
+			set { _ProcessingState = value; }
+		}
+
+		protected string ProcessingHtml;
 		protected bool CancelVisible;
 		protected bool StartRefreshVisible;
 		protected bool StopRefreshVisible;
@@ -68,7 +128,7 @@ namespace Brettle.Web.NeatUpload
 
 		protected virtual string GetResourceString(string resourceName)
 		{
-			return Config.Current.GetResourceString(resourceName);
+			return ResourceManagerSingleton.GetResourceString(resourceName);
 		}
 		
 		protected string FormatCount(long count)
@@ -130,8 +190,8 @@ namespace Brettle.Web.NeatUpload
 			                          ts.TotalMinutes);
 		}
 		
-		private UploadContext UploadContext;					
 		private string ProgressBarID;					
+		private string PostBackID;					
 		private UploadStatus CurrentStatus = UploadStatus.Unknown;
 		private bool CanScript;
 		private bool CanCancel;
@@ -146,9 +206,9 @@ namespace Brettle.Web.NeatUpload
 			SetupBindableProps();
 			
 			// Set the status to Cancelled if requested.
-			if (this.UploadContext != null && Request.Params["cancelled"] == "true")
+			if (Request.Params["cancelled"] == "true")
 			{
-				this.UploadContext.Status = UploadStatus.Cancelled;
+				UploadModule.CancelPostBack(PostBackID);
 			}
 			
 			if (Request.Params["useXml"] == "true")
@@ -212,13 +272,13 @@ if (NeatUploadMainWindow.NeatUploadPB.prototype.Bars['" + ProgressBarID + @"'].E
 		private void SetupContext()
 		{
 			// Find the current upload context
-			string postBackID = Request.Params["postBackID"];
+			PostBackID = Request.Params["postBackID"];
 			ProgressBarID = Request.Params["barID"];
-			this.UploadContext = UploadContext.FindByID(postBackID);
-			if (log.IsDebugEnabled) log.Debug("FindByID() returned " + this.UploadContext + " when SessionID = " 
+			UploadModule.BindProgressState(PostBackID, ProgressBarID, this);
+			if (log.IsDebugEnabled) log.Debug("Status " + Status + " when SessionID = " 
 				+ (HttpContext.Current.Session != null ? HttpContext.Current.Session.SessionID : null));
 
-			if (this.UploadContext == null || this.UploadContext.Status == UploadStatus.Unknown)
+			if (Status == UploadStatus.Unknown)
 			{
 				CurrentStatus = UploadStatus.Unknown;
 				// Status is unknown, so try to find the last post back based on the lastPostBackID param.
@@ -226,20 +286,18 @@ if (NeatUploadMainWindow.NeatUploadPB.prototype.Bars['" + ProgressBarID + @"'].E
 				string lastPostBackID = Page.Request.Params["lastPostBackID"];
 				if (lastPostBackID != null && lastPostBackID.Length > 0 && Page.Request.Params["refresher"] == null)
 				{
-					this.UploadContext = UploadContext.FindByID(lastPostBackID);
-					if (this.UploadContext != null && this.UploadContext.FileBytesRead == 0
-						&& this.UploadContext.ProgressInfoByID.Count == 0)
+					UploadModule.BindProgressState(lastPostBackID, ProgressBarID, this);
+					if (FileBytesRead == 0 && ProcessingState != null)
 					{
-						this.UploadContext = null;
+						Status = UploadStatus.Unknown;
 					}
 				}
 			}
 			else
 			{
-				if (log.IsDebugEnabled) log.Debug("In ProgressPage, UploadContext.PostBackID = " + this.UploadContext.PostBackID);
-				if (log.IsDebugEnabled) log.Debug("In ProgressPage, UploadContext.Status = " + this.UploadContext.Status);
-				if (log.IsDebugEnabled) log.Debug("In ProgressPage, UploadContext.Exception = " + this.UploadContext.Exception);
-				CurrentStatus = this.UploadContext.Status;
+				if (log.IsDebugEnabled) log.Debug("In ProgressPage, PostBackID = " + PostBackID);
+				if (log.IsDebugEnabled) log.Debug("In ProgressPage, Status = " + Status);
+				CurrentStatus = Status;
 			}
 			
 		}
@@ -247,9 +305,11 @@ if (NeatUploadMainWindow.NeatUploadPB.prototype.Bars['" + ProgressBarID + @"'].E
 		private void SetupBindableProps()
 		{
 			ProcessingHtml = GetResourceString("ProcessingMessage");
-			if (this.UploadContext != null)
+			if (ProcessingState != null)
 			{
-				this.UploadContext.SetProgressProps(this, ProgressBarID);
+				ProgressInfo progress = (ProgressInfo)ProcessingState;
+				FractionComplete = 1.0 * progress.Value / progress.Maximum;
+				ProcessingHtml = progress.ToHtml();
 			}
 
 			CanScript = (Request.Params["canScript"] != null && Boolean.Parse(Request.Params["canScript"]));
@@ -269,7 +329,7 @@ if (NeatUploadMainWindow.NeatUploadPB.prototype.Bars['" + ProgressBarID + @"'].E
 			// The base refresh url contains just the barID and postBackID
 
 			RefreshUrl = Request.Url.AbsolutePath;
-			RefreshUrl += "?barID=" + ProgressBarID + "&postBackID=" + Request.Params["postBackID"];
+			RefreshUrl += "?barID=" + ProgressBarID + "&postBackID=" + PostBackID;
 			
 			// Workaround Mono XSP bug where ApplyAppPathModifier() removes the session id
 			RefreshUrl = ProgressBar.ApplyAppPathModifier(RefreshUrl);

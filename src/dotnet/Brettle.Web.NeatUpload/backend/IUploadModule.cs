@@ -31,5 +31,9 @@ namespace Brettle.Web.NeatUpload
 		NameValueCollection Unprotect(string armoredString);
 		string Protect(NameValueCollection nvc);
 		IUploadedFileCollection Files { get; }
+		string PostBackID { get; }
+		void SetProcessingState(string postBackID, string controlID, object state);
+		void BindProgressState(string postBackID, string controlID, IUploadProgressState progressState);
+		void CancelPostBack(string postBackID);
 	}
 }

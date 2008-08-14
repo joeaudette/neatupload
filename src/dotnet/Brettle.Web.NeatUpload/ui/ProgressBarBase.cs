@@ -113,7 +113,7 @@ namespace Brettle.Web.NeatUpload
 		
 		protected override void OnPreRender (EventArgs e)
 		{
-			if (Config.Current.UseHttpModule)
+			if (UploadModule.IsEnabled)
 			{
                 // If we don't have a session yet and the session mode is not "Off", we need to create a
                 // session so that it can be used to pass information between the progress display and the 
@@ -138,7 +138,7 @@ namespace Brettle.Web.NeatUpload
 				{
 					Page.RegisterClientScriptBlock("NeatUploadProgressBar", @"
 	<script type='text/javascript' language='javascript'>
-	NeatUploadPB.prototype.ClearFileNamesAlert = '" +  Config.Current.GetResourceString("ClearFileNamesAlert") + @"';
+	NeatUploadPB.prototype.ClearFileNamesAlert = '" +  ResourceManagerSingleton.GetResourceString("ClearFileNamesAlert") + @"';
 	// -->
 	</script>
 	");
@@ -192,7 +192,7 @@ namespace Brettle.Web.NeatUpload
 		
 		private void InitializeVars()
 		{
-			if (!Config.Current.UseHttpModule)
+			if (!UploadModule.IsEnabled)
 				return;
 
 			if (AutoStartCondition == null)
@@ -214,9 +214,9 @@ namespace Brettle.Web.NeatUpload
 
 			UploadProgressPath += "?barID=" + this.ClientID;
 
-			if (UploadContext.Current != null)
+			if (UploadModule.PostBackID != null)
 			{
-				UploadProgressPath += "&lastPostBackID=" + UploadContext.Current.PostBackID;
+				UploadProgressPath += "&lastPostBackID=" + UploadModule.PostBackID;
 			}
 		}
 					
@@ -266,7 +266,7 @@ namespace Brettle.Web.NeatUpload
 		protected virtual string GetStartupScript()
 		{
 			string allTriggerClientIDs = "[]";
-			if (Config.Current.UseHttpModule)
+			if (UploadModule.IsEnabled)
 			{
 				allTriggerClientIDs = GetClientIDsAsJSArray(Triggers);
 			}
@@ -324,7 +324,7 @@ if (!NeatUploadPB.prototype.FirstBarID)
 		
 		public override void RenderBeginTag(HtmlTextWriter writer)
 		{
-			if (!Config.Current.UseHttpModule)
+			if (!UploadModule.IsEnabled)
 			{
 				return;
 			}
@@ -342,7 +342,7 @@ if (!NeatUploadPB.prototype.FirstBarID)
 		
 		protected override void RenderContents(HtmlTextWriter writer)
 		{
-			if (!Config.Current.UseHttpModule)
+			if (!UploadModule.IsEnabled)
 			{
 				return;
 			}
@@ -370,7 +370,7 @@ if (!NeatUploadPB.prototype.FirstBarID)
 
 		public override void RenderEndTag(HtmlTextWriter writer)
 		{
-			if (!Config.Current.UseHttpModule)
+			if (!UploadModule.IsEnabled)
 			{
 				return;
 			}
@@ -383,14 +383,10 @@ if (!NeatUploadPB.prototype.FirstBarID)
 		{
 			get { return _ProcessingProgress; }
 			set 
-			{ 
+			{
+				value.ControlID = UniqueID;
 				_ProcessingProgress = value;
-				UploadContext ctx = UploadContext.Current;
-				if (ctx != null)
-				{
-					ctx.ProgressInfoByID[UniqueID] = _ProcessingProgress; 
-					UploadHttpModule.AccessSession(new SessionAccessCallback(ctx.SyncWithSession));
-				}
+				value.UpdateProcessingState();
 			}
 		}
 		

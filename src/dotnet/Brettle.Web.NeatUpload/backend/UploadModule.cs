@@ -54,6 +54,25 @@ namespace Brettle.Web.NeatUpload
 		public static IUploadedFileCollection Files {
 			get { return InstalledModule.Files; }
 		}
+
+		public static string PostBackID {
+			get { return InstalledModule.PostBackID; }
+		}
+
+		public static void SetProcessingState(string postBackID, string controlID, object state)
+		{
+			InstalledModule.SetProcessingState(postBackID, controlID, state);
+		}
+
+		public static void BindProgressState(string postBackID, string controlID, IUploadProgressState progressState)
+		{
+			InstalledModule.BindProgressState(postBackID, controlID, progressState);
+		}
+
+		public static void CancelPostBack(string postBackID)
+		{
+			InstalledModule.CancelPostBack(postBackID);
+		}
 		
 		private static bool _IsInstalled = true;
 		private static IUploadModule _InstalledModule;

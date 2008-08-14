@@ -45,16 +45,16 @@ namespace Brettle.Web.NeatUpload
 		}
 
 		private long _Maximum;
-		public virtual long Maximum { get { return _Maximum; } set { _Maximum = value; SyncWithSession(); } }
+		public virtual long Maximum { get { return _Maximum; } set { _Maximum = value; UpdateProcessingState(); } }
 		
 		private long _Value;
-		public virtual long Value { get { return _Value; } set { _Value = value; SyncWithSession(); } }
+		public virtual long Value { get { return _Value; } set { _Value = value; UpdateProcessingState(); } }
 		
 		private string _Text;
-		public virtual string Text { get { return _Text; } set { _Text = value; SyncWithSession(); } }
+		public virtual string Text { get { return _Text; } set { _Text = value; UpdateProcessingState(); } }
 		
 		private string _Units;
-		public virtual string Units { get { return _Units; } set { _Units = value; SyncWithSession(); } }
+		public virtual string Units { get { return _Units; } set { _Units = value; UpdateProcessingState(); } }
 		
 		public virtual string ToHtml()
 		{
@@ -62,24 +62,22 @@ namespace Brettle.Web.NeatUpload
 			{
 				return System.Web.HttpUtility.HtmlEncode(Text);
 			}
-			return String.Format(Config.Current.GetResourceString("ProgressInfoFormat"), 
+			return String.Format(ResourceManagerSingleton.GetResourceString("ProgressInfoFormat"), 
 								Value, Maximum, Units);
 		}
 		
 		private DateTime TimeOfLastSync = DateTime.MinValue;
 
-		protected void SyncWithSession()
+		internal void UpdateProcessingState()
 		{
 			if (TimeOfLastSync.AddSeconds(1) > DateTime.Now)
 			{
 				return;
 			}
-			UploadContext ctx = UploadContext.Current;
-			if (ctx != null)
-			{
-				UploadHttpModule.AccessSession(new SessionAccessCallback(ctx.SyncWithSession));
-			}
+			UploadModule.SetProcessingState(UploadModule.PostBackID, ControlID, this);
 			TimeOfLastSync = DateTime.Now;
 		}
+
+		internal string ControlID = null;
 	}
 }

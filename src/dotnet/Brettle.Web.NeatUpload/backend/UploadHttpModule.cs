@@ -102,6 +102,47 @@ namespace Brettle.Web.NeatUpload
 			get { return UploadHttpModule.Files; }
 		}
 
+		string IUploadModule.PostBackID {
+			get {
+				if (UploadContext.Current == null)
+					return null;
+				return UploadContext.Current.PostBackID;
+			}
+		}
+
+		void IUploadModule.SetProcessingState(string postBackID, string controlID, object state)
+		{
+			UploadContext ctx = UploadContext.FindByIDAllServers(postBackID);
+			if (ctx == null)
+			{
+				ctx = new UploadContext();
+				ctx.RegisterPostBack(postBackID);
+			}
+			ctx.ProcessingStateByID[controlID] = state;
+			UploadHttpModule.AccessSession(new SessionAccessCallback(ctx.SyncWithSession));
+		}
+
+		void IUploadModule.BindProgressState(string postBackID, string controlID, IUploadProgressState progressState)
+		{
+			UploadContext ctx = UploadContext.FindByIDAllServers(postBackID);
+			if (ctx == null)
+			{
+				progressState.Status = UploadStatus.Unknown;
+				return;
+			}
+			ctx.SetProgressProps(progressState, controlID);
+		}
+
+		void IUploadModule.CancelPostBack(string postBackID)
+		{
+			UploadContext ctx = UploadContext.FindByIDAllServers(postBackID);
+			if (ctx == null)
+				return;
+			ctx.Status = UploadStatus.Cancelled;
+			UploadHttpModule.AccessSession(new SessionAccessCallback(ctx.SyncWithSession));
+		}
+
+
 		internal static UploadedFileCollection Files
 		{
 			get 
@@ -132,6 +173,7 @@ namespace Brettle.Web.NeatUpload
 				return aspNetFiles;
 			}
 		}
+
 		
 		/// <summary>
 		/// Waits for the current upload request to finish.</summary>

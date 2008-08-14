@@ -31,6 +31,8 @@
     <Reference Include="System" />
     <Reference Include="System.Web" />
     <Reference Include="System.Design" />
+    <Reference Include="System.Drawing.Design" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
@@ -51,5 +53,17 @@
     <Compile Include="HiddenPostBackID.cs" />
     <Compile Include="FormContext.cs" />
     <Compile Include="InputFile.cs" />
+    <Compile Include="ProgressBar.cs" />
+    <Compile Include="ProgressBarBase.cs" />
+    <Compile Include="ProgressBarBaseDesigner.cs" />
+    <Compile Include="..\backend\ResourceManagerSingleton.cs" />
+    <Compile Include="ProgressInfo.cs" />
+    <Compile Include="DetailsControl.cs" />
+    <Compile Include="DetailsDiv.cs" />
+    <Compile Include="DetailsSpan.cs" />
+    <Compile Include="Progress-1.0.aspx.cs" />
+    <Compile Include="ProgressPage.cs" />
+    <Compile Include="..\backend\MyLog4net.cs" />
+    <Compile Include="UploadProgressState.cs" />
   </ItemGroup>
 </Project>

@@ -131,7 +131,7 @@ NeatUploadPB.prototype.Bars['{0}'].EvalOnClose = null;
 				return;
 			}
 			
-			if (!Config.Current.UseHttpModule)
+			if (!UploadModule.IsEnabled)
 			{
 				return;
 			}
@@ -158,7 +158,7 @@ NeatUploadPB.prototype.Bars['{0}'].EvalOnClose = null;
 				base.RenderEndTag(writer);
 				return;
 			}
-			if (!Config.Current.UseHttpModule)
+			if (!UploadModule.IsEnabled)
 				return;
 			
 			writer.RenderEndTag();

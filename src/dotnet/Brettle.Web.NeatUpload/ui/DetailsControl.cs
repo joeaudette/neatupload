@@ -62,37 +62,36 @@ namespace Brettle.Web.NeatUpload
 			
 			// Find the current upload context
 			string postBackID = Page.Request.Params["postBackID"];
-			UploadContext uploadContext = UploadContext.FindByID(postBackID);
+			string barID = Page.Request.Params["barID"];
 
 			// Set the status to Cancelled if requested.
-			if (uploadContext != null && Page.Request.Params["cancelled"] == "true")
+			if (Page.Request.Params["cancelled"] == "true")
 			{
-				uploadContext.Status = UploadStatus.Cancelled;
+				UploadModule.CancelPostBack(postBackID);
 			}
 			
-			if (uploadContext == null || uploadContext.Status == UploadStatus.Unknown)
+			IUploadProgressState progressState = new UploadProgressState();
+			UploadModule.BindProgressState(postBackID, barID, progressState);
+
+			if (progressState.Status == UploadStatus.Unknown)
 			{
 				// Status is unknown, so try to find the last post back based on the lastPostBackID param.
 				// If successful, use the status of the last post back.
 				string lastPostBackID = Page.Request.Params["lastPostBackID"];
 				if (lastPostBackID != null && lastPostBackID.Length > 0 && Page.Request.Params["refresher"] == null)
 				{
-					uploadContext = UploadContext.FindByID(lastPostBackID);
-					if (uploadContext != null && uploadContext.FileBytesRead == 0
-						&& uploadContext.ProgressInfoByID.Count == 0)
+					UploadModule.BindProgressState(postBackID, barID, progressState);
+					if (progressState.FileBytesRead == 0
+						&& progressState.ProcessingState == null)
 					{
-						uploadContext = null;
+						progressState.Status = UploadStatus.Unknown;
 					}
 				}
 			}
 			
-			Status = (uploadContext == null) ? UploadStatus.Unknown : uploadContext.Status;
-			string barID = Page.Request.Params["barID"];
+			Status = progressState.Status;
 			ProgressInfo progress = null;
-			if (barID != null && uploadContext != null)
-			{
-				progress = (ProgressInfo)uploadContext.ProgressInfoByID[barID];
-			}
+			progress = (ProgressInfo)progressState.ProcessingState;
 			if (progress != null && Status == UploadStatus.Completed)
 			{
 				Status = UploadStatus.ProcessingCompleted;
