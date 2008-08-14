@@ -667,10 +667,6 @@ namespace Brettle.Web.NeatUpload
 				else
 				{
 					outputStream = preloadedEntityBodyStream;
-					if (fileName != null && name != null)
-					{
-						uploadContext.CreateAspNetUploadedFile(name);
-					}
 				}
 			}
 			if (log.IsDebugEnabled) log.Debug("Done parsing.");

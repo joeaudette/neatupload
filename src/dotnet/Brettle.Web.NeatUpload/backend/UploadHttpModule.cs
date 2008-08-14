@@ -65,7 +65,7 @@ namespace Brettle.Web.NeatUpload
 			get { return UploadContext.ConfigNamePrefix; } 
 		}
 
-		bool IUploadModule.IsEnabled { 
+		bool IUploadModule.IsEnabled {
 			get { return Config.Current.UseHttpModule; } 
 		}
 
@@ -98,7 +98,7 @@ namespace Brettle.Web.NeatUpload
 			context.Response.AppendToLog(param);
 		}
 
-		IUploadedFileCollection IUploadModule.Files {
+		UploadedFileCollection IUploadModule.Files {
 			get { return UploadHttpModule.Files; }
 		}
 
@@ -110,7 +110,7 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 
-		void IUploadModule.SetProcessingState(string postBackID, string controlID, object state)
+		void IUploadModule.SetProcessingState(string postBackID, string controlUniqueID, object state)
 		{
 			UploadContext ctx = UploadContext.FindByIDAllServers(postBackID);
 			if (ctx == null)
@@ -118,11 +118,11 @@ namespace Brettle.Web.NeatUpload
 				ctx = new UploadContext();
 				ctx.RegisterPostBack(postBackID);
 			}
-			ctx.ProcessingStateByID[controlID] = state;
+			ctx.ProcessingStateByID[controlUniqueID] = state;
 			UploadHttpModule.AccessSession(new SessionAccessCallback(ctx.SyncWithSession));
 		}
 
-		void IUploadModule.BindProgressState(string postBackID, string controlID, IUploadProgressState progressState)
+		void IUploadModule.BindProgressState(string postBackID, string controlUniqueID, IUploadProgressState progressState)
 		{
 			UploadContext ctx = UploadContext.FindByIDAllServers(postBackID);
 			if (ctx == null)
@@ -130,7 +130,7 @@ namespace Brettle.Web.NeatUpload
 				progressState.Status = UploadStatus.Unknown;
 				return;
 			}
-			ctx.SetProgressProps(progressState, controlID);
+			ctx.SetProgressProps(progressState, controlUniqueID);
 		}
 
 		void IUploadModule.CancelPostBack(string postBackID)
@@ -142,35 +142,81 @@ namespace Brettle.Web.NeatUpload
 			UploadHttpModule.AccessSession(new SessionAccessCallback(ctx.SyncWithSession));
 		}
 
+		UploadedFile IUploadModule.ConvertToUploadedFile(string controlUniqueID, HttpPostedFile file)
+		{
+			UploadContext ctx = UploadContext.Current;
+			if (ctx == null)
+			{
+				// We use a temporary UploadContext so that we have something we can pass to the
+				// UploadStorageProvider.  Note that unlike when the UploadHttpModule is used,
+				// this temporary context is not shared between uploaded files.
+				ctx = new UploadContext();
+				ctx.SyncBytesTotal = HttpContext.Current.Request.ContentLength;
+				ctx.Status = UploadStatus.NormalInProgress;
+			}
+			UploadStorageConfig storageConfig = UploadStorage.CreateUploadStorageConfig();
+			string storageConfigString 
+				= HttpContext.Current.Request.Form[UploadContext.ConfigNamePrefix + "-" + controlUniqueID];
+			if (storageConfigString != null && storageConfigString != string.Empty)
+			{
+				storageConfig.Unprotect(storageConfigString);
+			}
+			UploadedFile uploadedFile 
+				= UploadStorage.CreateUploadedFile(ctx, controlUniqueID, file.FileName, file.ContentType, storageConfig);
+			System.IO.Stream outStream = null, inStream = null;
+			try
+			{
+				outStream = uploadedFile.CreateStream();
+				inStream = file.InputStream;
+				byte[] buf = new byte[4096];
+				int bytesRead = -1;
+				while (outStream.CanWrite && inStream.CanRead 
+					   && (bytesRead = inStream.Read(buf, 0, buf.Length)) > 0)
+				{
+					outStream.Write(buf, 0, bytesRead);
+					ctx.SyncBytesRead += bytesRead;
+				}
+				ctx.SyncBytesRead = ctx.BytesTotal;
+				ctx.Status = UploadStatus.Completed;
+			}
+			finally
+			{
+				if (inStream != null) inStream.Close();
+				if (outStream != null) outStream.Close();
+			}
+			return uploadedFile;
+		}
+
+		string IUploadModule.FileSizesFieldName {
+			get { return UploadContext.FileSizesName; } 
+		}
+
+		string IUploadModule.AsyncUploadPath {
+			get { return "/NeatUpload/AsyncUpload.aspx"; }
+		}
+
+		string IUploadModule.AsyncControlIDQueryParam {
+			get { return "NeatUpload_AsyncControlID"; }
+		}
+		
+		string IUploadModule.ArmoredCookiesQueryParam {
+			get { return "NeatUpload_ArmoredCookies"; }
+		}
 
 		internal static UploadedFileCollection Files
 		{
 			get 
 			{
 				// If the upload is being handled by this module, then return the collection that it maintains.
-				if (Config.Current.UseHttpModule)
-				{
-					FilteringWorkerRequest worker = UploadHttpModule.GetCurrentWorkerRequest() as FilteringWorkerRequest;
-					if (worker != null) 
-					{
-						return worker.GetUploadContext().Files;
-					}
-				}
-				// Otherwise return a fake one that will use the HttpPostedFiles in the Request.Files collection.
-				HttpContext ctx = HttpContext.Current;
-				UploadedFileCollection aspNetFiles = ctx.Items["NeatUpload_AspNetFiles"] as UploadedFileCollection;
-				if (aspNetFiles == null)
-				{
-					ctx.Items["NeatUpload_AspNetFiles"] = aspNetFiles = new UploadedFileCollection();
-					HttpFileCollection files = ctx.Request.Files;
-					string[] fieldNames = files.AllKeys;
-					for (int i = 0; i < fieldNames.Length; i++)
-					{
-						AspNetUploadedFile aspNetFile = new AspNetUploadedFile(fieldNames[i]);
-						aspNetFiles.Add(fieldNames[i], aspNetFile);
-					}
-				}
-				return aspNetFiles;
+				if (!Config.Current.UseHttpModule)
+					return null;
+				FilteringWorkerRequest worker = UploadHttpModule.GetCurrentWorkerRequest() as FilteringWorkerRequest;
+				if (worker == null)
+				    return null;
+				UploadedFileCollection files = worker.GetUploadContext().Files;
+				if (files == null)
+					return null;
+				return files.GetReadOnlyCopy();
 			}
 		}
 
@@ -519,7 +565,7 @@ namespace Brettle.Web.NeatUpload
         {
             if (qs == null)
                 return null;
-			Match match = Regex.Match(qs, @"(^|\?|&)NeatUpload_AsyncControlID=([^&]+)");
+			Match match = Regex.Match(qs, @"(^|\?|&)" + UploadModule.AsyncControlIDQueryParam + "=([^&]+)");
 			if (!match.Success)
 				return null;
 			return HttpUtility.UrlDecode(match.Groups[2].Value);
@@ -529,7 +575,7 @@ namespace Brettle.Web.NeatUpload
 		{
             if (qs == null)
                 return null;
-			Match match = Regex.Match(qs, @"(^|\?|&)NeatUpload_ArmoredCookies=([^&]+)");
+			Match match = Regex.Match(qs, @"(^|\?|&)" + UploadModule.ArmoredCookiesQueryParam + "=([^&]+)");
 			if (!match.Success)
 				return null;
 			return HttpUtility.UrlDecode(match.Groups[2].Value);
@@ -706,7 +752,7 @@ namespace Brettle.Web.NeatUpload
 				string armoredCookiesString = UploadHttpModule.GetArmoredCookiesStringFromQueryString(qs);
 				if (armoredCookiesString != null && armoredCookiesString.Length > 0)
 				{
-					qs = "NeatUpload_ArmoredCookies=" + HttpUtility.UrlEncode(armoredCookiesString);
+					qs = UploadModule.ArmoredCookiesQueryParam + "=" + HttpUtility.UrlEncode(armoredCookiesString);
 				}
 			}
 

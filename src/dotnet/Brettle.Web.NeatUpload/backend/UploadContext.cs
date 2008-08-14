@@ -324,12 +324,7 @@ namespace Brettle.Web.NeatUpload
 				}
 			}
 		}
-		
-		internal void CreateAspNetUploadedFile(string name)
-		{
-			Files.Add(name, new AspNetUploadedFile(name));
-		}
-		
+				
 		internal void CompleteRequest()
 		{
 			if (!IsAsyncRequest)

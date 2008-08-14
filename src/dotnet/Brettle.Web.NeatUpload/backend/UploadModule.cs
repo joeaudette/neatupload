@@ -51,7 +51,7 @@ namespace Brettle.Web.NeatUpload
 			return InstalledModule.Protect(nvc);
 		}
 
-		public static IUploadedFileCollection Files {
+		public static UploadedFileCollection Files {
 			get { return InstalledModule.Files; }
 		}
 
@@ -59,19 +59,43 @@ namespace Brettle.Web.NeatUpload
 			get { return InstalledModule.PostBackID; }
 		}
 
-		public static void SetProcessingState(string postBackID, string controlID, object state)
+		public static void SetProcessingState(string postBackID, string controlUniqueID, object state)
 		{
-			InstalledModule.SetProcessingState(postBackID, controlID, state);
+			InstalledModule.SetProcessingState(postBackID, controlUniqueID, state);
 		}
 
-		public static void BindProgressState(string postBackID, string controlID, IUploadProgressState progressState)
+		public static void BindProgressState(string postBackID, string controlUniqueID, IUploadProgressState progressState)
 		{
-			InstalledModule.BindProgressState(postBackID, controlID, progressState);
+			InstalledModule.BindProgressState(postBackID, controlUniqueID, progressState);
 		}
 
 		public static void CancelPostBack(string postBackID)
 		{
 			InstalledModule.CancelPostBack(postBackID);
+		}
+
+		public static UploadedFile ConvertToUploadedFile(string controlUniqueID, HttpPostedFile file)
+		{
+			if (InstalledModule != null)
+				return InstalledModule.ConvertToUploadedFile(controlUniqueID, file);
+			else
+				return new AspNetUploadedFile(controlUniqueID, file);
+		}
+
+		public static string FileSizesFieldName {
+			get { return InstalledModule.FileSizesFieldName; }
+		}
+
+		public static string AsyncUploadPath {
+			get { return InstalledModule.AsyncUploadPath; }
+		}
+
+		public static string AsyncControlIDQueryParam {
+			get { return InstalledModule.AsyncControlIDQueryParam; }
+		}
+		
+		public static string ArmoredCookiesQueryParam {
+			get { return InstalledModule.ArmoredCookiesQueryParam; }
 		}
 		
 		private static bool _IsInstalled = true;

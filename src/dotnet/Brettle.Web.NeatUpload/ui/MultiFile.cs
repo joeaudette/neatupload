@@ -38,7 +38,7 @@ namespace Brettle.Web.NeatUpload
 	/// Multiple file upload control that can be used with the <see cref="UploadHttpModule"/> and <see cref="ProgressBar"/>.
 	/// </summary>
 	/// <remarks>
-	/// On post back, you can use <see cref="Files"/> to access the <see cref="UploadedFileCollection"/>.
+	/// On post back, you can use <see cref="Files"/> to access the array of <see cref="UploadedFile"/>s.
 	/// For each <see cref="UploadedFile"/> in the collection, use <see cref="UploadedFile.FileName"/>, 
 	//// <see cref="UploadedFile.ContentType"/>, <see cref="UploadedFile.ContentLength"/>, and
 	/// <see cref="UploadedFile.InputStream"/>
@@ -52,51 +52,12 @@ namespace Brettle.Web.NeatUpload
 	[ValidationProperty("ValidationFileNames")]
 	[ParseChildren(false)]
 	[PersistChildren(true)]
-	public class MultiFile : System.Web.UI.WebControls.WebControl, System.Web.UI.IPostBackDataHandler
+	public class MultiFile : FileControl, System.Web.UI.IPostBackDataHandler
 	{
 
 		// Create a logger for use in this class
 		private static readonly log4net.ILog log
 			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-		
-		private bool IsDesignTime = (HttpContext.Current == null);
-
-		private UploadedFileCollection _files = null;
-		private UploadedFileCollection files
-		{
-			get 
-			{
-				if (_files == null)
-				{
-					_files = new UploadedFileCollection();
-					if (IsDesignTime) return _files;
-					
-					// Get only the files that were uploaded from this control
-					UploadedFileCollection allFiles = UploadHttpModule.Files;
-					for (int i = 0; i < allFiles.Count; i++)
-					{
-						if (allFiles.GetKey(i) == this.UniqueID && allFiles[i].IsUploaded)
-						{
-							_files.Add(_files.Count.ToString(), allFiles[i]);
-						}
-					}
-				}
-				return _files;
-			}
-		}
-		
-		/// <summary>
-		/// The <see cref="UploadedFileCollection"/> corresponding to the files uploaded to this control. </summary>
-		/// <remarks>
-		/// Derived classes can use this to access the <see cref="UploadedFile"/> objects that were created by the
-		/// UploadStorageProvider.</remarks>
-		public UploadedFileCollection Files
-		{
-			get 
-			{
-				return files;
-			}
-		}
 		
 		private string _validationFileNames;
 		
@@ -109,70 +70,13 @@ namespace Brettle.Web.NeatUpload
 				if (_validationFileNames == null)
 				{
 					System.Text.StringBuilder sb = new System.Text.StringBuilder();
-					for (int i = 0; i < Files.Count; i++)
+					for (int i = 0; i < Files.Length; i++)
 					{
 						sb.Append(Files[i].FileName + ";");
 					}
 					_validationFileNames = sb.ToString();
 				}
 				return _validationFileNames;
-			}
-		}
-
-		public string Accept
-		{
-			get
-			{
-				string val = Attributes["accept"];
-				if (val == null)
-					return String.Empty;
-				else
-					return val;
-			}
-			set
-			{
-				if (value == null || value == String.Empty)
-					Attributes.Remove("accept");
-				else
-					Attributes["accept"] = value;
-			}
-		}
-		
-		public int MaxLength
-		{
-			get
-			{
-				string val = Attributes["maxlength"];
-				if (val == null)
-					return -1;
-				else
-					return Convert.ToInt32(val);
-			}
-			set
-			{
-				if (value == -1)
-					Attributes.Remove("maxlength");
-				else
-					Attributes["maxlength"] = value.ToString();
-			}
-		}
-				
-		public int Size
-		{
-			get
-			{
-				string val = Attributes["size"];
-				if (val == null)
-					return -1;
-				else
-					return Convert.ToInt32(val);
-			}
-			set
-			{
-				if (value == -1)
-					Attributes.Remove("size");
-				else
-					Attributes["size"] = value.ToString();
 			}
 		}
 		
@@ -243,34 +147,6 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 
-#warning TODO
-		private UploadStorageConfig _StorageConfig;
-		public UploadStorageConfig StorageConfig
-		{
-			get
-			{
-				if (_StorageConfig == null)
-				{
-					// Keep the storage config associated with the previous upload, if any
-					if (Files.Count > 0 && !IsDesignTime && HttpContext.Current != null)
-					{
-						string secureStorageConfig = HttpContext.Current.Request.Form[FormContext.Current.Translator.FileIDToConfigID(UniqueID)];
-						if (secureStorageConfig != null)
-						{
-							_StorageConfig = UploadStorage.CreateUploadStorageConfig();
-							if (log.IsDebugEnabled) log.DebugFormat("Calling Unprotect({0})", secureStorageConfig);
-							_StorageConfig.Unprotect(secureStorageConfig);
-						}
-					}
-					else
-					{
-						_StorageConfig = UploadStorage.CreateUploadStorageConfig();
-					}
-				}
-				return _StorageConfig;
-			}
-		}
-
 		protected override void OnInit(EventArgs e)
 		{
 			InitializeComponent();
@@ -279,59 +155,11 @@ namespace Brettle.Web.NeatUpload
 		
 		private void InitializeComponent()
 		{
-			this.Load += new System.EventHandler(this.Control_Load);
-			this.Unload += new System.EventHandler(this.Control_Unload);
 		}
 				
-		private void Control_Load(object sender, EventArgs e)
-		{
-			if (IsDesignTime)
-				return;
-			
-			// If we can find the containing HtmlForm control, set enctype="multipart/form-data" method="Post".
-			// If we can't find it, the page might be using some other form control or not using runat="server",
-			// so we assume the developer has already set the enctype and method attributes correctly.
-			Control c = Parent;
-			while (c != null && !(c is HtmlForm))
-			{
-				c = c.Parent;
-			}
-			HtmlForm form = c as HtmlForm;
-			if (form != null)
-			{
-				form.Enctype = "multipart/form-data";
-				form.Method = "post";
-			}
-		}
-
-		private void Control_Unload(object sender, EventArgs e)
-		{
-			foreach (UploadedFile f in Files)
-				f.Dispose();
-		}
-		
-		// This is used to ensure that the browser gets the latest SWFUpload.js each time this assembly is
-		// reloaded.  Strictly speaking the browser only needs to get the latest when SWFUpload.js changes,
-		// but computing a hash on that file everytime this assembly is loaded strikes me as overkill.
-		private static Guid CacheBustingGuid = System.Guid.NewGuid();
-
-		private string AppPath
-		{
-			get 
-			{
-				string appPath = Context.Request.ApplicationPath;
-				if (appPath == "/")
-				{
-					appPath = "";
-				}
-				return appPath;
-			}
-		}
-
-
 		protected override void OnPreRender (EventArgs e)
 		{
-			if (!IsDesignTime && Config.Current.UseHttpModule)
+			if (!IsDesignTime && UploadModule.IsEnabled)
 			{
 				if (!Page.IsClientScriptBlockRegistered("NeatUploadMultiFile"))
 				{
@@ -349,13 +177,12 @@ namespace Brettle.Web.NeatUpload
 			base.OnPreRender(e);
 		}
 
-
 		protected override void Render(HtmlTextWriter writer)
 		{
 			string targetDivID = "NeatUploadDiv_" + this.ClientID;
 			string name;
 			string storageConfigName;
-			if (!IsDesignTime && Config.Current.UseHttpModule)
+			if (!IsDesignTime && UploadModule.IsEnabled)
 			{
 				// Generate a special name recognized by the UploadHttpModule
 				name = FormContext.Current.GenerateFileID(this.UniqueID);
@@ -380,11 +207,11 @@ namespace Brettle.Web.NeatUpload
 NeatUploadMultiFileCreate('" + this.ClientID + @"', 
 		'" + FormContext.Current.PostBackID + @"',
 		'" + AppPath + @"',
-		'" + AppPath + @"/NeatUpload/AsyncUpload.aspx',
-		'" + Config.Current.PostBackIDQueryParam + @"',
-		{" + Config.Current.PostBackIDQueryParam + @" : '" + FormContext.Current.PostBackID + @"',
-		 NeatUpload_AsyncControlID : '" + this.ClientID + @"',
-		 NeatUpload_ArmoredCookies : '" + armoredCookies.Protect() + @"'
+		'" + AppPath + UploadModule.AsyncUploadPath +@"',
+		'" + UploadModule.PostBackIDQueryParam + @"',
+		{" + UploadModule.PostBackIDQueryParam + @" : '" + FormContext.Current.PostBackID + @"',
+		 " + UploadModule.AsyncControlIDQueryParam + @": '" + this.ClientID + @"',
+		 " + UploadModule.ArmoredCookiesQueryParam + @": '" + UploadModule.Protect(armoredCookies) + @"'
 		},
 		 " + (UseFlashIfAvailable ? "true" : "false") + @",
 		 '" + FileQueueControlID + @"',
@@ -397,7 +224,7 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
 			else
 			{
 				name = this.UniqueID;
-				storageConfigName = UploadContext.ConfigNamePrefix + "-" + this.UniqueID;
+				storageConfigName = UploadModule.ConfigFieldNamePrefix + "-" + this.UniqueID;
 			}
 
 			// Store the StorageConfig in a hidden form field with a related name
@@ -406,7 +233,7 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
 				writer.AddAttribute(HtmlTextWriterAttribute.Type, "hidden");
 				writer.AddAttribute(HtmlTextWriterAttribute.Name, storageConfigName);
 				
-				writer.AddAttribute(HtmlTextWriterAttribute.Value, StorageConfig.Protect());				
+				writer.AddAttribute(HtmlTextWriterAttribute.Value, UploadModule.Protect(StorageConfig));				
 				writer.RenderBeginTag(HtmlTextWriterTag.Input);
 				writer.RenderEndTag();
 			}
@@ -420,14 +247,14 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
 			writer.RenderBeginTag(HtmlTextWriterTag.Input);
 			writer.RenderEndTag(); // input type="file"
 
-			if (Config.Current.UseHttpModule && HasControls())
+			if (UploadModule.IsEnabled && HasControls())
 			{
 				writer.Write("<div style='position: relative; display: none;'>");
 				RenderChildren(writer);
 				writer.Write("</div>");
 			}
 
-			if (Config.Current.UseHttpModule)
+			if (UploadModule.IsEnabled)
 			{
 				// The constant strings below are broken apart so that you couldn't just search for the text and
 				// remove it.  To find this code, you probably had to understand enough about custom web controls
@@ -452,15 +279,14 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
 
  			writer.RenderEndTag(); // div
 		}
-
 		/// <summary>
 		/// Called by ASP.NET so that controls can find and process their post back data</summary>
 		/// <returns>true if a file was uploaded with this control</returns>
 		public virtual bool LoadPostData(string postDataKey, NameValueCollection postCollection)
 		{		
-			return (Files.Count > 0);
-		}
-		
+			return (Files.Length > 0);
+		}		
+
 		/// <summary>
 		/// Called by ASP.NET if <see cref="LoadPostData"/> returns true (i.e. if a file was uploaded to this 
 		/// control).  Fires the <see cref="FileUploaded"/> event.</summary>
@@ -473,7 +299,7 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
 		}
 		
 		/// <summary>
-		/// Fired when a file is uploaded to this control.</summary>
+		/// Fired when at least one file is uploaded to this control.</summary>
 		public event System.EventHandler FileUploaded;
 	}
 }

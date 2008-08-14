@@ -47,7 +47,7 @@ namespace Brettle.Web.NeatUpload
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[ValidationProperty("ValidationFileName")]
-	public class InputFile : System.Web.UI.WebControls.WebControl, System.Web.UI.IPostBackDataHandler
+	public class InputFile : FileControl, System.Web.UI.IPostBackDataHandler
 	{
 
 		// Create a logger for use in this class
@@ -56,19 +56,15 @@ namespace Brettle.Web.NeatUpload
 			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 		*/
 		
-		private bool IsDesignTime = (HttpContext.Current == null);
-
 		private UploadedFile _file = null;
 		private UploadedFile file
 		{
 			get 
 			{
-				if (_file == null && UniqueID != null)
-				{
-					if (IsDesignTime) return null;
-					_file = UploadModule.Files[this.UniqueID];
-				}
-				return _file;
+				if (Files.Length > 0) 
+					return Files[0];
+				else
+					return null;
 			}
 		}
 		
@@ -159,105 +155,7 @@ namespace Brettle.Web.NeatUpload
 					fileContent = file.OpenRead();
 				return fileContent;
 			}
-		}
-		
-		public string Accept
-		{
-			get
-			{
-				string val = Attributes["accept"];
-				if (val == null)
-					return String.Empty;
-				else
-					return val;
-			}
-			set
-			{
-				if (value == null || value == String.Empty)
-					Attributes.Remove("accept");
-				else
-					Attributes["accept"] = value;
-			}
-		}
-		
-		public int MaxLength
-		{
-			get
-			{
-				string val = Attributes["maxlength"];
-				if (val == null)
-					return -1;
-				else
-					return Convert.ToInt32(val);
-			}
-			set
-			{
-				if (value == -1)
-					Attributes.Remove("maxlength");
-				else
-					Attributes["maxlength"] = value.ToString();
-			}
-		}
-				
-		public int Size
-		{
-			get
-			{
-				string val = Attributes["size"];
-				if (val == null)
-					return -1;
-				else
-					return Convert.ToInt32(val);
-			}
-			set
-			{
-				if (value == -1)
-					Attributes.Remove("size");
-				else
-					Attributes["size"] = value.ToString();
-			}
-		}
-		
-		
-		private UploadStorageConfig _NewStorageConfig;
-		private UploadStorageConfig _StorageConfig;
-		public UploadStorageConfig StorageConfig
-		{
-			get
-			{
-				if (_StorageConfig == null)
-				{
-					// Keep the storage config associated with the previous upload, if any
-					if (file != null && !IsDesignTime && HttpContext.Current != null)
-					{
-						string secureStorageConfig = HttpContext.Current.Request.Form[FormContext.Current.GenerateStorageConfigID(UniqueID)];
-						if (secureStorageConfig != null)
-						{
-							NameValueCollection nvc = UploadModule.Unprotect(secureStorageConfig);
-							_StorageConfig = UploadStorage.CreateUploadStorageConfig();
-							_StorageConfig.Add(nvc);
-							// Replace any values set before this control had a fully qualified name.
-							if (_NewStorageConfig != null)
-							{
-								foreach (string key in _NewStorageConfig.AllKeys)
-									_StorageConfig[key] = _NewStorageConfig[key];
-							}
-						}
-					}
-				}
-				if (_StorageConfig != null)
-					return _StorageConfig;
-				if (_NewStorageConfig == null)
-				{
-					_NewStorageConfig = UploadStorage.CreateUploadStorageConfig();
-				}
-				return _NewStorageConfig;
-			}
-		}
-		
-			
-			
-					
+		}		
 		
 		/// <summary>
 		/// Moves an uploaded file to a permanent location.</summary>
@@ -296,55 +194,8 @@ namespace Brettle.Web.NeatUpload
 		
 		private void InitializeComponent()
 		{
-			this.Load += new System.EventHandler(this.Control_Load);
-			this.Unload += new System.EventHandler(this.Control_Unload);
-		}
-				
-		private void Control_Load(object sender, EventArgs e)
-		{
-			if (IsDesignTime)
-				return;
-			
-			// If we can find the containing HtmlForm control, set enctype="multipart/form-data" method="Post".
-			// If we can't find it, the page might be using some other form control or not using runat="server",
-			// so we assume the developer has already set the enctype and method attributes correctly.
-			Control c = Parent;
-			while (c != null && !(c is HtmlForm))
-			{
-				c = c.Parent;
-			}
-			HtmlForm form = c as HtmlForm;
-			if (form != null)
-			{
-				form.Enctype = "multipart/form-data";
-				form.Method = "post";
-			}
-		}
-
-		private void Control_Unload(object sender, EventArgs e)
-		{
-			if (File != null)
-				File.Dispose();
-		}
+		}				
 		
-		// This is used to ensure that the browser gets the latest NeatUpload.js each time this assembly is
-		// reloaded.  Strictly speaking the browser only needs to get the latest when NeatUpload.js changes,
-		// but computing a hash on that file everytime this assembly is loaded strikes me as overkill.
-		private static Guid CacheBustingGuid = System.Guid.NewGuid();
-
-		private string AppPath
-		{
-			get 
-			{
-				string appPath = Context.Request.ApplicationPath;
-				if (appPath == "/")
-				{
-					appPath = "";
-				}
-				return appPath;
-			}
-		}
-				
 		protected override void OnPreRender (EventArgs e)
 		{
 			if (!IsDesignTime && UploadModule.IsEnabled)

@@ -19,7 +19,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 using System;
-using System.IO;
 using System.Web;
 using System.Configuration;
 
@@ -32,36 +31,44 @@ namespace Brettle.Web.NeatUpload
 	// replaces them with UploadedFiles created by the UploadStorageProvider.
 	internal class AspNetUploadedFile : UploadedFile
 	{
-		internal AspNetUploadedFile(string controlUniqueID) : base(controlUniqueID, "", "")
+		internal AspNetUploadedFile(string controlUniqueID, HttpPostedFile httpPostedFile) 
+			: base(controlUniqueID, httpPostedFile.FileName, httpPostedFile.ContentType)
 		{
+			File = httpPostedFile;
 		}
+
+		private HttpPostedFile File;
 						
 		public override void Dispose() { }
 
 		public override bool IsUploaded	
 		{
-			get { return true; }
+			get { return ((FileName != null && FileName.Length > 0) || File.ContentLength > 0); }
 		}
 
-		public override Stream CreateStream() 
+		public override System.IO.Stream CreateStream() 
 		{
-			throw new System.NotSupportedException("Only allowed on files streamed by NeatUpload");
+			return File.InputStream;
 		}
 			
 
 		public override void MoveTo(string path, MoveToOptions opts) 
 		{
-			throw new System.NotSupportedException("Only allowed on files streamed by NeatUpload");
+			if (opts.CanOverwrite && System.IO.File.Exists(path))
+			{
+				System.IO.File.Delete(path);
+			}
+			File.SaveAs(path);
 		}
 
 		public override long ContentLength 
 		{
-			get { throw new System.NotSupportedException("Only allowed on files streamed by NeatUpload"); }
+			get { return File.ContentLength; }
 		}
 
-		public override Stream OpenRead()
+		public override System.IO.Stream OpenRead()
 		{
-			throw new System.NotSupportedException("Only allowed on files streamed by NeatUpload");
+			return File.InputStream;
 		}
 	}
 }

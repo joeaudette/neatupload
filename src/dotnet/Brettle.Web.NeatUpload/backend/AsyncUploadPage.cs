@@ -43,9 +43,9 @@ namespace Brettle.Web.NeatUpload
 				
 		protected override void OnLoad(EventArgs e)
 		{
-			string controlID = Request.Params["NeatUpload_AsyncControlID"];
+			string controlID = Request.Params[UploadModule.AsyncControlIDQueryParam];
 			if (log.IsDebugEnabled) log.DebugFormat("controlID={0}", controlID);
-			string postBackID = Request.Params[Config.Current.PostBackIDQueryParam];
+			string postBackID = Request.Params[UploadModule.PostBackIDQueryParam];
 			if (log.IsDebugEnabled) log.DebugFormat("postBackID={0}", postBackID);
 			UploadContext uploadContext = UploadContext.Current;
 			// If we don't have an uploadContext then this is the pre-upload POST that contains the
@@ -59,14 +59,12 @@ namespace Brettle.Web.NeatUpload
 					uploadContext.RegisterPostBack(postBackID); // Do this first so that progress display sees errors
 				}
 				if (log.IsDebugEnabled) log.DebugFormat("uploadContext={0}", uploadContext);
-				FieldNameTranslator translator = UploadStorage.CreateFieldNameTranslator();
-				if (log.IsDebugEnabled) log.DebugFormat("translator={0}", translator);
 				string secureStorageConfigString 
-					= Request.Params[translator.FormatConfigFieldName(postBackID, controlID)];
+					= Request.Params[UploadModule.ConfigFieldNamePrefix + "-" + controlID];
 				if (log.IsDebugEnabled) log.DebugFormat("secureStorageConfigString={0}", secureStorageConfigString);
 				if (secureStorageConfigString != null)
 					uploadContext.SecureStorageConfigString = secureStorageConfigString;
-				string fileSizesString = Request.Params[UploadContext.FileSizesName];
+				string fileSizesString = Request.Params[UploadModule.FileSizesFieldName];
 				if (log.IsDebugEnabled) log.DebugFormat("fileSizesString={0}", fileSizesString);
 				if (fileSizesString != null && fileSizesString.Length > 0)
 				{

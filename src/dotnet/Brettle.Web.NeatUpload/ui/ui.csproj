@@ -65,5 +65,7 @@
     <Compile Include="ProgressPage.cs" />
     <Compile Include="..\backend\MyLog4net.cs" />
     <Compile Include="UploadProgressState.cs" />
+    <Compile Include="MultiFile.cs" />
+    <Compile Include="FileControl.cs" />
   </ItemGroup>
 </Project>

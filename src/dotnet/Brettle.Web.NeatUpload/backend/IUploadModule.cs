@@ -19,6 +19,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Collections.Specialized;
+using System.Web;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -30,10 +31,15 @@ namespace Brettle.Web.NeatUpload
 		bool IsEnabled { get; }
 		NameValueCollection Unprotect(string armoredString);
 		string Protect(NameValueCollection nvc);
-		IUploadedFileCollection Files { get; }
+		UploadedFileCollection Files { get; }
 		string PostBackID { get; }
-		void SetProcessingState(string postBackID, string controlID, object state);
-		void BindProgressState(string postBackID, string controlID, IUploadProgressState progressState);
+		void SetProcessingState(string postBackID, string controlUniqueID, object state);
+		void BindProgressState(string postBackID, string controlUniqueID, IUploadProgressState progressState);
 		void CancelPostBack(string postBackID);
+		UploadedFile ConvertToUploadedFile(string controlUniqueID, HttpPostedFile file);
+		string FileSizesFieldName { get; }
+		string AsyncUploadPath { get; }
+		string AsyncControlIDQueryParam { get; }
+		string ArmoredCookiesQueryParam { get; }		
 	}
 }
