@@ -25,10 +25,40 @@ namespace Brettle.Web.NeatUpload
 {
 	public interface IUploadModule
 	{
+		/// <value>
+		/// The name of the query parameter that can contain the post-back ID with
+		/// which files in the request should be associated.  
+		/// </value>
+		/// <remarks>For example, if
+		/// PostBackIDQueryParam is "NeatUpload_PostBackID", then if a request is
+		/// received with a query string of "NeatUpload_PostBackID=123ABC", all files
+		/// in the request will be assocated with post-back ID "123ABC".  The post-back
+		/// ID must not contain the character "-".
+		/// </remarks>
 		string PostBackIDQueryParam { get; }
+
+		/// <value>
+		/// The prefix for the names of file fields in requests.
+		/// </value>
+		/// <remarks>If a file field has a name that starts with this prefix, the prefix
+		/// must be followed by the post-back ID, then a "-", then a control's UniqueID.
+		/// The file will then be associated with that post-back ID and control UniqueID.
+		/// </remarks>
 		string FileFieldNamePrefix { get; }
+
+		
 		string ConfigFieldNamePrefix { get; }
 		bool IsEnabled { get; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="armoredString">
+		/// A <see cref="System.String"/>
+		/// </param>
+		/// <returns>
+		/// A <see cref="NameValueCollection"/>
+		/// </returns>
 		NameValueCollection Unprotect(string armoredString);
 		string Protect(NameValueCollection nvc);
 		UploadedFileCollection Files { get; }

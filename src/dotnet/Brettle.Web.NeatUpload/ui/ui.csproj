@@ -68,4 +68,7 @@
     <Compile Include="MultiFile.cs" />
     <Compile Include="FileControl.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\NeatUpload.Strings.resx" />
+  </ItemGroup>
 </Project>

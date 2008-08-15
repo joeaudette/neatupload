@@ -77,4 +77,7 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
+  <ItemGroup>
+    <EmbeddedResource Include="..\NeatUpload.Strings.resx" />
+  </ItemGroup>
 </Project>

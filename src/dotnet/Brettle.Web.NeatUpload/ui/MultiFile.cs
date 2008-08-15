@@ -59,6 +59,15 @@ namespace Brettle.Web.NeatUpload
 		private static readonly log4net.ILog log
 			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 		
+
+		public new UploadedFile[] Files
+		{
+			get 
+			{
+				return base.Files;
+			}
+		}		
+		
 		private string _validationFileNames;
 		
 		/// <summary>

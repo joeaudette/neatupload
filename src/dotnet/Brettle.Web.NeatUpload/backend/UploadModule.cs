@@ -106,8 +106,10 @@ namespace Brettle.Web.NeatUpload
 					return null;
 				if (_InstalledModule == null)
 				{
-					foreach (IHttpModule module in HttpContext.Current.ApplicationInstance.Modules)
+					HttpModuleCollection modules = HttpContext.Current.ApplicationInstance.Modules;
+					foreach (string moduleName in modules.AllKeys)
 					{
+						IHttpModule module = modules[moduleName];
 						if (module is IUploadModule)
 						{
 							_InstalledModule = (IUploadModule) module;
