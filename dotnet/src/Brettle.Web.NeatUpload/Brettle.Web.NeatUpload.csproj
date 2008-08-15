@@ -1,14 +1,34 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <ProjectGuid>{8C57C0B1-A668-4CDD-BE3B-54B15175BEC2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AssemblyName>Brettle.Web.NeatUpload</AssemblyName>
     <TargetFrameworkVersion>v1.1</TargetFrameworkVersion>
     <SchemaVersion>2.0</SchemaVersion>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -42,9 +62,13 @@
     <Reference Include="System.Drawing.Design" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Brettle.Web.NeatUpload\AccessSessionPage.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\AccessSessionPage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Brettle.Web.NeatUpload\ArmoredNameValueCollection.cs" />
-    <Compile Include="Brettle.Web.NeatUpload\AsyncUploadPage.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\AsyncUploadPage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Brettle.Web.NeatUpload\ConfigSectionHandler.cs" />
     <Compile Include="Brettle.Web.NeatUpload\DetailsControl.cs" />
     <Compile Include="Brettle.Web.NeatUpload\DetailsDiv.cs" />
@@ -60,12 +84,16 @@
     <Compile Include="Brettle.Web.NeatUpload\MoveToOptions.cs" />
     <Compile Include="Brettle.Web.NeatUpload\MultiFile.cs" />
     <Compile Include="Brettle.Web.NeatUpload\NonfilePortionTooLargeException.cs" />
-    <Compile Include="Brettle.Web.NeatUpload\Progress-1.0.aspx.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\Progress-1.0.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Brettle.Web.NeatUpload\ProgressBar.cs" />
     <Compile Include="Brettle.Web.NeatUpload\ProgressBarBase.cs" />
     <Compile Include="Brettle.Web.NeatUpload\ProgressBarBaseDesigner.cs" />
     <Compile Include="Brettle.Web.NeatUpload\ProgressInfo.cs" />
-    <Compile Include="Brettle.Web.NeatUpload\ProgressPage.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\ProgressPage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Brettle.Web.NeatUpload\SessionAccessCallback.cs" />
     <Compile Include="Brettle.Web.NeatUpload\UploadContext.cs" />
     <Compile Include="Brettle.Web.NeatUpload\UploadedFile.cs" />
@@ -96,6 +124,28 @@
   <ItemGroup>
     <EmbeddedResource Include="NeatUpload.Strings.resx" />
   </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <MonoDevelop>
@@ -103,6 +153,7 @@
         <GtkDesignInfo gtkVersion="2.10.3" />
       </Properties>
     </MonoDevelop>
+    <VisualStudio />
   </ProjectExtensions>
   <ItemGroup>
     <None Include="PostBuild.sh" />
