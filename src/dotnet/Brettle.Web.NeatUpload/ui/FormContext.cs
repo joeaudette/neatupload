@@ -22,9 +22,9 @@ using System;
 using System.IO;
 using System.Web;
 
-namespace Brettle.Web.NeatUpload
+namespace Brettle.Web.NeatUpload.Internal.UI
 {
-	public class FormContext
+	internal class FormContext
 	{
 		// Create a logger for use in this class
 //		private static readonly log4net.ILog log 

@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Web;
 using System.Collections.Specialized;
+using Brettle.Web.NeatUpload.Internal.Module;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -79,7 +80,7 @@ namespace Brettle.Web.NeatUpload
 			if (InstalledModule != null)
 				return InstalledModule.ConvertToUploadedFile(controlUniqueID, file);
 			else
-				return new Internal.AspNetUploadedFile(controlUniqueID, file);
+				return new AspNetUploadedFile(controlUniqueID, file);
 		}
 
 		public static string FileSizesFieldName {

@@ -24,6 +24,7 @@ using System.Web;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Net;
+using Brettle.Web.NeatUpload.Internal;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -62,7 +63,7 @@ namespace Brettle.Web.NeatUpload
 			{
 				return System.Web.HttpUtility.HtmlEncode(Text);
 			}
-			return String.Format(Internal.ResourceManagerSingleton.GetResourceString("ProgressInfoFormat"), 
+			return String.Format(ResourceManagerSingleton.GetResourceString("ProgressInfoFormat"), 
 								Value, Maximum, Units);
 		}
 		

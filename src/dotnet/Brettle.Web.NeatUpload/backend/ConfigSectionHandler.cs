@@ -22,6 +22,7 @@ using System;
 using System.Configuration;
 using System.Web;
 using System.Xml;
+using Brettle.Web.NeatUpload.Internal.Module;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -34,7 +35,7 @@ namespace Brettle.Web.NeatUpload
 */
 		public object Create(object parent, object context, XmlNode section)
 		{
-			return Internal.Config.CreateFromConfigSection(parent as Internal.Config, section);
+			return Config.CreateFromConfigSection(parent as Config, section);
 		}
 	}
 }

@@ -39,7 +39,7 @@ using System.Web.Configuration;
 using System.IO;
 using System.Threading;
 
-namespace Brettle.Web.NeatUpload
+namespace Brettle.Web.NeatUpload.Internal.Module
 {
 	internal abstract class DecoratedWorkerRequest : System.Web.HttpWorkerRequest
 	{

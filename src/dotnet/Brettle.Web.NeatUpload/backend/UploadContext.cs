@@ -25,6 +25,7 @@ using System.Web.SessionState;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Net;
+using Brettle.Web.NeatUpload.Internal.Module;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -67,10 +68,10 @@ namespace Brettle.Web.NeatUpload
 				{
 					if (httpContext.Items["NeatUpload_UploadContext"] == null)
 					{
-						if (Internal.Config.Current.UseHttpModule)
+						if (Config.Current.UseHttpModule)
 						{
-							Internal.FilteringWorkerRequest worker 
-								= UploadHttpModule.GetCurrentWorkerRequest() as Internal.FilteringWorkerRequest;
+							FilteringWorkerRequest worker 
+								= UploadHttpModule.GetCurrentWorkerRequest() as FilteringWorkerRequest;
 							if (worker != null)
 							{
 								httpContext.Items["NeatUpload_UploadContext"] = worker.GetUploadContext();

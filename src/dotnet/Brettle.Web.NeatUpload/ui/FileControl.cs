@@ -31,6 +31,7 @@ using System.Web.UI.HtmlControls;
 using System.Security.Permissions;
 using System.Text.RegularExpressions;
 using System.Web.Security;
+using Brettle.Web.NeatUpload.Internal.UI;
 
 namespace Brettle.Web.NeatUpload
 {	

@@ -26,7 +26,7 @@ using System.Web.Configuration;
 using System.IO;
 using System.Collections.Specialized;
 
-namespace Brettle.Web.NeatUpload.Internal
+namespace Brettle.Web.NeatUpload.Internal.Module
 {
 	internal class FilteringWorkerRequest : DecoratedWorkerRequest
 	{

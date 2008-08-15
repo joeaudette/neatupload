@@ -23,6 +23,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Reflection;
 using System.Web;
+using Brettle.Web.NeatUpload.Internal.Module;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -58,7 +59,7 @@ namespace Brettle.Web.NeatUpload
 		{
 			get
 			{
-				Internal.Config config = Internal.Config.Current;
+				Config config = Config.Current;
 				if (config.DefaultProviderName == null)
 				{
 					return LastResortProvider;
@@ -71,7 +72,7 @@ namespace Brettle.Web.NeatUpload
 		{
 			get
 			{
-				return Internal.Config.Current.Providers;
+				return Config.Current.Providers;
 			}
 		}
 

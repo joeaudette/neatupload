@@ -21,7 +21,7 @@ using System;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
-using Brettle.Web.NeatUpload;
+using Brettle.Web.NeatUpload.Internal;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -128,7 +128,7 @@ namespace Brettle.Web.NeatUpload
 
 		protected virtual string GetResourceString(string resourceName)
 		{
-			return Internal.ResourceManagerSingleton.GetResourceString(resourceName);
+			return ResourceManagerSingleton.GetResourceString(resourceName);
 		}
 		
 		protected string FormatCount(long count)

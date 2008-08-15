@@ -30,6 +30,8 @@ using System.Web.UI.HtmlControls;
 using System.Security.Permissions;
 using System.Web.UI.Design;
 using System.Drawing.Design;
+using Brettle.Web.NeatUpload.Internal;
+using Brettle.Web.NeatUpload.Internal.UI;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -138,7 +140,7 @@ namespace Brettle.Web.NeatUpload
 				{
 					Page.RegisterClientScriptBlock("NeatUploadProgressBar", @"
 	<script type='text/javascript' language='javascript'>
-	NeatUploadPB.prototype.ClearFileNamesAlert = '" +  Internal.ResourceManagerSingleton.GetResourceString("ClearFileNamesAlert") + @"';
+	NeatUploadPB.prototype.ClearFileNamesAlert = '" +  ResourceManagerSingleton.GetResourceString("ClearFileNamesAlert") + @"';
 	// -->
 	</script>
 	");

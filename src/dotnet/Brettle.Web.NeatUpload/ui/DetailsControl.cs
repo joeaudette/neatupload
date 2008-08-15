@@ -29,6 +29,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 using System.Security.Permissions;
+using Brettle.Web.NeatUpload.Internal.UI;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -70,7 +71,7 @@ namespace Brettle.Web.NeatUpload
 				UploadModule.CancelPostBack(postBackID);
 			}
 			
-			IUploadProgressState progressState = new Internal.UploadProgressState();
+			IUploadProgressState progressState = new UploadProgressState();
 			UploadModule.BindProgressState(postBackID, barID, progressState);
 
 			if (progressState.Status == UploadStatus.Unknown)
