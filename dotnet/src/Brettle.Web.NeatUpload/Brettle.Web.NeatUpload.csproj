@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <ProjectGuid>{8C57C0B1-A668-4CDD-BE3B-54B15175BEC2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Brettle.Web.NeatUpload</AssemblyName>
+    <TargetFrameworkVersion>v1.1</TargetFrameworkVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <Output>
+      <Output />
+    </Output>
+    <Build>
+      <Build />
+    </Build>
+    <Execution>
+      <Execution />
+    </Execution>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Execution>
+      <Execution />
+    </Execution>
+    <Build>
+      <Build />
+    </Build>
+    <ConsolePause>false</ConsolePause>
+    <Output>
+      <Output />
+    </Output>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Design" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Brettle.Web.NeatUpload\AccessSessionPage.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\ArmoredNameValueCollection.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\AsyncUploadPage.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\ConfigSectionHandler.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\DetailsControl.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\DetailsDiv.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\DetailsSpan.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\FileControl.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\FilesystemUploadedFile.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\FilesystemUploadStorageProvider.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\HiddenPostBackID.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\InputFile.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\InvalidStorageConfigException.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\IUploadModule.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\IUploadProgressState.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\MoveToOptions.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\MultiFile.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\NonfilePortionTooLargeException.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\Progress-1.0.aspx.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\ProgressBar.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\ProgressBarBase.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\ProgressBarBaseDesigner.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\ProgressInfo.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\ProgressPage.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\SessionAccessCallback.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadContext.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadedFile.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadedFileCollection.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadException.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadHttpModule.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadModule.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadStatus.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadStorage.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadStorageConfig.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadStorageProvider.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadStorageProviderCollection.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadTooLargeException.cs" />
+    <Compile Include="Brettle.Web.NeatUpload.Internal\ResourceManagerSingleton.cs" />
+    <Compile Include="Brettle.Web.NeatUpload.Internal.Module\AspNetUploadedFile.cs" />
+    <Compile Include="Brettle.Web.NeatUpload.Internal.Module\Config.cs" />
+    <Compile Include="Brettle.Web.NeatUpload.Internal.Module\DecoratedWorkerRequest.cs" />
+    <Compile Include="Brettle.Web.NeatUpload.Internal.Module\FieldNameTranslator.cs" />
+    <Compile Include="Brettle.Web.NeatUpload.Internal.Module\FilteringWorkerRequest.cs" />
+    <Compile Include="Brettle.Web.NeatUpload.Internal.Module\SessionAccessingWorkerRequest.cs" />
+    <Compile Include="Brettle.Web.NeatUpload.Internal.Module\SessionPreservingWorkerRequest.cs" />
+    <Compile Include="Brettle.Web.NeatUpload.Internal.Module\SizeLimitingWorkerRequest.cs" />
+    <Compile Include="Brettle.Web.NeatUpload.Internal.UI\FormContext.cs" />
+    <Compile Include="Brettle.Web.NeatUpload.Internal.UI\UploadProgressState.cs" />
+    <Compile Include="Brettle.Web.NeatUpload.log4net\MyLog4net.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="NeatUpload.Strings.resx" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <GtkDesignInfo gtkVersion="2.10.3" />
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
+</Project>
