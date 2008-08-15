@@ -39,7 +39,7 @@ using System.Web.Configuration;
 using System.IO;
 using System.Threading;
 
-namespace Brettle.Web.NeatUpload
+namespace Brettle.Web.NeatUpload.Internal
 {
 	internal class SessionPreservingWorkerRequest : DecoratedWorkerRequest
 	{

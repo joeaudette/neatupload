@@ -34,7 +34,7 @@ namespace Brettle.Web.NeatUpload
 */
 		public object Create(object parent, object context, XmlNode section)
 		{
-			return Config.CreateFromConfigSection(parent as Config, section);
+			return Internal.Config.CreateFromConfigSection(parent as Internal.Config, section);
 		}
 	}
 }

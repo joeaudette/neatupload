@@ -54,7 +54,7 @@ namespace Brettle.Web.NeatUpload
 			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
 		string IUploadModule.PostBackIDQueryParam { 
-			get { return Config.Current.PostBackIDQueryParam; } 
+			get { return Internal.Config.Current.PostBackIDQueryParam; } 
 		}
 
 		string IUploadModule.FileFieldNamePrefix { 
@@ -66,7 +66,7 @@ namespace Brettle.Web.NeatUpload
 		}
 
 		bool IUploadModule.IsEnabled {
-			get { return Config.Current.UseHttpModule; } 
+			get { return Internal.Config.Current.UseHttpModule; } 
 		}
 
 		NameValueCollection IUploadModule.Unprotect(string armoredString)
@@ -208,9 +208,10 @@ namespace Brettle.Web.NeatUpload
 			get 
 			{
 				// If the upload is being handled by this module, then return the collection that it maintains.
-				if (!Config.Current.UseHttpModule)
+				if (!Internal.Config.Current.UseHttpModule)
 					return null;
-				FilteringWorkerRequest worker = UploadHttpModule.GetCurrentWorkerRequest() as FilteringWorkerRequest;
+				Internal.FilteringWorkerRequest worker 
+					= UploadHttpModule.GetCurrentWorkerRequest() as Internal.FilteringWorkerRequest;
 				if (worker == null)
 				    return null;
 				UploadedFileCollection files = worker.GetUploadContext().Files;
@@ -236,7 +237,8 @@ namespace Brettle.Web.NeatUpload
 		{
 			// If the original request hasn't been parsed (and any upload received) by now,
 			// we force parsing to ensure that the upload is received.
-			FilteringWorkerRequest worker = GetCurrentWorkerRequest() as FilteringWorkerRequest;
+			Internal.FilteringWorkerRequest worker 
+				= GetCurrentWorkerRequest() as Internal.FilteringWorkerRequest;
 			if (worker != null)
 			{
 				worker.ParseMultipart();
@@ -247,7 +249,7 @@ namespace Brettle.Web.NeatUpload
 		{
 			get
 			{
-				return Config.Current.MaxNormalRequestLength;
+				return Internal.Config.Current.MaxNormalRequestLength;
 			}
 		}
 
@@ -255,7 +257,7 @@ namespace Brettle.Web.NeatUpload
 		{
 			get
 			{
-				return Config.Current.MaxRequestLength;
+				return Internal.Config.Current.MaxRequestLength;
 			}
 		}
 
@@ -360,7 +362,7 @@ namespace Brettle.Web.NeatUpload
 				}
 			}
 			
-			if (!Config.Current.UseHttpModule)
+			if (!Internal.Config.Current.UseHttpModule)
 			{
 				return;
 			}
@@ -425,7 +427,7 @@ namespace Brettle.Web.NeatUpload
 			string contentTypeHeader = origWorker.GetKnownRequestHeader(HttpWorkerRequest.HeaderContentType);
 			if (contentTypeHeader != null && contentTypeHeader.ToLower().StartsWith("multipart/form-data"))
 			{
-				subWorker = new FilteringWorkerRequest(origWorker);
+				subWorker = new Internal.FilteringWorkerRequest(origWorker);
 			}
 			else
 			{
@@ -436,7 +438,7 @@ namespace Brettle.Web.NeatUpload
 				{
 					throw new HttpException(413, "Request Entity Too Large");
 				}
-				subWorker = new SizeLimitingWorkerRequest(origWorker, MaxNormalRequestLength);
+				subWorker = new Internal.SizeLimitingWorkerRequest(origWorker, MaxNormalRequestLength);
 //				subWorker = null;
 			}
 			
@@ -491,7 +493,7 @@ namespace Brettle.Web.NeatUpload
 		private void Application_ResolveRequestCache(object sender, EventArgs e)
 		{
 			if (log.IsDebugEnabled) log.Debug("In Application_ResolveRequestCache");
-			if (!Config.Current.UseHttpModule)
+			if (!Internal.Config.Current.UseHttpModule)
 			{
 				return;
 			}
@@ -552,7 +554,7 @@ namespace Brettle.Web.NeatUpload
 			// Parse out the postBackID.  Note, we can't just do:
 			//   string postBackID = httpContext.Request.Params[Config.Current.PostBackIDQueryParam];
 			// because that will prevent ASP.NET from getting a new Params array if Server.Transfer() is called.
-			string postBackIDQueryParam = Config.Current.PostBackIDQueryParam;
+			string postBackIDQueryParam = Internal.Config.Current.PostBackIDQueryParam;
             if (qs == null || postBackIDQueryParam == null)
                 return null;
 			Match match = Regex.Match(qs, @"(^|\?|&)" + Regex.Escape(postBackIDQueryParam) + @"=([^&]+)");
@@ -619,7 +621,7 @@ namespace Brettle.Web.NeatUpload
 		private void Application_AcquireRequestState(object sender, EventArgs e)
 		{
 			if (log.IsDebugEnabled) log.Debug("In Application_AcquireRequestState");
-			if (!Config.Current.UseHttpModule)
+			if (!Internal.Config.Current.UseHttpModule)
 			{
 				return;
 			}
@@ -629,7 +631,7 @@ namespace Brettle.Web.NeatUpload
 		private void Application_ReleaseRequestState(object sender, EventArgs e)
 		{
 			if (log.IsDebugEnabled) log.Debug("In Application_ReleaseRequestState");
-			if (!Config.Current.UseHttpModule)
+			if (!Internal.Config.Current.UseHttpModule)
 			{
 				return;
 			}
@@ -639,7 +641,7 @@ namespace Brettle.Web.NeatUpload
 		private void Application_PreRequestHandlerExecute(object sender, EventArgs e)
 		{
 			if (log.IsDebugEnabled) log.Debug("In Application_PreRequestHandlerExecute");
-			if (!Config.Current.UseHttpModule)
+			if (!Internal.Config.Current.UseHttpModule)
 			{
 				return;
 			}
@@ -648,7 +650,7 @@ namespace Brettle.Web.NeatUpload
 		private EventHandler RememberErrorHandler; 
 		private void RememberError(object sender, EventArgs e)
 		{
-			if (!Config.Current.UseHttpModule)
+			if (!Internal.Config.Current.UseHttpModule)
 			{
 				return;
 			}
@@ -700,7 +702,7 @@ namespace Brettle.Web.NeatUpload
 		private void Application_EndRequest(object sender, EventArgs e)
 		{
 			if (log.IsDebugEnabled) log.Debug("In Application_EndRequest");
-			if (!Config.Current.UseHttpModule)
+			if (!Internal.Config.Current.UseHttpModule)
 			{
 				return;
 			}
@@ -719,7 +721,7 @@ namespace Brettle.Web.NeatUpload
 
 		private void Application_EndRequestOrError(object sender, EventArgs args)
 		{
-			if (!Config.Current.UseHttpModule)
+			if (!Internal.Config.Current.UseHttpModule)
 				return;
 			HttpContext ctx = HttpContext.Current;
 			// Get the list of files to dispose to the current context if one hasn't been added yet
@@ -756,8 +758,8 @@ namespace Brettle.Web.NeatUpload
 				}
 			}
 
-			SessionAccessingWorkerRequest req 
-				= SessionAccessingWorkerRequest.Create(GetOrigWorkerRequest(), page, qs, accessor);
+			Internal.SessionAccessingWorkerRequest req 
+				= Internal.SessionAccessingWorkerRequest.Create(GetOrigWorkerRequest(), page, qs, accessor);
 			try
 			{
 				req.ProcessRequest(null);

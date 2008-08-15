@@ -25,7 +25,7 @@ using System.Web;
 using System.Web.Configuration;
 using System.IO;
 
-namespace Brettle.Web.NeatUpload
+namespace Brettle.Web.NeatUpload.Internal
 {
 	internal class SizeLimitingWorkerRequest : DecoratedWorkerRequest
 	{

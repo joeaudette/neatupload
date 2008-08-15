@@ -28,7 +28,7 @@ using System.Web.UI;
 using System.Web;
 using System.Text.RegularExpressions;
 
-namespace Brettle.Web.NeatUpload
+namespace Brettle.Web.NeatUpload.Internal
 {
 	internal class FieldNameTranslator
 	{

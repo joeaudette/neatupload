@@ -27,7 +27,7 @@ namespace Brettle.Web.NeatUpload
 	public class InvalidStorageConfigException : UploadException
 	{
 		public InvalidStorageConfigException(string details) 
-			: base(500, String.Format(Config.Current.GetResourceString("InvalidStorageConfigMessageFormat"), details))
+			: base(500, String.Format(Internal.Config.Current.GetResourceString("InvalidStorageConfigMessageFormat"), details))
 		{
 			Details = details;
 		}

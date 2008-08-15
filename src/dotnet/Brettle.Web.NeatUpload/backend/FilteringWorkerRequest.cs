@@ -26,7 +26,7 @@ using System.Web.Configuration;
 using System.IO;
 using System.Collections.Specialized;
 
-namespace Brettle.Web.NeatUpload
+namespace Brettle.Web.NeatUpload.Internal
 {
 	internal class FilteringWorkerRequest : DecoratedWorkerRequest
 	{
@@ -475,7 +475,7 @@ namespace Brettle.Web.NeatUpload
 				}
 			}
 			
-			FieldNameTranslator translator = UploadStorage.CreateFieldNameTranslator();
+			FieldNameTranslator translator = new FieldNameTranslator();
 			if (!uploadContext.IsAsyncRequest)
 			{
 				uploadContext.SyncBytesTotal = origContentLength;

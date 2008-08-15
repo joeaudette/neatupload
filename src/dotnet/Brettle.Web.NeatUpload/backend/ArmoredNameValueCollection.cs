@@ -77,7 +77,7 @@ namespace Brettle.Web.NeatUpload
 			
 			// Verify the hash
 			KeyedHashAlgorithm macAlgorithm = KeyedHashAlgorithm.Create();
-			macAlgorithm.Key = Config.Current.ValidationKey;
+			macAlgorithm.Key = Internal.Config.Current.ValidationKey;
 			byte[] expectedHash = macAlgorithm.ComputeHash(cipherText);
 			AssertSignaturesAreEqual(actualHash, expectedHash);
 			
@@ -86,7 +86,7 @@ namespace Brettle.Web.NeatUpload
 			SymmetricAlgorithm cipher = SymmetricAlgorithm.Create();
 			cipher.Mode = CipherMode.CBC;
 			cipher.Padding = PaddingMode.PKCS7;
-			cipher.Key = Config.Current.EncryptionKey;
+			cipher.Key = Internal.Config.Current.EncryptionKey;
 			cipher.IV = iv;
 			CryptoStream cryptoStream = new CryptoStream(cipherTextStream, cipher.CreateDecryptor(), CryptoStreamMode.Read);
 			try
@@ -106,7 +106,7 @@ namespace Brettle.Web.NeatUpload
 			SymmetricAlgorithm cipher = SymmetricAlgorithm.Create();
 			cipher.Mode = CipherMode.CBC;
 			cipher.Padding = PaddingMode.PKCS7;
-			cipher.Key = Config.Current.EncryptionKey;
+			cipher.Key = Internal.Config.Current.EncryptionKey;
 			CryptoStream cryptoStream = new CryptoStream(cipherTextStream, cipher.CreateEncryptor(), CryptoStreamMode.Write);
 			Serialize(cryptoStream);
 			cryptoStream.Close();
@@ -114,7 +114,7 @@ namespace Brettle.Web.NeatUpload
 			
 			// MAC the ciphertext
 			KeyedHashAlgorithm macAlgorithm = KeyedHashAlgorithm.Create();
-			macAlgorithm.Key = Config.Current.ValidationKey;
+			macAlgorithm.Key = Internal.Config.Current.ValidationKey;
 			byte[] hash = macAlgorithm.ComputeHash(cipherText);
 			
 			// Concatenate MAC length, MAC, IV length, IV, and ciphertext into an array.

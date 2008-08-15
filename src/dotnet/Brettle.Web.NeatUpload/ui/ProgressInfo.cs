@@ -62,7 +62,7 @@ namespace Brettle.Web.NeatUpload
 			{
 				return System.Web.HttpUtility.HtmlEncode(Text);
 			}
-			return String.Format(ResourceManagerSingleton.GetResourceString("ProgressInfoFormat"), 
+			return String.Format(Internal.ResourceManagerSingleton.GetResourceString("ProgressInfoFormat"), 
 								Value, Maximum, Units);
 		}
 		

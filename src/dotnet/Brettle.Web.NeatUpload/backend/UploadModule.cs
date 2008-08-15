@@ -79,7 +79,7 @@ namespace Brettle.Web.NeatUpload
 			if (InstalledModule != null)
 				return InstalledModule.ConvertToUploadedFile(controlUniqueID, file);
 			else
-				return new AspNetUploadedFile(controlUniqueID, file);
+				return new Internal.AspNetUploadedFile(controlUniqueID, file);
 		}
 
 		public static string FileSizesFieldName {

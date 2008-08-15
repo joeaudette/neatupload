@@ -70,7 +70,7 @@ namespace Brettle.Web.NeatUpload
 				UploadModule.CancelPostBack(postBackID);
 			}
 			
-			IUploadProgressState progressState = new UploadProgressState();
+			IUploadProgressState progressState = new Internal.UploadProgressState();
 			UploadModule.BindProgressState(postBackID, barID, progressState);
 
 			if (progressState.Status == UploadStatus.Unknown)

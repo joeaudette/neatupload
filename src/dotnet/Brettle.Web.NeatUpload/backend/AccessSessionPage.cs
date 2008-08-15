@@ -45,8 +45,8 @@ namespace Brettle.Web.NeatUpload
 		protected override void OnLoad(EventArgs e)
 		{
 			if (log.IsDebugEnabled) log.Debug("In AccessSessionPage.OnLoad()");
-			SessionAccessingWorkerRequest worker 
-				= (SessionAccessingWorkerRequest)UploadHttpModule.GetCurrentWorkerRequest();
+			Internal.SessionAccessingWorkerRequest worker 
+				= (Internal.SessionAccessingWorkerRequest)UploadHttpModule.GetCurrentWorkerRequest();
 			worker.Accessor(HttpContext.Current.Session);
 			return;
 		}

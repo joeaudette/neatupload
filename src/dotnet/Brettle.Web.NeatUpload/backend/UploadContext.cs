@@ -67,9 +67,10 @@ namespace Brettle.Web.NeatUpload
 				{
 					if (httpContext.Items["NeatUpload_UploadContext"] == null)
 					{
-						if (Config.Current.UseHttpModule)
+						if (Internal.Config.Current.UseHttpModule)
 						{
-							FilteringWorkerRequest worker = UploadHttpModule.GetCurrentWorkerRequest() as FilteringWorkerRequest;
+							Internal.FilteringWorkerRequest worker 
+								= UploadHttpModule.GetCurrentWorkerRequest() as Internal.FilteringWorkerRequest;
 							if (worker != null)
 							{
 								httpContext.Items["NeatUpload_UploadContext"] = worker.GetUploadContext();

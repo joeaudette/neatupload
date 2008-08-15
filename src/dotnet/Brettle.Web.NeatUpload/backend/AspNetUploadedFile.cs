@@ -22,7 +22,7 @@ using System;
 using System.Web;
 using System.Configuration;
 
-namespace Brettle.Web.NeatUpload
+namespace Brettle.Web.NeatUpload.Internal
 {
 	// Instances of this class are just placeholders in an UploadedFileCollection for files that the UploadHttpModule
 	// doesn't stream to the UploadStorageProvider while the request is being received (e.g. because it is

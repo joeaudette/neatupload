@@ -28,7 +28,7 @@ using System.Resources;
 using System.Security.Cryptography;
 using System.Security.Permissions;
 
-namespace Brettle.Web.NeatUpload
+namespace Brettle.Web.NeatUpload.Internal
 {
 	internal class Config
 	{
