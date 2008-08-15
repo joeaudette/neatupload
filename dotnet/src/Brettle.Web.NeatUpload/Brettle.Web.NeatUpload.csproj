@@ -28,6 +28,11 @@
     <Execution>
       <Execution />
     </Execution>
+    <AssemblyKeyFile>..\..\..\..\keypair.snk</AssemblyKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <EnvironmentVariables>
+      <EnvironmentVariables />
+    </EnvironmentVariables>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -104,6 +109,7 @@
     <Compile Include="Brettle.Web.NeatUpload.Internal.UI\FormContext.cs" />
     <Compile Include="Brettle.Web.NeatUpload.Internal.UI\UploadProgressState.cs" />
     <Compile Include="Brettle.Web.NeatUpload.log4net\MyLog4net.cs" />
+    <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="NeatUpload.Strings.resx" />
@@ -116,4 +122,8 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
+  <ItemGroup>
+    <None Include="PostBuild.sh" />
+    <None Include="PreBuild.sh" />
+  </ItemGroup>
 </Project>
