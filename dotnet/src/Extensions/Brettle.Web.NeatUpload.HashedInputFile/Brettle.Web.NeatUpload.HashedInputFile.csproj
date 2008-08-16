@@ -4,10 +4,10 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
-    <ProjectGuid>{05F3DC4F-E625-4CEB-BCDA-4B951AE98874}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AssemblyName>SWFUpload</AssemblyName>
     <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{5C2D697F-9FF3-4862-8C5B-742EDCE8EF3E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Brettle.Web.NeatUpload.HashedInputFile</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -17,12 +17,7 @@
     <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="Build" command="Build" workingdir="${ProjectDir}" />
-        <Command type="Clean" command="Clean" workingdir="${ProjectDir}" />
-      </CustomCommands>
-    </CustomCommands>
+    <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -30,13 +25,25 @@
     <OutputPath>install\bin</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="Build" command="Build" workingdir="${ProjectDir}" />
-        <Command type="Clean" command="Clean" workingdir="${ProjectDir}" />
-      </CustomCommands>
-    </CustomCommands>
+    <ConsolePause>false</ConsolePause>
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Brettle.Web.NeatUpload\Brettle.Web.NeatUpload.csproj">
+      <Project>{8C57C0B1-A668-4CDD-BE3B-54B15175BEC2}</Project>
+      <Name>Brettle.Web.NeatUpload</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Design" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="HashedInputFile.cs" />
+    <Compile Include="HashingFilesystemUploadedFile.cs" />
+    <Compile Include="HashingFilesystemUploadStorageProvider.cs" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <MonoDevelop>
@@ -45,14 +52,4 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
-  <ItemGroup>
-    <None Include="FlashDevelop\swfupload.js" />
-    <None Include="FlashDevelop\classes\Delegate.as" />
-    <None Include="FlashDevelop\classes\FileItem.as" />
-    <None Include="FlashDevelop\classes\SWFUpload.as" />
-    <None Include="Build" />
-    <None Include="Build.bat" />
-    <None Include="Clean" />
-    <None Include="Clean.bat" />
-  </ItemGroup>
 </Project>

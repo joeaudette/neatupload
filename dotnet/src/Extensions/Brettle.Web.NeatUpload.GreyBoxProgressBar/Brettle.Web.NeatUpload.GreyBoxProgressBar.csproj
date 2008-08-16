@@ -4,55 +4,51 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
-    <ProjectGuid>{05F3DC4F-E625-4CEB-BCDA-4B951AE98874}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AssemblyName>SWFUpload</AssemblyName>
     <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{71BD05D2-9780-4168-BFF7-B7A0A3445A1D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Brettle.Web.NeatUpload.GreyBoxProgressBar</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>install\bin</OutputPath>
+    <OutputPath>bin\Debug</OutputPath>
     <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="Build" command="Build" workingdir="${ProjectDir}" />
-        <Command type="Clean" command="Clean" workingdir="${ProjectDir}" />
-      </CustomCommands>
-    </CustomCommands>
+    <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>install\bin</OutputPath>
+    <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="Build" command="Build" workingdir="${ProjectDir}" />
-        <Command type="Clean" command="Clean" workingdir="${ProjectDir}" />
-      </CustomCommands>
-    </CustomCommands>
+    <ConsolePause>false</ConsolePause>
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Brettle.Web.NeatUpload\Brettle.Web.NeatUpload.csproj">
+      <Project>{8C57C0B1-A668-4CDD-BE3B-54B15175BEC2}</Project>
+      <Name>Brettle.Web.NeatUpload</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="GreyBoxProgressBar.cs" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <MonoDevelop>
-      <Properties>
+      <Properties xmlns="">
         <GtkDesignInfo gtkVersion="2.10.3" />
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
-  <ItemGroup>
-    <None Include="FlashDevelop\swfupload.js" />
-    <None Include="FlashDevelop\classes\Delegate.as" />
-    <None Include="FlashDevelop\classes\FileItem.as" />
-    <None Include="FlashDevelop\classes\SWFUpload.as" />
-    <None Include="Build" />
-    <None Include="Build.bat" />
-    <None Include="Clean" />
-    <None Include="Clean.bat" />
-  </ItemGroup>
 </Project>

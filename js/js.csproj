@@ -4,10 +4,10 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
-    <ProjectGuid>{05F3DC4F-E625-4CEB-BCDA-4B951AE98874}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AssemblyName>SWFUpload</AssemblyName>
     <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{AC10DB99-6E40-4CF7-965E-74DC082CA85D}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>js</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -17,12 +17,6 @@
     <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="Build" command="Build" workingdir="${ProjectDir}" />
-        <Command type="Clean" command="Clean" workingdir="${ProjectDir}" />
-      </CustomCommands>
-    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -30,13 +24,11 @@
     <OutputPath>install\bin</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="Build" command="Build" workingdir="${ProjectDir}" />
-        <Command type="Clean" command="Clean" workingdir="${ProjectDir}" />
-      </CustomCommands>
-    </CustomCommands>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="install\NeatUpload.js" />
+    <None Include="install\Progress.js" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <MonoDevelop>
@@ -45,14 +37,4 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
-  <ItemGroup>
-    <None Include="FlashDevelop\swfupload.js" />
-    <None Include="FlashDevelop\classes\Delegate.as" />
-    <None Include="FlashDevelop\classes\FileItem.as" />
-    <None Include="FlashDevelop\classes\SWFUpload.as" />
-    <None Include="Build" />
-    <None Include="Build.bat" />
-    <None Include="Clean" />
-    <None Include="Clean.bat" />
-  </ItemGroup>
 </Project>
