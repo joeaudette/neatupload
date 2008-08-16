@@ -1,1 +1,1 @@
-del install\*.*
+del ..\..\install\*.*

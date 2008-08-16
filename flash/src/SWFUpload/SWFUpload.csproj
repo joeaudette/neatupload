@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <ProjectGuid>{05F3DC4F-E625-4CEB-BCDA-4B951AE98874}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AssemblyName>SWFUpload</AssemblyName>
@@ -33,7 +33,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>install\bin</OutputPath>
+    <OutputPath>ignore\</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CustomCommands>
@@ -50,6 +50,7 @@
         <GtkDesignInfo gtkVersion="2.10.3" />
       </Properties>
     </MonoDevelop>
+    <VisualStudio />
   </ProjectExtensions>
   <ItemGroup>
     <None Include="FlashDevelop\swfupload.js" />
@@ -61,4 +62,7 @@
     <None Include="Clean" />
     <None Include="Clean.bat" />
   </ItemGroup>
+  <PropertyGroup>
+    <PreBuildEvent>$(ProjectDir)Build $(ProjectDir)</PreBuildEvent>
+  </PropertyGroup>
 </Project>
