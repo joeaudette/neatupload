@@ -34,7 +34,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
+    <OutputPath>install\bin</OutputPath>
     <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -48,7 +48,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Release</OutputPath>
+    <OutputPath>install\bin</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -156,6 +156,16 @@
     <VisualStudio />
   </ProjectExtensions>
   <ItemGroup>
+    <None Include="install\NeatUpload\AccessSession.aspx" />
+    <None Include="install\NeatUpload\AsyncUpload.aspx" />
+    <None Include="install\NeatUpload\cancel.png" />
+    <None Include="install\NeatUpload\default.css" />
+    <None Include="install\NeatUpload\Error413.aspx" />
+    <None Include="install\NeatUpload\Progress.aspx" />
+    <None Include="install\NeatUpload\refresh.png" />
+    <None Include="install\NeatUpload\stop_refresh.png" />
+    <None Include="install\NeatUpload\SWFUpload-license.txt" />
+    <None Include="install\NeatUpload\Web.config" />
     <None Include="PostBuild.sh" />
     <None Include="PreBuild.sh" />
   </ItemGroup>
