@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hitone.Web.SqlServerUploade
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "js", "js\js.csproj", "{AC10DB99-6E40-4CF7-965E-74DC082CA85D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "app", "dotnet\app\app.csproj", "{B5EE5471-AA00-4B21-983A-3200074D7A5A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +25,6 @@ Global
 		{05F3DC4F-E625-4CEB-BCDA-4B951AE98874}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05F3DC4F-E625-4CEB-BCDA-4B951AE98874}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05F3DC4F-E625-4CEB-BCDA-4B951AE98874}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8C57C0B1-A668-4CDD-BE3B-54B15175BEC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8C57C0B1-A668-4CDD-BE3B-54B15175BEC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8C57C0B1-A668-4CDD-BE3B-54B15175BEC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8C57C0B1-A668-4CDD-BE3B-54B15175BEC2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5C2D697F-9FF3-4862-8C5B-742EDCE8EF3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5C2D697F-9FF3-4862-8C5B-742EDCE8EF3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C2D697F-9FF3-4862-8C5B-742EDCE8EF3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -35,21 +33,29 @@ Global
 		{71BD05D2-9780-4168-BFF7-B7A0A3445A1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71BD05D2-9780-4168-BFF7-B7A0A3445A1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71BD05D2-9780-4168-BFF7-B7A0A3445A1D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D312FA63-ACC3-4C2B-9479-5ACF78F0154E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D312FA63-ACC3-4C2B-9479-5ACF78F0154E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D312FA63-ACC3-4C2B-9479-5ACF78F0154E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D312FA63-ACC3-4C2B-9479-5ACF78F0154E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C57C0B1-A668-4CDD-BE3B-54B15175BEC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C57C0B1-A668-4CDD-BE3B-54B15175BEC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C57C0B1-A668-4CDD-BE3B-54B15175BEC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C57C0B1-A668-4CDD-BE3B-54B15175BEC2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AC10DB99-6E40-4CF7-965E-74DC082CA85D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AC10DB99-6E40-4CF7-965E-74DC082CA85D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC10DB99-6E40-4CF7-965E-74DC082CA85D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC10DB99-6E40-4CF7-965E-74DC082CA85D}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
+		{B5EE5471-AA00-4B21-983A-3200074D7A5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5EE5471-AA00-4B21-983A-3200074D7A5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5EE5471-AA00-4B21-983A-3200074D7A5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5EE5471-AA00-4B21-983A-3200074D7A5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D312FA63-ACC3-4C2B-9479-5ACF78F0154E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D312FA63-ACC3-4C2B-9479-5ACF78F0154E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D312FA63-ACC3-4C2B-9479-5ACF78F0154E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D312FA63-ACC3-4C2B-9479-5ACF78F0154E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		name = NeatUpload_VS2005
 		version = 0.1
 		StartupItem = flash\src\SWFUpload\SWFUpload.csproj
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal

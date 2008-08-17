@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -13,20 +13,19 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>2.0</OldToolsVersion>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>install\bin</OutputPath>
+    <OutputPath>src\neatupload\trunk\flash\src\SWFUpload\ignore\</OutputPath>
     <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CustomCommands>
       <CustomCommands>
-        <Command type="Build" command="Build" workingdir="${ProjectDir}" />
-        <Command type="Clean" command="Clean" workingdir="${ProjectDir}" />
+        <Command type="BeforeBuild" command="Build ${ProjectDir}" workingdir="${ProjectDir}" />
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
@@ -38,8 +37,7 @@
     <WarningLevel>4</WarningLevel>
     <CustomCommands>
       <CustomCommands>
-        <Command type="Build" command="Build" workingdir="${ProjectDir}" />
-        <Command type="Clean" command="Clean" workingdir="${ProjectDir}" />
+        <Command type="BeforeBuild" command="Build ${ProjectDir}" workingdir="${ProjectDir}" />
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
@@ -59,10 +57,11 @@
     <None Include="FlashDevelop\classes\SWFUpload.as" />
     <None Include="Build" />
     <None Include="Build.bat" />
-    <None Include="Clean" />
-    <None Include="Clean.bat" />
   </ItemGroup>
   <PropertyGroup>
     <PreBuildEvent>$(ProjectDir)Build $(ProjectDir)</PreBuildEvent>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+  </ItemGroup>
 </Project>

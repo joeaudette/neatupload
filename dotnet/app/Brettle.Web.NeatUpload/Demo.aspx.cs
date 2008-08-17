@@ -124,9 +124,9 @@ namespace Brettle.Web.NeatUpload
 				return;
 			}
 			bodyPre.InnerText = "";
-			if (multiFile.Files.Count > 0)
+			if (multiFile.Files.Length > 0)
 			{
-				bodyPre.InnerText += "Uploaded " + multiFile.Files.Count + " files with MultiFile:\n"; 
+				bodyPre.InnerText += "Uploaded " + multiFile.Files.Length + " files with MultiFile:\n"; 
 				foreach (UploadedFile file in multiFile.Files)
 				{
 					/* 
@@ -138,9 +138,9 @@ namespace Brettle.Web.NeatUpload
 				}
 			}
 
-			if (multiFile2.Files.Count > 0)
+			if (multiFile2.Files.Length > 0)
 			{
-				bodyPre.InnerText += "Uploaded " + multiFile2.Files.Count + " files with MultiFile2:\n"; 
+				bodyPre.InnerText += "Uploaded " + multiFile2.Files.Length + " files with MultiFile2:\n"; 
 				foreach (UploadedFile file in multiFile2.Files)
 				{
 					/* 
