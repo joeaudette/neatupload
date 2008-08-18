@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "js", "js\js.csproj", "{AC10
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "deploy", "dotnet\deploy\deploy.csproj", "{E4426BAD-345E-42BE-B988-14DDB9A0E3E8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "docs", "dotnet\docs\docs.csproj", "{45755213-862A-4709-A8C6-D0BBF511D14E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{05F3DC4F-E625-4CEB-BCDA-4B951AE98874}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05F3DC4F-E625-4CEB-BCDA-4B951AE98874}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05F3DC4F-E625-4CEB-BCDA-4B951AE98874}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45755213-862A-4709-A8C6-D0BBF511D14E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45755213-862A-4709-A8C6-D0BBF511D14E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45755213-862A-4709-A8C6-D0BBF511D14E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45755213-862A-4709-A8C6-D0BBF511D14E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5C2D697F-9FF3-4862-8C5B-742EDCE8EF3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5C2D697F-9FF3-4862-8C5B-742EDCE8EF3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C2D697F-9FF3-4862-8C5B-742EDCE8EF3E}.Release|Any CPU.ActiveCfg = Release|Any CPU

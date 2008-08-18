@@ -1,4 +1,4 @@
-' This needs to be added to your OpenOffice.org macros in order for Build.sh
+' This needs to be added to your OpenOffice.org macros in order for Build
 ' to convert Manual.flatxml to Manual.html:
 '   Tools > Macros > Organize Macros > OpenOffice.org Basic 
 '     > My Macros > Standard > Module1
