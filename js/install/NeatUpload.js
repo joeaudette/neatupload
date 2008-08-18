@@ -1176,9 +1176,13 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 			inputFileElem.parentNode.insertBefore(hiddenField, inputFileElem);
 
 			// Change the <input type='file'> to an innocuous <input type='button'> so that
-			// clicking on it doesn't bring up an extra file selection dialog.
-			inputFileElem.type = 'button';
-			inputFileElem.value = 'Pick Files...';
+			// clicking on it doesn't bring up an extra file selection dialog in FF.
+			try {
+				inputFileElem.type = 'button';
+				inputFileElem.value = 'Pick Files...';
+			} catch (ex)
+			{
+			}
 
 		}, 0);
 	}

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -46,12 +46,13 @@
     </EnvironmentVariables>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
+    <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>install\bin</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -62,9 +63,13 @@
     <Reference Include="System.Drawing.Design" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Brettle.Web.NeatUpload\AccessSessionPage.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\AccessSessionPage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Brettle.Web.NeatUpload\ArmoredNameValueCollection.cs" />
-    <Compile Include="Brettle.Web.NeatUpload\AsyncUploadPage.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\AsyncUploadPage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Brettle.Web.NeatUpload\ConfigSectionHandler.cs" />
     <Compile Include="Brettle.Web.NeatUpload\DetailsControl.cs" />
     <Compile Include="Brettle.Web.NeatUpload\DetailsDiv.cs" />
@@ -80,12 +85,16 @@
     <Compile Include="Brettle.Web.NeatUpload\MoveToOptions.cs" />
     <Compile Include="Brettle.Web.NeatUpload\MultiFile.cs" />
     <Compile Include="Brettle.Web.NeatUpload\NonfilePortionTooLargeException.cs" />
-    <Compile Include="Brettle.Web.NeatUpload\Progress-1.0.aspx.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\Progress-1.0.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Brettle.Web.NeatUpload\ProgressBar.cs" />
     <Compile Include="Brettle.Web.NeatUpload\ProgressBarBase.cs" />
     <Compile Include="Brettle.Web.NeatUpload\ProgressBarBaseDesigner.cs" />
     <Compile Include="Brettle.Web.NeatUpload\ProgressInfo.cs" />
-    <Compile Include="Brettle.Web.NeatUpload\ProgressPage.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\ProgressPage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Brettle.Web.NeatUpload\SessionAccessCallback.cs" />
     <Compile Include="Brettle.Web.NeatUpload\UploadContext.cs" />
     <Compile Include="Brettle.Web.NeatUpload\UploadedFile.cs" />
@@ -114,7 +123,9 @@
     <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="NeatUpload.Strings.resx" />
+    <EmbeddedResource Include="NeatUpload.Strings.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
