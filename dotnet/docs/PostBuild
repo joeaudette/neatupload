@@ -18,4 +18,4 @@ ndoc bin/*.dll \
 	-Title="NeatUpload Documentation"
 
 # Converting Manual.flatxml to Manual.html via OpenOffice...
-ooffice -invisible 'macro:///Standard.Module1.SaveAsHTML("'`pwd`'/Manual.flatxml")'
+ooffice -invisible 'macro:///SaveAsHtml.Module1.SaveAsHTML("'`pwd`'/Manual.flatxml")'
