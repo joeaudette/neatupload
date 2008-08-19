@@ -57,7 +57,7 @@ Global
 		{E4426BAD-345E-42BE-B988-14DDB9A0E3E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		name = NeatUpload_VS2005
+		name = NeatUpload
 		version = 0.1
 		StartupItem = flash\src\SWFUpload\SWFUpload.csproj
 	EndGlobalSection
