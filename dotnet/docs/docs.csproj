@@ -89,6 +89,7 @@
     <None Include="FlatXMLFilter.jar" />
     <None Include="ooSaveAsHtml.oxt" />
     <None Include="README.txt" />
+    <None Include="PostBuild" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
