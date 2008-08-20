@@ -8,6 +8,7 @@ set -e
 # Display the commands as they are executed
 set -x
 # Generating API docs
+cp ../src/Brettle.Web.NeatUpload/install/bin/*.xml ../src/Extensions/*/install/bin/*.xml bin
 ndoc bin/*.dll \
 	-Documenter=MSDN \
 	-SkipCompile=true \
