@@ -117,11 +117,10 @@ namespace Brettle.Web.NeatUpload
 			UploadedFile uploadedFile 
 				= UploadStorage.CreateUploadedFile(this, controlUniqueID, fileName, contentType, storageConfig);			
 			uploadedFiles[controlUniqueID] = uploadedFile;
-			
-			if (fileName != null && fileName != string.Empty)
-				CurrentFileName = fileName;
-			
-			
+
+			if (uploadedFile != null && uploadedFile.FileName != null)
+				CurrentFileName = uploadedFile.FileName;
+						
 			return uploadedFile;
 		}
 		
