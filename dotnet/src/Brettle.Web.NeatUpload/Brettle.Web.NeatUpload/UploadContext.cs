@@ -308,9 +308,9 @@ namespace Brettle.Web.NeatUpload
 			if (!IsAsyncRequest)
 				RegisterFilesForDisposal(controlUniqueID);
 			
-			if (fileName != null && fileName != string.Empty)
-				CurrentFileName = fileName;
-			
+			if (uploadedFile != null && uploadedFile.FileName != null)
+				CurrentFileName = uploadedFile.FileName;
+						
 			return uploadedFile;
 		}
 		
