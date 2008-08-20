@@ -47,7 +47,7 @@
     <GenerateDocumentation>true</GenerateDocumentation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
+    <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>install\bin</OutputPath>
     <ErrorReport>prompt</ErrorReport>
@@ -161,7 +161,5 @@
     <None Include="install\NeatUpload\stop_refresh.png" />
     <None Include="install\NeatUpload\SWFUpload-license.txt" />
     <None Include="install\NeatUpload\Web.config" />
-    <None Include="PostBuild.sh" />
-    <None Include="PreBuild.sh" />
   </ItemGroup>
 </Project>
