@@ -191,12 +191,11 @@ namespace Brettle.Web.NeatUpload
 		{
 			string targetDivID = "NeatUploadDiv_" + this.ClientID;
 			string name;
-			string storageConfigName;
+			string storageConfigName = FormContext.Current.GenerateStorageConfigID(this.UniqueID);
 			if (!IsDesignTime && UploadModule.IsEnabled)
 			{
 				// Generate a special name recognized by the UploadHttpModule
 				name = FormContext.Current.GenerateFileID(this.UniqueID);
-				storageConfigName = FormContext.Current.GenerateStorageConfigID(this.UniqueID);
 				ArmoredNameValueCollection armoredCookies = new ArmoredNameValueCollection();
 				if (HttpContext.Current != null)
 				{
@@ -217,16 +216,17 @@ namespace Brettle.Web.NeatUpload
 NeatUploadMultiFileCreate('" + this.ClientID + @"', 
 		'" + FormContext.Current.PostBackID + @"',
 		'" + AppPath + @"',
-		'" + AppPath + UploadModule.AsyncUploadPath +@"',
+		'" + (MultiRequestUploadModule.IsEnabled ? (AppPath + MultiRequestUploadModule.UploadPath) : "") + @"',
 		'" + UploadModule.PostBackIDQueryParam + @"',
 		{" + UploadModule.PostBackIDQueryParam + @" : '" + FormContext.Current.PostBackID + @"',
-		 " + UploadModule.AsyncControlIDQueryParam + @": '" + this.ClientID + @"',
-		 " + UploadModule.ArmoredCookiesQueryParam + @": '" + UploadModule.Protect(armoredCookies) + @"'
+		 " + (MultiRequestUploadModule.IsEnabled ? MultiRequestUploadModule.ControlIDQueryParam : "ignore") + @": '" + this.ClientID + @"',
+		 " + (MultiRequestUploadModule.IsEnabled ? MultiRequestUploadModule.ArmoredCookiesQueryParam : "ignore2") + @": '" + UploadModule.Protect(armoredCookies) + @"'
 		},
-		 " + (UseFlashIfAvailable ? "true" : "false") + @",
+		 " + (MultiRequestUploadModule.IsEnabled && UseFlashIfAvailable ? "true" : "false") + @",
 		 '" + FileQueueControlID + @"',
 		 '" + FlashFilterExtensions + @"',
-		 '" + FlashFilterDescription + @"'
+		 '" + FlashFilterDescription + @"',
+		 '" + storageConfigName + @"'
 );
 // -->
 </script>");
@@ -234,7 +234,6 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
 			else
 			{
 				name = this.UniqueID;
-				storageConfigName = UploadModule.ConfigFieldNamePrefix + "-" + this.UniqueID;
 			}
 
 			// Store the StorageConfig in a hidden form field with a related name
