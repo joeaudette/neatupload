@@ -31,6 +31,50 @@ namespace Brettle.Web.NeatUpload
 	/// of the <see cref="IUploadModule"/> that is installed in the
 	/// &lt;httpModules&gt; section of the Web.config.
 	/// </summary>
+	/// <remarks>
+	/// When <see cref="IsEnabled"/> returns true, an <see cref="IUploadModule"/>
+	/// is installed in the &lt;httpModules&gt; section of the Web.config and will
+	/// handle POST requests to the current request's URL
+	/// that have a Content-Type header of
+	/// "multipart/form-data" and contain a post-back ID in one
+	/// of the following locations:
+	/// <list type="bullet">
+	///   <item>If the post-back ID is in a query parameter named by
+	///     <see cref="PostBackIDQueryParam"/>, all files in the request will
+	///     be associated with the post-back ID.  The files can be retrieved
+	///     from the <see cref="Files"/> collection using the names of the 
+	///     file fields in the request.  These names are typically the 
+	///     UniqueIDs of the controls that uploaded the files.</item>
+	///   <item>If the post-back ID is in the form field named by
+	///     <see cref="PostBackIDFieldName"/>, all files that occur after 
+	///     form field will be associated with the post-back ID.    
+	///     Those files can be retrieved
+	///     from the <see cref="Files"/> collection using the names of the 
+	///     file fields in the request.  These names are typically the 
+	///     UniqueIDs of the controls that uploaded the files.</item>
+	///   <item>If the post-back ID is in a file field name prefixed by 
+	///     <see cref="FileFieldNamePrefix"/>, that file will be associated
+	///     with the post-back ID.  That file can be retrieved
+	///     from the <see cref="Files"/> collection using the portion of
+	///     the file field name after the first "-".  That portion of the name
+	///     typically corresponds to the UniqueID of the controls that uploaded
+	///     the files.</item>
+	/// </list>
+	/// For requests that specify a post-back ID, the module can also use "protected"
+	/// configuration information associated with a particular file if the
+	/// file field is preceded in the request by a
+	/// field with a name consisting of the value <see cref="ConfigFieldNamePrefix"/>
+	/// followed by the files key in <see cref="Files"/> collection (typically the
+	/// uploading control's UniqueID).
+	/// 
+	/// <para>In addition, <see cref="BindProgressState"/> provides information 
+	/// concerning the progress of the upload,
+	/// <see cref="CancelPostBack"/> tells the module it should ignore the
+	/// remainder of the upload, <see cref="SetProcessingState"/> associates an
+	/// arbitrary object with an upload after it has been received but before the
+	/// end of the request, and <see cref="ConvertToUploadedFile"/> to convert an
+	/// <see cref="HttpPostedFile"/> into an <see cref="UploadedFile"/></para>
+	/// </remarks>
 	public class UploadModule
 	{		
 		/// <summary>
@@ -49,6 +93,25 @@ namespace Brettle.Web.NeatUpload
 		/// </remarks>
 		public static string PostBackIDQueryParam {
 			get { return InstalledModule.PostBackIDQueryParam; }
+		}
+
+		/// <summary>
+		/// The name of the form field that can contain the post-back ID with
+		/// which all subsequent files in the request should be associated.  
+		/// </summary>
+		/// <value>
+		/// The name of the form field that can contain the post-back ID with
+		/// which all subsequent files in the request should be associated.  
+		/// </value>
+		/// <remarks>For example, if
+		/// PostBackIDFieldName is "NeatUpload_PostBackID", then if a request contains
+		/// a form field named "NeatUpload_PostBackID" with a value of "123ABC", all 
+		/// subsequent files
+		/// in the request will be assocated with post-back ID "123ABC".  The post-back
+		/// ID must not contain the character "-".
+		/// </remarks>
+		public static string PostBackIDFieldName {
+			get { return InstalledModule.PostBackIDFieldName; }
 		}
 
 		/// <summary>
@@ -104,6 +167,10 @@ namespace Brettle.Web.NeatUpload
 		/// <returns>
 		/// The <see cref="NameValueCollection"/> that was passed to <see cref="Protect"/>
 		/// </returns>
+		/// <remarks>
+		/// If the module does not use any "protected" information, it must return an empty
+		/// <see cref="NameValueCollection"/>.
+		/// </remarks>
 		public static NameValueCollection Unprotect(string armoredString)
 		{
 			return InstalledModule.Unprotect(armoredString);
@@ -123,7 +190,11 @@ namespace Brettle.Web.NeatUpload
 		/// The <see cref="System.String"/> that can be passed to <see cref="Unprotect"/> to
 		/// get the original <see cref="NameValueCollection"/> back.
 		/// </returns>
-		/// <remarks>This is used to protect config fields and cookie parameters.</remarks>
+		/// <remarks>
+		/// This is used to protect config fields and cookie parameters.
+		/// If the module does not use any "protected" information, it must return 
+		/// <see cref="String.Empty"/>.
+		/// </remarks>
 		public static string Protect(NameValueCollection nvc)
 		{
 			return InstalledModule.Protect(nvc);
@@ -167,9 +238,10 @@ namespace Brettle.Web.NeatUpload
 		/// A <see cref="System.Object"/> that represents the processing state.  This must be
 		/// serializable.
 		/// </param>
-		public static void SetProcessingState(string postBackID, string controlUniqueID, object state)
+		/// <returns>true if the module supports setting processing state, otherwise false.</returns>
+		public static bool SetProcessingState(string postBackID, string controlUniqueID, object state)
 		{
-			InstalledModule.SetProcessingState(postBackID, controlUniqueID, state);
+			return InstalledModule.SetProcessingState(postBackID, controlUniqueID, state);
 		}
 
 		/// <summary>
@@ -222,15 +294,18 @@ namespace Brettle.Web.NeatUpload
 		/// <returns>
 		/// The <see cref="UploadedFile"/> that corresponds to the <see cref="HttpPostedFile"/>.
 		/// </returns>
-		/// <remarks>If an <see cref="IUploadModule"/> is not installed, this method will
+		/// <remarks>If an <see cref="IUploadModule"/> is not installed or it does not support
+		/// conversion, this method will
 		/// wrap the <paramref name="file"/> in an <see cref="UploadedFile"/> subclass that
 		/// delegates all members to the corresponding members of <paramref name="file"/></remarks>
 		public static UploadedFile ConvertToUploadedFile(string controlUniqueID, HttpPostedFile file)
 		{
+			UploadedFile uploadedFile = null;
 			if (InstalledModule != null)
-				return InstalledModule.ConvertToUploadedFile(controlUniqueID, file);
-			else
-				return new AspNetUploadedFile(controlUniqueID, file);
+				uploadedFile = InstalledModule.ConvertToUploadedFile(controlUniqueID, file);
+			if (uploadedFile == null)
+				uploadedFile = new AspNetUploadedFile(controlUniqueID, file);
+			return uploadedFile;
 		}
 		
 		private static bool _IsInstalled = true;

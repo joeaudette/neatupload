@@ -136,7 +136,7 @@ NeatUploadHiddenPostBackIDCreate('" + this.ClientID + @"','"
 			}
 			writer.AddAttribute(HtmlTextWriterAttribute.Id, ClientID);
 			writer.AddAttribute(HtmlTextWriterAttribute.Type, "hidden");
-			writer.AddAttribute(HtmlTextWriterAttribute.Name, UploadModule.PostBackIDQueryParam);
+			writer.AddAttribute(HtmlTextWriterAttribute.Name, UploadModule.PostBackIDFieldName);
 			if (!IsDesignTime)
 			{
 				writer.AddAttribute(HtmlTextWriterAttribute.Value, FormContext.Current.PostBackID);

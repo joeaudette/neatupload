@@ -36,15 +36,15 @@ namespace Brettle.Web.NeatUpload
     /// upload:
 	/// <list type="number">
 	///   <item>An initial POST request sent to the
-	///     <see cref="MultiRequestUploadModule.UploadPath"/> containing:
+	///     <see cref="UploadPath"/> containing:
 	///     <list type="bullet">
 	///       <item>a post-back ID in the query parameter named by
 	///         <see cref="UploadModule.PostBackIDQueryParam"/></item>
 	///       <item>a control UniqueID in the query parameter named by
-	///         <see cref="MultiRequestUploadModule.ControlIDQueryParam"/></item>
+	///         <see cref="ControlIDQueryParam"/></item>
 	///       <item>"protected" cookies needed for authentication or session 
 	///         identification in the query parameter named by
-	///         <see cref="MultiRequestUploadModule.ArmoredCookiesQueryParam"/></item>
+	///         <see cref="ArmoredCookiesQueryParam"/></item>
 	///       <item>a space-delimited list of file sizes in the form field named by
 	///         <see cref="UploadModule.FileSizesFieldName"/></item>
 	///       <item>(optionally) a form field with a name starting with
@@ -55,15 +55,15 @@ namespace Brettle.Web.NeatUpload
 	///   </item>
 	///   <item>A sequence of upload request (one for each file size in 
 	///     the file sizes field of the initial request) to the
-	///     <see cref="MultiRequestUploadModule.UploadPath"/> containing:
+	///     <see cref="UploadPath"/> containing:
 	///     <list type="bullet">
 	///       <item>a post-back ID in the query parameter named by
 	///         <see cref="UploadModule.PostBackIDQueryParam"/></item>
 	///       <item>a control UniqueID in the query parameter named by
-	///         <see cref="MultiRequestUploadModule.ControlIDQueryParam"/></item>
+	///         <see cref="ControlIDQueryParam"/></item>
 	///       <item>"protected" cookies needed for authentication or session 
 	///         identification in the query parameter named by
-	///         <see cref="MultiRequestUploadModule.ArmoredCookiesQueryParam"/></item>
+	///         <see cref="ArmoredCookiesQueryParam"/></item>
 	///     </list>
 	///   </item>
 	///   <item>A final form submission upload request to any path for which 
@@ -73,7 +73,7 @@ namespace Brettle.Web.NeatUpload
 	///       <item>in the query parameter named by
 	///         <see cref="UploadModule.PostBackIDQueryParam"/></item>
 	///       <item>in the form field named by
-	///         <see cref="UploadModule.PostBackIDQueryParam"/></item>
+	///         <see cref="UploadModule.PostBackIDFieldName"/></item>
 	///       <item>in a file field name prefixed by 
 	///         <see cref="UploadModule.FileFieldNamePrefix"/></item>
 	///     </list>
@@ -144,7 +144,7 @@ namespace Brettle.Web.NeatUpload
 		///   <item>in the query parameter named by
 		///     <see cref="PostBackIDQueryParam"/></item>
 		///   <item>in the form field named by
-		///     <see cref="PostBackIDQueryParam"/></item>
+		///     <see cref="PostBackIDFieldName"/></item>
 		///   <item>in a file field name prefixed by 
 		///     <see cref="FileFieldNamePrefix"/></item>
 		/// </list>
