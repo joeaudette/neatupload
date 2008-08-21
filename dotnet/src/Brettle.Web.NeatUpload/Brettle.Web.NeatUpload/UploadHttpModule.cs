@@ -31,8 +31,8 @@ using Brettle.Web.NeatUpload.Internal.Module;
 namespace Brettle.Web.NeatUpload
 {
 	/// <summary>
-	/// Limits the size of incoming HTTP requests and allows <see cref="ProgressBar"/> to monitor the progress of 
-	/// upload requests associated with <see cref="InputFile"/> controls.</summary>
+	/// An <see cref="IUploadModule"/> and <see cref="IMultiRequestUploadModule"/> that uses child requests
+	/// to extract uploaded files and maintain upload state across a web garden/farm.</summary>
 	/// <remarks>
 	/// To use this module, add it to the <see href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpgenref/html/gngrfhttpmodulessection.asp">
 	/// httpModules section</see> of your Web.config like this:
@@ -55,6 +55,10 @@ namespace Brettle.Web.NeatUpload
 			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
 		string IUploadModule.PostBackIDQueryParam { 
+			get { return Config.Current.PostBackIDQueryParam; } 
+		}
+
+		string IUploadModule.PostBackIDFieldName { 
 			get { return Config.Current.PostBackIDQueryParam; } 
 		}
 
@@ -111,7 +115,7 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 
-		void IUploadModule.SetProcessingState(string postBackID, string controlUniqueID, object state)
+		bool IUploadModule.SetProcessingState(string postBackID, string controlUniqueID, object state)
 		{
 			UploadContext ctx = UploadContext.FindByIDAllServers(postBackID);
 			if (ctx == null)
@@ -121,6 +125,7 @@ namespace Brettle.Web.NeatUpload
 			}
 			ctx.ProcessingStateByID[controlUniqueID] = state;
 			UploadHttpModule.AccessSession(new SessionAccessCallback(ctx.SyncWithSession));
+			return true;
 		}
 
 		void IUploadModule.BindProgressState(string postBackID, string controlUniqueID, IUploadProgressState progressState)
