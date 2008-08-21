@@ -24,9 +24,25 @@ using Brettle.Web.NeatUpload.Internal;
 
 namespace Brettle.Web.NeatUpload
 {
+	/// <summary>
+	/// Indicates that the upload was too large.
+	/// </summary>
 	[Serializable]
 	public class UploadTooLargeException : UploadException
-	{			
+	{
+		/// <summary>
+		/// Creates an <see cref="UploadTooLargeException"/>, given the maximum allowed
+		/// request length, and the length of the request which was too large.
+		/// </summary>
+		/// <param name="maxRequestLength">
+		/// The maximum allowed request length
+		/// </param>
+		/// <param name="requestLength">
+		/// The length of the request which was too large.
+		/// </param>
+		/// <remarks>The HTTP status code for this exception will be 413, and the message
+		/// will be retrieved from the "UploadTooLargeMessageFormat" resource in 
+		/// NeatUpload.Strings.resx.</remarks>
 		public UploadTooLargeException(long maxRequestLength, long requestLength) 
 			: base(413, String.Format(ResourceManagerSingleton.GetResourceString("UploadTooLargeMessageFormat"), maxRequestLength, requestLength))
 		{
@@ -34,12 +50,31 @@ namespace Brettle.Web.NeatUpload
 			RequestLength = requestLength;
 		}
 
+		/// <summary>
+		/// Creates an <see cref="UploadTooLargeException"/>, given the maximum allowed
+		/// request length.
+		/// </summary>
+		/// <param name="maxRequestLength">
+		/// The maximum allowed request length
+		/// </param>
+		/// <remarks>The HTTP status code for this exception will be 413, and the message
+		/// will be retrieved from the "UploadTooLargeMessageFormat" resource in 
+		/// NeatUpload.Strings.resx.</remarks>
 		[Obsolete("Use UploadTooLargeException(maxRequestLength, requestLength) instead")]
 		public UploadTooLargeException(long maxRequestLength) 
 			: this(maxRequestLength, 0)
 		{
 		}
 
+		/// <summary>
+		/// Creates an <see cref="UploadTooLargeException"/> when deserializing.
+		/// </summary>
+		/// <param name="info">
+		/// A <see cref="SerializationInfo"/>
+		/// </param>
+		/// <param name="context">
+		/// A <see cref="StreamingContext"/>
+		/// </param>
 		protected UploadTooLargeException(SerializationInfo info, StreamingContext context)
 			: base (info, context) 
 		{
@@ -47,6 +82,15 @@ namespace Brettle.Web.NeatUpload
 			RequestLength = info.GetInt64("UploadTooLargeException.RequestLength");
 		}
 
+		/// <summary>
+		/// Serializes this object.
+		/// </summary>
+		/// <param name="info">
+		/// A <see cref="SerializationInfo"/>
+		/// </param>
+		/// <param name="context">
+		/// A <see cref="StreamingContext"/>
+		/// </param>
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);
@@ -54,7 +98,14 @@ namespace Brettle.Web.NeatUpload
 			info.AddValue ("UploadTooLargeException.RequestLength", RequestLength);
 		}
 
+		/// <summary>
+		/// The maximum allowed request length.
+		/// </summary>
 		public long MaxRequestLength = 0;
+
+		/// <summary>
+		/// The length of the request that was too large.
+		/// </summary>
 		public long RequestLength = 0;
 	}
 }

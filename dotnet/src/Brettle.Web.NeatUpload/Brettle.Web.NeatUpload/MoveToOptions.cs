@@ -22,13 +22,50 @@ using System;
 
 namespace Brettle.Web.NeatUpload
 {
+	/// <summary>
+	/// Options controlling how an uploaded file is moved to a permanent location.
+	/// This class only specifies whether a file already at the location can be
+	/// overwritten, but subclasses could specify additional options.
+	/// </summary>
 	public class MoveToOptions
 	{
+		/// <summary>
+		/// Constructs a <see cref="MoveToOptions"/> given whether the file can
+		/// replace any file already at the destination location.
+		/// </summary>
+		/// <param name="canOverwrite">
+		/// true to indicate that any file at the destination location can be
+		/// overwritten.
+		/// </param>
 		protected MoveToOptions(bool canOverwrite) { _canOverwrite = canOverwrite; }
 
+		/// <summary>
+		/// A <see cref="MoveToOptions"/> that indicates that the any file at the
+		/// destination location must not be overwritten.
+		/// </summary>
+		/// <value>
+		/// A <see cref="MoveToOptions"/> that indicates that the any file at the
+		/// destination location must not be overwritten.
+		/// </value>
 		public static readonly MoveToOptions None = new MoveToOptions(false);
+
+		
+		/// <summary>
+		/// A <see cref="MoveToOptions"/> that indicates that the any file at the
+		/// destination location can be overwritten.
+		/// </summary>
+		/// <value>
+		/// A <see cref="MoveToOptions"/> that indicates that the any file at the
+		/// destination location can be overwritten.
+		/// </value>
 		public static readonly MoveToOptions Overwrite = new MoveToOptions(true);
 
+		/// <summary>
+		/// true iff any file at the destination location can be overwritten.
+		/// </summary>
+		/// <value>
+		/// true iff any file at the destination location can be overwritten.
+		/// </value>
 		public virtual bool CanOverwrite {
 			get { return _canOverwrite;	}
 		}

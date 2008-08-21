@@ -57,7 +57,6 @@ namespace Brettle.Web.NeatUpload
 			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 		*/
 		
-		private UploadedFile _file = null;
 		private UploadedFile file
 		{
 			get 

@@ -30,7 +30,7 @@ namespace Brettle.Web.NeatUpload
 {
 	public class UploadStorageConfig : ArmoredNameValueCollection
 	{
-		protected virtual void AssertSignaturesAreEqual(byte[] actualHash, byte[] expectedHash)
+		protected override void AssertSignaturesAreEqual(byte[] actualHash, byte[] expectedHash)
 		{
 			if (actualHash.Length != expectedHash.Length)
 			{

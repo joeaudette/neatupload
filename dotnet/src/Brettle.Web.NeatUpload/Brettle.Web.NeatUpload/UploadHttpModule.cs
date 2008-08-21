@@ -586,7 +586,6 @@ namespace Brettle.Web.NeatUpload
 		
         internal static HttpCookieCollection GetCookiesFromQueryString(string qs)
         {
-#warning TODO: Use encrypted session ID, but only for async upload pages to minimize security hole
 			string armoredCookiesString = GetArmoredCookiesStringFromQueryString(qs);
 			if (log.IsDebugEnabled) log.DebugFormat("armoredCookiesString={0}", armoredCookiesString);
 			HttpCookieCollection cookies = new HttpCookieCollection();

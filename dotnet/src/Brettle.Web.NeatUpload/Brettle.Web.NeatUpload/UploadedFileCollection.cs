@@ -28,6 +28,10 @@ using System.Runtime.Serialization;
 
 namespace Brettle.Web.NeatUpload
 {
+	/// <summary>
+	/// A collection of <see cref="UploadedFile"/> objects, indexed by the UniqueID of
+	/// the control that uploaded them.
+	/// </summary>
     [Serializable]
     public class UploadedFileCollection : NameObjectCollectionBase, ICollection
 	{
@@ -38,17 +42,32 @@ namespace Brettle.Web.NeatUpload
         {
         }
 
-		public void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            base.GetObjectData(info, context);
-        }
-
 		private object _SyncRoot = new object();
-		
+
+		/// <summary>
+		/// An object that can be used to synchronize access to this collection.
+		/// </summary>
+		/// <value>
+		/// An object that can be used to synchronize access to this collection.
+		/// </value>
 		object ICollection.SyncRoot { get { return _SyncRoot; } }
 
+		/// <summary>
+		/// Returns true.
+		/// </summary>
+		/// <value>
+		/// Returns true.
+		/// </value>
 		bool ICollection.IsSynchronized { get { return true; } }
-		
+
+		/// <summary>
+		/// The <see cref="UploadedFile"/> in the collection that was uploaded from
+		/// the control with the specified UniqueID, or null if there is no such file.
+		/// </summary>
+		/// <value>
+		/// The <see cref="UploadedFile"/> in the collection that was uploaded from
+		/// the control with the specified UniqueID, or null if there is no such file.
+		/// </value>
 		public UploadedFile this[string key]
 		{
 			get 
@@ -56,7 +75,13 @@ namespace Brettle.Web.NeatUpload
 				return Get(key);
 			}
 		}
-				
+
+		/// <summary>
+		/// The index'th <see cref="UploadedFile"/> in the collection.
+		/// </summary>
+		/// <value>
+		/// The index'th <see cref="UploadedFile"/> in the collection.
+		/// </value>
 		public UploadedFile this[int index]
 		{
 			get 
@@ -64,7 +89,13 @@ namespace Brettle.Web.NeatUpload
 				return Get(index);
 			}
 		}
-		
+
+		/// <summary>
+		/// The UniqueIDs of all of the controls with files in this collection.
+		/// </summary>
+		/// <value>
+		/// The UniqueIDs of all of the controls with files in this collection.
+		/// </value>
 		public string[] AllKeys
 		{
 			get
@@ -73,6 +104,17 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 
+
+		/// <summary>
+		/// Get the <see cref="UploadedFile"/> in the collection that was uploaded from
+		/// the control with the specified UniqueID, or null if there is no such file.
+		/// </summary>
+		/// <param name="key">
+		/// The UniqueID of the control.
+		/// </param>
+		/// <returns>
+		/// The corresponding <see cref="UploadedFile"/>, or null if there is no such file.
+		/// </returns>
 		public UploadedFile Get(string key)
 		{
 			lock (_SyncRoot)
@@ -81,6 +123,15 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 
+		/// <summary>
+		/// Gets the index'th <see cref="UploadedFile"/> in the collection.
+		/// </summary>
+		/// <param name="index">
+		/// The index into the collection.
+		/// </param>
+		/// <returns>
+		/// The corresponding <see cref="UploadedFile"/>.
+		/// </returns>
 		public UploadedFile Get(int index)
 		{
 			lock (_SyncRoot)
@@ -88,12 +139,28 @@ namespace Brettle.Web.NeatUpload
 				return (UploadedFile)this.BaseGet(index);
 			}
 		}
-		
-		public virtual IEnumerator GetEnumerator()
+
+		/// <summary>
+		/// Gets an <see cref="IEnumerator"/> that can be used to enumerate through
+		/// the <see cref="UploadedFile"/> objects in the collection.
+		/// </summary>
+		/// <returns>
+		/// The <see cref="IEnumerator"/>.
+		/// </returns>
+		public new IEnumerator GetEnumerator()
 		{
 			return BaseGetAllValues().GetEnumerator();
 		}
-		
+
+		/// <summary>
+		/// Gets the index'th control UniqueID in the collection.
+		/// </summary>
+		/// <param name="index">
+		/// The index into the collection.
+		/// </param>
+		/// <returns>
+		/// The UniqueID of the control the uploaded the corresponding file.
+		/// </returns>
 		public string GetKey(int index)
 		{
 			lock (_SyncRoot)	{ return this.BaseGetKey(index); }
