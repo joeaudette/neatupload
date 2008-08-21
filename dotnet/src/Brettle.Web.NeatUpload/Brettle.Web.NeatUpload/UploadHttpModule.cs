@@ -48,7 +48,7 @@ namespace Brettle.Web.NeatUpload
 	/// </code>
 	/// </example>
 	/// </remarks>
-	public class UploadHttpModule : IHttpModule, IUploadModule
+	public class UploadHttpModule : IHttpModule, IMultiRequestUploadModule
 	{
 		// Create a logger for use in this class
 		private static readonly log4net.ILog log 
@@ -188,19 +188,19 @@ namespace Brettle.Web.NeatUpload
 			return uploadedFile;
 		}
 
-		string IUploadModule.FileSizesFieldName {
+		string IMultiRequestUploadModule.FileSizesFieldName {
 			get { return UploadContext.FileSizesName; } 
 		}
 
-		string IUploadModule.AsyncUploadPath {
+		string IMultiRequestUploadModule.UploadPath {
 			get { return "/NeatUpload/AsyncUpload.aspx"; }
 		}
 
-		string IUploadModule.AsyncControlIDQueryParam {
+		string IMultiRequestUploadModule.ControlIDQueryParam {
 			get { return "NeatUpload_AsyncControlID"; }
 		}
 		
-		string IUploadModule.ArmoredCookiesQueryParam {
+		string IMultiRequestUploadModule.ArmoredCookiesQueryParam {
 			get { return "NeatUpload_ArmoredCookies"; }
 		}
 
@@ -568,7 +568,7 @@ namespace Brettle.Web.NeatUpload
         {
             if (qs == null)
                 return null;
-			Match match = Regex.Match(qs, @"(^|\?|&)" + UploadModule.AsyncControlIDQueryParam + "=([^&]+)");
+			Match match = Regex.Match(qs, @"(^|\?|&)" + MultiRequestUploadModule.ControlIDQueryParam + "=([^&]+)");
 			if (!match.Success)
 				return null;
 			return HttpUtility.UrlDecode(match.Groups[2].Value);
@@ -578,7 +578,7 @@ namespace Brettle.Web.NeatUpload
 		{
             if (qs == null)
                 return null;
-			Match match = Regex.Match(qs, @"(^|\?|&)" + UploadModule.ArmoredCookiesQueryParam + "=([^&]+)");
+			Match match = Regex.Match(qs, @"(^|\?|&)" + MultiRequestUploadModule.ArmoredCookiesQueryParam + "=([^&]+)");
 			if (!match.Success)
 				return null;
 			return HttpUtility.UrlDecode(match.Groups[2].Value);
@@ -754,7 +754,7 @@ namespace Brettle.Web.NeatUpload
 				string armoredCookiesString = UploadHttpModule.GetArmoredCookiesStringFromQueryString(qs);
 				if (armoredCookiesString != null && armoredCookiesString.Length > 0)
 				{
-					qs = UploadModule.ArmoredCookiesQueryParam + "=" + HttpUtility.UrlEncode(armoredCookiesString);
+					qs = MultiRequestUploadModule.ArmoredCookiesQueryParam + "=" + HttpUtility.UrlEncode(armoredCookiesString);
 				}
 			}
 

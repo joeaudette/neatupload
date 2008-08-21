@@ -43,7 +43,7 @@ namespace Brettle.Web.NeatUpload
 				
 		protected override void OnLoad(EventArgs e)
 		{
-			string controlID = Request.Params[UploadModule.AsyncControlIDQueryParam];
+			string controlID = Request.Params[MultiRequestUploadModule.ControlIDQueryParam];
 			if (log.IsDebugEnabled) log.DebugFormat("controlID={0}", controlID);
 			string postBackID = Request.Params[UploadModule.PostBackIDQueryParam];
 			if (log.IsDebugEnabled) log.DebugFormat("postBackID={0}", postBackID);
@@ -60,11 +60,11 @@ namespace Brettle.Web.NeatUpload
 				}
 				if (log.IsDebugEnabled) log.DebugFormat("uploadContext={0}", uploadContext);
 				string secureStorageConfigString 
-					= Request.Params[UploadModule.ConfigFieldNamePrefix + "-" + controlID];
+					= Request.Params[UploadModule.ConfigFieldNamePrefix + controlID];
 				if (log.IsDebugEnabled) log.DebugFormat("secureStorageConfigString={0}", secureStorageConfigString);
 				if (secureStorageConfigString != null)
 					uploadContext.SecureStorageConfigString = secureStorageConfigString;
-				string fileSizesString = Request.Params[UploadModule.FileSizesFieldName];
+				string fileSizesString = Request.Params[MultiRequestUploadModule.FileSizesFieldName];
 				if (log.IsDebugEnabled) log.DebugFormat("fileSizesString={0}", fileSizesString);
 				if (fileSizesString != null && fileSizesString.Length > 0)
 				{

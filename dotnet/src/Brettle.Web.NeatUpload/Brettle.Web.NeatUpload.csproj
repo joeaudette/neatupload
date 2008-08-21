@@ -115,6 +115,8 @@
     <Compile Include="Brettle.Web.NeatUpload.Internal.UI\UploadProgressState.cs" />
     <Compile Include="Brettle.Web.NeatUpload.log4net\MyLog4net.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\IMultiRequestUploadModule.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\MultiRequestUploadModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="NeatUpload.Strings.resx" />

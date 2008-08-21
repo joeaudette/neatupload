@@ -904,18 +904,21 @@ NeatUploadInputFile.prototype.Controls = new Object();
 
 function NeatUploadMultiFileCreate(clientID, postBackID, appPath, uploadScript, postBackIDQueryParam, uploadParams,
 									useFlashIfAvailable, fileQueueControlID, 
-									flashFilterExtensions, flashFilterDescription)
+									flashFilterExtensions, flashFilterDescription,
+									storageConfigFieldName)
 {
 	NeatUploadMultiFile.prototype.Controls[clientID] 
 		= new NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBackIDQueryParam, uploadParams,
 									useFlashIfAvailable, fileQueueControlID, 
-									flashFilterExtensions, flashFilterDescription);
+									flashFilterExtensions, flashFilterDescription,
+									storageConfigFieldName);
 	return NeatUploadMultiFile.prototype.Controls[clientID];
 }
 
 function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBackIDQueryParam, uploadParams,
 							useFlashIfAvailable, fileQueueControlID, 
-							flashFilterExtensions, flashFilterDescription)
+							flashFilterExtensions, flashFilterDescription,
+							storageConfigFieldName)
 {
 	var numf = this;
 	this.ClientID = clientID;
@@ -926,6 +929,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	this.FilesToUpload = [];
 	this.FileID = 0;
 	this.FileQueueControlID = fileQueueControlID;
+	this.StorageConfigFieldName = storageConfigFieldName;
 	
 	AddFileNamesElem();
 
@@ -1095,7 +1099,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 		var postParams = numf.Swfu.buildQueryString();
 		var fileSizes = nuf.GetFileSizes().join(" ");
 		postParams += "&NeatUploadFileSizes=" + encodeURIComponent(fileSizes);
-		var storageConfigFieldName = "NeatUploadConfig_" + numf.ClientID;
+		var storageConfigFieldName = numf.StorageConfigFieldName;
 		var storageConfigElem = nuf.FormElem.elements[storageConfigFieldName];
 		if (storageConfigElem)
 		{
