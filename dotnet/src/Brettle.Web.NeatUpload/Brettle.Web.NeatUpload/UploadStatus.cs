@@ -27,8 +27,62 @@ using System.Web.UI.HtmlControls;
 
 namespace Brettle.Web.NeatUpload
 {
+	/// <summary>
+	/// The status of an upload.
+	/// </summary>
 	public enum UploadStatus : long
 	{
-		Unknown, NormalInProgress, ChunkedInProgress, ProcessingInProgress, ProcessingCompleted, Completed, Cancelled, Rejected, Failed
+		/// <summary>
+		/// Either the upload is unknown (e.g. an invalid post-back ID) or
+		/// hasn't started to be received yet.
+		/// </summary>
+		Unknown,
+
+		/// <summary>
+		/// The upload is still being received and the request had a Content-Length
+		/// header.
+		/// </summary>
+		NormalInProgress,
+
+		/// <summary>
+		/// The upload is still being received and the request did not have a Content-Length
+		/// header and has a Transfer-Encoding of "chunked".
+		/// </summary>
+		ChunkedInProgress, 
+		
+		/// <summary>
+		/// The entire upload has been received but the request is still being
+		/// processed (e.g. the upload page code-behind is still executing).
+		/// </summary>
+		ProcessingInProgress, 
+
+		/// <summary>
+		/// <see cref="UploadModule.SetProcessingState"/> was called for this upload and
+		/// the request has completed.
+		/// </summary>
+		ProcessingCompleted, 
+
+		/// <summary>
+		/// <see cref="UploadModule.SetProcessingState"/> was not called for this upload
+		/// and the request has completed.
+		/// </summary>
+		Completed,
+
+		/// <summary>
+		/// The upload was cancelled by calling <see cref="UploadModule.CancelPostBack"/>
+		/// </summary>
+		Cancelled, 
+
+		/// <summary>
+		/// An <see cref="UploadException"/> (or subclass) was thrown while receiving or
+		/// processing the upload.
+		/// </summary>
+		Rejected,
+
+		/// <summary>
+		/// An exception that is not an <see cref="UploadException"/> was thrown while 
+		/// receiving or processing the upload.
+		/// </summary>
+		Failed
 	}
 }

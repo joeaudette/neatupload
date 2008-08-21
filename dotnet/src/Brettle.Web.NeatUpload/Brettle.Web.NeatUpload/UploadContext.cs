@@ -627,7 +627,6 @@ namespace Brettle.Web.NeatUpload
 		{
 			lock (Sync)
 			{
-				object processingState = null;
 				if (progressBarID != null)
 				{
 					p.ProcessingState = (object)ProcessingStateByID[progressBarID];
