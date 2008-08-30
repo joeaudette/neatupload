@@ -117,6 +117,15 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Brettle.Web.NeatUpload\IMultiRequestUploadModule.cs" />
     <Compile Include="Brettle.Web.NeatUpload\MultiRequestUploadModule.cs" />
+    <Compile Include="Brettle.Web.NeatUpload.Internal.Module\InternalUploadContext.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadStateStore.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadStateStoreProvider.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\InProcUploadStateStoreProvider.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadState.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\ObjectProtector.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\SessionBasedUploadStateStoreProviderBase.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\SessionBasedUploadStateStoreProvider.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadStateStoreHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="NeatUpload.Strings.resx" />
@@ -147,7 +156,7 @@
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>
-        <GtkDesignInfo gtkVersion="2.10.3" />
+        <GtkDesignInfo />
       </Properties>
     </MonoDevelop>
     <VisualStudio />
@@ -163,5 +172,6 @@
     <None Include="install\NeatUpload\stop_refresh.png" />
     <None Include="install\NeatUpload\SWFUpload-license.txt" />
     <None Include="install\NeatUpload\Web.config" />
+    <None Include="install\NeatUpload\UploadStateStoreHandler.ashx" />
   </ItemGroup>
 </Project>

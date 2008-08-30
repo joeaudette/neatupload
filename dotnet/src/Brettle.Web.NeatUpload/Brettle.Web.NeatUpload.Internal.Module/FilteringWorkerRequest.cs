@@ -30,41 +30,38 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 {
 	internal class FilteringWorkerRequest : DecoratedWorkerRequest
 	{
+		
 		// Create a logger for use in this class
 		private static readonly log4net.ILog log 
 			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-		private UploadContext uploadContext;
-		
-		internal UploadContext GetUploadContext()
-		{
-			return uploadContext;
-		}
-		
-
 		public FilteringWorkerRequest (HttpWorkerRequest origWorker) : base(origWorker)
 		{
-			this.uploadContext = new UploadContext();
+		}
 
-			string qs = origWorker.GetQueryString();
-			if (qs == null)
-			{
-				return;
-			}
-				
-			// If this is an async request, start with a copy of the UploadContext from the session
-			// if one exists.
-			if (UploadHttpModule.GetAsyncControlIDFromQueryString(qs) != null)
-			{				
-				string postBackID = UploadHttpModule.GetPostBackIDFromQueryString(qs);
-				uploadContext = UploadContext.FindByIDAllServers(postBackID);
-				if (uploadContext == null)
+		UploadState _UploadState;
+		private UploadState UploadState {
+			get {
+				if (_UploadState == null)
 				{
-					uploadContext = new UploadContext();
-					uploadContext.RegisterPostBack(postBackID); // Do this first so that progress display sees errors
+					_UploadState = UploadHttpModule.CurrentUploadState;
 				}
-				uploadContext.IsAsyncRequest = true;
-				SyncUploadContextWithSession();
+				return _UploadState;
+			}
+			set {
+				_UploadState = value;
+				UploadHttpModule.CurrentUploadState = value;
+			}
+		}
+
+		string _AsyncControlID;
+		private string AsyncControlID {
+			get {
+				if (_AsyncControlID == null)
+				{
+					_AsyncControlID = UploadHttpModule.CurrentAsyncControlID;
+				}
+				return _AsyncControlID;
 			}
 		}
 		
@@ -210,17 +207,17 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 		{
 			// If the upload was cancelled, return a 204 error code which tells the client that it
 			// "SHOULD NOT change its document view from that which caused the request to be sent" (RFC 2616 10.2.5)
-			if (uploadContext.Status == UploadStatus.Cancelled)
+			if (UploadState != null && UploadState.Status == UploadStatus.Cancelled)
 			{
 				throw new HttpException(204, "Upload cancelled by user");
 			}
 
             double secsToWait = 0;
-            if (uploadContext != null && Config.Current.MaxUploadRate > 0)
+            if (UploadState != null && Config.Current.MaxUploadRate > 0)
             {
                 double desiredSecs 
-                	= ((double)uploadContext.BytesRead) / Config.Current.MaxUploadRate;
-                secsToWait = Math.Max(0, desiredSecs - uploadContext.TimeElapsed.TotalSeconds);
+                	= ((double)UploadState.BytesRead) / Config.Current.MaxUploadRate;
+                secsToWait = Math.Max(0, desiredSecs - UploadState.TimeElapsed.TotalSeconds);
             }
 
             // NOTE: if secsToWait = 0, this will simply yield to other threads so that the progress bar 
@@ -282,13 +279,9 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 				writePos += bytesRead;
 				totalBytesRead += bytesRead;
 				grandTotalBytesRead += bytesRead;
-				if (!uploadContext.IsAsyncRequest)
+				if (AsyncControlID == null && UploadState != null)
 				{
-					uploadContext.SyncBytesRead = grandTotalBytesRead;
-				}
-				if (TimeOfLastSync.AddSeconds(1) < DateTime.Now)
-				{
-					SyncUploadContextWithSession();
+					UploadState.BytesRead += bytesRead;
 				}
 
 /*
@@ -306,12 +299,12 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 		{
 			int bytesParsed = parsePos - readPos;
             outputStream.Write(buffer, readPos, bytesParsed);
-			if (outputStream == fileStream)
+			if (outputStream == fileStream && UploadState != null)
 			{
-				uploadContext.FileBytesRead += bytesParsed;
-				if (uploadContext.IsAsyncRequest)
+				UploadState.FileBytesRead += bytesParsed;
+				if (AsyncControlID != null)
 				{
-					uploadContext.AsyncBytesRead += bytesParsed;
+					UploadState.BytesRead += bytesParsed;
 				}
 			}
 			readPos = parsePos;
@@ -396,25 +389,26 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 			}
 			catch (Exception ex)
 			{
-				// Remember the exception.
-				uploadContext.Exception = ex;
-				// We need to remember the exception here because the 
-				// FormsAuthenticationHttpModule in ASP.NET 1.1 will eat any exception we throw and
-				// the UploadHttpModule's RememberError handler will not get called.
-				this.Exception = ex;
-				if (ex is UploadException)
+				if (UploadState != null)
 				{
-					uploadContext.Status = UploadStatus.Rejected;
-					SyncUploadContextWithSession();
-					// Wait 5 seconds to give the client a chance to stop the request.  If the client
-					// stops the request, the user will see the original form instead of an error page.
-					// Regardless, the progress display will show the error so the user knows what went wrong.
-					System.Threading.Thread.Sleep(5000);
-				}
-				else if (uploadContext.Status != UploadStatus.Cancelled)
-				{
-					uploadContext.Status = UploadStatus.Failed;
-					SyncUploadContextWithSession();
+					// We need to remember the exception here because the 
+					// FormsAuthenticationHttpModule in ASP.NET 1.1 will eat any exception we throw and
+					// the UploadHttpModule's RememberError handler will not get called.
+					this.Exception = ex;
+					if (ex is UploadException)
+					{
+						UploadState.Status = UploadStatus.Rejected;
+						UploadState.Rejection = (UploadException)ex;
+						// Wait 5 seconds to give the client a chance to stop the request.  If the client
+						// stops the request, the user will see the original form instead of an error page.
+						// Regardless, the progress display will show the error so the user knows what went wrong.
+						System.Threading.Thread.Sleep(5000);
+					}
+					else if (UploadState.Status != UploadStatus.Cancelled)
+					{
+						UploadState.Failure = ex;
+						UploadState.Status = UploadStatus.Failed;
+					}
 				}
 					
 				try
@@ -451,6 +445,7 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 			origPreloadedBody = OrigWorker.GetPreloadedEntityBody();
 			string contentTypeHeader = OrigWorker.GetKnownRequestHeader(HttpWorkerRequest.HeaderContentType);
 			string contentLengthHeader = OrigWorker.GetKnownRequestHeader(HttpWorkerRequest.HeaderContentLength);
+			string transferEncodingHeader = OrigWorker.GetKnownRequestHeader(HttpWorkerRequest.HeaderTransferEncoding);
 			if (contentLengthHeader != null)
 			{
 				origContentLength = Int64.Parse(contentLengthHeader);
@@ -476,11 +471,10 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 			}
 			
 			FieldNameTranslator translator = new FieldNameTranslator();
-			if (!uploadContext.IsAsyncRequest)
+			if (AsyncControlID == null && UploadState != null)
 			{
-				uploadContext.SyncBytesTotal = origContentLength;
+				UploadState.BytesTotal += origContentLength;
 			}
-			SyncUploadContextWithSession();
 			if (log.IsDebugEnabled) log.Debug("=" + contentLengthHeader + " -> " + origContentLength);
 			
 			boundary = System.Text.Encoding.ASCII.GetBytes("--" + GetAttribute(contentTypeHeader, "boundary"));
@@ -580,33 +574,28 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 				         && null != (controlID = translator.FileFieldNameToControlID(name)))
 				{
 					if (log.IsDebugEnabled) log.DebugFormat("name != null && controlID != null");
-					uploadContext.PostBackID = translator.FileFieldNameToPostBackID(name);
-					// If this isn't an async request but there are some async files, get the existing upload state
-					// except for SyncBytesRead and SyncBytesTotal.
-					long syncBytesRead = uploadContext.SyncBytesRead;
-					long syncBytesTotal = uploadContext.SyncBytesTotal;
-					UploadContext newContext = null;
-					if (!uploadContext.IsAsyncRequest 
-					    && null != (newContext = UploadContext.FindByIDAllServers(uploadContext.PostBackID)))
+					if (UploadState == null)
 					{
-						uploadContext = newContext;
-						uploadContext.SyncBytesRead = syncBytesRead;
-						uploadContext.SyncBytesTotal = syncBytesTotal;
-						uploadContext.IsAsyncRequest = false;
+						UploadState = UploadStateStore.OpenReadWriteOrCreate(translator.FileFieldNameToPostBackID(name));
+						if (transferEncodingHeader != "chunked")
+							UploadState.Status = UploadStatus.NormalInProgress;
+						else
+							UploadState.Status = UploadStatus.ChunkedInProgress;
+						UploadState.BytesRead += grandTotalBytesRead;
+						UploadState.BytesTotal += origContentLength;
 					}
-					else
-					{
-						uploadContext.RegisterPostBack(uploadContext.PostBackID); // Do this first so that progress display sees errors
-					}
-					SyncUploadContextWithSession();
 
 					UploadStorageConfig storageConfig = null;
 					
-					if (uploadContext.SecureStorageConfigString != null)
+					if (UploadState.MultiRequestObject != null)
 					{
-						storageConfig = UploadStorage.CreateUploadStorageConfig();
-						storageConfig.Unprotect(uploadContext.SecureStorageConfigString);
-						if (log.IsDebugEnabled) log.DebugFormat("storageConfig[tempDirectory]={0}", storageConfig["tempDirectory"]);
+						string secureStorageConfigString = UploadState.MultiRequestObject as string;
+						if (secureStorageConfigString != null)
+						{
+							storageConfig = UploadStorage.CreateUploadStorageConfig();
+							storageConfig.Unprotect(secureStorageConfigString);
+							if (log.IsDebugEnabled) log.DebugFormat("storageConfig[tempDirectory]={0}", storageConfig["tempDirectory"]);
+						}
 					}
 					string configID = translator.FileIDToConfigID(controlID);
 					MemoryStream storageConfigStream = storageConfigStreamTable[configID] as MemoryStream;
@@ -633,7 +622,13 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 					{
 						if (log.IsDebugEnabled) log.DebugFormat("filename != null");
 						if (log.IsDebugEnabled) log.Debug("Calling UploadContext.Current.CreateUploadedFile(" + controlID + "...)");
-						UploadedFile uploadedFile = uploadContext.CreateUploadedFile(controlID, fileName, contentType, storageConfig);
+						UploadContext tempUploadContext = new UploadContext();
+						tempUploadContext._ContentLength = origContentLength;
+						UploadedFile uploadedFile 
+							= UploadStorage.CreateUploadedFile(tempUploadContext, controlID, fileName, contentType, storageConfig);
+						UploadState.Files.Add(controlID, uploadedFile);
+						if (AsyncControlID == null)
+							RegisterFilesForDisposal(controlID);
 						outputStream = fileStream = uploadedFile.CreateStream();
 						readPos = parsePos; // Skip past the boundary and headers
 	
@@ -652,14 +647,14 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 					}
 					else
 					{
-						if (log.IsDebugEnabled) log.DebugFormat("filename !== null");
+						if (log.IsDebugEnabled) log.DebugFormat("filename == null");
 						// Since filename==null this must just be a hidden field with a name that
 						// looks like a file field.  It is just an indication that when this request
 						// ends, the associated uploaded files should be disposed.
-						if (!uploadContext.IsAsyncRequest)
+						if (AsyncControlID == null)
 						{
 							if (log.IsDebugEnabled) log.DebugFormat("IsASyncRequest == false");
-							uploadContext.RegisterFilesForDisposal(controlID);
+							RegisterFilesForDisposal(controlID);
 						}
 						outputStream = preloadedEntityBodyStream;
 					}
@@ -694,9 +689,21 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 					throw new HttpException (400, String.Format("Client disconnected after receiving {0} of {1} bytes -- user probably cancelled upload.", grandTotalBytesRead, origContentLength));
 				}
 			}
-			SyncUploadContextWithSession();
 		}
-		
+
+		internal void RegisterFilesForDisposal(string controlUniqueID)
+		{
+			foreach (UploadedFile f in UploadState.Files)
+			{
+				if (log.IsDebugEnabled) log.DebugFormat("Checking {0} == {1}", f.ControlUniqueID, controlUniqueID);
+				if (f.ControlUniqueID == controlUniqueID)
+				{
+					if (log.IsDebugEnabled) log.DebugFormat("DisposeAtEndOfRequest({0})", f);
+					UploadStorage.DisposeAtEndOfRequest(f);
+				}
+			}
+		}
+
 		private void WriteReplacementFormField(string name, string val)
 		{
 			preloadedEntityBodyStream.Write(boundary, 0, boundary.Length);
@@ -707,18 +714,6 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 			preloadedEntityBodyStream.Write(replacementPartBytes, 0, replacementPartBytes.Length);
 		}
 				
-		private void SyncUploadContextWithSession()
-		{
-			try
-			{
-				UploadHttpModule.AccessSession(new SessionAccessCallback(uploadContext.SyncWithSession));
-			}
-			finally
-			{
-				TimeOfLastSync = DateTime.Now;
-			}
-		}
-		
 		public override int ReadEntityBody (byte[] buffer, int size)
 		{
 			ParseMultipart();

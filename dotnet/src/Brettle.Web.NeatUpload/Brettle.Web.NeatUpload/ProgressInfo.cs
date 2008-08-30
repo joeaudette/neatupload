@@ -75,7 +75,7 @@ namespace Brettle.Web.NeatUpload
 			{
 				return;
 			}
-			UploadModule.SetProcessingState(UploadModule.PostBackID, ControlID, this);
+			UploadModule.SetProcessingState(ControlID, this);
 			TimeOfLastSync = DateTime.Now;
 		}
 

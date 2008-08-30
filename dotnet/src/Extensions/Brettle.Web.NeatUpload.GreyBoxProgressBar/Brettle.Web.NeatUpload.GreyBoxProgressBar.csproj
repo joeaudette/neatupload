@@ -55,7 +55,7 @@
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>
-        <GtkDesignInfo gtkVersion="2.10.3" />
+        <GtkDesignInfo />
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>

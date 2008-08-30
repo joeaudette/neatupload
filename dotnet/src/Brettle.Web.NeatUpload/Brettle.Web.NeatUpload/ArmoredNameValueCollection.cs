@@ -67,85 +67,18 @@ namespace Brettle.Web.NeatUpload
 		}
 
 		internal void Unprotect(string secureString)
-		{			
-			byte[] secureBytes = Convert.FromBase64String(secureString);
-			MemoryStream secureStream = new MemoryStream(secureBytes);
-			BinaryReader binaryReader = new BinaryReader(secureStream);
-			byte[] actualHash = binaryReader.ReadBytes(binaryReader.ReadByte());
-			byte[] iv = binaryReader.ReadBytes(binaryReader.ReadByte());
-			byte[] cipherText = binaryReader.ReadBytes((int)(secureStream.Length - secureStream.Position));
-			
-			// Verify the hash
-			KeyedHashAlgorithm macAlgorithm = KeyedHashAlgorithm.Create();
-			macAlgorithm.Key = Config.Current.ValidationKey;
-			byte[] expectedHash = macAlgorithm.ComputeHash(cipherText);
-			AssertSignaturesAreEqual(actualHash, expectedHash);
-			
-			// Decrypt the ciphertext
-			MemoryStream cipherTextStream = new MemoryStream(cipherText);
-			SymmetricAlgorithm cipher = SymmetricAlgorithm.Create();
-			cipher.Mode = CipherMode.CBC;
-			cipher.Padding = PaddingMode.PKCS7;
-			cipher.Key = Config.Current.EncryptionKey;
-			cipher.IV = iv;
-			CryptoStream cryptoStream = new CryptoStream(cipherTextStream, cipher.CreateDecryptor(), CryptoStreamMode.Read);
-			try
-			{
-				Deserialize(cryptoStream);
-			}
-			finally
-			{
-				cryptoStream.Close();
-			}
+		{
+			ObjectProtector.Unprotect(secureString, Deserialize, AssertSignaturesAreEqual);
 		}
 		
 		internal string Protect()
 		{
-			// Encrypt it
-			MemoryStream cipherTextStream = new MemoryStream();
-			SymmetricAlgorithm cipher = SymmetricAlgorithm.Create();
-			cipher.Mode = CipherMode.CBC;
-			cipher.Padding = PaddingMode.PKCS7;
-			cipher.Key = Config.Current.EncryptionKey;
-			CryptoStream cryptoStream = new CryptoStream(cipherTextStream, cipher.CreateEncryptor(), CryptoStreamMode.Write);
-			Serialize(cryptoStream);
-			cryptoStream.Close();
-			byte[] cipherText = cipherTextStream.ToArray();
-			
-			// MAC the ciphertext
-			KeyedHashAlgorithm macAlgorithm = KeyedHashAlgorithm.Create();
-			macAlgorithm.Key = Config.Current.ValidationKey;
-			byte[] hash = macAlgorithm.ComputeHash(cipherText);
-			
-			// Concatenate MAC length, MAC, IV length, IV, and ciphertext into an array.
-			MemoryStream secureStream = new MemoryStream();
-			BinaryWriter binaryWriter = new BinaryWriter(secureStream);
-			binaryWriter.Write((byte)hash.Length);
-			binaryWriter.Write(hash);
-			binaryWriter.Write((byte)cipher.IV.Length);
-			binaryWriter.Write(cipher.IV);
-			binaryWriter.Write(cipherText);
-			binaryWriter.Close();
-			
-			// return Base64-encoded value suitable for putting in a hidden form field
-			return Convert.ToBase64String(secureStream.ToArray());
+			return ObjectProtector.Protect(Serialize);
 		}
 		
 		protected virtual void AssertSignaturesAreEqual(byte[] actualHash, byte[] expectedHash)
 		{
-			if (actualHash.Length != expectedHash.Length)
-			{
-				throw new Exception("actualHash.Length (" + actualHash.Length + ")" +
-				                    " != expectedHash.Length (" + expectedHash.Length + ")");
-			}
-			for (int i = 0; i < expectedHash.Length; i++)
-			{
-				if (actualHash[i] != expectedHash[i])
-				{
-					throw new Exception("actualHash[" + i + "] (" + (int)actualHash[i] + ")" +
-					                    " != expectedHash[" + i + "] (" + (int)expectedHash[i] + ")");
-				}
-			}
+			ObjectProtector.AssertSignaturesAreEqual(actualHash, expectedHash);
 		}
 	}
 }

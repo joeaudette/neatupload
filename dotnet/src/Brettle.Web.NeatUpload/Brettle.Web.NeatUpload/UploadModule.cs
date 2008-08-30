@@ -76,7 +76,10 @@ namespace Brettle.Web.NeatUpload
 	/// <see cref="HttpPostedFile"/> into an <see cref="UploadedFile"/></para>
 	/// </remarks>
 	public class UploadModule
-	{		
+	{
+		// Only static members...
+		protected UploadModule() { }
+		
 		/// <summary>
 		/// The name of the query parameter that can contain the post-back ID with
 		/// which files in the request should be associated.  
@@ -223,14 +226,11 @@ namespace Brettle.Web.NeatUpload
 		}
 
 		/// <summary>
-		/// Sets the processing state object associated with the specified post-back ID and
-		/// control UniqueID.  The processing state object can be retrieved by passing an
+		/// Sets the processing state object associated with the current upload and
+		/// given control UniqueID.  The processing state object can be retrieved by passing an
 		/// <see cref="IUploadProgressState"/> object to <see cref="BindProgressState"/> and
 		/// then accessing <see cref="IUploadProgressState.ProcessingState"/>.
 		/// </summary>
-		/// <param name="postBackID">
-		/// The post-back ID that the processing state is associated with.
-		/// </param>
 		/// <param name="controlUniqueID">
 		/// The UniqueID of the control that the processing state is associated with.
 		/// </param>
@@ -239,9 +239,9 @@ namespace Brettle.Web.NeatUpload
 		/// serializable.
 		/// </param>
 		/// <returns>true if the module supports setting processing state, otherwise false.</returns>
-		public static bool SetProcessingState(string postBackID, string controlUniqueID, object state)
+		public static bool SetProcessingState(string controlUniqueID, object state)
 		{
-			return InstalledModule.SetProcessingState(postBackID, controlUniqueID, state);
+			return InstalledModule.SetProcessingState(controlUniqueID, state);
 		}
 
 		/// <summary>

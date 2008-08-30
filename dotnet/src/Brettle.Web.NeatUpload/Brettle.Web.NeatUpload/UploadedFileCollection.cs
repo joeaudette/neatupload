@@ -169,6 +169,8 @@ namespace Brettle.Web.NeatUpload
 		internal void Add(string key, UploadedFile file)
 		{
 			lock (_SyncRoot) { this.BaseAdd(key, file); }
+			if (Changed != null)
+				Changed(this, null);
 		}
 
 		internal UploadedFileCollection GetReadOnlyCopy()
@@ -182,5 +184,7 @@ namespace Brettle.Web.NeatUpload
 			}
 			return readOnlyCollection;
 		}
+
+		internal event EventHandler Changed;
 	}
 }

@@ -47,34 +47,21 @@ namespace Brettle.Web.NeatUpload
 			if (log.IsDebugEnabled) log.DebugFormat("controlID={0}", controlID);
 			string postBackID = Request.Params[UploadModule.PostBackIDQueryParam];
 			if (log.IsDebugEnabled) log.DebugFormat("postBackID={0}", postBackID);
-			UploadContext uploadContext = UploadContext.Current;
-			// If we don't have an uploadContext then this is the pre-upload POST that contains the
-			// storage config and file sizes.
-			if (uploadContext == null && controlID != null && postBackID != null)
+			string secureStorageConfigString = Request.Params[UploadModule.ConfigFieldNamePrefix + controlID];
+			if (log.IsDebugEnabled) log.DebugFormat("secureStorageConfigString={0}", secureStorageConfigString);
+			string fileSizesString = Request.Params[MultiRequestUploadModule.FileSizesFieldName];
+			if (log.IsDebugEnabled) log.DebugFormat("fileSizesString={0}", fileSizesString);
+
+			if (postBackID != null && fileSizesString != null && fileSizesString.Length > 0)
 			{
-				uploadContext = UploadContext.FindByIDAllServers(postBackID);
-				if (uploadContext == null)
+				string[] fileSizeStrings = fileSizesString.Split(' ');
+				long totalSize = 0;
+				for (int i = 0; i < fileSizeStrings.Length; i++)
 				{
-					uploadContext = new UploadContext();
-					uploadContext.RegisterPostBack(postBackID); // Do this first so that progress display sees errors
-				}
-				if (log.IsDebugEnabled) log.DebugFormat("uploadContext={0}", uploadContext);
-				string secureStorageConfigString 
-					= Request.Params[UploadModule.ConfigFieldNamePrefix + controlID];
-				if (log.IsDebugEnabled) log.DebugFormat("secureStorageConfigString={0}", secureStorageConfigString);
-				if (secureStorageConfigString != null)
-					uploadContext.SecureStorageConfigString = secureStorageConfigString;
-				string fileSizesString = Request.Params[MultiRequestUploadModule.FileSizesFieldName];
-				if (log.IsDebugEnabled) log.DebugFormat("fileSizesString={0}", fileSizesString);
-				if (fileSizesString != null && fileSizesString.Length > 0)
-				{
-					string[] fileSizeStrings = fileSizesString.Split(' ');
-					long[] fileSizes = new long[fileSizeStrings.Length];
-					for (int i = 0; i < fileSizes.Length; i++)
-						fileSizes[i] = Int64.Parse(fileSizeStrings[i]);
-					uploadContext.FileSizes = fileSizes;
-				}
-				UploadHttpModule.AccessSession(new SessionAccessCallback(uploadContext.SyncWithSession));
+					totalSize += Int64.Parse(fileSizeStrings[i]);
+				}				
+				UploadHttpModule.CurrentUploadState.MultiRequestObject = secureStorageConfigString;
+				UploadHttpModule.CurrentUploadState.BytesTotal = totalSize;
 			}
 
 			base.OnLoad(e);

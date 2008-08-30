@@ -94,6 +94,20 @@ namespace Brettle.Web.NeatUpload.Internal.UI
 			set { _CurrentFileName = value; }
 		}
 
+		private UploadedFileCollection _Files;
+		/// <summary>
+		/// A collection of the <see cref="UploadedFile"/> objects associated with the
+		/// the upload.
+		/// </summary>
+		/// <value>
+		/// A collection of the <see cref="UploadedFile"/> objects associated with the
+		/// the upload.
+		/// </value>
+		UploadedFileCollection IUploadProgressState.Files { 
+			get { return _Files; }
+			set	{ _Files = value; }
+		}
+
 		private object _ProcessingState;
 		object IUploadProgressState.ProcessingState {
 			get { return _ProcessingState; }
