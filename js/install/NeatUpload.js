@@ -1097,6 +1097,8 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	{
 		numf.debugMessage("StartAsyncUploads(): Entered.");
 		var postParams = numf.Swfu.buildQueryString();
+		var req = GetXHR();
+		req.open('POST', numf.UploadScript + "?" + postParams);
 		var fileSizes = nuf.GetFileSizes().join(" ");
 		postParams += "&NeatUploadFileSizes=" + encodeURIComponent(fileSizes);
 		var storageConfigFieldName = numf.StorageConfigFieldName;
@@ -1105,8 +1107,6 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 		{
 			postParams += "&" + encodeURIComponent(storageConfigFieldName) + "=" + encodeURIComponent(storageConfigElem.value);
 		}
-		var req = GetXHR();
-		req.open('POST', numf.UploadScript);
 		req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		req.setRequestHeader("Content-length", postParams.length);
 		req.onreadystatechange = function () {

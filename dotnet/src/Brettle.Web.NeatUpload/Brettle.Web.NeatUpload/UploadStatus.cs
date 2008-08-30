@@ -69,11 +69,6 @@ namespace Brettle.Web.NeatUpload
 		Completed,
 
 		/// <summary>
-		/// The upload was cancelled by calling <see cref="UploadModule.CancelPostBack"/>
-		/// </summary>
-		Cancelled, 
-
-		/// <summary>
 		/// An <see cref="UploadException"/> (or subclass) was thrown while receiving or
 		/// processing the upload.
 		/// </summary>
@@ -83,6 +78,12 @@ namespace Brettle.Web.NeatUpload
 		/// An exception that is not an <see cref="UploadException"/> was thrown while 
 		/// receiving or processing the upload.
 		/// </summary>
-		Failed
+		Failed,
+		
+		/// <summary>
+		/// The upload was cancelled by calling <see cref="UploadModule.CancelPostBack"/>
+		/// </summary>
+		Cancelled
+
 	}
 }

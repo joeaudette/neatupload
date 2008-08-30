@@ -84,6 +84,9 @@ namespace Brettle.Web.NeatUpload
 	/// </remarks>
 	public class MultiRequestUploadModule : UploadModule
 	{
+		// Only static members...
+		protected MultiRequestUploadModule() { }
+		
 		/// <summary>
 		/// Whether an <see cref="IMultRequestUploadModule"/> is installed and 
 		/// will handle requests to the same URL as the current request.

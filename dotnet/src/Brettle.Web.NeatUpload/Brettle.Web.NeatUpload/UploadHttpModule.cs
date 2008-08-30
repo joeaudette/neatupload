@@ -63,11 +63,11 @@ namespace Brettle.Web.NeatUpload
 		}
 
 		string IUploadModule.FileFieldNamePrefix { 
-			get { return UploadContext.NamePrefix; } 
+			get { return InternalUploadContext.NamePrefix; } 
 		}
 
 		string IUploadModule.ConfigFieldNamePrefix { 
-			get { return UploadContext.ConfigNamePrefix; } 
+			get { return InternalUploadContext.ConfigNamePrefix; } 
 		}
 
 		bool IUploadModule.IsEnabled {
@@ -109,60 +109,79 @@ namespace Brettle.Web.NeatUpload
 
 		string IUploadModule.PostBackID {
 			get {
-				if (UploadContext.Current == null)
+				if (CurrentUploadState == null)
 					return null;
-				return UploadContext.Current.PostBackID;
+				return CurrentUploadState.PostBackID;
 			}
 		}
 
-		bool IUploadModule.SetProcessingState(string postBackID, string controlUniqueID, object state)
+		bool IUploadModule.SetProcessingState(string controlUniqueID, object state)
 		{
-			UploadContext ctx = UploadContext.FindByIDAllServers(postBackID);
-			if (ctx == null)
-			{
-				ctx = new UploadContext();
-				ctx.RegisterPostBack(postBackID);
-			}
-			ctx.ProcessingStateByID[controlUniqueID] = state;
-			UploadHttpModule.AccessSession(new SessionAccessCallback(ctx.SyncWithSession));
+			
+			UploadState uploadState = CurrentUploadState;
+			if (uploadState != null && uploadState.Status == UploadStatus.Unknown)
+				return true;
+			uploadState.ProcessingStateDict[controlUniqueID] = state;
 			return true;
 		}
 
 		void IUploadModule.BindProgressState(string postBackID, string controlUniqueID, IUploadProgressState progressState)
 		{
-			UploadContext ctx = UploadContext.FindByIDAllServers(postBackID);
-			if (ctx == null)
+			UploadState uploadState = UploadStateStore.OpenReadOnly(postBackID);
+			if (uploadState == null)
 			{
 				progressState.Status = UploadStatus.Unknown;
 				return;
 			}
-			ctx.SetProgressProps(progressState, controlUniqueID);
+
+			progressState.Status = uploadState.Status;
+			if (uploadState.Status == UploadStatus.Unknown)
+				return;			
+			progressState.BytesRead = uploadState.BytesRead;
+			progressState.BytesTotal = uploadState.BytesTotal;
+			progressState.BytesPerSec = uploadState.BytesPerSec;
+			progressState.FileBytesRead = uploadState.FileBytesRead;
+			progressState.FractionComplete 
+				= uploadState.BytesTotal <= 0 ? 0 : (double)uploadState.BytesRead / uploadState.BytesTotal;
+			if (uploadState.Files != null && uploadState.Files.Count > 0)
+				progressState.CurrentFileName = uploadState.Files[uploadState.Files.Count-1].FileName;
+			progressState.Files = uploadState.Files.GetReadOnlyCopy();
+			progressState.Failure = uploadState.Failure;
+			progressState.Rejection = uploadState.Rejection;
+			progressState.ProcessingState = uploadState.ProcessingStateDict[controlUniqueID];
+			progressState.TimeElapsed = uploadState.TimeElapsed;
+			if (uploadState.BytesRead == 0 || uploadState.BytesTotal < 0)
+			{
+				progressState.TimeRemaining = TimeSpan.MaxValue;
+			}
+			else
+			{
+				double bytesRemaining = ((double)(uploadState.BytesTotal - uploadState.BytesRead));
+				double ticksRemaining = bytesRemaining * uploadState.TimeElapsed.Ticks;
+				progressState.TimeRemaining = new TimeSpan((long)(ticksRemaining/uploadState.BytesRead));
+			}
+			UploadStateStore.Close(uploadState);
 		}
 
 		void IUploadModule.CancelPostBack(string postBackID)
 		{
-			UploadContext ctx = UploadContext.FindByIDAllServers(postBackID);
-			if (ctx == null)
+			UploadState uploadState = UploadStateStore.OpenReadWrite(postBackID);
+			if (uploadState.Status == UploadStatus.Unknown)
 				return;
-			ctx.Status = UploadStatus.Cancelled;
-			UploadHttpModule.AccessSession(new SessionAccessCallback(ctx.SyncWithSession));
+			uploadState.Status = UploadStatus.Cancelled;
+			UploadStateStore.Close(uploadState);
 		}
 
 		UploadedFile IUploadModule.ConvertToUploadedFile(string controlUniqueID, HttpPostedFile file)
 		{
-			UploadContext ctx = UploadContext.Current;
-			if (ctx == null)
-			{
-				// We use a temporary UploadContext so that we have something we can pass to the
-				// UploadStorageProvider.  Note that unlike when the UploadHttpModule is used,
-				// this temporary context is not shared between uploaded files.
-				ctx = new UploadContext();
-				ctx.SyncBytesTotal = HttpContext.Current.Request.ContentLength;
-				ctx.Status = UploadStatus.NormalInProgress;
-			}
+			// We use a temporary UploadContext so that we have something we can pass to the
+			// UploadStorageProvider.  Note that unlike when the UploadHttpModule is used,
+			// this temporary context is not shared between uploaded files.
+			UploadContext ctx = new UploadContext();
+			ctx._ContentLength = HttpContext.Current.Request.ContentLength;
 			UploadStorageConfig storageConfig = UploadStorage.CreateUploadStorageConfig();
 			string storageConfigString 
-				= HttpContext.Current.Request.Form[UploadContext.ConfigNamePrefix + "-" + controlUniqueID];
+				= HttpContext.Current.Request.Form[InternalUploadContext.ConfigNamePrefix + "-" + controlUniqueID];
 			if (storageConfigString != null && storageConfigString != string.Empty)
 			{
 				storageConfig.Unprotect(storageConfigString);
@@ -180,10 +199,7 @@ namespace Brettle.Web.NeatUpload
 					   && (bytesRead = inStream.Read(buf, 0, buf.Length)) > 0)
 				{
 					outStream.Write(buf, 0, bytesRead);
-					ctx.SyncBytesRead += bytesRead;
 				}
-				ctx.SyncBytesRead = ctx.BytesTotal;
-				ctx.Status = UploadStatus.Completed;
 			}
 			finally
 			{
@@ -194,7 +210,7 @@ namespace Brettle.Web.NeatUpload
 		}
 
 		string IMultiRequestUploadModule.FileSizesFieldName {
-			get { return UploadContext.FileSizesName; } 
+			get { return InternalUploadContext.FileSizesName; } 
 		}
 
 		string IMultiRequestUploadModule.UploadPath {
@@ -214,13 +230,9 @@ namespace Brettle.Web.NeatUpload
 			get 
 			{
 				// If the upload is being handled by this module, then return the collection that it maintains.
-				if (!Config.Current.UseHttpModule)
+				if (!Config.Current.UseHttpModule || CurrentUploadState == null)
 					return null;
-				FilteringWorkerRequest worker 
-					= UploadHttpModule.GetCurrentWorkerRequest() as FilteringWorkerRequest;
-				if (worker == null)
-				    return null;
-				UploadedFileCollection files = worker.GetUploadContext().Files;
+				UploadedFileCollection files = CurrentUploadState.Files;
 				if (files == null)
 					return null;
 				return files.GetReadOnlyCopy();
@@ -349,9 +361,9 @@ namespace Brettle.Web.NeatUpload
 			HttpWorkerRequest wr = GetCurrentWorkerRequest();
 			string filePath = wr.GetFilePath().ToLower();
 			if (log.IsDebugEnabled) log.DebugFormat("filePath={0}", filePath);
+			string qs = wr.GetQueryString();
 			if (filePath.StartsWith("/neatupload/"))
 			{
-				string qs = wr.GetQueryString();
 				if (qs != null)
 				{
 					HttpCookieCollection cookies = UploadHttpModule.GetCookiesFromQueryString(qs);
@@ -433,6 +445,16 @@ namespace Brettle.Web.NeatUpload
 			string contentTypeHeader = origWorker.GetKnownRequestHeader(HttpWorkerRequest.HeaderContentType);
 			if (contentTypeHeader != null && contentTypeHeader.ToLower().StartsWith("multipart/form-data"))
 			{
+				// If this is an async request get the post-back ID from the query string
+				if (qs != null && UploadHttpModule.GetAsyncControlIDFromQueryString(qs) != null)
+				{				
+					CurrentUploadState = UploadStateStore.OpenReadWriteOrCreate(UploadHttpModule.GetPostBackIDFromQueryString(qs));
+					string transferEncodingHeader = origWorker.GetKnownRequestHeader(HttpWorkerRequest.HeaderTransferEncoding);
+					if (transferEncodingHeader != "chunked")
+						CurrentUploadState.Status = UploadStatus.NormalInProgress;
+					else
+						CurrentUploadState.Status = UploadStatus.ChunkedInProgress;
+				}
 				subWorker = new FilteringWorkerRequest(origWorker);
 			}
 			else
@@ -506,21 +528,23 @@ namespace Brettle.Web.NeatUpload
 			// Wait for the upload to complete before AcquireRequestState fires.  If we don't then the session
 			// will be locked while the upload completes
 			WaitForUploadToComplete();
-            UploadContext uploadContext = UploadContext.Current;
-            if (uploadContext == null)
-            {
-                // If a FilteringWorkerRequest was not used, but the request contains the PostBackIDQueryParam, 
-                // then create and register an UploadContext.  This occurs when the module disabled, 
-                // this is not a form/multipart POST request, etc.  This allows ProgressBars
-                // to be used for pages where no upload is occuring.
-                uploadContext = CreateUploadContextFromQueryString();
-            }
 
-            if (uploadContext != null && !uploadContext.IsAsyncRequest)
-            {
-                uploadContext.Status = UploadStatus.ProcessingInProgress;
-				UploadHttpModule.AccessSession(new SessionAccessCallback(uploadContext.SyncWithSession));
-            }
+			// If the request is not an async request and contains the PostBackIDQueryParam,
+            // then get an UploadState for it and set it's status to ProcessingInProgress.
+			// This occurs when the module disabled,
+            // this is not a form/multipart POST request, etc.  This allows ProgressBars
+            // to be used for pages where no upload is occuring.
+			if (CurrentAsyncControlID != null)
+				return;
+            UploadState uploadState = CurrentUploadState;
+			if (uploadState == null)
+				return;
+
+			if (uploadState.BytesTotal == 0)
+				uploadState.BytesTotal = HttpContext.Current.Request.ContentLength;
+			if (uploadState.BytesRead == 0)
+				uploadState.BytesRead = HttpContext.Current.Request.ContentLength;
+            uploadState.Status = UploadStatus.ProcessingInProgress;
         }
 
 		private static void SetCookie(string name, string val)
@@ -535,26 +559,74 @@ namespace Brettle.Web.NeatUpload
 			cookie.Value = val;
 			cookies.Set(cookie);
 		}
-		
-        
-		private UploadContext CreateUploadContextFromQueryString()
-		{
-			HttpWorkerRequest worker = UploadHttpModule.GetCurrentWorkerRequest();
-            if (worker == null)
-                return null;
-			string qs = worker.GetQueryString();
-           	string postBackID = GetPostBackIDFromQueryString(qs);
-           	if (postBackID == null)
-           		return null;
 
-			UploadContext uploadContext;
-			uploadContext = new UploadContext();
-			uploadContext.SyncBytesTotal = HttpContext.Current.Request.ContentLength;
-			uploadContext.RegisterPostBack(postBackID);
-			UploadContext.Current = uploadContext;
-			return uploadContext;
+		internal static UploadState CurrentUploadState {
+			get {
+				HttpContext httpContext = HttpContext.Current;
+				if (httpContext != null)
+				{
+					if (httpContext.Items["NeatUpload_UploadState"] == null)
+					{
+						if (Config.Current.UseHttpModule)
+						{
+							HttpWorkerRequest worker = UploadHttpModule.GetCurrentWorkerRequest();
+							if (log.IsDebugEnabled) log.DebugFormat("worker={0}", worker);
+				            if (worker == null)
+				                return null;
+							string qs = worker.GetQueryString();
+				           	string postBackID = GetPostBackIDFromQueryString(qs);
+							if (log.IsDebugEnabled) log.DebugFormat("postBackID={0}, qs={1}", postBackID, qs);							
+				           	if (postBackID == null)
+				           		return null;
+				
+							UploadState uploadState = UploadStateStore.OpenReadWriteOrCreate(postBackID);
+							string transferEncodingHeader = worker.GetKnownRequestHeader(HttpWorkerRequest.HeaderTransferEncoding);
+							if (transferEncodingHeader != "chunked")
+								uploadState.Status = UploadStatus.NormalInProgress;
+							else
+								uploadState.Status = UploadStatus.ChunkedInProgress;
+							CurrentUploadState = uploadState;
+							return uploadState;
+						}
+					}
+					return (UploadState)httpContext.Items["NeatUpload_UploadState"];
+				}
+				return null;
+			}
+			set {
+				HttpContext httpContext = HttpContext.Current;
+				if (httpContext != null)
+				{
+					HttpContext.Current.Items["NeatUpload_UploadState"] = value;
+				}
+			}
 		}
-		
+        
+		internal static string CurrentAsyncControlID {
+			get {
+				HttpContext httpContext = HttpContext.Current;
+				if (httpContext != null)
+				{
+					if (httpContext.Items["NeatUpload_AsyncControlID"] == null)
+					{
+						if (Config.Current.UseHttpModule)
+						{
+							HttpWorkerRequest worker = UploadHttpModule.GetCurrentWorkerRequest();
+				            if (worker == null)
+				                return null;
+							string qs = worker.GetQueryString();
+				           	string controlID = GetAsyncControlIDFromQueryString(qs);
+				           	if (controlID == null)
+				           		return null;
+							httpContext.Items["NeatUpload_AsyncControlID"] = controlID;
+						}
+					}
+					return (string)httpContext.Items["NeatUpload_AsyncControlID"];
+				}
+				return null;
+			}
+		}
+        
         internal static string GetPostBackIDFromQueryString(string qs)
         {
 			// Parse out the postBackID.  Note, we can't just do:
@@ -717,10 +789,17 @@ namespace Brettle.Web.NeatUpload
 			{
 				app.Error -= RememberErrorHandler;
 			}
-			UploadContext uploadContext = UploadContext.Current;
-			if (uploadContext != null)
+
+			UploadState uploadState = CurrentUploadState;
+			if (uploadState != null)
 			{
-				uploadContext.CompleteRequest();
+				if (CurrentAsyncControlID == null
+			    	&& uploadState.Status != UploadStatus.Failed && uploadState.Status != UploadStatus.Rejected)
+				{
+					uploadState.Status = UploadStatus.Completed;
+				}
+				UploadStateStore.Close(CurrentUploadState);
+				CurrentUploadState = null;
 			}
 		}
 

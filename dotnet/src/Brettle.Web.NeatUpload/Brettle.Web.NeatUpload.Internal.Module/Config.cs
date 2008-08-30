@@ -134,6 +134,8 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 				config.ValidationKey = parent.ValidationKey;
 				config.EncryptionKey = parent.EncryptionKey;
 				config.PostBackIDQueryParam = parent.PostBackIDQueryParam;
+				config.MergeIntervalSeconds = parent.MergeIntervalSeconds;
+				config.StateStaleAfterSeconds = parent.StateStaleAfterSeconds;
 			}
 			foreach (XmlAttribute attr in section.Attributes)
 			{
@@ -190,6 +192,14 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 				else if (name == "postBackIDQueryParam")
 				{
 					config.PostBackIDQueryParam = val;
+				}
+				else if (name == "stateMergeIntervalSeconds")
+				{
+					config.MergeIntervalSeconds = Double.Parse(val);
+				}
+				else if (name == "stateStaleAfterSeconds")
+				{
+					config.StateStaleAfterSeconds = Double.Parse(val);
 				}
 				else
 				{
@@ -265,6 +275,8 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 		internal byte[] ValidationKey = Config.DefaultValidationKey;
 		internal byte[] EncryptionKey = Config.DefaultEncryptionKey;
 		internal string PostBackIDQueryParam = "NeatUpload_PostBackID";
+		internal double MergeIntervalSeconds = 1.0;
+		internal double StateStaleAfterSeconds = 60.0;
 		
 		private static byte[] DefaultValidationKey = null;
 		private static byte[] DefaultEncryptionKey = null;

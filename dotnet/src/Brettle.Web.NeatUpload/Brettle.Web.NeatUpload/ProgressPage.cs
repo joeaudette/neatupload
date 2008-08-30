@@ -107,6 +107,20 @@ namespace Brettle.Web.NeatUpload
 			set { _CurrentFileName = value; }
 		}
 
+		private UploadedFileCollection _Files;
+		/// <summary>
+		/// A collection of the <see cref="UploadedFile"/> objects associated with the
+		/// the upload.
+		/// </summary>
+		/// <value>
+		/// A collection of the <see cref="UploadedFile"/> objects associated with the
+		/// the upload.
+		/// </value>
+		public UploadedFileCollection Files { 
+			get { return _Files; }
+			set	{ _Files = value; }
+		}
+
 		private object _ProcessingState;
 		public object ProcessingState {
 			get { return _ProcessingState; }
