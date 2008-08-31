@@ -18,6 +18,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 using System;
+using System.Collections;
 using Brettle.Web.NeatUpload.Internal.Module;
 
 namespace Brettle.Web.NeatUpload
@@ -41,50 +42,66 @@ namespace Brettle.Web.NeatUpload
 		/// </returns>
 		public abstract UploadState Load(string postBackID);
 
-		public abstract void MergeAndSave(UploadState uploadState);
+		public abstract string[] MergeSaveAndCleanUp(UploadState uploadState, string[] postBackIDsToCleanUpIfStale);
 
-		public abstract void DeleteIfStale(string postBackID);
+        protected abstract void Delete(string postBackID);
+
+        protected string[] CleanUpIfStale(string[] postBackIDsToCleanUpIfStale)
+        {
+            ArrayList cleanedPostBackIDs = new ArrayList();
+            foreach (string postBackID in postBackIDsToCleanUpIfStale)
+            {
+                UploadState uploadState = Load(postBackID);
+                if (uploadState != null && uploadState.TimeOfLastMerge.AddSeconds(Config.Current.StateStaleAfterSeconds) > DateTime.Now)
+                {
+                    Delete(postBackID);
+                    cleanedPostBackIDs.Add(postBackID);
+                }
+            }
+            return (string[])cleanedPostBackIDs.ToArray(typeof(string));
+        }
 
 		public static void Merge(UploadState uploadState, UploadState storedUploadState)
 		{
-			if (storedUploadState == null || uploadState == storedUploadState)
+			if (uploadState == storedUploadState)
 				return;
+            if (storedUploadState != null)
+            {
+                UploadState uploadStateAtLastMerge = uploadState.UploadStateAtLastMerge;
+                if (uploadStateAtLastMerge == null)
+                    uploadStateAtLastMerge = new UploadState(uploadState.PostBackID);
 
-			UploadState uploadStateAtLastMerge = uploadState.UploadStateAtLastMerge;
-			if (uploadStateAtLastMerge == null)
-				uploadStateAtLastMerge = new UploadState(uploadState.PostBackID);
+                uploadState.IsMerging = true;
+                uploadState.BytesRead
+                    = storedUploadState.BytesRead + (uploadState.BytesRead - uploadStateAtLastMerge.BytesRead);
 
-			uploadState.IsMerging = true;
-			uploadState.BytesRead 
-				= storedUploadState.BytesRead + (uploadState.BytesRead - uploadStateAtLastMerge.BytesRead);
+                uploadState.BytesTotal
+                    = storedUploadState.BytesTotal + (uploadState.BytesTotal - uploadStateAtLastMerge.BytesTotal);
 
-			uploadState.BytesTotal 
-				= storedUploadState.BytesTotal + (uploadState.BytesTotal - uploadStateAtLastMerge.BytesTotal);
+                uploadState.FileBytesRead
+                    = storedUploadState.FileBytesRead + (uploadState.FileBytesRead
+                                                         - uploadStateAtLastMerge.FileBytesRead);
 
-			uploadState.FileBytesRead 
-				= storedUploadState.FileBytesRead + (uploadState.FileBytesRead 
-				                                     - uploadStateAtLastMerge.FileBytesRead);
+                if (uploadState.Failure == null)
+                    uploadState.Failure = storedUploadState.Failure;
 
-			if (uploadState.Failure == null)
-				uploadState.Failure = storedUploadState.Failure;
+                if (uploadState.Rejection == null)
+                    uploadState.Rejection = storedUploadState.Rejection;
 
-			if (uploadState.Rejection == null)
-				uploadState.Rejection = storedUploadState.Rejection;
+                if (uploadState.Files.Count < storedUploadState.Files.Count)
+                {
+                    uploadState._Files = storedUploadState._Files;
+                }
 
-			if (uploadState.Files.Count < storedUploadState.Files.Count)
-			{
-				uploadState._Files = storedUploadState._Files;
-			}
+                if (uploadState.MultiRequestObject == null)
+                    uploadState.MultiRequestObject = storedUploadState.MultiRequestObject;
 
-			if (uploadState.MultiRequestObject == null)
-				uploadState.MultiRequestObject = storedUploadState.MultiRequestObject;
+                if (uploadState.ProcessingStateDict == null || uploadState.ProcessingStateDict.Count == 0)
+                    uploadState._ProcessingStateDict = storedUploadState._ProcessingStateDict;
 
-			if (uploadState.ProcessingStateDict == null ||  uploadState.ProcessingStateDict.Count == 0)
-				uploadState._ProcessingStateDict = storedUploadState._ProcessingStateDict;
-
-			if (uploadState.Status < storedUploadState.Status)
-				uploadState.Status = storedUploadState.Status;
-
+                if (uploadState.Status < storedUploadState.Status)
+                    uploadState.Status = storedUploadState.Status;
+            }
 			uploadState.OnMerged();
 			uploadState.IsMerging = false;
 		}
@@ -94,5 +111,6 @@ namespace Brettle.Web.NeatUpload
 			return (uploadState.TimeOfLastMerge.AddSeconds(Config.Current.StateStaleAfterSeconds) > DateTime.Now);				
 		}
 
+        internal Hashtable PostBackIDsToDeleteIfStale = new Hashtable();
 	}
 }

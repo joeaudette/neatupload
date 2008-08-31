@@ -34,27 +34,16 @@ namespace Brettle.Web.NeatUpload
 		{
 			if (IsSessionReadable)
 				return base.Load(postBackID);
-			return MakeRemoteCall("Load", postBackID) as UploadState;
+			return (UploadState)MakeRemoteCall("Load", postBackID);
 		}
 
-		public override void MergeAndSave(UploadState uploadState)
+		public override string[] MergeSaveAndCleanUp(UploadState uploadState, string[] postBackIDsToCleanUpIfStale)
 		{
 			if (IsSessionWritable)
 			{
-				base.MergeAndSave(uploadState);
-				return;
+				return base.MergeSaveAndCleanUp(uploadState, postBackIDsToCleanUpIfStale);
 			}
-			MakeRemoteCall("MergeAndSave", uploadState);
-		}
-
-		public override void DeleteIfStale (string postBackID)
-		{
-			if (IsSessionWritable)
-			{
-				base.DeleteIfStale(postBackID);
-				return;
-			}
-			MakeRemoteCall("DeleteIfStale", postBackID);
+			return (string[])MakeRemoteCall("MergeSaveAndCleanUp", uploadState, postBackIDsToCleanUpIfStale);
 		}
 
 		private bool IsSessionReadable {
@@ -77,8 +66,8 @@ namespace Brettle.Web.NeatUpload
 			CookieContainer cookieContainer = new CookieContainer();
 			HttpCookieCollection httpCookies = HttpContext.Current.Request.Cookies;
 			if (httpCookies != null)
-				foreach (HttpCookie httpCookie in httpCookies)
-					cookieContainer.Add(new Cookie(httpCookie.Name, httpCookie.Value, "/", handlerUriBuilder.Host));
+				foreach (string name in httpCookies.AllKeys)
+					cookieContainer.Add(new Cookie(name, httpCookies[name].Value, "/", handlerUriBuilder.Host));
 			WebClient wc = new WebClient();
 			wc.Headers.Add("Cookie", cookieContainer.GetCookieHeader(handlerUriBuilder.Uri));
 			string protectedRequestPayload = ObjectProtector.Protect(methodCall);
@@ -86,10 +75,20 @@ namespace Brettle.Web.NeatUpload
 			formValues.Add("ProtectedPayload", protectedRequestPayload);
 			byte[] responseBytes = wc.UploadValues(handlerUriBuilder.ToString(), formValues);
 			string protectedResponsePayload = System.Text.Encoding.ASCII.GetString(responseBytes);
-			object result = null;
-			if (protectedResponsePayload != null && protectedResponsePayload.Length > 0)
-				result = ObjectProtector.Unprotect(protectedResponsePayload);
-			return result;
+            if (protectedResponsePayload != null && protectedResponsePayload.Length > 0)
+            {
+                object[] results = null;
+                results = (object[])ObjectProtector.Unprotect(protectedResponsePayload);
+                int j = 1;
+                for (int i = 1; i < methodCall.Length; i++)
+                {
+                    ICopyFromObject copyFromObject = methodCall[i] as ICopyFromObject;
+                    if (copyFromObject != null)
+                        copyFromObject.CopyFrom(results[j++]);
+                }
+                return results[0];
+            }
+			return null;
 		}
 	}
 }
