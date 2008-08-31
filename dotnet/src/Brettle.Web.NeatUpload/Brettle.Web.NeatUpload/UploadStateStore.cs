@@ -20,6 +20,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Web;
 using System.Web.Caching;
+using System.Collections;
+using System.Collections.Specialized;
 using Brettle.Web.NeatUpload.Internal.Module;
 
 namespace Brettle.Web.NeatUpload
@@ -103,7 +105,7 @@ namespace Brettle.Web.NeatUpload
 		/// </summary>
 		public static void Close(UploadState uploadState)
 		{
-			Provider.MergeAndSave(uploadState);
+			MergeSaveAndCleanUp(uploadState);
 			if (uploadState.DeleteAfterDelayWhenNotOpenReadWrite)
 				DeleteAfterDelay(uploadState);
 		}
@@ -129,7 +131,7 @@ namespace Brettle.Web.NeatUpload
 		{
 			if (reason == CacheItemRemovedReason.Removed)
 				return;
-			Provider.DeleteIfStale(postBackID);			
+            PostBackIDsToCleanUpIfStale[postBackID] = postBackID;
 		}
 
 
@@ -143,9 +145,23 @@ namespace Brettle.Web.NeatUpload
 				uploadState.TimeOfLastMerge = now;
 			else if (uploadState.TimeOfLastMerge.AddSeconds(Config.Current.MergeIntervalSeconds) < now)
 			{
-				Provider.MergeAndSave(uploadState);
+				MergeSaveAndCleanUp(uploadState);
 				uploadState.TimeOfLastMerge = now;
 			}
 		}
+
+        private static void MergeSaveAndCleanUp(UploadState uploadState)
+        {
+            ArrayList postBackIDsToCleanUpIfStale = new ArrayList();
+            foreach (string postBackID in PostBackIDsToCleanUpIfStale.Keys)
+                postBackIDsToCleanUpIfStale.Add(postBackID);
+            string[] deletedPostBackIDs 
+                = Provider.MergeSaveAndCleanUp(uploadState, (string[])postBackIDsToCleanUpIfStale.ToArray(typeof(string)));
+            if (deletedPostBackIDs != null)
+                foreach (string postBackID in deletedPostBackIDs)
+                    PostBackIDsToCleanUpIfStale.Remove(postBackID);
+        }
+
+        private static StringDictionary PostBackIDsToCleanUpIfStale = new StringDictionary();
 	}
 }

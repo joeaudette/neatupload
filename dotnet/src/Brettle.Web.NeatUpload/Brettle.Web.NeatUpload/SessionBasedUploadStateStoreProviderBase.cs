@@ -33,24 +33,21 @@ namespace Brettle.Web.NeatUpload
 			return ctx.Session[key] as UploadState;
 		}
 
-		public override void MergeAndSave(UploadState uploadState)
+		public override string[] MergeSaveAndCleanUp(UploadState uploadState, string[] postBackIDsToCleanUpIfStale)
 		{
 			HttpContext ctx = HttpContext.Current;
 			string key = KeyPrefix + uploadState.PostBackID;
 			UploadState storedUploadState = Load(uploadState.PostBackID);
 			Merge(uploadState, storedUploadState);
 			ctx.Session[key] = uploadState;
+            return CleanUpIfStale(postBackIDsToCleanUpIfStale);
 		}
 
-		public override void DeleteIfStale (string postBackID)
+		protected override void Delete(string postBackID)
 		{
-			UploadState uploadState = Load(postBackID);
-			if (IsStale(uploadState))
-			{
-				HttpContext ctx = HttpContext.Current;
-				string key = KeyPrefix + uploadState.PostBackID;
-				ctx.Session.Remove(key);
-			}
+		    HttpContext ctx = HttpContext.Current;
+		    string key = KeyPrefix + postBackID;
+		    ctx.Session.Remove(key);
 		}
 	}
 }

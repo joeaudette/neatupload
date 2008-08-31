@@ -8,6 +8,7 @@ using System;
 using System.Web;
 using System.Web.UI;
 using System.Web.SessionState;
+using System.Collections;
 
 namespace Brettle.Web.NeatUpload
 {	
@@ -18,23 +19,27 @@ namespace Brettle.Web.NeatUpload
 			string protectedPayload = context.Request.Params["ProtectedPayload"];
 			object[] methodCall = (object[])ObjectProtector.Unprotect(protectedPayload);
 			string methodName = (string)methodCall[0];
-			object result = null;
+			object retVal = null;
 			if (methodName == "Load")
 			{
 				string postBackID = (string)methodCall[1];
-				result = Load(postBackID);
+                retVal = Load(postBackID);
 			}
-			else if (methodName == "MergeAndSave")
+			else if (methodName == "MergeSaveAndCleanUp")
 			{
 				UploadState uploadState = (UploadState)methodCall[1];
-				MergeAndSave(uploadState);
+                string[] postBackIDsToCleanUpIfStale = (string[])methodCall[2];
+                retVal = MergeSaveAndCleanUp(uploadState, postBackIDsToCleanUpIfStale);
 			}
-			else if (methodName == "DeleteIfStale")
-			{
-				string postBackID = (string)methodCall[1];
-				DeleteIfStale(postBackID);
-			}
-			string responseBody = ObjectProtector.Protect(result);
+            ArrayList resultsArray = new ArrayList();
+            resultsArray.Add(retVal);
+            for (int i = 1; i < methodCall.Length; i++)
+            {
+                if (methodCall[i] is ICopyFromObject)
+                    resultsArray.Add(methodCall[i]);
+            }
+            
+			string responseBody = ObjectProtector.Protect(resultsArray.ToArray());
 			context.Response.ContentType = "application/octet-stream";
 			context.Response.Write(responseBody);
 			context.Response.Flush();

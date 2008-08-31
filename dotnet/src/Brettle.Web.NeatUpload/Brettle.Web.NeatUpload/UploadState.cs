@@ -10,7 +10,7 @@ using System.Collections;
 namespace Brettle.Web.NeatUpload
 {
 	[Serializable]
-	public class UploadState
+	public class UploadState : ICopyFromObject
 	{
 		public UploadState() { }
 		
@@ -20,6 +20,28 @@ namespace Brettle.Web.NeatUpload
 			// TODO: If contents of _ProcessingStateDict change, we need to call OnChanged();
 			_Files.Changed += new EventHandler(Files_Changed);
 		}
+
+        public void CopyFrom(object source)
+        {
+            UploadState src = (UploadState)source;
+            this._BytesPerSec = src._BytesPerSec;
+            this._BytesRead = src._BytesRead;
+            this._BytesTotal = src._BytesTotal;
+            this._Failure = src._Failure;
+            this._FileBytesRead = src._FileBytesRead;
+            this._Files = src._Files;
+            this._MultiRequestObject = src._MultiRequestObject;
+            this._PostBackID = src._PostBackID;
+            this._ProcessingStateDict = src._ProcessingStateDict;
+            this._Rejection = src._Rejection;
+            this._Status = src._Status;
+            this.BytesReadAtLastMark = src.BytesReadAtLastMark;
+            this.IsMerging = src.IsMerging;
+            this.TimeOfFirstByte = src.TimeOfFirstByte;
+            this.TimeOfLastMark = src.TimeOfLastMark;
+            this.TimeOfLastMerge = src.TimeOfLastMerge;
+            this.UploadStateAtLastMerge = src.UploadStateAtLastMerge;
+        }
 
 		private string _PostBackID;
 		/// <value>
