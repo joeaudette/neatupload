@@ -1,6 +1,6 @@
 <%@ Reference Control="TestControl.ascx" %>
 <%@ Page language="c#" AutoEventWireup="true" %>
-<%@ Register TagPrefix="Upload" TagName="TestControl" Src="~/TestControl.ascx" %>
+<%@ Register TagPrefix="Upload" TagName="TestControl" Src="./TestControl.ascx" %>
 <script runat="server">
 
 		protected override void OnInit(EventArgs e)
