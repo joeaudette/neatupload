@@ -26,6 +26,7 @@ using System.Security.Permissions;
 using System.Collections.Specialized;
 using System.Collections;
 using System.Text.RegularExpressions;
+using System.Reflection;
 using Brettle.Web.NeatUpload.Internal.Module;
 
 namespace Brettle.Web.NeatUpload
@@ -322,17 +323,22 @@ namespace Brettle.Web.NeatUpload
 		public void Dispose()
 		{
 		}
-		
+
+        private static string WorkerRequestKey = "NeatUpload_worker";
+
         [SecurityPermission(SecurityAction.Assert, UnmanagedCode=true)]
 		internal static HttpWorkerRequest GetCurrentWorkerRequest()
 		{
 			HttpContext context = HttpContext.Current;
+            HttpWorkerRequest worker = context.Items[WorkerRequestKey] as HttpWorkerRequest;
+            if (worker != null)
+                return worker;
 			IServiceProvider provider = (IServiceProvider)context;
 			if (provider == null)
 			{
 				return null;
 			}
-			HttpWorkerRequest worker = (HttpWorkerRequest) provider.GetService(typeof(HttpWorkerRequest));
+			worker = (HttpWorkerRequest) provider.GetService(typeof(HttpWorkerRequest));
 			return worker;
 		}
 
@@ -472,51 +478,75 @@ namespace Brettle.Web.NeatUpload
 			
 			if (subWorker != null)
 			{
-				// Process the subrequest.
-				HttpContext savedContext = HttpContext.Current;
-				try
-				{
-					subWorker.ProcessRequest(null);
-					if (log.IsDebugEnabled) log.Debug("Called ProcessRequest().  Calling subWorker.WaitForEndOfRequest().");
-					subWorker.WaitForEndOfRequest();
-					if (log.IsDebugEnabled) log.Debug("subWorker.WaitForEndOfRequest() returned.");
-				}
-				finally
-				{
-					HttpContext.Current = savedContext;
-					log4net.ThreadContext.Properties["url"] = rawUrl;
-					
-					// Workaround for bug in mod_mono (at least rev 1.0.9) where the response status
-					// is overwritten with 200 when app.CompleteRequest() is called.  Status (and headers)
-					// *should* be ignored because they were already sent when the subrequest was processed...
-					app.Response.StatusCode = subWorker.StatusCode;
-					app.Response.StatusDescription = subWorker.StatusDescription;
-
-					// If there was an error, rethrow it so that ASP.NET uses any custom error pages.
-					if (subWorker.Exception != null)
-					{
-						HttpException httpException = subWorker.Exception as HttpException;
-						if (httpException != null)
-						{
-							throw new HttpException(httpException.GetHttpCode(), "Unhandled HttpException while processing NeatUpload child request",
-											httpException);
-						}
-						UploadException uploadException = subWorker.Exception as UploadException;
-						if (uploadException != null)
-						{
-							throw new HttpException(uploadException.HttpCode, "Unhandled UploadException while processing NeatUpload child request",
-											uploadException);
-						}
-						
-						throw new Exception("Unhandled Exception while processing NeatUpload child request",
-											subWorker.Exception);
-					}
-
-					// Otherwise call CompleteRequest() to prevent further processing of the original request.
-					app.CompleteRequest();
-				}
+                if (!ReplaceWorkerRequest(app, subWorker))
+                {
+                    MakeChildRequest(app, subWorker);
+                }
 			}
 		}
+
+        private bool ReplaceWorkerRequest(HttpApplication app, DecoratedWorkerRequest subWorker)
+        {
+            BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
+            HttpRequest request = app.Request;
+            FieldInfo wrField = request.GetType().GetField("_wr", bindingFlags);
+            // In Mono, the field has a different name.
+            if (wrField == null)
+                wrField = request.GetType().GetField("worker_request", bindingFlags);
+            if (wrField == null)
+                return false;
+            wrField.SetValue(request, subWorker);
+            app.Context.Items[WorkerRequestKey] = subWorker;
+            return true;
+        }
+
+        private void MakeChildRequest(HttpApplication app, DecoratedWorkerRequest subWorker)
+        {
+            // Process the subrequest.
+            HttpContext savedContext = HttpContext.Current;
+            try
+            {
+                subWorker.ProcessRequest(null);
+                if (log.IsDebugEnabled) log.Debug("Called ProcessRequest().  Calling subWorker.WaitForEndOfRequest().");
+                subWorker.WaitForEndOfRequest();
+                if (log.IsDebugEnabled) log.Debug("subWorker.WaitForEndOfRequest() returned.");
+            }
+            finally
+            {
+                HttpContext.Current = savedContext;
+                string rawUrl = app.Context.Request.RawUrl;
+                log4net.ThreadContext.Properties["url"] = rawUrl;
+
+                // Workaround for bug in mod_mono (at least rev 1.0.9) where the response status
+                // is overwritten with 200 when app.CompleteRequest() is called.  Status (and headers)
+                // *should* be ignored because they were already sent when the subrequest was processed...
+                app.Response.StatusCode = subWorker.StatusCode;
+                app.Response.StatusDescription = subWorker.StatusDescription;
+
+                // If there was an error, rethrow it so that ASP.NET uses any custom error pages.
+                if (subWorker.Exception != null)
+                {
+                    HttpException httpException = subWorker.Exception as HttpException;
+                    if (httpException != null)
+                    {
+                        throw new HttpException(httpException.GetHttpCode(), "Unhandled HttpException while processing NeatUpload child request",
+                                        httpException);
+                    }
+                    UploadException uploadException = subWorker.Exception as UploadException;
+                    if (uploadException != null)
+                    {
+                        throw new HttpException(uploadException.HttpCode, "Unhandled UploadException while processing NeatUpload child request",
+                                        uploadException);
+                    }
+
+                    throw new Exception("Unhandled Exception while processing NeatUpload child request",
+                                        subWorker.Exception);
+                }
+
+                // Otherwise call CompleteRequest() to prevent further processing of the original request.
+                app.CompleteRequest();
+            }
+        }
 
 		private void Application_ResolveRequestCache(object sender, EventArgs e)
 		{
