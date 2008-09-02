@@ -21,9 +21,7 @@
 using System;
 using System.Web;
 using System.Web.SessionState;
-using System.Net;
 using System.IO;
-using System.Collections.Specialized;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -46,7 +44,15 @@ namespace Brettle.Web.NeatUpload
 			return (string[])MakeRemoteCall("MergeSaveAndCleanUp", uploadState, postBackIDsToCleanUpIfStale);
 		}
 
-		private bool IsSessionReadable {
+        public override void Delete(string postBackID)
+        {
+            if (IsSessionWritable)
+                base.Delete(postBackID);
+            MakeRemoteCall("Delete", postBackID);
+        }
+
+        private bool IsSessionReadable
+        {
 			get {
 				HttpSessionState session = HttpContext.Current.Session;
 				return (session != null && session.Mode != SessionStateMode.Off);
@@ -59,36 +65,11 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 
-		private object MakeRemoteCall(params object[] methodCall)
-		{
-			UriBuilder handlerUriBuilder = new UriBuilder(HttpContext.Current.Request.Url);
-			handlerUriBuilder.Path = HttpContext.Current.Request.ApplicationPath + "/NeatUpload/UploadStateStoreHandler.ashx";
-			CookieContainer cookieContainer = new CookieContainer();
-			HttpCookieCollection httpCookies = HttpContext.Current.Request.Cookies;
-			if (httpCookies != null)
-				foreach (string name in httpCookies.AllKeys)
-					cookieContainer.Add(new Cookie(name, httpCookies[name].Value, "/", handlerUriBuilder.Host));
-			WebClient wc = new WebClient();
-			wc.Headers.Add("Cookie", cookieContainer.GetCookieHeader(handlerUriBuilder.Uri));
-			string protectedRequestPayload = ObjectProtector.Protect(methodCall);
-			NameValueCollection formValues = new NameValueCollection();
-			formValues.Add("ProtectedPayload", protectedRequestPayload);
-			byte[] responseBytes = wc.UploadValues(handlerUriBuilder.ToString(), formValues);
-			string protectedResponsePayload = System.Text.Encoding.ASCII.GetString(responseBytes);
-            if (protectedResponsePayload != null && protectedResponsePayload.Length > 0)
-            {
-                object[] results = null;
-                results = (object[])ObjectProtector.Unprotect(protectedResponsePayload);
-                int j = 1;
-                for (int i = 1; i < methodCall.Length; i++)
-                {
-                    ICopyFromObject copyFromObject = methodCall[i] as ICopyFromObject;
-                    if (copyFromObject != null)
-                        copyFromObject.CopyFrom(results[j++]);
-                }
-                return results[0];
-            }
-			return null;
-		}
+        private object MakeRemoteCall(params object[] methodCall)
+        {
+            UriBuilder handlerUriBuilder = new UriBuilder(HttpContext.Current.Request.Url);
+            handlerUriBuilder.Path = HttpContext.Current.Request.ApplicationPath + "/NeatUpload/UploadStateStoreHandler.ashx";
+            return SimpleWebRemoting.MakeRemoteCall(handlerUriBuilder.Uri, methodCall);
+        }
 	}
 }

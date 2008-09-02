@@ -68,6 +68,7 @@
     <Compile Include="Brettle.Web.NeatUpload\AccessSessionPage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="Brettle.Web.NeatUpload\AdaptiveUploadStateStoreProvider.cs" />
     <Compile Include="Brettle.Web.NeatUpload\ArmoredNameValueCollection.cs" />
     <Compile Include="Brettle.Web.NeatUpload\AsyncUploadPage.cs">
       <SubType>ASPXCodeBehind</SubType>
@@ -99,17 +100,24 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Brettle.Web.NeatUpload\SessionAccessCallback.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\SessionBasedUploadStateStoreProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Brettle.Web.NeatUpload\SimpleWebRemoting.cs" />
     <Compile Include="Brettle.Web.NeatUpload\UploadContext.cs" />
     <Compile Include="Brettle.Web.NeatUpload\UploadedFile.cs" />
     <Compile Include="Brettle.Web.NeatUpload\UploadedFileCollection.cs" />
     <Compile Include="Brettle.Web.NeatUpload\UploadException.cs" />
     <Compile Include="Brettle.Web.NeatUpload\UploadHttpModule.cs" />
     <Compile Include="Brettle.Web.NeatUpload\UploadModule.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadStateStoreProviderCollection.cs" />
     <Compile Include="Brettle.Web.NeatUpload\UploadStatus.cs" />
     <Compile Include="Brettle.Web.NeatUpload\UploadStorage.cs" />
     <Compile Include="Brettle.Web.NeatUpload\UploadStorageConfig.cs" />
     <Compile Include="Brettle.Web.NeatUpload\UploadStorageProvider.cs" />
-    <Compile Include="Brettle.Web.NeatUpload\UploadStorageProviderCollection.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadStorageProviderCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Brettle.Web.NeatUpload\UploadTooLargeException.cs" />
     <Compile Include="Brettle.Web.NeatUpload.Internal\ResourceManagerSingleton.cs" />
     <Compile Include="Brettle.Web.NeatUpload.Internal.Module\AspNetUploadedFile.cs" />
@@ -133,7 +141,6 @@
     <Compile Include="Brettle.Web.NeatUpload\UploadState.cs" />
     <Compile Include="Brettle.Web.NeatUpload\ObjectProtector.cs" />
     <Compile Include="Brettle.Web.NeatUpload\SessionBasedUploadStateStoreProviderBase.cs" />
-    <Compile Include="Brettle.Web.NeatUpload\SessionBasedUploadStateStoreProvider.cs" />
     <Compile Include="Brettle.Web.NeatUpload\UploadStateStoreHandler.cs" />
   </ItemGroup>
   <ItemGroup>

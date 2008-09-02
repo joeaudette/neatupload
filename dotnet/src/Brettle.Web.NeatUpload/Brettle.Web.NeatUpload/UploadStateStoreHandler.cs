@@ -1,8 +1,21 @@
-// UploadStateStoreHandler.ashx.cs created with MonoDevelop
-// User: brettle at 2:28 PM 8/29/2008
-//
-// To change standard headers go to Edit->Preferences->Coding->Standard Headers
-//
+/*
+NeatUpload - an HttpModule and User Controls for uploading large files
+Copyright (C) 2008  Dean Brettle
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
 
 using System;
 using System.Web;
@@ -16,36 +29,40 @@ namespace Brettle.Web.NeatUpload
 	{
 		public virtual void ProcessRequest(HttpContext context)
 		{
-			string protectedPayload = context.Request.Params["ProtectedPayload"];
-			object[] methodCall = (object[])ObjectProtector.Unprotect(protectedPayload);
-			string methodName = (string)methodCall[0];
+            SimpleWebRemoting.ProcessRemoteCallRequest(context, HandleMethodCall);
+        }
+
+        private object HandleMethodCall(string methodName, object[] args)
+        {
 			object retVal = null;
 			if (methodName == "Load")
 			{
-				string postBackID = (string)methodCall[1];
+				string postBackID = (string)args[0];
                 retVal = Load(postBackID);
 			}
 			else if (methodName == "MergeSaveAndCleanUp")
 			{
-				UploadState uploadState = (UploadState)methodCall[1];
-                string[] postBackIDsToCleanUpIfStale = (string[])methodCall[2];
+				UploadState uploadState = (UploadState)args[0];
+                string[] postBackIDsToCleanUpIfStale = (string[])args[1];
                 retVal = MergeSaveAndCleanUp(uploadState, postBackIDsToCleanUpIfStale);
 			}
-            ArrayList resultsArray = new ArrayList();
-            resultsArray.Add(retVal);
-            for (int i = 1; i < methodCall.Length; i++)
+            else if (methodName == "Delete")
             {
-                if (methodCall[i] is ICopyFromObject)
-                    resultsArray.Add(methodCall[i]);
+                string postBackID = (string)args[0];
+                Delete(postBackID);
             }
-            
-			string responseBody = ObjectProtector.Protect(resultsArray.ToArray());
-			context.Response.ContentType = "application/octet-stream";
-			context.Response.Write(responseBody);
-			context.Response.Flush();
+            else if (methodName == "GetSessionStateMode")
+            {
+                HttpSessionState sessionState = HttpContext.Current.Session;
+                if (sessionState == null)
+                    retVal = SessionStateMode.Off;
+                else
+                    retVal = sessionState.Mode;
+            }
+            return retVal;
 		}
 
-		public bool IsReusable { get { return true; } }
+        public bool IsReusable { get { return true; } }
 
 	}
 }

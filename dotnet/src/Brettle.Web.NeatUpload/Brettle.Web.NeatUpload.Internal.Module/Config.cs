@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.Configuration;
 using System.Web;
 using System.IO;
@@ -27,6 +28,7 @@ using System.Xml;
 using System.Resources;
 using System.Security.Cryptography;
 using System.Security.Permissions;
+using System.Reflection;
 
 namespace Brettle.Web.NeatUpload.Internal.Module
 {
@@ -127,9 +129,11 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 				config.MaxRequestLength = parent.MaxRequestLength;
 				config.MaxUploadRate = parent.MaxUploadRate;
 				config._UseHttpModule = parent.UseHttpModule;
-				config.Providers = parent.Providers.Clone();
-				config.DefaultProviderName = parent.DefaultProviderName;
-				config.ResourceManager = parent.ResourceManager;
+				config.StorageProviders = parent.StorageProviders.Clone();
+				config.DefaultStorageProviderName = parent.DefaultStorageProviderName;
+                config.StateStoreProviders = parent.StateStoreProviders.Clone();
+                config.DefaultStateStoreProviderName = parent.DefaultStateStoreProviderName;
+                config.ResourceManager = parent.ResourceManager;
 				config.DebugDirectory = parent.DebugDirectory;
 				config.ValidationKey = parent.ValidationKey;
 				config.EncryptionKey = parent.EncryptionKey;
@@ -158,11 +162,15 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 				{
 					config._UseHttpModule = bool.Parse(val) && UploadHttpModule.IsInited;
 				}
-				else if (name == "defaultProvider")
+                else if (name == "defaultStorageProvider" || name == "defaultProvider")
 				{
-					config.DefaultProviderName = val;
+					config.DefaultStorageProviderName = val;
 				}
-				else if (name == "debugDirectory")
+                else if (name == "defaultStateStoreProvider")
+                {
+                    config.DefaultStateStoreProviderName = val;
+                }
+                else if (name == "debugDirectory")
 				{
 					if (HttpContext.Current != null)
 					{
@@ -218,17 +226,37 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 					string tagName = providerActionElem.LocalName;
 					if (tagName == "add")
 					{
-						config.Providers.Add(UploadStorage.CreateProvider(providerActionElem));
+                        string providerName = providerActionElem.Attributes["name"].Value;
+                        object provider = CreateProvider(providerActionElem);
+                        NameValueCollection configAttrs = GetProviderAttrs(providerActionElem);
+                        UploadStorageProvider storageProvider = provider as UploadStorageProvider;
+                        UploadStateStoreProvider stateStoreProvider = provider as UploadStateStoreProvider;
+                        if (storageProvider != null)
+                        {
+                            storageProvider.Initialize(providerName, configAttrs);
+                            config.StorageProviders.Add(storageProvider);
+                        }
+                        else if (stateStoreProvider != null)
+                        {
+                            stateStoreProvider.Initialize(providerName, configAttrs);
+                            config.StateStoreProviders.Add(stateStoreProvider);
+                        }
+                        else
+                        {
+                            throw new Exception(String.Format("Provider {0} must be either an UploadStorageProvider or and UploadStateStoreProvider"));
+                        }
 					}
 					else if (tagName == "remove")
 					{
 						string providerName = providerActionElem.Attributes["name"].Value;
-						config.Providers.Remove(providerName);
-					}
+                        config.StorageProviders.Remove(providerName);
+                        config.StateStoreProviders.Remove(providerName);
+                    }
 					else if (tagName == "clear")
 					{
-						config.Providers.Clear();
-					}
+                        config.StorageProviders.Clear();
+                        config.StateStoreProviders.Clear();
+                    }
 					else
 					{
 						throw new XmlException("Unrecognized tag name: " + tagName);
@@ -238,7 +266,31 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 			return config;
 		}
 
-		private static byte[] FromHexString(string s)
+        private static object CreateProvider(System.Xml.XmlNode providerActionElem)
+        {
+            string providerTypeName = providerActionElem.Attributes["type"].Value;
+
+            Type providerType = Type.GetType(providerTypeName);
+            ConstructorInfo constructor = providerType.GetConstructor(new Type[0]);
+            return constructor.Invoke(new object[0]);
+        }
+
+        private static NameValueCollection GetProviderAttrs(System.Xml.XmlNode providerActionElem)
+        {
+            NameValueCollection configAttrs = new NameValueCollection();
+            foreach (System.Xml.XmlAttribute attr in providerActionElem.Attributes)
+            {
+                string name = attr.Name;
+                string val = attr.Value;
+                if (name != "name" && name != "type")
+                {
+                    configAttrs[name] = val;
+                }
+            }
+            return configAttrs;
+        }
+
+        private static byte[] FromHexString(string s)
 		{
 			byte[] result = new byte[s.Length/2];
 			for (int i = 0; i < result.Length; i++)
@@ -247,10 +299,12 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 			}
 			return result;
 		}
-		
-		internal string DefaultProviderName = null;
-		internal UploadStorageProviderCollection Providers = new UploadStorageProviderCollection();
-		internal long MaxNormalRequestLength = 4096 * 1024;
+
+        internal string DefaultStorageProviderName = null;
+        internal UploadStorageProviderCollection StorageProviders = new UploadStorageProviderCollection();
+        internal string DefaultStateStoreProviderName = null;
+        internal UploadStateStoreProviderCollection StateStoreProviders = new UploadStateStoreProviderCollection();
+        internal long MaxNormalRequestLength = 4096 * 1024;
 		internal long MaxRequestLength = 2097151 * 1024;
 		internal int MaxUploadRate = -1;
         private bool _UseHttpModule = UploadHttpModule.IsInited;
