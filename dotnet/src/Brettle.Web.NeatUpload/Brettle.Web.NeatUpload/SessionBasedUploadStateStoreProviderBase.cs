@@ -23,8 +23,10 @@ using System.Web;
 namespace Brettle.Web.NeatUpload
 {	
 	public class SessionBasedUploadStateStoreProviderBase : UploadStateStoreProvider
-	{		
-		private static string KeyPrefix = "NeatUpload_SessionBasedUploadState_";		
+	{
+        public override string Description { get { return "Stores UploadState objects in the HttpSessionState of the current request."; } }
+        
+        private static string KeyPrefix = "NeatUpload_SessionBasedUploadState_";		
 
 		public override UploadState Load(string postBackID)
 		{
@@ -43,7 +45,7 @@ namespace Brettle.Web.NeatUpload
             return CleanUpIfStale(postBackIDsToCleanUpIfStale);
 		}
 
-		protected override void Delete(string postBackID)
+		public override void Delete(string postBackID)
 		{
 		    HttpContext ctx = HttpContext.Current;
 		    string key = KeyPrefix + postBackID;

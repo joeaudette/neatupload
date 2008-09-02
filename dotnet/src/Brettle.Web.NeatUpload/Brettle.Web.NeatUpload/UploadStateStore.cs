@@ -134,9 +134,6 @@ namespace Brettle.Web.NeatUpload
             PostBackIDsToCleanUpIfStale[postBackID] = postBackID;
 		}
 
-
-		private static UploadStateStoreProvider Provider = new SessionBasedUploadStateStoreProvider();
-
 		private static void UploadState_Changed(object sender, EventArgs args)
 		{
 			UploadState uploadState = sender as UploadState;
@@ -163,5 +160,45 @@ namespace Brettle.Web.NeatUpload
         }
 
         private static StringDictionary PostBackIDsToCleanUpIfStale = new StringDictionary();
-	}
+
+
+        public static UploadStateStoreProvider Provider
+        {
+            get
+            {
+                Config config = Config.Current;
+                if (config.DefaultStateStoreProviderName == null)
+                {
+                    return LastResortProvider;
+                }
+                return config.StateStoreProviders[config.DefaultStateStoreProviderName];
+            }
+        }
+
+        public static UploadStateStoreProviderCollection Providers
+        {
+            get
+            {
+                return Config.Current.StateStoreProviders;
+            }
+        }
+
+        private static AdaptiveUploadStateStoreProvider _lastResortProvider = null;
+        private static object _lock = new object();
+        internal static AdaptiveUploadStateStoreProvider LastResortProvider
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    if (_lastResortProvider == null)
+                    {
+                        _lastResortProvider = new AdaptiveUploadStateStoreProvider();
+                        _lastResortProvider.Initialize("AdaptiveUploadStateStoreProvider", new NameValueCollection());
+                    }
+                }
+                return _lastResortProvider;
+            }
+        }
+    }
 }

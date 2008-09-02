@@ -60,11 +60,11 @@ namespace Brettle.Web.NeatUpload
 			get
 			{
 				Config config = Config.Current;
-				if (config.DefaultProviderName == null)
+				if (config.DefaultStorageProviderName == null)
 				{
 					return LastResortProvider;
 				}
-				return config.Providers[config.DefaultProviderName];
+				return config.StorageProviders[config.DefaultStorageProviderName];
 			}
 		}
 
@@ -72,7 +72,7 @@ namespace Brettle.Web.NeatUpload
 		{
 			get
 			{
-				return Config.Current.Providers;
+				return Config.Current.StorageProviders;
 			}
 		}
 
@@ -94,28 +94,6 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 
-		internal static UploadStorageProvider CreateProvider(System.Xml.XmlNode providerActionElem)
-		{
-			NameValueCollection configAttrs = new NameValueCollection();
-			string providerName = providerActionElem.Attributes["name"].Value;
-			string providerTypeName = providerActionElem.Attributes["type"].Value;
-			foreach (System.Xml.XmlAttribute attr in providerActionElem.Attributes)
-			{
-				string name = attr.Name;
-				string val = attr.Value;
-				if (name != "name" && name != "type")
-				{
-					configAttrs[name] = val;
-				}
-			}
-			
-			Type providerType = Type.GetType(providerTypeName);
-			ConstructorInfo constructor = providerType.GetConstructor(new Type[0]);
-			UploadStorageProvider provider = (UploadStorageProvider)constructor.Invoke(new object[0]);
-			provider.Initialize(providerName, configAttrs);
-			return provider;
-		}
-		
 		internal static void DisposeAtEndOfRequest(UploadedFile file)
 		{
 			HttpContext ctx = HttpContext.Current;

@@ -19,6 +19,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Collections;
+using System.Web;
+using System.Collections.Specialized;
 using Brettle.Web.NeatUpload.Internal.Module;
 
 namespace Brettle.Web.NeatUpload
@@ -29,7 +31,17 @@ namespace Brettle.Web.NeatUpload
 	/// </summary>
 	public abstract class UploadStateStoreProvider
 	{
-		/// <summary>
+        public virtual void Initialize(string name, NameValueCollection attrs)
+        {
+            _name = name;
+        }
+
+        public abstract string Description { get; }
+
+        private string _name = null;
+        public virtual string Name { get { return _name; } }
+
+        /// <summary>
 		/// Returns an <see cref="IUploadState"/> for a given post-back ID.  
 		/// If one does not exist yet, a new one is created and returned.
 		/// </summary>
@@ -44,7 +56,7 @@ namespace Brettle.Web.NeatUpload
 
 		public abstract string[] MergeSaveAndCleanUp(UploadState uploadState, string[] postBackIDsToCleanUpIfStale);
 
-        protected abstract void Delete(string postBackID);
+        public abstract void Delete(string postBackID);
 
         protected string[] CleanUpIfStale(string[] postBackIDsToCleanUpIfStale)
         {

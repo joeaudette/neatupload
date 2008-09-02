@@ -32,6 +32,7 @@ namespace Brettle.Web.NeatUpload
 	/// </remarks>
 	public class InProcUploadStateStoreProvider : UploadStateStoreProvider
 	{
+        public override string Description { get { return "Stores UploadState objects in the HttpApplicationState of the current process."; } }
 
 		private static string KeyPrefix = "NeatUpload_InProcUploadState_";
 		/// <summary>
@@ -70,7 +71,7 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 
-		protected override void Delete (string postBackID)
+		public override void Delete (string postBackID)
 		{
 			HttpContext ctx = HttpContext.Current;
 			string key = KeyPrefix + postBackID;
