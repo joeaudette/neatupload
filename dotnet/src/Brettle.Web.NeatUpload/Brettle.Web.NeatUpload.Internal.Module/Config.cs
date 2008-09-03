@@ -133,6 +133,7 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 				config.DefaultStorageProviderName = parent.DefaultStorageProviderName;
                 config.StateStoreProviders = parent.StateStoreProviders.Clone();
                 config.DefaultStateStoreProviderName = parent.DefaultStateStoreProviderName;
+                config.MultiRequestUploadHandlerUrl = parent.MultiRequestUploadHandlerUrl;
                 config.ResourceManager = parent.ResourceManager;
 				config.DebugDirectory = parent.DebugDirectory;
 				config.ValidationKey = parent.ValidationKey;
@@ -169,6 +170,10 @@ namespace Brettle.Web.NeatUpload.Internal.Module
                 else if (name == "defaultStateStoreProvider")
                 {
                     config.DefaultStateStoreProviderName = val;
+                }
+                else if (name == "multiRequestUploadHandlerUrl")
+                {
+                    config.MultiRequestUploadHandlerUrl = val;
                 }
                 else if (name == "debugDirectory")
 				{
@@ -304,6 +309,7 @@ namespace Brettle.Web.NeatUpload.Internal.Module
         internal UploadStorageProviderCollection StorageProviders = new UploadStorageProviderCollection();
         internal string DefaultStateStoreProviderName = null;
         internal UploadStateStoreProviderCollection StateStoreProviders = new UploadStateStoreProviderCollection();
+        internal string MultiRequestUploadHandlerUrl = "~/NeatUpload/MultiRequestUploadHandler.ashx";
         internal long MaxNormalRequestLength = 4096 * 1024;
 		internal long MaxRequestLength = 2097151 * 1024;
 		internal int MaxUploadRate = -1;

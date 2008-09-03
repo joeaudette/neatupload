@@ -215,11 +215,11 @@ namespace Brettle.Web.NeatUpload
 		}
 
 		string IMultiRequestUploadModule.UploadPath {
-			get { return "~/NeatUpload/AsyncUpload.aspx"; }
+			get { return Config.Current.MultiRequestUploadHandlerUrl; }
 		}
 
 		string IMultiRequestUploadModule.ControlIDQueryParam {
-			get { return "NeatUpload_AsyncControlID"; }
+			get { return "NeatUpload_MultiRequestControlID"; }
 		}
 		
 		string IMultiRequestUploadModule.ArmoredCookiesQueryParam {
@@ -363,14 +363,14 @@ namespace Brettle.Web.NeatUpload
             if (log.IsDebugEnabled) log.Debug("In Application_BeginRequest");
             HttpApplication app = sender as HttpApplication;
 
-			// Restore the cookies for the AsyncUpload.aspx page.
+			// Restore the cookies for the MultiRequestUploadModule.UploadPath page.
 			HttpWorkerRequest wr = GetCurrentWorkerRequest();
 			string filePath = wr.GetFilePath().ToLower();
-            string asyncUploadPath = MultiRequestUploadModule.UploadPath;
-            asyncUploadPath = app.Response.ApplyAppPathModifier(asyncUploadPath);
+            string multiRequestUploadPath = MultiRequestUploadModule.UploadPath;
+            multiRequestUploadPath = app.Response.ApplyAppPathModifier(multiRequestUploadPath);
 			if (log.IsDebugEnabled) log.DebugFormat("filePath={0}", filePath);
 			string qs = wr.GetQueryString();
-			if (filePath.StartsWith(asyncUploadPath.ToLower()))
+			if (filePath.StartsWith(multiRequestUploadPath.ToLower()))
 			{
 				if (qs != null)
 				{
@@ -452,8 +452,8 @@ namespace Brettle.Web.NeatUpload
 			string contentTypeHeader = origWorker.GetKnownRequestHeader(HttpWorkerRequest.HeaderContentType);
 			if (contentTypeHeader != null && contentTypeHeader.ToLower().StartsWith("multipart/form-data"))
 			{
-				// If this is an async request get the post-back ID from the query string
-				if (qs != null && UploadHttpModule.GetAsyncControlIDFromQueryString(qs) != null)
+				// If this is a multi-request upload get the post-back ID from the query string
+				if (qs != null && UploadHttpModule.GetMultiRequestControlIDFromQueryString(qs) != null)
 				{				
 					CurrentUploadState = UploadStateStore.OpenReadWriteOrCreate(UploadHttpModule.GetPostBackIDFromQueryString(qs));
 					string transferEncodingHeader = origWorker.GetKnownRequestHeader(HttpWorkerRequest.HeaderTransferEncoding);
@@ -560,12 +560,12 @@ namespace Brettle.Web.NeatUpload
 			// will be locked while the upload completes
 			WaitForUploadToComplete();
 
-			// If the request is not an async request and contains the PostBackIDQueryParam,
+			// If the request is not a multi-request upload and contains the PostBackIDQueryParam,
             // then get an UploadState for it and set it's status to ProcessingInProgress.
 			// This occurs when the module disabled,
             // this is not a form/multipart POST request, etc.  This allows ProgressBars
             // to be used for pages where no upload is occuring.
-			if (CurrentAsyncControlID != null)
+			if (CurrentMultiRequestControlID != null)
 				return;
             UploadState uploadState = CurrentUploadState;
 			if (uploadState == null)
@@ -633,12 +633,12 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
         
-		internal static string CurrentAsyncControlID {
+		internal static string CurrentMultiRequestControlID {
 			get {
 				HttpContext httpContext = HttpContext.Current;
 				if (httpContext != null)
 				{
-					if (httpContext.Items["NeatUpload_AsyncControlID"] == null)
+					if (httpContext.Items["NeatUpload_MultiRequestControlID"] == null)
 					{
 						if (Config.Current.UseHttpModule)
 						{
@@ -646,13 +646,13 @@ namespace Brettle.Web.NeatUpload
 				            if (worker == null)
 				                return null;
 							string qs = worker.GetQueryString();
-				           	string controlID = GetAsyncControlIDFromQueryString(qs);
+				           	string controlID = GetMultiRequestControlIDFromQueryString(qs);
 				           	if (controlID == null)
 				           		return null;
-							httpContext.Items["NeatUpload_AsyncControlID"] = controlID;
+							httpContext.Items["NeatUpload_MultiRequestControlID"] = controlID;
 						}
 					}
-					return (string)httpContext.Items["NeatUpload_AsyncControlID"];
+					return (string)httpContext.Items["NeatUpload_MultiRequestControlID"];
 				}
 				return null;
 			}
@@ -672,7 +672,7 @@ namespace Brettle.Web.NeatUpload
 			return HttpUtility.UrlDecode(match.Groups[2].Value);
 		}
 
-        internal static string GetAsyncControlIDFromQueryString(string qs)
+        internal static string GetMultiRequestControlIDFromQueryString(string qs)
         {
             if (qs == null)
                 return null;
@@ -824,7 +824,7 @@ namespace Brettle.Web.NeatUpload
 			UploadState uploadState = CurrentUploadState;
 			if (uploadState != null)
 			{
-				if (CurrentAsyncControlID == null
+				if (CurrentMultiRequestControlID == null
 			    	&& uploadState.Status != UploadStatus.Failed && uploadState.Status != UploadStatus.Rejected)
 				{
 					uploadState.Status = UploadStatus.Completed;

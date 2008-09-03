@@ -66,9 +66,9 @@ namespace Brettle.Web.NeatUpload
 		/// <value>
 		/// The total number of bytes expected for the uploaded.
 		/// </value>
-		/// <remarks>For non-async uploads, this is determined by the Content-Length 
-		/// header of the request.  For async-uploads, it is determined by the total
-		/// of the sizes in the file sizes field in the pre-async-upload request.  It
+		/// <remarks>For non-multi-request uploads, this is determined by the Content-Length 
+		/// header of the request.  For multi-request uploads, it is determined by the total
+		/// of the sizes in the file sizes field in the initial request.  It
 		/// may go up when the final regular form submission request is received, since
 		/// it's Content-Length header will then be added.</remarks>
 		long BytesTotal { get; set; }

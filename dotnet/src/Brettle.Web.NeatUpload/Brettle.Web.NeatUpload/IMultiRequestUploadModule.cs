@@ -112,8 +112,8 @@ namespace Brettle.Web.NeatUpload
 		/// that the requests are to be associated with. 
 		/// </value>
 		/// <remarks>For example, if
-		/// ControlIDQueryParam is "NeatUpload_AsyncControlID", then if a request is
-		/// received with a query string of "NeatUpload_AsyncControlID=123ABC", all files
+		/// ControlIDQueryParam is "NeatUpload_MultiRequestControlID", then if a request is
+		/// received with a query string of "NeatUpload_MultiRequestControlID=123ABC", all files
 		/// or other upload data in the request will be assocated with the control with
 		/// UniqueID "123ABC".  All requests except the final request must also
 		/// specify the post-back ID in a separate query param whose name is given by the value

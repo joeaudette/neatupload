@@ -54,14 +54,14 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 			}
 		}
 
-		string _AsyncControlID;
-		private string AsyncControlID {
+		string _MultiRequestControlID;
+		private string MultiRequestControlID {
 			get {
-				if (_AsyncControlID == null)
+				if (_MultiRequestControlID == null)
 				{
-					_AsyncControlID = UploadHttpModule.CurrentAsyncControlID;
+					_MultiRequestControlID = UploadHttpModule.CurrentMultiRequestControlID;
 				}
-				return _AsyncControlID;
+				return _MultiRequestControlID;
 			}
 		}
 		
@@ -277,7 +277,7 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 				writePos += bytesRead;
 				totalBytesRead += bytesRead;
 				grandTotalBytesRead += bytesRead;
-				if (AsyncControlID == null && UploadState != null)
+				if (MultiRequestControlID == null && UploadState != null)
 				{
 					UploadState.BytesRead += bytesRead;
 				}
@@ -300,7 +300,7 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 			if (outputStream == fileStream && UploadState != null)
 			{
 				UploadState.FileBytesRead += bytesParsed;
-				if (AsyncControlID != null)
+				if (MultiRequestControlID != null)
 				{
 					UploadState.BytesRead += bytesParsed;
 				}
@@ -469,7 +469,7 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 			}
 			
 			FieldNameTranslator translator = new FieldNameTranslator();
-			if (AsyncControlID == null && UploadState != null)
+			if (MultiRequestControlID == null && UploadState != null)
 			{
 				UploadState.BytesTotal += origContentLength;
 			}
@@ -625,7 +625,7 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 						UploadedFile uploadedFile 
 							= UploadStorage.CreateUploadedFile(tempUploadContext, controlID, fileName, contentType, storageConfig);
 						UploadState.Files.Add(controlID, uploadedFile);
-						if (AsyncControlID == null)
+						if (MultiRequestControlID == null)
 							RegisterFilesForDisposal(controlID);
 						outputStream = fileStream = uploadedFile.CreateStream();
 						readPos = parsePos; // Skip past the boundary and headers
@@ -649,9 +649,9 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 						// Since filename==null this must just be a hidden field with a name that
 						// looks like a file field.  It is just an indication that when this request
 						// ends, the associated uploaded files should be disposed.
-						if (AsyncControlID == null)
+						if (MultiRequestControlID == null)
 						{
-							if (log.IsDebugEnabled) log.DebugFormat("IsASyncRequest == false");
+                            if (log.IsDebugEnabled) log.DebugFormat("MultiRequestControlID == null");
 							RegisterFilesForDisposal(controlID);
 						}
 						outputStream = preloadedEntityBodyStream;
