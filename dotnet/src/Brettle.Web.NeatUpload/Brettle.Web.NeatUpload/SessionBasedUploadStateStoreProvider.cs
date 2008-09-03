@@ -28,6 +28,26 @@ namespace Brettle.Web.NeatUpload
 		
 	public class SessionBasedUploadStateStoreProvider : SessionBasedUploadStateStoreProviderBase
 	{
+        public override void Initialize(string name, System.Collections.Specialized.NameValueCollection attrs)
+        {
+            base.Initialize(name, attrs);
+            if (attrs != null)
+            {
+                foreach (string key in attrs.Keys)
+                {
+                    string val = attrs[key];
+                    if (key == "handlerUrl")
+                    {
+                        HandlerUrl = val;
+                    }
+                    else
+                    {
+                        throw new System.Xml.XmlException("Unrecognized attribute: " + key);
+                    }
+                }
+            }
+        }
+
 		public override UploadState Load(string postBackID)
 		{
 			if (IsSessionReadable)
@@ -68,8 +88,10 @@ namespace Brettle.Web.NeatUpload
         private object MakeRemoteCall(params object[] methodCall)
         {
             UriBuilder handlerUriBuilder = new UriBuilder(HttpContext.Current.Request.Url);
-            handlerUriBuilder.Path = HttpContext.Current.Request.ApplicationPath + "/NeatUpload/UploadStateStoreHandler.ashx";
+            handlerUriBuilder.Path = HttpContext.Current.Response.ApplyAppPathModifier(HandlerUrl);
             return SimpleWebRemoting.MakeRemoteCall(handlerUriBuilder.Uri, methodCall);
         }
+
+        private string HandlerUrl = "~/NeatUpload/UploadStateStoreHandler.ashx";
 	}
 }
