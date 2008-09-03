@@ -216,7 +216,7 @@ namespace Brettle.Web.NeatUpload
 NeatUploadMultiFileCreate('" + this.ClientID + @"', 
 		'" + FormContext.Current.PostBackID + @"',
 		'" + AppPath + @"',
-		'" + (MultiRequestUploadModule.IsEnabled ? (AppPath + MultiRequestUploadModule.UploadPath) : "") + @"',
+		'" + (MultiRequestUploadModule.IsEnabled ? (HttpContext.Current.Response.ApplyAppPathModifier(MultiRequestUploadModule.UploadPath)) : "") + @"',
 		'" + UploadModule.PostBackIDQueryParam + @"',
 		{" + UploadModule.PostBackIDQueryParam + @" : '" + FormContext.Current.PostBackID + @"',
 		 " + (MultiRequestUploadModule.IsEnabled ? MultiRequestUploadModule.ControlIDQueryParam : "ignore") + @": '" + this.ClientID + @"',

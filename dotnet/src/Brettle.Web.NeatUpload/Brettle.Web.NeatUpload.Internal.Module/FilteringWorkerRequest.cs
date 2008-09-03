@@ -256,9 +256,7 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 				totalRead += read;
 			}
 			return totalRead;
-		}
-		
-		private DateTime TimeOfLastSync = DateTime.MinValue;
+		}		
 		
 		private int FillBuffer()
 		{

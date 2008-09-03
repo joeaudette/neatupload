@@ -63,7 +63,7 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 			}
 			
 			// If this is a the name of a file field that we created, return the associated control ID
-			if (name != null && name.StartsWith(InternalUploadContext.NamePrefix))
+			if (name != null && name.StartsWith(Constants.NamePrefix))
 			{
 				int dashIndex = name.IndexOf('-');
 				return name.Substring(dashIndex + 1);
@@ -84,22 +84,22 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 			if (PostBackID != null)
 				return PostBackID;
 			
-			if (name == null || !name.StartsWith(InternalUploadContext.NamePrefix))
+			if (name == null || !name.StartsWith(Constants.NamePrefix))
 				return null;
 			int dashIndex = name.IndexOf('-');
-			return name.Substring(InternalUploadContext.NamePrefix.Length, dashIndex-InternalUploadContext.NamePrefix.Length);
+			return name.Substring(Constants.NamePrefix.Length, dashIndex-Constants.NamePrefix.Length);
 		}
 		
 		internal virtual string ConfigFieldNameToControlID(string name)
 		{
-			if (name == null || !name.StartsWith(InternalUploadContext.ConfigNamePrefix))
+			if (name == null || !name.StartsWith(Constants.ConfigNamePrefix))
 				return null;
 			return name;
 		}
 		
 		internal virtual string FileIDToConfigID(string fileID)
 		{
-			return InternalUploadContext.ConfigNamePrefix + fileID;
+			return Constants.ConfigNamePrefix + fileID;
 		}
 	}
 }
