@@ -28,6 +28,14 @@ namespace Brettle.Web.NeatUpload
 		
 	public class AdaptiveUploadStateStoreProvider : UploadStateStoreProvider
 	{
+        public override void Initialize(string name, System.Collections.Specialized.NameValueCollection attrs)
+        {
+            base.Initialize(name, attrs);
+            InProcProvider = new InProcUploadStateStoreProvider();
+            SessionBasedProvider = new SessionBasedUploadStateStoreProvider();
+            SessionBasedProvider.Initialize(name, attrs);
+        }
+
         public override string Description { get { return "Delegates to InProcUploadStateStoreProvider if SessionStateMode is Off or InProc, otherwise delegates to SessionBasedUploadStateStoreProvider."; } }
 
         public override UploadState Load(string postBackID)
@@ -46,6 +54,9 @@ namespace Brettle.Web.NeatUpload
         }
 
         private object SyncRoot = new object();
+        private InProcUploadStateStoreProvider InProcProvider;
+        private SessionBasedUploadStateStoreProvider SessionBasedProvider;
+
         private UploadStateStoreProvider _Provider;
         private UploadStateStoreProvider Provider {
             get
@@ -61,9 +72,11 @@ namespace Brettle.Web.NeatUpload
                         handlerUriBuilder.Path = HttpContext.Current.Request.ApplicationPath + "/NeatUpload/UploadStateStoreHandler.ashx";
                         SessionStateMode mode = (SessionStateMode)SimpleWebRemoting.MakeRemoteCall(handlerUriBuilder.Uri, "GetSessionStateMode");
                         if (mode == SessionStateMode.Off || mode == SessionStateMode.InProc)
-                            _Provider = new InProcUploadStateStoreProvider();
+                            _Provider = InProcProvider;
                         else
-                            _Provider = new SessionBasedUploadStateStoreProvider();
+                        {
+                            _Provider = SessionBasedProvider;
+                        }
                     }
                     return _Provider;
                 }
