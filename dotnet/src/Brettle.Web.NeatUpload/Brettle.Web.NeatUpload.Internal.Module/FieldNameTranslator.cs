@@ -46,20 +46,20 @@ namespace Brettle.Web.NeatUpload.Internal.Module
             {
             	string qs = worker.GetQueryString();
 				PostBackID = UploadHttpModule.GetPostBackIDFromQueryString(qs);
-				AsyncControlID = UploadHttpModule.GetAsyncControlIDFromQueryString(qs);
+				MultiRequestControlID = UploadHttpModule.GetMultiRequestControlIDFromQueryString(qs);
 			}
 		}
 		
 		internal string PostBackID = null;
-		internal string AsyncControlID = null;
+		internal string MultiRequestControlID = null;
 		
 		internal virtual string FileFieldNameToControlID(string name)
 		{
-			// If an AsyncControlID was specified in the query string, use it instead, 
+			// If an MultiRequestControlID was specified in the query string, use it instead, 
 			// because Flash doesn't provide any control over the field name used to upload files.
-			if (AsyncControlID != null)
+			if (MultiRequestControlID != null)
 			{
-				return AsyncControlID;
+				return MultiRequestControlID;
 			}
 			
 			// If this is a the name of a file field that we created, return the associated control ID
