@@ -91,22 +91,23 @@ namespace Brettle.Web.NeatUpload
 
         void IUploadModule.AppendToLog(string param)
         {
-            UploadHttpModule.AppendToLog(param);
+            HttpContext context = HttpContext.Current;
+            if (context == null)
+            {
+                return;
+            }
+            HttpContext origContext = context.Items["NeatUpload_origContext"] as HttpContext;
+            if (origContext != null)
+            {
+                context = origContext;
+            }
+            context.Response.AppendToLog(param);
         }
 
+        [Obsolete("Use UploadModule.AppendToLog() instead.")]
 		public static void AppendToLog(string param)
 		{
-			HttpContext context = HttpContext.Current;
-			if (context == null)
-			{
-				return;
-			}
-			HttpContext origContext = context.Items["NeatUpload_origContext"] as HttpContext;
-			if (origContext != null)
-			{
-				context = origContext;
-			}
-			context.Response.AppendToLog(param);
+            UploadModule.AppendToLog(param);
 		}
 
 		UploadedFileCollection IUploadModule.Files {
