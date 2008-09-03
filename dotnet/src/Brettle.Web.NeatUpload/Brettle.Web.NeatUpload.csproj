@@ -65,9 +65,7 @@
     <Reference Include="System.Drawing.Design" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Brettle.Web.NeatUpload\AccessSessionPage.cs">
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
+    <Compile Include="Brettle.Web.NeatUpload.Internal.Module\Constants.cs" />
     <Compile Include="Brettle.Web.NeatUpload\AdaptiveUploadStateStoreProvider.cs" />
     <Compile Include="Brettle.Web.NeatUpload\ArmoredNameValueCollection.cs" />
     <Compile Include="Brettle.Web.NeatUpload\AsyncUploadPage.cs">
@@ -99,7 +97,6 @@
     <Compile Include="Brettle.Web.NeatUpload\ProgressPage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Brettle.Web.NeatUpload\SessionAccessCallback.cs" />
     <Compile Include="Brettle.Web.NeatUpload\SessionBasedUploadStateStoreProvider.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -125,8 +122,6 @@
     <Compile Include="Brettle.Web.NeatUpload.Internal.Module\DecoratedWorkerRequest.cs" />
     <Compile Include="Brettle.Web.NeatUpload.Internal.Module\FieldNameTranslator.cs" />
     <Compile Include="Brettle.Web.NeatUpload.Internal.Module\FilteringWorkerRequest.cs" />
-    <Compile Include="Brettle.Web.NeatUpload.Internal.Module\SessionAccessingWorkerRequest.cs" />
-    <Compile Include="Brettle.Web.NeatUpload.Internal.Module\SessionPreservingWorkerRequest.cs" />
     <Compile Include="Brettle.Web.NeatUpload.Internal.Module\SizeLimitingWorkerRequest.cs" />
     <Compile Include="Brettle.Web.NeatUpload.Internal.UI\FormContext.cs" />
     <Compile Include="Brettle.Web.NeatUpload.Internal.UI\UploadProgressState.cs" />
@@ -134,7 +129,6 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Brettle.Web.NeatUpload\IMultiRequestUploadModule.cs" />
     <Compile Include="Brettle.Web.NeatUpload\MultiRequestUploadModule.cs" />
-    <Compile Include="Brettle.Web.NeatUpload.Internal.Module\InternalUploadContext.cs" />
     <Compile Include="Brettle.Web.NeatUpload\UploadStateStore.cs" />
     <Compile Include="Brettle.Web.NeatUpload\UploadStateStoreProvider.cs" />
     <Compile Include="Brettle.Web.NeatUpload\InProcUploadStateStoreProvider.cs" />
@@ -178,7 +172,6 @@
     <VisualStudio />
   </ProjectExtensions>
   <ItemGroup>
-    <None Include="install\NeatUpload\AccessSession.aspx" />
     <None Include="install\NeatUpload\AsyncUpload.aspx" />
     <None Include="install\NeatUpload\cancel.png" />
     <None Include="install\NeatUpload\default.css" />

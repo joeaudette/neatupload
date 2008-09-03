@@ -114,11 +114,11 @@ namespace Brettle.Web.NeatUpload
 		}
 
 		/// <summary>
-		/// The path (relative to the app root) to which all but the final request should
+		/// The path (relative to the app root if starts with ~) to which all but the final request should
 		/// be sent.
 		/// </summary>
 		/// <value>
-		/// The path (relative to the app root) to which all but the final request should
+        /// The path (relative to the app root if starts with ~) to which all but the final request should
 		/// be sent.
 		/// </value>
 		public static string UploadPath {

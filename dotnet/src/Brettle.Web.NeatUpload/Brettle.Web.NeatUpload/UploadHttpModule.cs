@@ -64,11 +64,11 @@ namespace Brettle.Web.NeatUpload
 		}
 
 		string IUploadModule.FileFieldNamePrefix { 
-			get { return InternalUploadContext.NamePrefix; } 
+			get { return Constants.NamePrefix; } 
 		}
 
 		string IUploadModule.ConfigFieldNamePrefix { 
-			get { return InternalUploadContext.ConfigNamePrefix; } 
+			get { return Constants.ConfigNamePrefix; } 
 		}
 
 		bool IUploadModule.IsEnabled {
@@ -182,7 +182,7 @@ namespace Brettle.Web.NeatUpload
 			ctx._ContentLength = HttpContext.Current.Request.ContentLength;
 			UploadStorageConfig storageConfig = UploadStorage.CreateUploadStorageConfig();
 			string storageConfigString 
-				= HttpContext.Current.Request.Form[InternalUploadContext.ConfigNamePrefix + "-" + controlUniqueID];
+				= HttpContext.Current.Request.Form[Constants.ConfigNamePrefix + "-" + controlUniqueID];
 			if (storageConfigString != null && storageConfigString != string.Empty)
 			{
 				storageConfig.Unprotect(storageConfigString);
@@ -211,11 +211,11 @@ namespace Brettle.Web.NeatUpload
 		}
 
 		string IMultiRequestUploadModule.FileSizesFieldName {
-			get { return InternalUploadContext.FileSizesName; } 
+			get { return Constants.FileSizesName; } 
 		}
 
 		string IMultiRequestUploadModule.UploadPath {
-			get { return "/NeatUpload/AsyncUpload.aspx"; }
+			get { return "~/NeatUpload/AsyncUpload.aspx"; }
 		}
 
 		string IMultiRequestUploadModule.ControlIDQueryParam {
@@ -360,15 +360,17 @@ namespace Brettle.Web.NeatUpload
 		
 		private void Application_BeginRequest(object sender, EventArgs e)
 		{
-			if (log.IsDebugEnabled) log.Debug("In Application_BeginRequest");
+            if (log.IsDebugEnabled) log.Debug("In Application_BeginRequest");
+            HttpApplication app = sender as HttpApplication;
 
-			// Restore the cookies for pages in the /NeatUpload folder (particularly AsyncUpload.aspx
-			// and AccessSession.aspx).
+			// Restore the cookies for the AsyncUpload.aspx page.
 			HttpWorkerRequest wr = GetCurrentWorkerRequest();
 			string filePath = wr.GetFilePath().ToLower();
+            string asyncUploadPath = MultiRequestUploadModule.UploadPath;
+            asyncUploadPath = app.Response.ApplyAppPathModifier(asyncUploadPath);
 			if (log.IsDebugEnabled) log.DebugFormat("filePath={0}", filePath);
 			string qs = wr.GetQueryString();
-			if (filePath.StartsWith("/neatupload/"))
+			if (filePath.StartsWith(asyncUploadPath.ToLower()))
 			{
 				if (qs != null)
 				{
@@ -399,7 +401,6 @@ namespace Brettle.Web.NeatUpload
 			}
 				
 			if (log.IsDebugEnabled) log.Debug(origWorker.GetType() + " for " + origWorker.GetRawUrl() + " with AspFilterSessionId = " + origWorker.GetUnknownRequestHeader("AspFilterSessionId"));
-			HttpApplication app = sender as HttpApplication;
 			string rawUrl = app.Context.Request.RawUrl;
 			log4net.ThreadContext.Properties["url"] = rawUrl;
 
@@ -844,45 +845,6 @@ namespace Brettle.Web.NeatUpload
 			
 			foreach (UploadedFile file in filesToDispose)
 				file.Dispose();
-		}
-		
-		internal static void AccessSession(SessionAccessCallback accessor)
-		{
-			if (log.IsDebugEnabled) log.Debug("In AccessSession");
-			HttpContext savedContext = HttpContext.Current;
-            if (savedContext == null)
-            {
-                return;
-            }
-            if (savedContext.Session != null && savedContext.Items["NeatUpload_RequestStateAcquired"] != null)
-            {
-                throw new NotSupportedException("Can't access the session because it is locked.  Your"
-                    + " page must use EnableSessionState='false' to call this method.  See the NeatUpload"
-                    + " documentation for details.");
-            }
-			
-			string page = "NeatUpload/AccessSession.aspx";
-			string qs = GetCurrentWorkerRequest().GetQueryString();
-			if (qs != null)
-			{
-				string armoredCookiesString = UploadHttpModule.GetArmoredCookiesStringFromQueryString(qs);
-				if (armoredCookiesString != null && armoredCookiesString.Length > 0)
-				{
-					qs = MultiRequestUploadModule.ArmoredCookiesQueryParam + "=" + HttpUtility.UrlEncode(armoredCookiesString);
-				}
-			}
-
-			SessionAccessingWorkerRequest req 
-				= SessionAccessingWorkerRequest.Create(GetOrigWorkerRequest(), page, qs, accessor);
-			try
-			{
-				req.ProcessRequest(null);
-				req.WaitForEndOfRequest();
-			}
-			finally
-			{
-				HttpContext.Current = savedContext;
-			}		
-		}
+		}		
 	}
 }
