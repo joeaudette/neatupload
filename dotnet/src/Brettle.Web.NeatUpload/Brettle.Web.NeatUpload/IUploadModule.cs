@@ -262,5 +262,12 @@ namespace Brettle.Web.NeatUpload
 		/// or null if the the module does not support such conversion.
 		/// </returns>
 		UploadedFile ConvertToUploadedFile(string controlUniqueID, HttpPostedFile file);
+
+        /// <summary>
+        /// Adds a message to the IIS log file.
+        /// </summary>
+        /// <param name="param">The message to add.</param>
+        /// <remarks>If the implementation does not suppport this method, it does nothing.</remarks>
+        void AppendToLog(string param);
 	}
 }
