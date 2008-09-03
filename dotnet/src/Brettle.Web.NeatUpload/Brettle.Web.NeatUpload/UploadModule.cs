@@ -307,7 +307,17 @@ namespace Brettle.Web.NeatUpload
 				uploadedFile = new AspNetUploadedFile(controlUniqueID, file);
 			return uploadedFile;
 		}
-		
+
+        /// <summary>
+        /// Adds a message to the IIS log file.
+        /// </summary>
+        /// <param name="param">The message to add.</param>
+        /// <remarks>If the implementation does not suppport this method, it does nothing.</remarks>
+        public static void AppendToLog(string param)
+        {
+            InstalledModule.AppendToLog(param);
+        }
+
 		private static bool _IsInstalled = true;
 		private static IUploadModule _InstalledModule;
 		internal static IUploadModule InstalledModule {

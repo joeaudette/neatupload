@@ -89,6 +89,11 @@ namespace Brettle.Web.NeatUpload
 			return anvc.Protect();
 		}
 
+        void IUploadModule.AppendToLog(string param)
+        {
+            UploadHttpModule.AppendToLog(param);
+        }
+
 		public static void AppendToLog(string param)
 		{
 			HttpContext context = HttpContext.Current;
