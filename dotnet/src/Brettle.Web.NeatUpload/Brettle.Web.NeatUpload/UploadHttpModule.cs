@@ -449,20 +449,21 @@ namespace Brettle.Web.NeatUpload
 			
 			// Create a subrequest for each request.  For multipart/form-data requests, we use a 
 			// FilteringWorkerRequest which filters the file parts into temp files.  For all other
-			// requests, we use a SizeLimitingWorkerRequest to ensure that the size of the request is within
+			// requests that could contain a body, we use a SizeLimitingWorkerRequest to ensure that the 
+            // size of the request is within
 			// the user configured limit.  We need the SizeLimitingWorkerRequest, because httpRuntime's 
 			// maxRequestLength attribute needs to be set to a large value to allow large file upload request
 			// to get to this module at all.  That means that large normal requests will also get to this
 			// module.  SizeLimitingWorkerRequest ensures that normal requests which are too large are
 			// rejected.
 			string contentTypeHeader = origWorker.GetKnownRequestHeader(HttpWorkerRequest.HeaderContentType);
+			string transferEncodingHeader = origWorker.GetKnownRequestHeader(HttpWorkerRequest.HeaderTransferEncoding);
 			if (contentTypeHeader != null && contentTypeHeader.ToLower().StartsWith("multipart/form-data"))
 			{
 				// If this is a multi-request upload get the post-back ID from the query string
 				if (qs != null && UploadHttpModule.GetMultiRequestControlIDFromQueryString(qs) != null)
 				{				
 					CurrentUploadState = UploadStateStore.OpenReadWriteOrCreate(UploadHttpModule.GetPostBackIDFromQueryString(qs));
-					string transferEncodingHeader = origWorker.GetKnownRequestHeader(HttpWorkerRequest.HeaderTransferEncoding);
 					if (transferEncodingHeader != "chunked")
 						CurrentUploadState.Status = UploadStatus.NormalInProgress;
 					else
@@ -479,8 +480,21 @@ namespace Brettle.Web.NeatUpload
 				{
 					throw new HttpException(413, "Request Entity Too Large");
 				}
-				subWorker = new SizeLimitingWorkerRequest(origWorker, MaxNormalRequestLength);
-//				subWorker = null;
+
+                // Only requests which match the following criteria could contain a body.
+                if ((transferEncodingHeader != null && transferEncodingHeader != "identity")
+                    || (contentLengthHeader != null && contentLengthHeader != "0")
+                    || (contentTypeHeader != null && contentTypeHeader.StartsWith("multipart/byteranges")))
+                {
+				    subWorker = new SizeLimitingWorkerRequest(origWorker, MaxNormalRequestLength);
+                }
+                else
+                {
+                    if (origWorker.HasEntityBody() 
+                        || origWorker.GetPreloadedEntityBodyLength() > 0
+                        || origWorker.ReadEntityBody(new byte[1], 1) > 0)
+                        throw new HttpException(400, "Unexpected body in request for " + rawUrl);
+                }
 			}
 			
 			if (subWorker != null)
