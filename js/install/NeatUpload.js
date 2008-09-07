@@ -686,17 +686,17 @@ NeatUploadForm.prototype.GetFor = function (elem, postBackID)
 	return formElem.NeatUpload_NUForm;
 };
 
-NeatUploadForm.prototype.OnCancelUploadHandlers = new Array();
+NeatUploadForm.prototype.OnStopUploadHandlers = new Array();
 
-NeatUploadForm.prototype.AddCancelUploadHandler = function(handler)
+NeatUploadForm.prototype.AddStopUploadHandler = function(handler)
 {
-	NeatUploadForm.prototype.OnCancelUploadHandlers.push(handler);
+	NeatUploadForm.prototype.OnStopUploadHandlers.push(handler);
 };
 
-NeatUploadForm.prototype.CancelUpload = function() {
-	for (var i=0; i < NeatUploadForm.prototype.OnCancelUploadHandlers.length; i++)
+NeatUploadForm.prototype.StopUpload = function(status) {
+	for (var i=0; i < NeatUploadForm.prototype.OnStopUploadHandlers.length; i++)
 	{
-		NeatUploadForm.prototype.OnCancelUploadHandlers[i].call();
+		NeatUploadForm.prototype.OnStopUploadHandlers[i].call(this, status);
 	}
 	if (window.stop)
 		window.stop();
@@ -836,8 +836,8 @@ NeatUploadPB.prototype.ClearFileInputs = function(elem)
 };
 
 
-NeatUploadPB.prototype.CancelUpload = function() {
-	NeatUploadForm.prototype.CancelUpload();
+NeatUploadPB.prototype.StopUpload = function(status) {
+	NeatUploadForm.prototype.StopUpload(status);
 };
 
 NeatUploadForm.prototype.EventData.NeatUploadPBAlertShown = false;
@@ -1018,7 +1018,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	
 	// Hookup the non-upload handler.
 	nuf.AddNonuploadHandler(ClearQueue);
-	nuf.AddCancelUploadHandler(CancelUpload);
+	nuf.AddStopUploadHandler(StopUpload);
 	
 	// Add the GetFileSizes callback.
 	nuf.AddGetFileSizesCallback(function () {
@@ -1155,7 +1155,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
         QueueCleared();
 	}
 	
-	function CancelUpload()
+	function StopUpload()
 	{
 	    if (numf.IsFlashLoaded && numf.Swfu)
 	    {
@@ -1314,8 +1314,53 @@ NeatUploadMultiFile.prototype.GetFileQueueControl = function()
 	return this.fqc;
 };
 
+/* ******************************************************************************************* */
+/* NeatUploadUnloadConfirmer - JS support for NeatUpload's UnloadConfirmer control
+/* ******************************************************************************************* */
+
+function NeatUploadUnloadConfirmerCreate(clientID, postBackID, msg)
+{
+	NeatUploadUnloadConfirmer.prototype.Controls[clientID] 
+		= new NeatUploadUnloadConfirmer(clientID, postBackID, msg);
+	return NeatUploadUnloadConfirmer.prototype.Controls[clientID];
+}
+
+function NeatUploadUnloadConfirmer(clientID, postBackID, msg)
+{
+    var nup = this;
+	var nuf = NeatUploadForm.prototype.GetFor(document.getElementById(clientID), postBackID);
+	if (nuf.Protector)
+	    return;
+	nuf.Protector = this;
+    var confirmUnload = false;
+    var onBeforeUnloadCalled = false;
+    nuf.AddSubmitHandler(function(ev) {
+        if (nuf.GetFileSizes().length > 0)
+            confirmUnload = true;
+    }); 
+    nuf.AddStopUploadHandler(function(ev) {
+        confirmUnload = onBeforeUnloadCalled = false;
+    });
+
+    nuf.AddHandler(window, "beforeunload", function(ev) {
+        if (onBeforeUnloadCalled && confirmUnload)
+        {
+            ev.returnValue = msg;
+            return msg;
+        }
+        onBeforeUnloadCalled = true;
+    });
+}
+
+NeatUploadUnloadConfirmer.prototype.debugMessage = NeatUploadConsole.debugMessage;
+
+NeatUploadUnloadConfirmer.prototype.Controls = new Object();
+
 
 /***************************** Debug Settings **************************/
 NeatUploadForm.prototype.debug_enabled = true;
 NeatUploadPB.prototype.debug_enabled = true;
 NeatUploadMultiFile.prototype.debug_enabled = true;
+NeatUploadUnloadConfirmer.prototype.debug_enabled = true;
+
+
