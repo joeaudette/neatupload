@@ -32,22 +32,25 @@ function NeatUploadGetMainWindow()
 	return mainWindow;
 }
 
-NeatUploadCancelled = false;
+NeatUploadStopped = false;
 
-function NeatUploadCancel() 
+function NeatUploadStop() 
 {
-	NeatUploadCancelled = true;
+	NeatUploadStopped = true;
 	var mainWindow = NeatUploadGetMainWindow();
 	if (!mainWindow)
 		return;
 	if (mainWindow.NeatUploadPB)
-		mainWindow.NeatUploadPB.prototype.CancelUpload();
+		mainWindow.NeatUploadPB.prototype.StopUpload();
 	else if (mainWindow.stop)
 		mainWindow.stop();
 	else if (mainWindow.document && mainWindow.document.execCommand)
 		mainWindow.document.execCommand('Stop');
 }
 
+function NeatUploadCancel() {
+    NeatUploadStop();
+}
 function NeatUpload_CombineHandlers(origHandler, newHandler) 
 {
 	if (!origHandler || typeof(origHandler) == 'undefined') return newHandler;
@@ -174,7 +177,7 @@ function NeatUploadRefresh()
 
 function NeatUploadRefreshPage() 
 {
-	if (!NeatUploadCancelled)
+	if (!NeatUploadStopped)
 	{
 		window.location.replace(NeatUploadRefreshUrl);
 	}
@@ -182,6 +185,6 @@ function NeatUploadRefreshPage()
 
 function NeatUpload_CancelClicked()
 {
-	NeatUploadCancel();
+	NeatUploadStop();
 	window.location.replace(NeatUploadRefreshUrl + '&cancelled=true');
 }

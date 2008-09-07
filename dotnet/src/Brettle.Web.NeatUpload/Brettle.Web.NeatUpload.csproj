@@ -99,6 +99,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Brettle.Web.NeatUpload\SimpleWebRemoting.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UnloadConfirmer.cs" />
     <Compile Include="Brettle.Web.NeatUpload\UploadContext.cs" />
     <Compile Include="Brettle.Web.NeatUpload\UploadedFile.cs" />
     <Compile Include="Brettle.Web.NeatUpload\UploadedFileCollection.cs" />
