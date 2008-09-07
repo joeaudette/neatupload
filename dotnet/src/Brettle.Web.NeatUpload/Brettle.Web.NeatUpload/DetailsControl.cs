@@ -81,7 +81,7 @@ namespace Brettle.Web.NeatUpload
 				string lastPostBackID = Page.Request.Params["lastPostBackID"];
 				if (lastPostBackID != null && lastPostBackID.Length > 0 && Page.Request.Params["refresher"] == null)
 				{
-					UploadModule.BindProgressState(postBackID, barID, progressState);
+                    UploadModule.BindProgressState(lastPostBackID, barID, progressState);
 					if (progressState.FileBytesRead == 0
 						&& progressState.ProcessingState == null)
 					{

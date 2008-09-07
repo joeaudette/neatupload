@@ -82,13 +82,17 @@ namespace Brettle.Web.NeatUpload
 		/// <remarks>Computed as <see cref="BytesRead"/>/<see cref="BytesTotal"/></remarks>
 		double FractionComplete { get; set; }
 
-		/// <summary>
-		/// An estimate of the number of bytes received during the past second.
-		/// </summary>
-		/// <value>
-		/// An estimate of the number of bytes received during the past second.
-		/// </value>
-		int BytesPerSec { get; set; }
+        /// <summary>
+        /// An estimate of the number of bytes received during the past second 
+        /// while the upload is in progress.  When the upload is finished this is
+        /// an average over the entire upload.
+        /// </summary>
+        /// <value>
+        /// An estimate of the number of bytes received during the past second 
+        /// while the upload is in progress.  When the upload is finished this is
+        /// an average over the entire upload.
+        /// </value>
+        int BytesPerSec { get; set; }
 
 		/// <summary>
 		/// If an <see cref="UploadException"/> (or subclass) was thrown while

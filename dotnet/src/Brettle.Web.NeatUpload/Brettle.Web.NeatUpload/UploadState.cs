@@ -65,6 +65,10 @@ namespace Brettle.Web.NeatUpload
 				if (value != _Status)
 				{
 					_Status = value;
+                    if (_Status != UploadStatus.NormalInProgress && _Status != UploadStatus.ChunkedInProgress)
+                    {
+                        _BytesPerSec = (int)Math.Round(BytesRead / TimeElapsed.TotalSeconds);
+                    }
 					OnChanged();
 				}
 			}
@@ -86,11 +90,15 @@ namespace Brettle.Web.NeatUpload
 
 		private int _BytesPerSec;
 		/// <summary>
-		/// An estimate of the number of bytes received during the past second.
+		/// An estimate of the number of bytes received during the past second 
+        /// while the upload is in progress.  When the upload is finished this is
+        /// an average over the entire upload.
 		/// </summary>
 		/// <value>
-		/// An estimate of the number of bytes received during the past second.
-		/// </value>
+        /// An estimate of the number of bytes received during the past second 
+        /// while the upload is in progress.  When the upload is finished this is
+        /// an average over the entire upload.
+        /// </value>
 		public int BytesPerSec {
 			get {
 				return _BytesPerSec;

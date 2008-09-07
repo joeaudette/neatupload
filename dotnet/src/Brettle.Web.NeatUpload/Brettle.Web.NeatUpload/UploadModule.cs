@@ -21,6 +21,7 @@ using System;
 using System.Web;
 using System.Collections.Specialized;
 using Brettle.Web.NeatUpload.Internal.Module;
+using Brettle.Web.NeatUpload.Internal.UI;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -258,9 +259,30 @@ namespace Brettle.Web.NeatUpload
 		/// A <see cref="IUploadProgressState"/> to be filled in with the progress state
 		/// for the given post-back ID and control UniqueID.
 		/// </param>
+        /// <remarks>The progress state is cached for the length of the current request to
+        /// ensure consistency across multiple calls during a single request and to reduce 
+        /// the number of calls made
+        /// to the underlying <see cref="IUploadModule"/> implementation since some 
+        /// implementations might need to access the network to determine the 
+        /// progress state.</remarks>
 		public static void BindProgressState(string postBackID, string controlUniqueID, IUploadProgressState progressState)
 		{
-			InstalledModule.BindProgressState(postBackID, controlUniqueID, progressState);
+            HttpContext ctx = HttpContext.Current;
+            if (ctx != null)
+            {
+                InstalledModule.BindProgressState(postBackID, controlUniqueID, progressState);
+                return;
+            }
+
+            string cacheKey = String.Format("NeatUpload_cachedProgressState_{0}-{1}", postBackID, controlUniqueID);
+            UploadProgressState cachedProgressState = ctx.Items[cacheKey] as Internal.UI.UploadProgressState;
+            if (cachedProgressState == null)
+            {
+                cachedProgressState = new UploadProgressState();
+                InstalledModule.BindProgressState(postBackID, controlUniqueID, cachedProgressState);
+                ctx.Items[cacheKey] = cachedProgressState;
+            }
+            UploadProgressState.Copy(cachedProgressState, progressState);
 		}
 
 		/// <summary>

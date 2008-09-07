@@ -93,7 +93,7 @@ namespace Brettle.Web.NeatUpload
 			if (Inline)
 			{
 				Tag = HtmlTextWriterTag.Iframe;
-				Attributes["src"] = UploadProgressPath + "&canScript=false&canCancel=false&postBackID=" + FormContext.Current.PostBackID;
+                Attributes["src"] = UploadProgressPath + LastPostBackIDQueryStringPortion + "&canScript=false&canCancel=false&postBackID=" + FormContext.Current.PostBackID;
 				Attributes["frameborder"] = "0";
 				Attributes["scrolling"] = "no";
 				Attributes["name"] = this.ClientID;
@@ -108,6 +108,7 @@ namespace Brettle.Web.NeatUpload
 <!--
 NeatUploadPB.prototype.Bars['{0}'].DisplayUrl = function(progressUrl) {{
 	var pb = this;
+    frames[pb.ClientID].document.body.innerHTML = '';
 	setTimeout(function () {{ frames[pb.ClientID].location.href = progressUrl; }}, 0);
 }};
 
@@ -116,10 +117,10 @@ NeatUploadPB.prototype.Bars['{0}'].EvalOnClose = null;
 (function() {{
 	var pb = NeatUploadPB.prototype.Bars['{0}'];
 	if (frames[pb.ClientID]) 
-		frames[pb.ClientID].location.replace(pb.UploadProgressPath + '&postBackID=' + pb.UploadForm.GetPostBackID() + '&canScript=true&canCancel=' + NeatUploadPB.prototype.CanCancel());
+		frames[pb.ClientID].location.replace(pb.UploadProgressPath + '{1}&postBackID=' + pb.UploadForm.GetPostBackID() + '&canScript=true&canCancel=' + NeatUploadPB.prototype.CanCancel());
 }})();
 // -->
-</script>", ClientID);
+</script>", ClientID, LastPostBackIDQueryStringPortion);
 			return script;
 		}
 
@@ -164,5 +165,15 @@ NeatUploadPB.prototype.Bars['{0}'].EvalOnClose = null;
 			
 			writer.RenderEndTag();
 		}
+
+        private string LastPostBackIDQueryStringPortion
+        {
+            get
+            {
+                if (UploadModule.PostBackID == null)
+                    return "";
+                return "&lastPostBackID=" + UploadModule.PostBackID;
+            }
+        }
 	}
 }

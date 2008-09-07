@@ -215,11 +215,6 @@ namespace Brettle.Web.NeatUpload
 			}
 
 			UploadProgressPath += "?barID=" + this.ClientID;
-
-			if (UploadModule.PostBackID != null)
-			{
-				UploadProgressPath += "&lastPostBackID=" + UploadModule.PostBackID;
-			}
 		}
 					
 		private string GetPopupDimension(string name, Unit length, int min)
