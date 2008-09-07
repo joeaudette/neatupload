@@ -19,6 +19,7 @@
 	</head>
 	<body>
 		<form id="uploadForm" runat="server">
+		<Upload:UnloadConfirmer runat="server"/>
 			<h1>NeatUpload Demo</h1>
 			<p>
 			This page demonstrates the basic functionality of <a href="http://www.brettle.com/neatupload">NeatUpload</a>.
@@ -114,7 +115,7 @@
 			<h2>Inline Progress Bar</h2>
 			<p>
 			The inline progress bar will be displayed here:
-			<div style="display: none">
+			<div style="display: none;">
 			<Upload:ProgressBar id="inlineProgressBar" runat="server" inline="true" Triggers="submitButton linkButton commandButton htmlInputButtonButton htmlInputButtonSubmit" />
 			</div>
 			<script type="text/javascript">
