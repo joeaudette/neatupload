@@ -91,7 +91,7 @@ namespace Brettle.Web.NeatUpload
 					// checks because it might have since been deleted by the user.
 					return true;
 				}
-				return (TmpFile.Length > 0 || FileName.Length > 0); 
+				return (TmpFile.Exists && (TmpFile.Length > 0 || FileName.Length > 0));
 			}
 		}
 

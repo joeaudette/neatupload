@@ -113,5 +113,22 @@ namespace Brettle.Web.NeatUpload.Internal.UI
 			get { return _ProcessingState; }
 			set { _ProcessingState = value; }
 		}
+
+        internal static void Copy(IUploadProgressState src, IUploadProgressState dest)
+        {
+            dest.Status = src.Status;
+            dest.BytesRead = src.BytesRead;
+            dest.BytesTotal = src.BytesTotal;
+            dest.BytesPerSec = src.BytesPerSec;
+            dest.FileBytesRead = src.FileBytesRead;
+            dest.FractionComplete = src.FractionComplete;
+            dest.CurrentFileName = src.CurrentFileName;
+            dest.Files = src.Files;
+            dest.Failure = src.Failure;
+            dest.Rejection = src.Rejection;
+            dest.ProcessingState = src.ProcessingState;
+            dest.TimeElapsed = src.TimeElapsed;
+            dest.TimeRemaining = src.TimeRemaining;
+        }
 	}
 }

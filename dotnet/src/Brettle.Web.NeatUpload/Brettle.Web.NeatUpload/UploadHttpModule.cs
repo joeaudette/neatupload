@@ -149,7 +149,9 @@ namespace Brettle.Web.NeatUpload
 			progressState.BytesPerSec = uploadState.BytesPerSec;
 			progressState.FileBytesRead = uploadState.FileBytesRead;
 			progressState.FractionComplete 
-				= uploadState.BytesTotal <= 0 ? 0 : (double)uploadState.BytesRead / uploadState.BytesTotal;
+				= (uploadState.BytesTotal <= 0 || uploadState.FileBytesRead <= 0) 
+                ? 0 
+                : ((double)uploadState.BytesRead / uploadState.BytesTotal);
 			if (uploadState.Files != null && uploadState.Files.Count > 0)
 				progressState.CurrentFileName = uploadState.Files[uploadState.Files.Count-1].FileName;
 			progressState.Files = uploadState.Files.GetReadOnlyCopy();
