@@ -680,11 +680,13 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 				}
 				if (isClientConnected)
 				{
-					throw new HttpException (400, String.Format("Data length ({0}) is shorter than Content-Length ({1}) and client is still connected.", grandTotalBytesRead, origContentLength));
+					throw new HttpException (400, String.Format("Data length ({0}) is shorter than Content-Length ({1}) and client is still connected after {2} secs.", 
+					                                            grandTotalBytesRead, origContentLength, Math.Round(UploadState.TimeElapsed.TotalSeconds)));
 				}
 				else
 				{
-					throw new HttpException (400, String.Format("Client disconnected after receiving {0} of {1} bytes -- user probably cancelled upload.", grandTotalBytesRead, origContentLength));
+					throw new HttpException (400, String.Format("Client disconnected after receiving {0} of {1} bytes in {2} secs -- user probably cancelled upload.", 
+					                                            grandTotalBytesRead, origContentLength, Math.Round(UploadState.TimeElapsed.TotalSeconds)));
 				}
 			}
 		}
