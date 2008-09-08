@@ -492,9 +492,7 @@ namespace Brettle.Web.NeatUpload
                 }
                 else
                 {
-                    if (origWorker.HasEntityBody() 
-                        || origWorker.GetPreloadedEntityBodyLength() > 0
-                        || origWorker.ReadEntityBody(new byte[1], 1) > 0)
+                    if (origWorker.HasEntityBody())
                         throw new HttpException(400, "Unexpected body in request for " + rawUrl);
                 }
 			}
