@@ -36,13 +36,13 @@ namespace Brettle.Web.NeatUpload
 
         protected virtual void ProcessMultiRequestUploadRequest(HttpContext context, UploadState uploadState)
         {
-            string controlID = context.Request.Params[MultiRequestUploadModule.ControlIDQueryParam];
+            string controlID = context.Request.QueryString[MultiRequestUploadModule.ControlIDQueryParam];
             if (log.IsDebugEnabled) log.DebugFormat("controlID={0}", controlID);
-            string postBackID = context.Request.Params[UploadModule.PostBackIDQueryParam];
+            string postBackID = context.Request.QueryString[UploadModule.PostBackIDQueryParam];
             if (log.IsDebugEnabled) log.DebugFormat("postBackID={0}", postBackID);
-            string secureStorageConfigString = context.Request.Params[UploadModule.ConfigFieldNamePrefix + controlID];
+            string secureStorageConfigString = context.Request.Form[UploadModule.ConfigFieldNamePrefix + controlID];
             if (log.IsDebugEnabled) log.DebugFormat("secureStorageConfigString={0}", secureStorageConfigString);
-            string fileSizesString = context.Request.Params[MultiRequestUploadModule.FileSizesFieldName];
+            string fileSizesString = context.Request.Form[MultiRequestUploadModule.FileSizesFieldName];
             if (log.IsDebugEnabled) log.DebugFormat("fileSizesString={0}", fileSizesString);
 
             if (postBackID != null && fileSizesString != null && fileSizesString.Length > 0)

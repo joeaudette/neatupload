@@ -240,7 +240,7 @@ NeatUploadInputFileCreate('" + this.ClientID + @"','"
 				writer.AddAttribute(HtmlTextWriterAttribute.Type, "hidden");
 				writer.AddAttribute(HtmlTextWriterAttribute.Name, storageConfigName);
 				
-				writer.AddAttribute(HtmlTextWriterAttribute.Value, UploadModule.Protect(StorageConfig));				
+				writer.AddAttribute(HtmlTextWriterAttribute.Value, StorageConfig.Protect());				
 				writer.RenderBeginTag(HtmlTextWriterTag.Input);
 				writer.RenderEndTag();
 			}

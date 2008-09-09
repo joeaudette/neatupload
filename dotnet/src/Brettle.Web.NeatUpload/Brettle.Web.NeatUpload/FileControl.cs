@@ -78,9 +78,8 @@ namespace Brettle.Web.NeatUpload
 						string secureStorageConfig = HttpContext.Current.Request.Form[FormContext.Current.GenerateStorageConfigID(UniqueID)];
 						if (secureStorageConfig != null)
 						{
-							NameValueCollection nvc = UploadModule.Unprotect(secureStorageConfig);
-							_StorageConfig = UploadStorage.CreateUploadStorageConfig();
-							_StorageConfig.Add(nvc);
+							_StorageConfig = UploadModule.CreateUploadStorageConfig();
+                            _StorageConfig.Unprotect(secureStorageConfig);
 							// Replace any values set before this control had a fully qualified name.
 							if (_NewStorageConfig != null)
 							{

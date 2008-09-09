@@ -196,20 +196,6 @@ namespace Brettle.Web.NeatUpload
 			{
 				// Generate a special name recognized by the UploadHttpModule
 				name = FormContext.Current.GenerateFileID(this.UniqueID);
-				ArmoredNameValueCollection armoredCookies = new ArmoredNameValueCollection();
-				if (HttpContext.Current != null)
-				{
-					HttpCookieCollection cookies = HttpContext.Current.Request.Cookies;
-					string[] cookieNames 
-						= new string[] {"ASP.NET_SESSIONID", "ASPSESSION", FormsAuthentication.FormsCookieName};
-					foreach (string cookieName in cookieNames)
-					{
-						HttpCookie cookie = cookies[cookieName];
-						if (cookie != null)
-							armoredCookies[cookieName] = cookie.Value;
-					}
-				}
-					
 				this.Page.RegisterStartupScript("NeatUploadMultiFile-" + this.UniqueID, @"
 <script type='text/javascript' language='javascript'>
 <!--
@@ -220,7 +206,7 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
 		'" + UploadModule.PostBackIDQueryParam + @"',
 		{" + UploadModule.PostBackIDQueryParam + @" : '" + FormContext.Current.PostBackID + @"',
 		 " + (MultiRequestUploadModule.IsEnabled ? MultiRequestUploadModule.ControlIDQueryParam : "ignore") + @": '" + this.ClientID + @"',
-		 " + (MultiRequestUploadModule.IsEnabled ? MultiRequestUploadModule.ArmoredCookiesQueryParam : "ignore2") + @": '" + UploadModule.Protect(armoredCookies) + @"'
+		 " + (MultiRequestUploadModule.IsEnabled ? MultiRequestUploadModule.ArmoredCookiesQueryParam : "ignore2") + @": '" + MultiRequestUploadModule.GetArmoredCookies() + @"'
 		},
 		 " + (MultiRequestUploadModule.IsEnabled && UseFlashIfAvailable ? "true" : "false") + @",
 		 '" + FileQueueControlID + @"',
@@ -242,7 +228,7 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
 				writer.AddAttribute(HtmlTextWriterAttribute.Type, "hidden");
 				writer.AddAttribute(HtmlTextWriterAttribute.Name, storageConfigName);
 				
-				writer.AddAttribute(HtmlTextWriterAttribute.Value, UploadModule.Protect(StorageConfig));				
+				writer.AddAttribute(HtmlTextWriterAttribute.Value, StorageConfig.Protect());				
 				writer.RenderBeginTag(HtmlTextWriterTag.Input);
 				writer.RenderEndTag();
 			}

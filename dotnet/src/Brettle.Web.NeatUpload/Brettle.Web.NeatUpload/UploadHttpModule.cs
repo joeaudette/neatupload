@@ -75,19 +75,10 @@ namespace Brettle.Web.NeatUpload
 			get { return Config.Current.UseHttpModule; } 
 		}
 
-		NameValueCollection IUploadModule.Unprotect(string armoredString)
-		{
-			ArmoredNameValueCollection result = new ArmoredNameValueCollection();
-			result.Unprotect(armoredString);
-			return result;
-		}
-
-		string IUploadModule.Protect(NameValueCollection nvc)
-		{
-			ArmoredNameValueCollection anvc = new ArmoredNameValueCollection();
-			anvc.Add(nvc);
-			return anvc.Protect();
-		}
+        UploadStorageConfig IUploadModule.CreateUploadStorageConfig()
+        {
+            return null;
+        }
 
         void IUploadModule.AppendToLog(string param)
         {
@@ -234,7 +225,12 @@ namespace Brettle.Web.NeatUpload
 			get { return "NeatUpload_ArmoredCookies"; }
 		}
 
-		internal static UploadedFileCollection Files
+        string IMultiRequestUploadModule.GetArmoredCookies()
+        {
+            return null;
+        }
+
+        internal static UploadedFileCollection Files
 		{
 			get 
 			{
@@ -719,8 +715,7 @@ namespace Brettle.Web.NeatUpload
 			HttpCookieCollection cookies = new HttpCookieCollection();
 			if (armoredCookiesString != null && armoredCookiesString.Length > 0)
 			{
-				ArmoredNameValueCollection armoredCookies = new ArmoredNameValueCollection();
-				armoredCookies.Unprotect(armoredCookiesString);
+                NameValueCollection armoredCookies = (NameValueCollection)ObjectProtector.Unprotect(armoredCookiesString);
 				foreach (string k in armoredCookies.AllKeys)
 				{
 					if (log.IsDebugEnabled) log.DebugFormat("armoredCookies[{0}]={1}", k, armoredCookies[k]);
