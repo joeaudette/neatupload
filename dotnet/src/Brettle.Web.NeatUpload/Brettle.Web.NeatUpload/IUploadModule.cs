@@ -128,10 +128,12 @@ namespace Brettle.Web.NeatUpload
 		/// </value>
 		/// <remarks>If a field has a name that starts with this prefix, the prefix must
 		/// be followed by a control's UniqueID.  The contents of the field must have
-		/// been returned by a previous call to <see cref="Protect"/>.  The module will pass the 
-		/// field contents to <see cref="Unprotect"/> and the resulting NameValueCollection
-		/// will be used in an implementation way when processing the file fields for
-		/// the same control UniqueID.
+		/// been returned by a previous call to <see cref="UploadStorageConfig.Protect"/>.  
+        /// The module will pass the 
+		/// field contents to <see cref="UploadStorageConfig.Unprotect"/> of an object
+        /// returned by <see cref="UploadModule.CreateUploadStorageConfig"/> and
+		/// will be used in an implementation dependent way when processing the file
+        /// fields for the same control UniqueID.
 		/// </remarks>
 		string ConfigFieldNamePrefix { get; }
 
@@ -145,42 +147,16 @@ namespace Brettle.Web.NeatUpload
 		/// </value>
 		bool IsEnabled { get; }
 
-		/// <summary>
-		/// Converts a <see cref="String"/> returned by <see cref="Protect"/> back to the 
-		/// <see cref="NameValueCollection"/> that was passed to <see cref="Protect"/>.
-		/// </summary>
-		/// <param name="armoredString">
-		/// A <see cref="System.String"/> returned by <see cref="Protect"/>
-		/// </param>
-		/// <returns>
-		/// The <see cref="NameValueCollection"/> that was passed to <see cref="Protect"/>
-		/// </returns>
-		/// <remarks>
-		/// If the module does not use any "protected" information, it must return an empty
-		/// <see cref="NameValueCollection"/>.
-		/// </remarks>
-		NameValueCollection Unprotect(string armoredString);
-
-		/// <summary>
-		/// Converts a <see cref="NameValueCollection"/> to a <see cref="String"/> that
-		/// an attacker can not use to access any part of the <see cref="NameValueCollection"/>
-		/// and can not change without causing <see cref="Unprotect"/> to fail.  The 
-		/// returned <see cref="String"/> can be passed to <see cref="Unprotect"/> to get
-		/// the original <see cref="NameValueCollection"/> back.
-		/// </summary>
-		/// <param name="nvc">
-		/// A <see cref="NameValueCollection"/>
-		/// </param>
-		/// <returns>
-		/// The <see cref="System.String"/> that can be passed to <see cref="Unprotect"/> to
-		/// get the original <see cref="NameValueCollection"/> back.
-		/// </returns>
-		/// <remarks>
-		/// This is used to protect config fields and cookie parameters.
-		/// If the module does not use any "protected" information, it must return 
-		/// <see cref="String.Empty"/>.
-		/// </remarks>
-		string Protect(NameValueCollection nvc);
+        /// <summary>
+        /// Creates and returns a new <see cref="UploadStorageConfig"/> (or 
+        /// subclass) for use with the current request.
+        /// </summary>
+        /// <returns>a new <see cref="UploadStorageConfig"/> or subclass, or
+        /// null if the default implementation should be used.</returns>
+        /// <remarks>The default implmentation returns
+        /// the <see cref="UploadStorageConfig"/> created by the currently selected
+        /// <see cref="UploadStorageProvider"/>.</remarks>
+        UploadStorageConfig CreateUploadStorageConfig();
 
 		/// <summary>
 		/// A collection of the <see cref="UploadedFile"/> objects associated with the

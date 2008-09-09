@@ -178,8 +178,40 @@ namespace Brettle.Web.NeatUpload
 		public static string ArmoredCookiesQueryParam {
 			get { return InstalledModule.ArmoredCookiesQueryParam; }
 		}
-		
-		private static IMultiRequestUploadModule InstalledModule {
+
+        /// <summary>
+        /// Gets a protected string to use as the value of the <see cref="ArmoredCookiesQueryParam"/>
+        /// when making the requests in a multi-request upload.
+        /// </summary>
+        /// <returns>the protected string representing the cookies.</returns>
+        /// <remarks>If the installed module does not explicitly support armored
+        /// cookies, NeatUpoad will create an <see cref="NameValueCollection"/> 
+        /// containing the cookie names/values that ASP.NET uses for session ID and forms
+        /// auth, and will pass it to <see cref="ObjectProtector.Protect"/>.
+        /// </remarks>
+        public static string GetArmoredCookies()
+        {
+            string armoredCookies = InstalledModule.GetArmoredCookies();
+            if (armoredCookies == null)
+            {
+                HttpCookieCollection cookies = HttpContext.Current.Request.Cookies;
+                NameValueCollection authCookies = new NameValueCollection();
+                string[] cookieNames
+                    = new string[] { "ASP.NET_SESSIONID", "ASPSESSION", System.Web.Security.FormsAuthentication.FormsCookieName };
+                foreach (string cookieName in cookieNames)
+                {
+                    HttpCookie cookie = cookies[cookieName];
+                    if (cookie != null)
+                        authCookies.Add(cookieName, cookie.Value);
+                }
+
+                armoredCookies = ObjectProtector.Protect(authCookies);
+            }
+            return armoredCookies;
+        }
+
+        private static IMultiRequestUploadModule InstalledModule
+        {
 			get {
 				return UploadModule.InstalledModule as IMultiRequestUploadModule;
 			}

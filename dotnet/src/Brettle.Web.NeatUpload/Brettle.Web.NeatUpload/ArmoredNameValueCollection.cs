@@ -66,12 +66,12 @@ namespace Brettle.Web.NeatUpload
 			scFormatter.Serialize(s, ht);			
 		}
 
-		internal void Unprotect(string secureString)
+		public void Unprotect(string secureString)
 		{
 			ObjectProtector.Unprotect(secureString, Deserialize, AssertSignaturesAreEqual);
 		}
 		
-		internal string Protect()
+		public string Protect()
 		{
 			return ObjectProtector.Protect(Serialize);
 		}

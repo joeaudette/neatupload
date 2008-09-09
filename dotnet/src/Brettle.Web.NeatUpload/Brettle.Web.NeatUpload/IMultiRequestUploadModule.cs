@@ -145,10 +145,21 @@ namespace Brettle.Web.NeatUpload
 		/// of the web application.  For example, Flash always sends IE's cookies which means
 		/// that the correct cookies are not sent for Firefox users.  The value of the query 
 		/// parameter must be the value returned by
-		/// <see cref="Protect"/> when it is passed a <see cref="NameValueCollection"/>
-		/// that maps the cookie names to cookie values.  For security reasons, the module 
-		/// must only use the cookie when processing requests to the 
+		/// <see cref="GetArmoredCookies"/>.  For security reasons, the module 
+		/// must only use the cookies when processing requests to the 
 		/// <see cref="UploadPath"/>.</remarks>
-		string ArmoredCookiesQueryParam { get; }		
+		string ArmoredCookiesQueryParam { get; }
+
+        /// <summary>
+        /// Gets a protected string to use as the value of the <see cref="ArmoredCookiesQueryParam"/>
+        /// when making the requests in a multi-request upload.
+        /// </summary>
+        /// <returns>the protected string representing the cookies, or null
+        /// to indicate that default implementation should be used.</returns>
+        /// <remarks>The default implementation will create an  <see cref="NameValueCollection"/> 
+        /// containing the cookie names/values that ASP.NET uses for session ID and forms
+        /// auth, and will pass it to <see cref="ObjectProtector.Protect"/>.
+        /// </remarks>
+        string GetArmoredCookies();
 	}
 }
