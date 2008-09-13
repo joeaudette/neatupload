@@ -6,7 +6,6 @@
 	<head runat="server">
 		<title>NeatUpload Demo</title>
 		<style type="text/css">
-<!--
 		.ProgressBar {
 			margin: 0px;
 			border: 0px;
@@ -14,7 +13,6 @@
 			width: 100%;
 			height: 2em;
 		}
--->
 		</style>
 	</head>
 	<body>
@@ -59,7 +57,7 @@
 			</p>
 			<p>Other file(s) to upload (just to demonstrate multiple MultiFileControls on the same page): 
 			<Upload:MultiFile id="multiFile2" runat="server" useFlashIfAvailable="true">
-				<input type="button" id="multiFileButton" value="Add File..." />
+				<input type="button" id="multiFileButton2" value="Add File..." />
 			</Upload:MultiFile>
 			</p>
 			<p>
@@ -82,8 +80,8 @@
 			</span>
 
 			<span id="commandButtonSpan" runat="server">
-			<asp:Button id="commandButton" runat="server" Text="Submit Command" Command="Submit" />
-			<asp:Button id="cancelCommandButton" runat="server" Text="Cancel Command" CausesValidation="False" Command="Cancel" /><br />
+			<asp:Button id="commandButton" runat="server" Text="Submit Command" CommandName="Submit" />
+			<asp:Button id="cancelCommandButton" runat="server" Text="Cancel Command" CausesValidation="False" CommandName="Cancel" /><br />
 			</span>
 
 			<span id="linkButtonSpan" runat="server">
@@ -115,6 +113,7 @@
 			<h2>Inline Progress Bar</h2>
 			<p>
 			The inline progress bar will be displayed here:
+			</p>
 			<div style="display: none;">
 			<Upload:ProgressBar id="inlineProgressBar" runat="server" inline="true" Triggers="submitButton linkButton commandButton htmlInputButtonButton htmlInputButtonSubmit" />
 			</div>
@@ -133,6 +132,7 @@ window.onload = function()
 		+ inlineProgressBar.ClientID + "').parentNode.style.display = \"none\";";
 }
 </script>
+            <p>
 			By default, an inline progress bar is always displayed.  The inline progress bar above has been 
 			customized with javascript (see HTML source for this page) to hide the progress bar except when the
 			upload is in progress or an error has occurred.

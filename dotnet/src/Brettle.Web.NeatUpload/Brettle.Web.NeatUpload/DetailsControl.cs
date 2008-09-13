@@ -100,10 +100,9 @@ namespace Brettle.Web.NeatUpload
 
 			Attributes["status"] = Status.ToString();
 			
-			string whenStatus = Attributes["WhenStatus"];
-			if (whenStatus != null)
+			if (WhenStatus != null)
 			{
-				string[] matchingStatuses = whenStatus.Split(' ');
+				string[] matchingStatuses = WhenStatus.Split(' ');
 				if (Array.IndexOf(matchingStatuses, Status.ToString()) == -1)
 				{
 					this.Visible = false;
@@ -122,6 +121,17 @@ namespace Brettle.Web.NeatUpload
 			}
 			set { ViewState["UseHtml4"] = value; }
 		}
+
+        /// <summary>
+        /// A space delimited list of the <see cref="UploadStatus"/> values for which this control should be displayed.</summary>
+        public string WhenStatus
+        {
+            get
+            {
+                return (string)ViewState["WhenStatus"];
+            }
+            set { ViewState["WhenStatus"] = value; }
+        }
 		
 		private UploadStatus Status = UploadStatus.Unknown;
 				
