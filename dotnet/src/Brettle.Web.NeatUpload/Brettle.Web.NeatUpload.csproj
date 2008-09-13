@@ -179,6 +179,7 @@
     <None Include="install\NeatUpload\default.css" />
     <None Include="install\NeatUpload\Error413.aspx" />
     <None Include="install\NeatUpload\MultiRequestUploadHandler.ashx" />
+    <None Include="install\NeatUpload\NeatUploadConfig.xsd" />
     <None Include="install\NeatUpload\Progress.aspx" />
     <None Include="install\NeatUpload\refresh.png" />
     <None Include="install\NeatUpload\stop_refresh.png" />
