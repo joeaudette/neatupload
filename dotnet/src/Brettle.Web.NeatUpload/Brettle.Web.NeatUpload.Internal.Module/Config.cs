@@ -46,7 +46,11 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 				if (HttpContext.Current != null)
 				{
 					config = HttpContext.Current.Items["NeatUpload_config"] as Config;
-					if (config == null)
+                    if (config == null)
+                    {
+                        config = HttpContext.Current.GetConfig("neatUpload") as Config;
+                    }
+                    if (config == null)
 					{
 						config = HttpContext.Current.GetConfig("brettle.web/neatUpload") as Config;
 					}
@@ -214,12 +218,14 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 				{
 					config.StateStaleAfterSeconds = Double.Parse(val);
 				}
-				else
+                else if (!name.Contains(":") && name != "xmlns")
 				{
-					throw new XmlException("Unrecognized attribute: " + name);
+					throw new XmlException("Unrecognized unqualified attribute: " + name);
 				}
 			}
-			XmlNode providersElem = section.SelectSingleNode("providers");
+            XmlNamespaceManager nsm = new XmlNamespaceManager(new NameTable());
+            nsm.AddNamespace("nu", "http://www.brettle.com/neatupload/config/2008");
+            XmlNode providersElem = section.SelectSingleNode("nu:providers | providers", nsm);
 			if (providersElem != null)
 			{
 				foreach (XmlNode providerActionElem in providersElem.ChildNodes)

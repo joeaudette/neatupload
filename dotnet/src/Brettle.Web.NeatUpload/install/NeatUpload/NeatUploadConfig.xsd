@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema targetNamespace="http://www.brettle.com/neatupload/config/2008" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vs="http://schemas.microsoft.com/Visual-Studio-Intellisense" elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <xs:element name="neatUpload" vs:help="configuration/neatUpload">
+        <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="1">
+                <xs:element name="providers" vs:help="configuration/system.web/neatUpload/providers">
+                    <xs:complexType>
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
+                            <xs:element name="add" vs:help="configuration/system.web/httpHandlers/add">
+                                <xs:complexType>
+                                    <xs:attribute name="name" type="xs:string" use="required" />
+                                    <xs:attribute name="type" type="xs:string" use="required" />
+                                    <xs:anyAttribute processContents="skip"/>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="remove" vs:help="configuration/system.web/httpHandlers/remove">
+                                <xs:complexType>
+                                    <xs:attribute name="name" type="xs:string" use="required" />
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="clear" vs:help="configuration/system.web/httpHandlers/clear" />
+                        </xs:choice>
+                    </xs:complexType>
+                </xs:element>
+            </xs:choice>
+            <xs:attribute name="defaultProvider" type="xs:string" use="optional" />
+            <xs:attribute name="defaultStorageProvider" type="xs:string" use="optional" />
+            <xs:attribute name="defaultStateStoreProvider" type="xs:string" use="optional" />
+            <xs:attribute name="useHttpModule" type="xs:boolean" use="optional" />
+            <xs:attribute name="maxNormalRequestLength" type="xs:int" use="optional" />
+            <xs:attribute name="maxRequestLength" type="xs:int" use="optional" />
+            <xs:attribute name="postBackIDQueryParam" type="xs:string" use="optional" />
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
