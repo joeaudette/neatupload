@@ -715,11 +715,11 @@ namespace Brettle.Web.NeatUpload
 			HttpCookieCollection cookies = new HttpCookieCollection();
 			if (armoredCookiesString != null && armoredCookiesString.Length > 0)
 			{
-                NameValueCollection armoredCookies = (NameValueCollection)ObjectProtector.Unprotect(armoredCookiesString);
-				foreach (string k in armoredCookies.AllKeys)
+                Hashtable armoredCookies = (Hashtable)ObjectProtector.Unprotect(armoredCookiesString);
+				foreach (string k in armoredCookies.Keys)
 				{
 					if (log.IsDebugEnabled) log.DebugFormat("armoredCookies[{0}]={1}", k, armoredCookies[k]);
-					cookies.Add(new HttpCookie(k, armoredCookies[k]));
+					cookies.Add(new HttpCookie(k, (string)armoredCookies[k]));
 				}
 			}
 			return cookies;

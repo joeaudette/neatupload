@@ -218,8 +218,8 @@ namespace Brettle.Web.NeatUpload
 			if (!IsDesignTime && UploadModule.IsEnabled)
 			{
 				// Generate a special name recognized by the UploadHttpModule
-				name = FormContext.Current.GenerateFileID(this.UniqueID);
-				storageConfigName = FormContext.Current.GenerateStorageConfigID(this.UniqueID);
+				name = FormContext.Current.GenerateFileID(this.ClientID);
+				storageConfigName = FormContext.Current.GenerateStorageConfigID(this.ClientID);
 
 				this.Page.RegisterStartupScript("NeatUploadInputFile-" + this.UniqueID, @"
 <script type='text/javascript' language='javascript'>
@@ -231,8 +231,8 @@ NeatUploadInputFileCreate('" + this.ClientID + @"','"
 			}
 			else
 			{
-				name = this.UniqueID;
-				storageConfigName = FormContext.Current.GenerateStorageConfigID(this.UniqueID);
+				name = this.ClientID;
+				storageConfigName = FormContext.Current.GenerateStorageConfigID(this.ClientID);
 			}
 			// Store the StorageConfig in a hidden form field with a related name
 			if (StorageConfig != null && StorageConfig.Count > 0)
