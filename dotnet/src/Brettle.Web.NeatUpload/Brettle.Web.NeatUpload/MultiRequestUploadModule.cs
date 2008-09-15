@@ -19,6 +19,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Web;
+using System.Collections;
 using System.Collections.Specialized;
 using Brettle.Web.NeatUpload.Internal.Module;
 
@@ -185,7 +186,7 @@ namespace Brettle.Web.NeatUpload
         /// </summary>
         /// <returns>the protected string representing the cookies.</returns>
         /// <remarks>If the installed module does not explicitly support armored
-        /// cookies, NeatUpoad will create an <see cref="NameValueCollection"/> 
+        /// cookies, NeatUpoad will create a <see cref="Hashtable"/> 
         /// containing the cookie names/values that ASP.NET uses for session ID and forms
         /// auth, and will pass it to <see cref="ObjectProtector.Protect"/>.
         /// </remarks>
@@ -195,7 +196,7 @@ namespace Brettle.Web.NeatUpload
             if (armoredCookies == null)
             {
                 HttpCookieCollection cookies = HttpContext.Current.Request.Cookies;
-                NameValueCollection authCookies = new NameValueCollection();
+                Hashtable authCookies = new Hashtable();
                 string[] cookieNames
                     = new string[] { "ASP.NET_SESSIONID", "ASPSESSION", System.Web.Security.FormsAuthentication.FormsCookieName };
                 foreach (string cookieName in cookieNames)

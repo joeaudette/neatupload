@@ -75,7 +75,7 @@ namespace Brettle.Web.NeatUpload
 					// Keep the storage config associated with the previous upload, if any
 					if (Files != null  && Files.Length > 0 && !IsDesignTime && HttpContext.Current != null)
 					{
-						string secureStorageConfig = HttpContext.Current.Request.Form[FormContext.Current.GenerateStorageConfigID(UniqueID)];
+						string secureStorageConfig = HttpContext.Current.Request.Form[FormContext.Current.GenerateStorageConfigID(ClientID)];
 						if (secureStorageConfig != null)
 						{
 							_StorageConfig = UploadModule.CreateUploadStorageConfig();
@@ -155,11 +155,15 @@ namespace Brettle.Web.NeatUpload
 					Attributes["size"] = value.ToString();
 			}
 		}
-		
+
+        protected override void OnInit(EventArgs e)
+        {
+            InitializeFiles();
+            base.OnInit(e);
+        }
 
 		protected override void OnLoad(EventArgs e)
 		{
-			InitializeFiles();
 			InitializeForm();
 			base.OnLoad(e);
 		}
@@ -176,7 +180,7 @@ namespace Brettle.Web.NeatUpload
 				// Get only the files that were uploaded from this control
 				for (int i = 0; allFiles != null && i < allFiles.Count; i++)
 				{
-					if (allFiles.GetKey(i) == this.UniqueID)
+					if (allFiles.GetKey(i) == this.ClientID)
 					{
 						UploadedFile uploadedFile = allFiles[i];
 						if (uploadedFile.IsUploaded)
@@ -190,10 +194,10 @@ namespace Brettle.Web.NeatUpload
 				// Get only the files that were uploaded from this control
 				for (int i = 0; allFiles != null && i < allFiles.Count; i++)
 				{
-					if (allFiles.GetKey(i) == this.UniqueID)
+					if (allFiles.GetKey(i) == this.ClientID)
 					{
 						UploadedFile uploadedFile 
-								= UploadModule.ConvertToUploadedFile(this.UniqueID, (HttpPostedFile)allFiles[i]);
+								= UploadModule.ConvertToUploadedFile(this.ClientID, (HttpPostedFile)allFiles[i]);
 						if (uploadedFile != null && uploadedFile.IsUploaded)
 							fileArrayList.Add(allFiles[i]);
 					}

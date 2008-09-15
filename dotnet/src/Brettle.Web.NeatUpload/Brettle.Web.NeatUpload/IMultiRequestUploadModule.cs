@@ -18,6 +18,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 using System;
+using System.Collections;
 using System.Collections.Specialized;
 using System.Web;
 
@@ -156,7 +157,7 @@ namespace Brettle.Web.NeatUpload
         /// </summary>
         /// <returns>the protected string representing the cookies, or null
         /// to indicate that default implementation should be used.</returns>
-        /// <remarks>The default implementation will create an  <see cref="NameValueCollection"/> 
+        /// <remarks>The default implementation will create an  <see cref="Hashtable"/> 
         /// containing the cookie names/values that ASP.NET uses for session ID and forms
         /// auth, and will pass it to <see cref="ObjectProtector.Protect"/>.
         /// </remarks>
