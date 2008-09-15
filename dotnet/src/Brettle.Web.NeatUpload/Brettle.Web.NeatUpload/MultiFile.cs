@@ -191,7 +191,9 @@ namespace Brettle.Web.NeatUpload
 		{
 			string targetDivID = "NeatUploadDiv_" + this.ClientID;
 			string name;
-			string storageConfigName = FormContext.Current.GenerateStorageConfigID(this.ClientID);
+            string storageConfigName = null;
+            if (!IsDesignTime)
+                storageConfigName = FormContext.Current.GenerateStorageConfigID(this.ClientID);
 			if (!IsDesignTime && UploadModule.IsEnabled)
 			{
 				// Generate a special name recognized by the UploadHttpModule
@@ -235,19 +237,32 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
 			
 			writer.AddAttribute(HtmlTextWriterAttribute.Id, targetDivID);
  			writer.RenderBeginTag(HtmlTextWriterTag.Div);
+            if (IsDesignTime && !IsEmpty())
+            {
+                RenderChildren(writer);
+            }
+            else
+            {
 
-			base.AddAttributesToRender(writer);
-			writer.AddAttribute(HtmlTextWriterAttribute.Type, "file");
-			writer.AddAttribute(HtmlTextWriterAttribute.Name, name);
-			writer.RenderBeginTag(HtmlTextWriterTag.Input);
-			writer.RenderEndTag(); // input type="file"
+                base.AddAttributesToRender(writer);
+                if (IsDesignTime)
+                {
+                    writer.AddAttribute(HtmlTextWriterAttribute.Type, "button");
+                    writer.AddAttribute(HtmlTextWriterAttribute.Value, "Pick Files...");
+                }
+                else
+                    writer.AddAttribute(HtmlTextWriterAttribute.Type, "file");
+                writer.AddAttribute(HtmlTextWriterAttribute.Name, name);
+                writer.RenderBeginTag(HtmlTextWriterTag.Input);
+                writer.RenderEndTag(); // input type="file"
 
-			if (UploadModule.IsEnabled && HasControls())
-			{
-				writer.Write("<div style='position: relative; display: none;'>");
-				RenderChildren(writer);
-				writer.Write("</div>");
-			}
+                if (UploadModule.IsEnabled && !IsEmpty())
+                {
+                    writer.Write("<div style='position: relative; display: none;'>");
+                    RenderChildren(writer);
+                    writer.Write("</div>");
+                }
+            }
 
 			if (UploadModule.IsEnabled)
 			{
@@ -274,6 +289,21 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
 
  			writer.RenderEndTag(); // div
 		}
+
+        private bool IsEmpty()
+        {
+            if (!HasControls())
+                return true;
+            if (Controls.Count > 1)
+                return false;
+            LiteralControl c = Controls[0] as LiteralControl;
+            if (c == null)
+                return false;
+            if (c.Text.Trim().Length == 0)
+                return true;
+            return false;
+        }
+
 		/// <summary>
 		/// Called by ASP.NET so that controls can find and process their post back data</summary>
 		/// <returns>true if a file was uploaded with this control</returns>

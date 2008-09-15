@@ -65,7 +65,7 @@ namespace Brettle.Web.NeatUpload
 				if (value != _Status)
 				{
 					_Status = value;
-                    if (_Status != UploadStatus.NormalInProgress && _Status != UploadStatus.ChunkedInProgress)
+                    if (_Status != UploadStatus.NormalInProgress && _Status != UploadStatus.ChunkedInProgress && TimeElapsed.TotalSeconds > 0)
                     {
                         _BytesPerSec = (int)Math.Round(BytesRead / TimeElapsed.TotalSeconds);
                     }
@@ -210,6 +210,8 @@ namespace Brettle.Web.NeatUpload
 		/// </value>
 		public TimeSpan TimeElapsed {
 			get {
+                if (TimeOfFirstByte == DateTime.MaxValue)
+                    return TimeSpan.FromSeconds(0);
 				return DateTime.Now - TimeOfFirstByte;
 			}
 		}
