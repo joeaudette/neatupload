@@ -73,7 +73,7 @@ namespace Brettle.Web.NeatUpload
 				if (_StorageConfig == null)
 				{
 					// Keep the storage config associated with the previous upload, if any
-					if (Files != null  && Files.Length > 0 && !IsDesignTime && HttpContext.Current != null)
+					if (!IsDesignTime && Files != null  && Files.Length > 0 && HttpContext.Current != null)
 					{
 						string secureStorageConfig = HttpContext.Current.Request.Form[FormContext.Current.GenerateStorageConfigID(ClientID)];
 						if (secureStorageConfig != null)
@@ -91,7 +91,7 @@ namespace Brettle.Web.NeatUpload
 				}
 				if (_StorageConfig != null)
 					return _StorageConfig;
-				if (_NewStorageConfig == null)
+				if (!IsDesignTime && _NewStorageConfig == null)
 				{
 					_NewStorageConfig = UploadStorage.CreateUploadStorageConfig();
 				}

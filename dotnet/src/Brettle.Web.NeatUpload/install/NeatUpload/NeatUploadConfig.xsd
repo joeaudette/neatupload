@@ -29,6 +29,7 @@
             <xs:attribute name="useHttpModule" type="xs:boolean" use="optional" />
             <xs:attribute name="maxNormalRequestLength" type="xs:int" use="optional" />
             <xs:attribute name="maxRequestLength" type="xs:int" use="optional" />
+            <xs:attribute name="maxUploadRate" type="xs:int" use="optional" />
             <xs:attribute name="postBackIDQueryParam" type="xs:string" use="optional" />
         </xs:complexType>
     </xs:element>

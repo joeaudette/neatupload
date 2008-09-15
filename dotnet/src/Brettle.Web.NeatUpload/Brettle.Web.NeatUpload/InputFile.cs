@@ -214,7 +214,7 @@ namespace Brettle.Web.NeatUpload
 		protected override void Render(HtmlTextWriter writer)
 		{
 			string name;
-			string storageConfigName;
+			string storageConfigName = null;
 			if (!IsDesignTime && UploadModule.IsEnabled)
 			{
 				// Generate a special name recognized by the UploadHttpModule
@@ -232,7 +232,8 @@ NeatUploadInputFileCreate('" + this.ClientID + @"','"
 			else
 			{
 				name = this.ClientID;
-				storageConfigName = FormContext.Current.GenerateStorageConfigID(this.ClientID);
+                if (!IsDesignTime)
+				    storageConfigName = FormContext.Current.GenerateStorageConfigID(this.ClientID);
 			}
 			// Store the StorageConfig in a hidden form field with a related name
 			if (StorageConfig != null && StorageConfig.Count > 0)

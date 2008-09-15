@@ -161,7 +161,8 @@ namespace Brettle.Web.NeatUpload
 		/// as the current request.
 		/// </value>
 		public static bool IsEnabled {
-			get { return (InstalledModule != null && InstalledModule.IsEnabled); }
+			get { return (HttpContext.Current == null // for design-time support
+                            || (InstalledModule != null && InstalledModule.IsEnabled)); }
 		}
 
         /// <summary>
@@ -325,16 +326,20 @@ namespace Brettle.Web.NeatUpload
 					return null;
 				if (_InstalledModule == null)
 				{
-					HttpModuleCollection modules = HttpContext.Current.ApplicationInstance.Modules;
-					foreach (string moduleName in modules.AllKeys)
-					{
-						IHttpModule module = modules[moduleName];
-						if (module is IUploadModule)
-						{
-							_InstalledModule = (IUploadModule) module;
-							break;
-						}
-					}
+                    HttpContext ctx = HttpContext.Current;
+                    if (ctx != null)
+                    {
+                        HttpModuleCollection modules = ctx.ApplicationInstance.Modules;
+                        foreach (string moduleName in modules.AllKeys)
+                        {
+                            IHttpModule module = modules[moduleName];
+                            if (module is IUploadModule)
+                            {
+                                _InstalledModule = (IUploadModule)module;
+                                break;
+                            }
+                        }
+                    }
 					if (_InstalledModule == null) 
 						_IsInstalled = false;
 				}

@@ -213,7 +213,8 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 			}
 
             double secsToWait = 0;
-            if (UploadState != null && Config.Current.MaxUploadRate > 0)
+            if (UploadState != null && Config.Current.MaxUploadRate > 0
+                && UploadState.TimeElapsed != TimeSpan.MinValue)
             {
                 double desiredSecs 
                 	= ((double)UploadState.BytesRead) / Config.Current.MaxUploadRate;
