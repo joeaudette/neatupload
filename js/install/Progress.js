@@ -62,21 +62,24 @@ function NeatUploadRefreshWithAjax(url)
 {
 	NeatUploadReq = null;
 	var req = null;
-	try
-	{
-		req = new ActiveXObject('Microsoft.XMLHTTP');
-	}
-	catch (ex)
-	{
-		req = null;
-	}
-	if (!req && typeof(XMLHttpRequest) != 'undefined')
+	if (typeof(XMLHttpRequest) != 'undefined')
 	{
 		req = new XMLHttpRequest();
+	}
+	if (!req)
+	{
+		try
+		{
+			req = new ActiveXObject('MSXML2.XMLHTTP.3.0');
+		}
+		catch (ex)
+		{
+		}
 	}
 	if (req)
 	{
 		NeatUploadReq = req;
+		req = null;
 	}
 	if (NeatUploadReq)
 	{
@@ -98,6 +101,7 @@ function NeatUploadUpdateHtml()
 		try
 		{
 			var responseXmlDoc = NeatUploadReq.responseXML;
+			NeatUploadReq = null;
 			if (responseXmlDoc.parseError && responseXmlDoc.parseError.errorCode != 0)
 			{
 //				window.alert('parse error: ' + responseXmlDoc.parseError.reason);
@@ -134,6 +138,8 @@ function NeatUploadUpdateHtml()
 					}
 				}
 			}
+			responseXmlDoc = null;
+			templates = null;
 			if (status != 'NormalInProgress' && status != 'ChunkedInProgress' && status != 'ProcessingInProgress' && status != 'Unknown')
 			{
 				NeatUploadRefreshPage();

@@ -984,8 +984,10 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	StyleInputFile(GetInputFileElem()); 
 	
 	// Don't use SWFUpload if Flash support wasn't requested or XMLHttpRequest isn't supported
-	if (!useFlashIfAvailable || !GetXHR())
+	var tmpXHR = GetXHR();
+	if (!useFlashIfAvailable || !tmpXHR)
 		return;
+	tmpXHR = null;
 	
 	nuf.AddHandler(window, "load", function ()	{
 		numf.Swfu = new SWFUpload({
@@ -1117,6 +1119,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 				numf.debugMessage("onreadstatechange(): req.responseText=" + req.responseText);
 				if (req.status == 200)
 					StartSWFUploads();
+				req = null;
 			}
 		};
 		numf.debugMessage("StartAsyncUploads(): calling req.send(" + postParams + ")");
@@ -1132,15 +1135,18 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	function GetXHR()
 	{
 		var req = null;
-		try
+		if (typeof(XMLHttpRequest) != 'undefined')
 		{
-			req = new ActiveXObject('Microsoft.XMLHTTP');
+			req = new XMLHttpRequest();
 		}
-		catch (ex)
+		if (!req)
 		{
-			if (typeof(XMLHttpRequest) != 'undefined')
+			try
 			{
-				req = new XMLHttpRequest();
+				req = new ActiveXObject('MSXML2.XMLHTTP.3.0');
+			}
+			catch (ex)
+			{
 			}
 		}
 		return req;
