@@ -40,7 +40,7 @@ namespace Brettle.Web.NeatUpload
 	/// </summary>
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class FileControl : System.Web.UI.WebControls.WebControl
+	public abstract class FileControl : System.Web.UI.WebControls.WebControl
 	{
 
 		// Create a logger for use in this class
