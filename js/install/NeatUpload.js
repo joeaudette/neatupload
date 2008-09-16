@@ -981,7 +981,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	
 	// If the browser supports opacity and the div after the input file control has children,
 	// then use a variant of McGrady's technique to make the input file control look like those children.
-	StyleInputFile(GetInputFileElem()); 
+	StyleInputFile(GetInputFileElem());
 	
 	// Don't use SWFUpload if Flash support wasn't requested or XMLHttpRequest isn't supported
 	var tmpXHR = GetXHR();
@@ -1257,31 +1257,44 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 		if (!replacementDiv || !replacementDiv.tagName || replacementDiv.tagName.toLowerCase() != "div" 
 			|| !replacementDiv.firstChild)
 			return;
-		replacementDiv.style.display = "block";
-		replacementDiv.style.height = replacementDiv.offsetHeight + "px";
-		var w = 0;
-		for (var n = replacementDiv.firstChild; n; n = n.nextSibling)
+		if (replacementDiv.offsetHeight)
+			MoveAndResizeDiv();
+		else
 		{
-			w = ((n.offsetLeft + n.offsetWidth > w) ? (n.offsetLeft + n.offsetWidth) : w);
-		}	
-		replacementDiv.style.width = w + "px";
-		replacementDiv.style.overflow = "hidden";
-		inputFile.style.display = "none";
-		inputFile.style.position = "absolute";
-		inputFile.style.textAlign = "right";
-		inputFile.style.top = 0;
-		inputFile.style.right = 0;
-		inputFile.style.cursor = "pointer";
-		var fontHeight = replacementDiv.offsetHeight;
-		var fontWidth = w / 3;
-		var fontSize = (fontHeight > fontWidth ? fontHeight : fontWidth);
-		inputFile.style.fontSize = fontSize + "px";
-		inputFile.style.filter = "alpha(opacity=0)";
-		inputFile.style.opacity = 0;
-		inputFile.style.MozOpacity = 0;
-		inputFile.style.zIndex = 2;
-		replacementDiv.insertBefore(inputFile, replacementDiv.firstChild);
-		inputFile.style.display = "block";
+			// Do the styling in an onload handler to support controls in tables because offsetheight isn't 
+			// available in tables until the page has loaded.
+			nuf.AddHandler(window, "load", MoveAndResizeDiv);
+		}
+		return;
+		
+		function MoveAndResizeDiv()
+		{
+			replacementDiv.style.display = "block";
+			replacementDiv.style.height = replacementDiv.offsetHeight + "px";
+			var w = 0;
+			for (var n = replacementDiv.firstChild; n; n = n.nextSibling)
+			{
+				w = ((n.offsetLeft + n.offsetWidth > w) ? (n.offsetLeft + n.offsetWidth) : w);
+			}	
+			replacementDiv.style.width = w + "px";
+			replacementDiv.style.overflow = "hidden";
+			inputFile.style.display = "none";
+			inputFile.style.position = "absolute";
+			inputFile.style.textAlign = "right";
+			inputFile.style.top = 0;
+			inputFile.style.right = 0;
+			inputFile.style.cursor = "pointer";
+			var fontHeight = replacementDiv.offsetHeight;
+			var fontWidth = w / 3;
+			var fontSize = (fontHeight > fontWidth ? fontHeight : fontWidth);
+			inputFile.style.fontSize = fontSize + "px";
+			inputFile.style.filter = "alpha(opacity=0)";
+			inputFile.style.opacity = 0;
+			inputFile.style.MozOpacity = 0;
+			inputFile.style.zIndex = 2;
+			replacementDiv.insertBefore(inputFile, replacementDiv.firstChild);
+			inputFile.style.display = "block";
+		}
 	}
 
 }
