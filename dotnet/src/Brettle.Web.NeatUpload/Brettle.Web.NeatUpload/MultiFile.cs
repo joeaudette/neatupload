@@ -237,36 +237,32 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
 			
 			writer.AddAttribute(HtmlTextWriterAttribute.Id, targetDivID);
  			writer.RenderBeginTag(HtmlTextWriterTag.Div);
-            if (IsDesignTime && !IsEmpty())
-            {
-                RenderChildren(writer);
-            }
-            else
+            if (!IsDesignTime)
             {
 
                 base.AddAttributesToRender(writer);
-                if (IsDesignTime)
-                {
-                    writer.AddAttribute(HtmlTextWriterAttribute.Type, "button");
-                    writer.AddAttribute(HtmlTextWriterAttribute.Value, "Pick Files...");
-                }
-                else
-                    writer.AddAttribute(HtmlTextWriterAttribute.Type, "file");
+                writer.AddAttribute(HtmlTextWriterAttribute.Type, "file");
                 writer.AddAttribute(HtmlTextWriterAttribute.Name, name);
                 writer.RenderBeginTag(HtmlTextWriterTag.Input);
                 writer.RenderEndTag(); // input type="file"
-
-                if (UploadModule.IsEnabled && !IsEmpty())
-                {
-                    writer.Write("<div style='position: relative; display: none;'>");
-                    RenderChildren(writer);
-                    writer.Write("</div>");
-                }
             }
 
-			if (UploadModule.IsEnabled)
+            if (UploadModule.IsEnabled)
 			{
-				// The constant strings below are broken apart so that you couldn't just search for the text and
+                writer.Write("<div style='position: relative; display: {0};'>",
+                    IsDesignTime ? "block" : "none");
+                if (!IsEmpty())
+                    RenderChildren(writer);
+                else
+                {
+                    writer.AddAttribute(HtmlTextWriterAttribute.Type, "button");
+                    writer.AddAttribute(HtmlTextWriterAttribute.Value, "Pick Files...");
+                    writer.RenderBeginTag(HtmlTextWriterTag.Input);
+                    writer.RenderEndTag();
+                }
+                writer.Write("</div>");
+
+                // The constant strings below are broken apart so that you couldn't just search for the text and
 				// remove it.  To find this code, you probably had to understand enough about custom web controls
 				// to know where to look.  People who can't find this code are generally less experienced, harder
 				// to support, and less likely to submit patches.  So they contribute in another way when they
