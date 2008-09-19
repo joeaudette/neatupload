@@ -29,6 +29,18 @@ using Brettle.Web.NeatUpload.Internal.Module;
 
 namespace Brettle.Web.NeatUpload
 {
+    /// <summary>
+    /// Converts serializable objects to and from secure strings so they
+    /// can be passed through untrusted code.
+    /// </summary>
+    /// <remarks>
+    /// <see cref="Protect(object)"/> serializes, encrypts, signs, and base64-encodes 
+    /// an object tree to produce a secure string.  
+    /// <see cref="Unprotect(string)"/> base64-decodes 
+    /// the string, verifies the signature, decrypts the ciphertext and deserializes
+    /// the object tree.  All objects in the object tree must have the
+    /// <see cref="SerializableAttribute"/>.
+    /// </remarks>
 	public class ObjectProtector
 	{
 		// Static methods only
@@ -40,25 +52,86 @@ namespace Brettle.Web.NeatUpload
 		= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 		*/
 
+        /// <summary>
+        /// A method that verifies that two signatures are the same and throws an
+        /// exception if they aren't.
+        /// </summary>
+        /// <param name="actualHash">the actual signature</param>
+        /// <param name="expectedHash">the expected signature</param>
 		public delegate void SignatureChecker(byte[] actualHash, byte[] expectedHash);
-		public delegate void Deserializer(Stream s);
-		public delegate void Serializer(Stream s);
 
-		public static object Unprotect(string secureString)
+        /// <summary>
+        /// A method of an object that reconstructs the object from a <see cref="Stream"/>
+        /// of serialized bytes.
+        /// </summary>
+        /// <param name="s">the <see cref="Stream"/> of serialized bytes.</param>
+		public delegate void Deserializer(Stream s);
+
+        /// <summary>
+        /// A method of an object that serializes the object into a <see cref="Stream"/>
+        /// of serialized bytes.
+        /// </summary>
+        /// <param name="s">the <see cref="Stream"/> to which the serialized bytes
+        /// will be written.</param>
+        public delegate void Serializer(Stream s);
+
+        /// <summary>
+        /// Converts a secure string back to the object tree it represents.
+        /// </summary>
+        /// <param name="secureString">a <see cref="string"/> returned by an earlier
+        /// call to <see cref="Protect(object)"/></param>
+        /// <returns>the object that was passed to <see cref="Protect(object)"/></returns>
+        /// <exception>throws an <see cref="Exception"/> if the signature is
+        /// not valid.</exception>
+        /// <remarks>The encryption and validation keys specified in the encryptionKey
+        /// and validationKey attributes of the &lt;neatUpload&gt; element are used
+        /// to verify the signature and decrypt the ciphertext.  They must have
+        /// the same values as they did when <see cref="Protect(object)"/> was called or
+        /// an exception will occur.</remarks>
+        public static object Unprotect(string secureString)
 		{
 			SelfSerializingObject obj = new SelfSerializingObject();
 			Unprotect(secureString, obj.Deserialize, AssertSignaturesAreEqual);
 			return obj.Obj;
 		}
-		
-		public static string Protect(object objectToSerialize)
+
+        /// <summary>
+        /// Converts an object tree to a secure string.
+        /// </summary>
+        /// <param name="objectToSerialize">the object at the root of the object tree
+        /// to protect.</param>
+        /// <returns>a secure string that can be passed to <see cref="Unprotect(string)"/> to
+        /// retrieve the original object.</returns>
+        /// <remarks>The encryption and validation keys specified in the encryptionKey
+        /// and validationKey attributes of the &lt;neatUpload&gt; element are used
+        /// to encrypt the serialized object and sign it, respectively.  They must have
+        /// the same values when <see cref="Unprotect(string)"/> is called or
+        /// an exception will occur.</remarks>
+        public static string Protect(object objectToSerialize)
 		{
 			SelfSerializingObject obj = new SelfSerializingObject();
 			obj.Obj = objectToSerialize;
 			return Protect(obj.Serialize);
 		}
 
-		public static void Unprotect(string secureString, Deserializer deserializer, SignatureChecker sigChecker)
+        /// <summary>
+        /// Converts a secure string back to the object tree it represents, using
+        /// a custom <see cref="Deserializer"/> and <see cref="SignatureChecker"/>.
+        /// </summary>
+        /// <param name="secureString">the secure string to be converted back to an
+        /// object tree.</param>
+        /// <param name="deserializer">a <see cref="Deserializer"/> delegate from the
+        /// root object of the object tree that can recreate the object tree from a
+        /// <see cref="Stream"/> of serialized bytes.</param>
+        /// <param name="sigChecker">a <see cref="SignatureChecker"/> delegate that
+        /// compares an actual signature to the expected signature, throwin an exception
+        /// if they don't match.</param>
+        /// <remarks>The encryption and validation keys specified in the encryptionKey
+        /// and validationKey attributes of the &lt;neatUpload&gt; element are used
+        /// to verify the signature and decrypt the ciphertext.  They must have
+        /// the same values as they did when <see cref="Protect(Serializer)"/> was called or
+        /// an exception will occur.</remarks>
+        public static void Unprotect(string secureString, Deserializer deserializer, SignatureChecker sigChecker)
 		{			
 			byte[] secureBytes = Convert.FromBase64String(secureString);
 			MemoryStream secureStream = new MemoryStream(secureBytes);
@@ -90,8 +163,20 @@ namespace Brettle.Web.NeatUpload
 				cryptoStream.Close();
 			}
 		}
-		
-		public static string Protect(Serializer serializer)
+
+        /// <summary>
+        /// Converts am object tree to a secure string, using
+        /// a custom <see cref="Serializer"/>.
+        /// </summary>
+        /// <param name="serializer">a <see cref="Serializer"/> delegate from the
+        /// root object of the object tree that can serialize the object tree into a
+        /// <see cref="Stream"/> of serialized bytes.</param>
+        /// <remarks>The encryption and validation keys specified in the encryptionKey
+        /// and validationKey attributes of the &lt;neatUpload&gt; element are used
+        /// to encrypt the serialized object and sign it, respectively.  They must have
+        /// the same values when <see cref="Unprotect(string, Deserializer, SignatureChecker)"/> is called or
+        /// an exception will occur.</remarks>
+        public static string Protect(Serializer serializer)
 		{
 			// Encrypt it
 			MemoryStream cipherTextStream = new MemoryStream();
@@ -123,6 +208,12 @@ namespace Brettle.Web.NeatUpload
 			return Convert.ToBase64String(secureStream.ToArray());
 		}
 		
+        /// <summary>
+        /// Compares an actual signature to an expected signature, throwing an exception if they 
+        /// don't match.
+        /// </summary>
+        /// <param name="actualHash">the actual signature</param>
+        /// <param name="expectedHash">the expected signature</param>
 		public static void AssertSignaturesAreEqual(byte[] actualHash, byte[] expectedHash)
 		{
 			if (actualHash.Length != expectedHash.Length)

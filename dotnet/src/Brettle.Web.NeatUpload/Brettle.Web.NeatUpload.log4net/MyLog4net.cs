@@ -20,7 +20,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #if ! USE_LOG4NET
 
-#warning LOGGING DISABLED.  To use log4net for logging, add a reference to log4net and define USE_LOG4NET.
+
+// This class is only used when not using log4net for logging.
+// To use log4net for logging, add a reference to log4net and define USE_LOG4NET.
 
 using System;
 using System.Collections;

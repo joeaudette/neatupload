@@ -37,9 +37,9 @@ using System.IO;
 [assembly: CLSCompliant(true)]
 
 [assembly: System.Security.AllowPartiallyTrustedCallers]
+
+// To enable logging with log4net, add a reference to log4net and define USE_LOG4NET.
 #if USE_LOG4NET
 [assembly: log4net.Config.XmlConfigurator(ConfigFile="log4net.config", Watch=true)]
-#else
-#warning LOGGING DISABLED.  To use log4net for logging, add a reference to log4net and define USE_LOG4NET.
 #endif
 

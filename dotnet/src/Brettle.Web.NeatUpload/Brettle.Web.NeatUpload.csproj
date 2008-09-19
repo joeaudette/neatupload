@@ -45,6 +45,7 @@
       <EnvironmentVariables />
     </EnvironmentVariables>
     <GenerateDocumentation>true</GenerateDocumentation>
+    <DocumentationFile>install\bin\Brettle.Web.NeatUpload.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -55,6 +56,7 @@
     <ConsolePause>false</ConsolePause>
     <DebugSymbols>true</DebugSymbols>
     <GenerateDocumentation>true</GenerateDocumentation>
+    <DocumentationFile>install\bin\Brettle.Web.NeatUpload.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

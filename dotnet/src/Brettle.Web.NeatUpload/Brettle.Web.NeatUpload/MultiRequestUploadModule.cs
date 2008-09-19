@@ -96,7 +96,7 @@ namespace Brettle.Web.NeatUpload
 		/// Whether an <see cref="IMultRequestUploadModule"/> is installed and 
 		/// will handle requests to the same URL as the current request.
 		/// </value>
-		public static bool IsEnabled {
+		public static new bool IsEnabled {
 			get { return (InstalledModule != null && InstalledModule.IsEnabled); }
 		}
 
@@ -211,7 +211,7 @@ namespace Brettle.Web.NeatUpload
             return armoredCookies;
         }
 
-        private static IMultiRequestUploadModule InstalledModule
+        private static new IMultiRequestUploadModule InstalledModule
         {
 			get {
 				return UploadModule.InstalledModule as IMultiRequestUploadModule;
