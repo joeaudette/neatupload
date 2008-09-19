@@ -638,7 +638,7 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 						if (origContentLength > UploadHttpModule.MaxRequestLength)
 						{
 							if (log.IsDebugEnabled) log.Debug("contentLength > MaxRequestLength");
-							throw new UploadTooLargeException(UploadHttpModule.MaxRequestLength);
+							throw new UploadTooLargeException(UploadHttpModule.MaxRequestLength, origContentLength);
 						}
 	
 						// Write out a replacement part that just contains the filename as the value.
