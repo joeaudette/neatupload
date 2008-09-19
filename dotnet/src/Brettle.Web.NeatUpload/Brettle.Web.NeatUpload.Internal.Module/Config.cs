@@ -218,7 +218,7 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 				{
 					config.StateStaleAfterSeconds = Double.Parse(val);
 				}
-                else if (!name.Contains(":") && name != "xmlns")
+                else if (name.IndexOf(":") == -1 && name != "xmlns")
 				{
 					throw new XmlException("Unrecognized unqualified attribute: " + name);
 				}
