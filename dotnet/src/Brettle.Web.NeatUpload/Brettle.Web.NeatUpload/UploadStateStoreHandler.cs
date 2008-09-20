@@ -29,7 +29,15 @@ namespace Brettle.Web.NeatUpload
 	{
 		public virtual void ProcessRequest(HttpContext context)
 		{
-            SimpleWebRemoting.ProcessRemoteCallRequest(context, HandleMethodCall);
+			try
+			{
+            	SimpleWebRemoting.ProcessRemoteCallRequest(context, HandleMethodCall);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine("ProcessRemoteCallRequest threw {0}", ex);
+				throw;
+			}
         }
 
         private object HandleMethodCall(string methodName, object[] args)

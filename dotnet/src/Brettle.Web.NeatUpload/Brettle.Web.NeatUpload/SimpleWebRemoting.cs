@@ -27,7 +27,11 @@ namespace Brettle.Web.NeatUpload
 {	
 	public class SimpleWebRemoting
 	{
-        public delegate object MethodCallHandler(string methodName, object[] args);
+		// Create a logger for use in this class
+		private static readonly log4net.ILog log 
+			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+		public delegate object MethodCallHandler(string methodName, object[] args);
 
         public static void ProcessRemoteCallRequest(HttpContext context, MethodCallHandler methodCallHandler)
         {
@@ -57,12 +61,26 @@ namespace Brettle.Web.NeatUpload
             if (httpCookies != null)
                 foreach (string name in httpCookies.AllKeys)
                     cookieContainer.Add(new Cookie(name, httpCookies[name].Value, "/", uri.Host));
-            WebClient wc = new WebClient();
-            wc.Headers.Add("Cookie", cookieContainer.GetCookieHeader(uri));
-            string protectedRequestPayload = ObjectProtector.Protect(methodCall);
-            NameValueCollection formValues = new NameValueCollection();
-            formValues.Add("ProtectedPayload", protectedRequestPayload);
-            byte[] responseBytes = wc.UploadValues(uri.ToString(), formValues);
+			WebClient wc = new WebClient();
+            byte[] responseBytes = null;
+            try
+			{
+	            wc.Headers.Add("Cookie", cookieContainer.GetCookieHeader(uri));
+	            string protectedRequestPayload = ObjectProtector.Protect(methodCall);
+	            NameValueCollection formValues = new NameValueCollection();
+	            formValues.Add("ProtectedPayload", protectedRequestPayload);
+	            responseBytes = wc.UploadValues(uri.ToString(), formValues);
+			}
+			catch (Exception ex)
+			{
+				log.Error(String.Format("Caught exception while making call to {0} at {1}", methodCall[0], uri), 
+				          ex);
+				throw;
+			}
+			finally
+			{
+				wc.Dispose();
+			}
             string protectedResponsePayload = System.Text.Encoding.ASCII.GetString(responseBytes);
             if (protectedResponsePayload != null && protectedResponsePayload.Length > 0)
             {
