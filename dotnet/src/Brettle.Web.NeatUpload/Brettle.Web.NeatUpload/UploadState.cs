@@ -260,7 +260,7 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 
-		private void Files_Changed(object sender, EventArgs args)
+		public void Files_Changed(object sender, EventArgs args)
 		{
 			OnChanged();
 		}

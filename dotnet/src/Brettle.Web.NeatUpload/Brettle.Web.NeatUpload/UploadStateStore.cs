@@ -134,7 +134,7 @@ namespace Brettle.Web.NeatUpload
             PostBackIDsToCleanUpIfStale[postBackID] = postBackID;
 		}
 
-		private static void UploadState_Changed(object sender, EventArgs args)
+		public static void UploadState_Changed(object sender, EventArgs args)
 		{
 			UploadState uploadState = sender as UploadState;
 			DateTime now = DateTime.Now;
