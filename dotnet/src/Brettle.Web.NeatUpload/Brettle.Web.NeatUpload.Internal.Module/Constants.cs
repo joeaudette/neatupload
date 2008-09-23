@@ -29,9 +29,11 @@ using Brettle.Web.NeatUpload;
 
 namespace Brettle.Web.NeatUpload.Internal.Module
 {
-	[Serializable]
-	public class Constants
+	internal class Constants
 	{
+		// No instances.
+		private Constants() { }
+		
 		internal const string ContextItemKeyPrefix = "NeatUpload.UploadedFile-";
 				
 		// All NeatUpload InputFile controls will have name attributes starting with the following prefix

@@ -44,7 +44,7 @@
 			Now either select and upload files using the following MultiFile controls:
 			</p>
 			<p>File(s) to upload: 
-			<Upload:MultiFile id="multiFile" runat="server" useFlashIfAvailable="true">
+			<Upload:MultiFile id="multiFile" runat="server" useFlashIfAvailable="true" flashFilterExtensions="*.jpg;*.gif;*.png">
 				<input type="button" id="multiFileButton" value="Add File..." />
 			</Upload:MultiFile>
 			<asp:RegularExpressionValidator id="RegularExpressionValidator2" 
