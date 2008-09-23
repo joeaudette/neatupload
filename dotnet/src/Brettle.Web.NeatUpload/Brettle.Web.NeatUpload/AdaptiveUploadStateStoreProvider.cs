@@ -25,7 +25,10 @@ using System.IO;
 
 namespace Brettle.Web.NeatUpload
 {
-		
+	/// <summary>
+	/// Acts like <see cref="InProcUploadStateStoreProvider"/> if a the session state mode is Off or
+	/// InProc.  Otherwise, acts like <see cref="SessionBasedUploadStateStoreProvider"/>.
+	/// </summary>
 	public class AdaptiveUploadStateStoreProvider : UploadStateStoreProvider
 	{
         public override void Initialize(string name, System.Collections.Specialized.NameValueCollection attrs)
