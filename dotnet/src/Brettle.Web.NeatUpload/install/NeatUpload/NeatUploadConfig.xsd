@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <xs:schema targetNamespace="http://www.brettle.com/neatupload/config/2008" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vs="http://schemas.microsoft.com/Visual-Studio-Intellisense" elementFormDefault="qualified" attributeFormDefault="unqualified">
   <xs:element name="neatUpload" vs:help="configuration/neatUpload">
     <xs:annotation>
@@ -212,7 +212,8 @@
             The number of seconds the upload state must remain unchanged before
             NeatUpload can request that the UploadStateStoreProvider remove the
             upload state from the store.  This is primarily for cases where a
-            multi-request upload stops without warning between requests.
+            multi-request upload stops without warning between requests.  Defaults to
+            60 seconds.
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
