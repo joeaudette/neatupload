@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		<title>Upload Progress</title>
 		<link rel="stylesheet" type="text/css" title="default" href="default.css" />		
 		<style type="text/css">
-<!--
 		body, form, table, tr, td {
 			margin: 0px;
 			border: 0px none;
@@ -72,7 +71,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			height: 100%;
 			width: 75%;
 		}
--->
 		</style>
 	</head>
 	<body>

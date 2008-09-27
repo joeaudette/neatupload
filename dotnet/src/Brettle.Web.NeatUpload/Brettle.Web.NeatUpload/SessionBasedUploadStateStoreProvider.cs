@@ -92,6 +92,6 @@ namespace Brettle.Web.NeatUpload
             return SimpleWebRemoting.MakeRemoteCall(handlerUriBuilder.Uri, methodCall);
         }
 
-        private string HandlerUrl = "~/NeatUpload/UploadStateStoreHandler.ashx";
+        internal string HandlerUrl = "~/NeatUpload/UploadStateStoreHandler.ashx";
 	}
 }
