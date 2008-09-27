@@ -71,9 +71,18 @@ namespace Brettle.Web.NeatUpload
                 {
                     if (_Provider == null)
                     {
-                        UriBuilder handlerUriBuilder = new UriBuilder(HttpContext.Current.Request.Url);
-                        handlerUriBuilder.Path = HttpContext.Current.Request.ApplicationPath + "/NeatUpload/UploadStateStoreHandler.ashx";
-                        SessionStateMode mode = (SessionStateMode)SimpleWebRemoting.MakeRemoteCall(handlerUriBuilder.Uri, "GetSessionStateMode");
+                        HttpSessionState session = HttpContext.Current.Session;
+                        SessionStateMode mode;
+                        if (session != null)
+                        {
+                            mode = session.Mode;
+                        }
+                        else
+                        {
+                            UriBuilder handlerUriBuilder = new UriBuilder(HttpContext.Current.Request.Url);
+                            handlerUriBuilder.Path = HttpContext.Current.Response.ApplyAppPathModifier(SessionBasedProvider.HandlerUrl);
+                            mode = (SessionStateMode)SimpleWebRemoting.MakeRemoteCall(handlerUriBuilder.Uri, "GetSessionStateMode");
+                        }
                         if (mode == SessionStateMode.Off || mode == SessionStateMode.InProc)
                             _Provider = InProcProvider;
                         else
