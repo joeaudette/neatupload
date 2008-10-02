@@ -43,3 +43,6 @@ using System.IO;
 [assembly: log4net.Config.XmlConfigurator(ConfigFile="log4net.config", Watch=true)]
 #endif
 
+// Works around a Mono bug which fails to set this flag by default, causing the control
+// to not work in a VB.NET Web Application project.
+[assembly: AssemblyFlags(1 /* AssemblyNameFlags.PublicKey only exists in .NET 2.0 */)]
