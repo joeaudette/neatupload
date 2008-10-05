@@ -520,12 +520,17 @@ NeatUploadForm.prototype.OnSubmit = function(ev)
 
 	// To avoid having OnSubmit() run twice for the same click
 	// (once from our form.submit() and again from our onsubmit handler),
-	// we set a flag to note that we've already called it, and add a timer event 
-	// that will reset it once all other pending events are processed.
+	// we set a flag to note that we've already called it, and add a timer handler 
+	// that will reset it once all other pending events are
+	// processed, and a and stop upload handler that will reset it if the upload
+	// is stopped.
 	var formElem = this;
 	if (formElem.NeatUpload_OnSubmitCalled)
 		return false;
 	formElem.NeatUpload_OnSubmitCalled = true;
+    NeatUploadForm.prototype.AddStopUploadHandler(function() {
+        formElem.NeatUpload_OnSubmitCalled = false;
+    });
 	var timeoutId = window.setTimeout(function () { formElem.NeatUpload_OnSubmitCalled = false; }, 1);
 
 	var retVal = true;
