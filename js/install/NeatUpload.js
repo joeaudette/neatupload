@@ -966,7 +966,6 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 		{
 			if (n.tagName && n.tagName.toLowerCase() == "input" 
 				&& n.getAttribute 
-				&& (n.getAttribute('type') == "file" || n.getAttribute('type') == "hidden")
 				&& n.getAttribute('name') == oldName)
 			{
 				n.setAttribute('name', newName);
@@ -1382,9 +1381,9 @@ NeatUploadUnloadConfirmer.prototype.Controls = new Object();
 
 
 /***************************** Debug Settings **************************/
-NeatUploadForm.prototype.debug_enabled = true;
-NeatUploadPB.prototype.debug_enabled = true;
-NeatUploadMultiFile.prototype.debug_enabled = true;
-NeatUploadUnloadConfirmer.prototype.debug_enabled = true;
+NeatUploadForm.prototype.debug_enabled = false;
+NeatUploadPB.prototype.debug_enabled = false;
+NeatUploadMultiFile.prototype.debug_enabled = false;
+NeatUploadUnloadConfirmer.prototype.debug_enabled = false;
 
 
