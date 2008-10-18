@@ -322,8 +322,12 @@ namespace Brettle.Web.NeatUpload.Internal.Module
         private bool _UseHttpModule = UploadHttpModule.IsInited;
         internal bool UseHttpModule
         {
-//            set { _UseHttpModule = value; }
-            get { return _UseHttpModule && CanGetWorkerRequest; }
+            get 
+            {
+                object useHttpModuleOverride = HttpContext.Current.Items["NeatUpload_UseHttpModule"];
+                return (_UseHttpModule || (useHttpModuleOverride != null && (bool)useHttpModuleOverride)) 
+                            && CanGetWorkerRequest;
+            }
         }
 
 		private ResourceManager ResourceManager = null;

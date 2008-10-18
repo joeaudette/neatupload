@@ -376,6 +376,13 @@ namespace Brettle.Web.NeatUpload
 			string qs = wr.GetQueryString();
 			if (filePath.StartsWith(multiRequestUploadPath.ToLower()))
 			{
+                // The module should always be used for the multi-request upload handler
+                // Note that for compatibility reasons we can't set useHttpModule="true"
+                // in the NeatUpload folder's Web.config because we can't be sure where
+                // the app put the top-level <neatUpload> section and if guess wrong we
+                // won't inherit the top-level settings (e.g. validationKey and 
+                // encryptionKey)
+                HttpContext.Current.Items["NeatUpload_UseHttpModule"] = true;
 				if (qs != null)
 				{
 					HttpCookieCollection cookies = UploadHttpModule.GetCookiesFromQueryString(qs);
