@@ -52,10 +52,9 @@ namespace Brettle.Web.NeatUpload
 	public abstract class ProgressBarBase : System.Web.UI.WebControls.WebControl
 	{
 		protected string UploadProgressPath;
-		private ArrayList otherTriggers = new ArrayList(); // Controls passed to AddTrigger()
 
 		/// <summary>
-		/// Space-separated list of the IDs of controls which should upload files and start the progress 
+		/// Space-separated list of the IDs or ClientIDs of controls which should upload files and start the progress 
 		/// display. </summary>
 		/// <remarks>
 		/// If no triggers are listed in <see cref="Triggers"/> or added via <see cref="AddTrigger"/> then whenever
@@ -237,15 +236,13 @@ namespace Brettle.Web.NeatUpload
 		/// See the <see cref="Triggers"/> property for information on what triggers are.  This method is
 		/// primarily for situations where the see cref="Triggers"/> property can't be used because the ID of the
 		/// trigger control is not known until runtime (e.g. for
-		/// controls in Repeaters).  Controls added via this method are maintained in a separate list from those
-		/// listed in the <see cref="Triggers"/> property, and said list is not maintained as part of this
+		/// controls in Repeaters).  Controls added via this method are not maintained as part of this
 		/// control's <see cref="ViewState"/>.  That means that if you use this method, you will need to call it
 		/// for each request, not just non-postback requests.  Also, you can use both this method and the
 		/// <see cref="Triggers"/> property for the same control.
 		/// </remarks>
 		public void AddTrigger(Control control)
 		{
-			otherTriggers.Add(control);
             Page.RegisterClientScriptBlock(String.Format("NeatUploadProgressBar-{0}-{1}", ClientID, control.ClientID),
                 String.Format(@"<script type='text/javascript' language='javascript'>
 	if (typeof(NeatUploadPB_{0}_Triggers) == 'undefined') NeatUploadPB_{0}_Triggers = [];
