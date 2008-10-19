@@ -99,22 +99,20 @@ namespace Brettle.Web.NeatUpload
 			inlineProgressBar.AddTrigger(commandButton);
 			inlineProgressBar.AddTrigger(htmlInputButtonButton);
 			inlineProgressBar.AddTrigger(htmlInputButtonSubmit);
-*/
 
-/*
-			// The temp directory used by the default FilesystemUploadStorageProvider can be configured on a
-			// per-control basis like this (see documentation for details)
-			if (!IsPostBack)
-			{
-				inputFile.StorageConfig["tempDirectory"] = "file1temp";
-				inputFile2.StorageConfig["tempDirectory"] = "file2temp";
-			}
+            // The temp directory used by the default FilesystemUploadStorageProvider can be configured on a
+            // per-control basis like this (see documentation for details).  Note that if the temp directory
+            // is within the application's directory hierarchy (except under App_Data) ASP.NET may restart
+            // the application when NeatUpload writes the temp files to the directory.
+            if (!IsPostBack)
+            {
+                inputFile.StorageConfig["tempDirectory"] = Path.Combine("App_Data", "file1temp");
+                inputFile2.StorageConfig["tempDirectory"] = Path.Combine("App_Data", "file2temp");
+                multiFile.StorageConfig["tempDirectory"] = Path.Combine("App_Data", "file1temp");
+  				multiFile2.StorageConfig["tempDirectory"] = Path.Combine("App_Data", "file2temp");
+            }
 */
-			if (!IsPostBack)
-			{
-				multiFile.StorageConfig["tempDirectory"] = "file1temp";
-			}
-		}
+        }
 
 		private void Button_Clicked(object sender, EventArgs e)
 		{
