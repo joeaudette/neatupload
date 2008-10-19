@@ -60,7 +60,21 @@ namespace Brettle.Web.NeatUpload
             HttpCookieCollection httpCookies = HttpContext.Current.Request.Cookies;
             if (httpCookies != null)
                 foreach (string name in httpCookies.AllKeys)
-                    cookieContainer.Add(new Cookie(name, httpCookies[name].Value, "/", uri.Host));
+                {
+                    string quotedCookieValue = httpCookies[name].Value;
+                    if (quotedCookieValue.IndexOfAny(new char[] {',', ';'}) != -1)
+                        quotedCookieValue = "\"" + quotedCookieValue.Replace("\"", "\\\"") + "\"";
+                    try
+                    {
+                        cookieContainer.Add(new Cookie(name, quotedCookieValue, "/", uri.Host));
+                    }
+                    catch (Exception ex)
+                    {
+                        // We typically only need to use cookies that are used to identify the session
+                        // so if other cookies throw exceptions, it is best to just ignore them.
+                        if (log.IsDebugEnabled) log.DebugFormat("Ignore exception thrown by CookieContainer.Add(): {0}", ex);
+                    }
+                }
 			WebClient wc = new WebClient();
             byte[] responseBytes = null;
             try
