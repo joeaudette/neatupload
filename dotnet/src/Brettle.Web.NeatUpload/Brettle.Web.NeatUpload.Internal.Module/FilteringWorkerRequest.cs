@@ -408,6 +408,14 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 						UploadState.Failure = ex;
 						UploadState.Status = UploadStatus.Failed;
 					}
+
+                    // If an error occurs during the upload of one file during
+                    // a multi-request upload, make sure that all the files associated
+                    // with that upload get disposed.
+                    if (MultiRequestControlID != null)
+                    {
+                        RegisterFilesForDisposal(MultiRequestControlID);
+                    }
 				}
 					
 				try
