@@ -48,16 +48,16 @@ namespace Brettle.Web.NeatUpload
 				string postBackID = (string)args[0];
                 retVal = Load(postBackID);
 			}
-			else if (methodName == "MergeSaveAndCleanUp")
+			else if (methodName == "MergeAndSave")
 			{
 				UploadState uploadState = (UploadState)args[0];
-                string[] postBackIDsToCleanUpIfStale = (string[])args[1];
-                retVal = MergeSaveAndCleanUp(uploadState, postBackIDsToCleanUpIfStale);
+                MergeAndSave(uploadState);
 			}
-            else if (methodName == "Delete")
+            else if (methodName == "CleanUpIfStale")
             {
-                string postBackID = (string)args[0];
-                Delete(postBackID);
+                object postBackID = (object)args[0];
+                EventArgs eventArgs = (EventArgs)args[1];
+                CleanUpIfStale(postBackID, eventArgs);
             }
             else if (methodName == "GetSessionStateMode")
             {

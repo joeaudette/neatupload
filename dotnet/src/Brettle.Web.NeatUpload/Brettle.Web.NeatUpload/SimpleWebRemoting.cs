@@ -56,8 +56,13 @@ namespace Brettle.Web.NeatUpload
 
         public static object MakeRemoteCall(Uri uri, params object[] methodCall)
         {
-            CookieContainer cookieContainer = new CookieContainer();
             HttpCookieCollection httpCookies = HttpContext.Current.Request.Cookies;
+            return MakeRemoteCall(uri, httpCookies, methodCall);
+        }
+
+        public static object MakeRemoteCall(Uri uri, HttpCookieCollection httpCookies, params object[] methodCall)
+        {
+            CookieContainer cookieContainer = new CookieContainer();
             if (httpCookies != null)
                 foreach (string name in httpCookies.AllKeys)
                 {

@@ -285,5 +285,6 @@ namespace Brettle.Web.NeatUpload
 		private DateTime TimeOfFirstByte = DateTime.MaxValue;
 		internal bool DeleteAfterDelayWhenNotOpenReadWrite = false;
 		internal bool IsMerging = false;
+        internal bool IsWritable = true;
 	}
 }
