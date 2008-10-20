@@ -55,20 +55,20 @@ namespace Brettle.Web.NeatUpload
 			return (UploadState)MakeRemoteCall("Load", postBackID);
 		}
 
-		public override string[] MergeSaveAndCleanUp(UploadState uploadState, string[] postBackIDsToCleanUpIfStale)
+		public override void MergeAndSave(UploadState uploadState)
 		{
 			if (IsSessionWritable)
 			{
-				return base.MergeSaveAndCleanUp(uploadState, postBackIDsToCleanUpIfStale);
+				base.MergeAndSave(uploadState);
+                return;
 			}
-			return (string[])MakeRemoteCall("MergeSaveAndCleanUp", uploadState, postBackIDsToCleanUpIfStale);
+			MakeRemoteCall("MergeAndSave", uploadState);
 		}
 
-        public override void Delete(string postBackID)
+        public override EventHandler GetCleanUpIfStaleHandler(string postBackID)
         {
-            if (IsSessionWritable)
-                base.Delete(postBackID);
-            MakeRemoteCall("Delete", postBackID);
+            RemoteCall remoteCall = new RemoteCall(HandlerUrl, "CleanUpIfStale", postBackID, null);
+            return new EventHandler(remoteCall.Invoke);
         }
 
         private bool IsSessionReadable
@@ -90,6 +90,27 @@ namespace Brettle.Web.NeatUpload
             UriBuilder handlerUriBuilder = new UriBuilder(HttpContext.Current.Request.Url);
             handlerUriBuilder.Path = HttpContext.Current.Response.ApplyAppPathModifier(HandlerUrl);
             return SimpleWebRemoting.MakeRemoteCall(handlerUriBuilder.Uri, methodCall);
+        }
+
+        private class RemoteCall
+        {
+            internal RemoteCall(string handlerUrl, params object[] methodCall)
+            {
+                UriBuilder handlerUriBuilder = new UriBuilder(HttpContext.Current.Request.Url);
+                handlerUriBuilder.Path = HttpContext.Current.Response.ApplyAppPathModifier(handlerUrl);
+                HandlerUri = handlerUriBuilder.Uri;
+                Cookies = HttpContext.Current.Request.Cookies;
+                MethodCall = methodCall;
+            }
+
+            internal void Invoke(object source, EventArgs args)
+            {
+                SimpleWebRemoting.MakeRemoteCall(HandlerUri, Cookies, MethodCall);
+            }
+
+            Uri HandlerUri;
+            HttpCookieCollection Cookies;
+            object[] MethodCall;
         }
 
         internal string HandlerUrl = "~/NeatUpload/UploadStateStoreHandler.ashx";

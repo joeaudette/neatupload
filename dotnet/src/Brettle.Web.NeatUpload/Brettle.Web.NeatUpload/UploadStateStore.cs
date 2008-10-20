@@ -48,8 +48,13 @@ namespace Brettle.Web.NeatUpload
 		/// </returns>
 		public static UploadState OpenReadOnly(string postBackID)
 		{
-			UploadState uploadState = Provider.Load(postBackID);
-			return uploadState;
+            UploadState uploadState = Provider.Load(postBackID);
+            if (uploadState == null)
+                return null;
+            UploadState uploadStateCopy = new UploadState();
+            uploadStateCopy.CopyFrom(uploadState);
+            uploadStateCopy.IsWritable = false;
+			return uploadStateCopy;
 		}
 
 		/// <summary>
@@ -68,7 +73,8 @@ namespace Brettle.Web.NeatUpload
 			UploadState uploadState = Provider.Load(postBackID);
 			if (uploadState != null && uploadState.DeleteAfterDelayWhenNotOpenReadWrite)
 			{
-				CancelDeleteAfterDelay(uploadState.PostBackID);
+                uploadState.IsWritable = true;
+                CancelDeleteAfterDelay(uploadState.PostBackID);
 			}
 			return uploadState;
 		}
@@ -93,19 +99,21 @@ namespace Brettle.Web.NeatUpload
 				uploadState.Changed += new EventHandler(UploadState_Changed);
 				uploadState.DeleteAfterDelayWhenNotOpenReadWrite = true;
 			}
-			return uploadState;
+            uploadState.IsWritable = true;
+            return uploadState;
 		}
 
 		/// <summary>
 		/// Called to indicate that no additional calls will be made to members
-		/// of the uploadState object.  If the implementation is supposed to
-		/// share the information in the object across servers, it might need to 
-		/// take some action to ensure that final changes are propagated to other
-		/// servers.
+		/// of the uploadState object during this request.  If the implementation
+        /// is supposed to share the information in the object across servers, it 
+        /// might need to take some action to ensure that final changes are 
+        /// propagated to other servers.
 		/// </summary>
 		public static void Close(UploadState uploadState)
 		{
-			MergeSaveAndCleanUp(uploadState);
+            if (uploadState.IsWritable)
+			    MergeAndSave(uploadState);
 			if (uploadState.DeleteAfterDelayWhenNotOpenReadWrite)
 				DeleteAfterDelay(uploadState);
 		}
@@ -113,7 +121,9 @@ namespace Brettle.Web.NeatUpload
 		private static void DeleteAfterDelay(UploadState uploadState)
 		{
 			HttpContext ctx = HttpContext.Current;
-			ctx.Cache.Insert(uploadState.PostBackID, uploadState.PostBackID, null, 
+            EventHandler cleanUpIfStaleHandler
+                = Provider.GetCleanUpIfStaleHandler(uploadState.PostBackID);
+            ctx.Cache.Insert(uploadState.PostBackID, cleanUpIfStaleHandler, null,
 			                 Cache.NoAbsoluteExpiration,
 			                 TimeSpan.FromSeconds(Config.Current.StateStaleAfterSeconds),
 			                 CacheItemPriority.High,
@@ -129,9 +139,10 @@ namespace Brettle.Web.NeatUpload
 
 		private static void CacheItem_Remove(string postBackID, object val, CacheItemRemovedReason reason)
 		{
+            EventHandler cleanUpIfStaleHandler = (EventHandler)val;
 			if (reason == CacheItemRemovedReason.Removed)
 				return;
-            PostBackIDsToCleanUpIfStale[postBackID] = postBackID;
+            cleanUpIfStaleHandler(postBackID, null);
 		}
 
 		public static void UploadState_Changed(object sender, EventArgs args)
@@ -142,25 +153,15 @@ namespace Brettle.Web.NeatUpload
 				uploadState.TimeOfLastMerge = now;
 			else if (uploadState.TimeOfLastMerge.AddSeconds(Config.Current.MergeIntervalSeconds) < now)
 			{
-				MergeSaveAndCleanUp(uploadState);
+				MergeAndSave(uploadState);
 				uploadState.TimeOfLastMerge = now;
 			}
 		}
 
-        private static void MergeSaveAndCleanUp(UploadState uploadState)
+        private static void MergeAndSave(UploadState uploadState)
         {
-            ArrayList postBackIDsToCleanUpIfStale = new ArrayList();
-            foreach (string postBackID in PostBackIDsToCleanUpIfStale.Keys)
-                postBackIDsToCleanUpIfStale.Add(postBackID);
-            string[] deletedPostBackIDs 
-                = Provider.MergeSaveAndCleanUp(uploadState, (string[])postBackIDsToCleanUpIfStale.ToArray(typeof(string)));
-            if (deletedPostBackIDs != null)
-                foreach (string postBackID in deletedPostBackIDs)
-                    PostBackIDsToCleanUpIfStale.Remove(postBackID);
+            Provider.MergeAndSave(uploadState);
         }
-
-        private static StringDictionary PostBackIDsToCleanUpIfStale = new StringDictionary();
-
 
         public static UploadStateStoreProvider Provider
         {

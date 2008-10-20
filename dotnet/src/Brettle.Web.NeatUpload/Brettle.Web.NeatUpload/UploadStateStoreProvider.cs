@@ -54,23 +54,27 @@ namespace Brettle.Web.NeatUpload
 		/// </returns>
 		public abstract UploadState Load(string postBackID);
 
-		public abstract string[] MergeSaveAndCleanUp(UploadState uploadState, string[] postBackIDsToCleanUpIfStale);
+		public abstract void MergeAndSave(UploadState uploadState);
 
-        public abstract void Delete(string postBackID);
-
-        protected string[] CleanUpIfStale(string[] postBackIDsToCleanUpIfStale)
+        public virtual EventHandler GetCleanUpIfStaleHandler(string postBackID)
         {
-            ArrayList cleanedPostBackIDs = new ArrayList();
-            foreach (string postBackID in postBackIDsToCleanUpIfStale)
+            return new EventHandler(CleanUpIfStale);
+        }
+
+        protected virtual void Delete(string postBackID)
+        {
+        }
+
+        protected void CleanUpIfStale(object source, EventArgs args)
+        {
+            string postBackID = (string)source;
+            UploadState uploadState = Load(postBackID);
+            if (uploadState != null && uploadState.TimeOfLastMerge.AddSeconds(Config.Current.StateStaleAfterSeconds) < DateTime.Now)
             {
-                UploadState uploadState = Load(postBackID);
-                if (uploadState != null && uploadState.TimeOfLastMerge.AddSeconds(Config.Current.StateStaleAfterSeconds) > DateTime.Now)
-                {
-                    Delete(postBackID);
-                    cleanedPostBackIDs.Add(postBackID);
-                }
+                foreach (UploadedFile f in uploadState.Files)
+                    f.Dispose();
+                Delete(postBackID);
             }
-            return (string[])cleanedPostBackIDs.ToArray(typeof(string));
         }
 
 		public static void Merge(UploadState uploadState, UploadState storedUploadState)
@@ -122,7 +126,5 @@ namespace Brettle.Web.NeatUpload
 		{
 			return (uploadState.TimeOfLastMerge.AddSeconds(Config.Current.StateStaleAfterSeconds) > DateTime.Now);				
 		}
-
-        internal Hashtable PostBackIDsToDeleteIfStale = new Hashtable();
 	}
 }

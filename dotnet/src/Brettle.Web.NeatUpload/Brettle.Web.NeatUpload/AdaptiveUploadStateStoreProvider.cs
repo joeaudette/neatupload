@@ -46,14 +46,14 @@ namespace Brettle.Web.NeatUpload
             return Provider.Load(postBackID);
 		}
 
-		public override string[] MergeSaveAndCleanUp(UploadState uploadState, string[] postBackIDsToCleanUpIfStale)
+		public override void MergeAndSave(UploadState uploadState)
 		{
-            return Provider.MergeSaveAndCleanUp(uploadState, postBackIDsToCleanUpIfStale);
+            Provider.MergeAndSave(uploadState);
 		}
 
-        public override void Delete(string postBackID)
+        public override EventHandler GetCleanUpIfStaleHandler(string postBackID)
         {
-            Provider.Delete(postBackID);
+            return Provider.GetCleanUpIfStaleHandler(postBackID);
         }
 
         private object SyncRoot = new object();

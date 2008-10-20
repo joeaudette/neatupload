@@ -53,7 +53,7 @@ namespace Brettle.Web.NeatUpload
 			return ctx.Application[key] as UploadState;
 		}
 
-		public override string[] MergeSaveAndCleanUp(UploadState uploadState, string[] postBackIDsToCleanUpIfStale)
+		public override void MergeAndSave(UploadState uploadState)
 		{
 			HttpContext ctx = HttpContext.Current;
 			string key = KeyPrefix + uploadState.PostBackID;
@@ -63,7 +63,6 @@ namespace Brettle.Web.NeatUpload
 				UploadState storedUploadState = Load(uploadState.PostBackID);
 				Merge(uploadState, storedUploadState);
 				ctx.Application[key] = uploadState;
-                return CleanUpIfStale(postBackIDsToCleanUpIfStale);
 			}
 			finally
 			{
@@ -71,7 +70,7 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 
-		public override void Delete (string postBackID)
+		protected override void Delete (string postBackID)
 		{
 			HttpContext ctx = HttpContext.Current;
 			string key = KeyPrefix + postBackID;
