@@ -56,15 +56,17 @@ namespace Brettle.Web.NeatUpload
 
 		public abstract void MergeAndSave(UploadState uploadState);
 
-        public abstract EventHandler GetCleanUpIfStaleHandler(string postBackID);
+        public virtual CleanUpIfStaleCallback GetCleanUpIfStaleCallback()
+        {
+            return CleanUpIfStale;
+        }
 
         protected virtual void Delete(string postBackID)
         {
         }
 
-        protected void CleanUpIfStale(object source, EventArgs args)
+        protected void CleanUpIfStale(string postBackID)
         {
-            string postBackID = (string)source;
             UploadState uploadState = Load(postBackID);
             if (uploadState != null && uploadState.TimeOfLastMerge.AddSeconds(Config.Current.StateStaleAfterSeconds) < DateTime.Now)
             {
@@ -123,5 +125,7 @@ namespace Brettle.Web.NeatUpload
 		{
 			return (uploadState.TimeOfLastMerge.AddSeconds(Config.Current.StateStaleAfterSeconds) > DateTime.Now);				
 		}
+
+        public delegate void CleanUpIfStaleCallback(string postBackID);
 	}
 }

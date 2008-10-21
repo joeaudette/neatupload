@@ -66,10 +66,10 @@ namespace Brettle.Web.NeatUpload
 			MakeRemoteCall("MergeAndSave", uploadState);
 		}
 
-        public override EventHandler GetCleanUpIfStaleHandler(string postBackID)
+        public override CleanUpIfStaleCallback GetCleanUpIfStaleCallback()
         {
-            RemoteCall remoteCall = new RemoteCall(HandlerUrl, "CleanUpIfStale", postBackID, null);
-            return new EventHandler(remoteCall.Invoke);
+            Cleaner cleaner = new Cleaner(this);
+            return cleaner.CleanUpIfStale;
         }
 
         private bool IsSessionReadable
@@ -93,29 +93,27 @@ namespace Brettle.Web.NeatUpload
             return SimpleWebRemoting.MakeRemoteCall(handlerUriBuilder.Uri, methodCall);
         }
 
-        private class RemoteCall
+        private class Cleaner
         {
-            internal RemoteCall(string handlerUrl, params object[] methodCall)
+            internal Cleaner(SessionBasedUploadStateStoreProvider provider)
             {
                 UriBuilder handlerUriBuilder = new UriBuilder(HttpContext.Current.Request.Url);
-                handlerUriBuilder.Path = HttpContext.Current.Response.ApplyAppPathModifier(handlerUrl);
+                handlerUriBuilder.Path = HttpContext.Current.Response.ApplyAppPathModifier(provider.HandlerUrl);
                 HandlerUri = handlerUriBuilder.Uri;
                 Cookies = HttpContext.Current.Request.Cookies;
                 EncryptionKey = Config.Current.EncryptionKey;
                 ValidationKey = Config.Current.ValidationKey;
-                MethodCall = methodCall;
             }
 
-            internal void Invoke(object source, EventArgs args)
+            internal void CleanUpIfStale(string postBackID)
             {
-                SimpleWebRemoting.MakeRemoteCall(HandlerUri, Cookies, EncryptionKey, ValidationKey, MethodCall);
+                SimpleWebRemoting.MakeRemoteCall(HandlerUri, Cookies, EncryptionKey, ValidationKey, "CleanUpIfStale", postBackID);
             }
 
             Uri HandlerUri;
             HttpCookieCollection Cookies;
             byte[] EncryptionKey;
             byte[] ValidationKey;
-            object[] MethodCall;
         }
 
         internal string HandlerUrl = "~/NeatUpload/UploadStateStoreHandler.ashx";
