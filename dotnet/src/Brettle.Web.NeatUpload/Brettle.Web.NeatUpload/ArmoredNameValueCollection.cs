@@ -68,12 +68,12 @@ namespace Brettle.Web.NeatUpload
 
 		public void Unprotect(string secureString)
 		{
-			ObjectProtector.Unprotect(secureString, Deserialize, AssertSignaturesAreEqual);
+			ObjectProtector.Unprotect(secureString, Config.Current.EncryptionKey, Config.Current.ValidationKey, Deserialize, AssertSignaturesAreEqual);
 		}
 		
 		public string Protect()
 		{
-			return ObjectProtector.Protect(Serialize);
+			return ObjectProtector.Protect(Serialize, Config.Current.EncryptionKey, Config.Current.ValidationKey);
 		}
 		
 		protected virtual void AssertSignaturesAreEqual(byte[] actualHash, byte[] expectedHash)

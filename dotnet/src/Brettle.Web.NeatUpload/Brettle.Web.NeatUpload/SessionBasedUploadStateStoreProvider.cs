@@ -22,6 +22,7 @@ using System;
 using System.Web;
 using System.Web.SessionState;
 using System.IO;
+using Brettle.Web.NeatUpload.Internal.Module;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -100,16 +101,20 @@ namespace Brettle.Web.NeatUpload
                 handlerUriBuilder.Path = HttpContext.Current.Response.ApplyAppPathModifier(handlerUrl);
                 HandlerUri = handlerUriBuilder.Uri;
                 Cookies = HttpContext.Current.Request.Cookies;
+                EncryptionKey = Config.Current.EncryptionKey;
+                ValidationKey = Config.Current.ValidationKey;
                 MethodCall = methodCall;
             }
 
             internal void Invoke(object source, EventArgs args)
             {
-                SimpleWebRemoting.MakeRemoteCall(HandlerUri, Cookies, MethodCall);
+                SimpleWebRemoting.MakeRemoteCall(HandlerUri, Cookies, EncryptionKey, ValidationKey, MethodCall);
             }
 
             Uri HandlerUri;
             HttpCookieCollection Cookies;
+            byte[] EncryptionKey;
+            byte[] ValidationKey;
             object[] MethodCall;
         }
 

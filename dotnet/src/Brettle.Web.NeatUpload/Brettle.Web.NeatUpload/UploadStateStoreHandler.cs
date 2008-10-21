@@ -72,5 +72,9 @@ namespace Brettle.Web.NeatUpload
 
         public bool IsReusable { get { return true; } }
 
+        public override EventHandler GetCleanUpIfStaleHandler(string postBackID)
+        {
+            throw new NotSupportedException("UploadStateStoreHandler does not support GetCleanUpIfStaleHandler().  It only derives from SessionBasedUploadStateStoreProviderBase for convenient access to its members.");
+        }
 	}
 }

@@ -22,6 +22,7 @@ using System.Web;
 using System.Net;
 using System.Collections;
 using System.Collections.Specialized;
+using Brettle.Web.NeatUpload.Internal.Module;
 
 namespace Brettle.Web.NeatUpload
 {	
@@ -57,10 +58,12 @@ namespace Brettle.Web.NeatUpload
         public static object MakeRemoteCall(Uri uri, params object[] methodCall)
         {
             HttpCookieCollection httpCookies = HttpContext.Current.Request.Cookies;
-            return MakeRemoteCall(uri, httpCookies, methodCall);
+            return MakeRemoteCall(uri, httpCookies, Config.Current.EncryptionKey, Config.Current.ValidationKey,
+                                    methodCall);
         }
 
-        public static object MakeRemoteCall(Uri uri, HttpCookieCollection httpCookies, params object[] methodCall)
+        internal static object MakeRemoteCall(Uri uri, HttpCookieCollection httpCookies, byte[] encryptionKey, byte[] validationKey, 
+                                            params object[] methodCall)
         {
             CookieContainer cookieContainer = new CookieContainer();
             if (httpCookies != null)
@@ -85,7 +88,7 @@ namespace Brettle.Web.NeatUpload
             try
 			{
 	            wc.Headers.Add("Cookie", cookieContainer.GetCookieHeader(uri));
-	            string protectedRequestPayload = ObjectProtector.Protect(methodCall);
+	            string protectedRequestPayload = ObjectProtector.Protect(methodCall, encryptionKey, validationKey);
 	            NameValueCollection formValues = new NameValueCollection();
 	            formValues.Add("ProtectedPayload", protectedRequestPayload);
 	            responseBytes = wc.UploadValues(uri.ToString(), formValues);
@@ -104,7 +107,7 @@ namespace Brettle.Web.NeatUpload
             if (protectedResponsePayload != null && protectedResponsePayload.Length > 0)
             {
                 object[] results = null;
-                results = (object[])ObjectProtector.Unprotect(protectedResponsePayload);
+                results = (object[])ObjectProtector.Unprotect(protectedResponsePayload, encryptionKey, validationKey);
                 int j = 1;
                 for (int i = 1; i < methodCall.Length; i++)
                 {
