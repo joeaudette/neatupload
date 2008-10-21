@@ -88,10 +88,10 @@ namespace Brettle.Web.NeatUpload
             }
         }
 
-        public override EventHandler GetCleanUpIfStaleHandler(string postBackID)
+        public override CleanUpIfStaleCallback GetCleanUpIfStaleCallback()
         {
-            Cleaner cleaner = new Cleaner(postBackID, this);
-            return new EventHandler(cleaner.Invoke);
+            Cleaner cleaner = new Cleaner(this);
+            return cleaner.CleanUpIfStale;
         }
 
 
@@ -100,20 +100,18 @@ namespace Brettle.Web.NeatUpload
 
         private class Cleaner
         {
-            internal Cleaner(string postBackID, InProcUploadStateStoreProvider provider)
+            internal Cleaner(InProcUploadStateStoreProvider provider)
             {
-                PostBackID = postBackID;
                 Provider = provider;
                 Application = HttpContext.Current.Application;
             }
 
-            internal void Invoke(object source, EventArgs args)
+            internal void CleanUpIfStale(string postBackID)
             {
                 InProcUploadStateStoreProvider.ThreadStaticApplication = Application;
-                Provider.CleanUpIfStale(source, args);
+                Provider.CleanUpIfStale(postBackID);
             }
 
-            string PostBackID;
             HttpApplicationState Application;
             InProcUploadStateStoreProvider Provider;
         }

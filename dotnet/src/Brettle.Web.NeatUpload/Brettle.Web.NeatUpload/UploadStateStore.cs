@@ -121,9 +121,9 @@ namespace Brettle.Web.NeatUpload
 		private static void DeleteAfterDelay(UploadState uploadState)
 		{
 			HttpContext ctx = HttpContext.Current;
-            EventHandler cleanUpIfStaleHandler
-                = Provider.GetCleanUpIfStaleHandler(uploadState.PostBackID);
-            ctx.Cache.Insert(uploadState.PostBackID, cleanUpIfStaleHandler, null,
+            UploadStateStoreProvider.CleanUpIfStaleCallback cleanUpIfStaleCallback
+                = Provider.GetCleanUpIfStaleCallback();
+            ctx.Cache.Insert(uploadState.PostBackID, cleanUpIfStaleCallback, null,
 			                 Cache.NoAbsoluteExpiration,
 			                 TimeSpan.FromSeconds(Config.Current.StateStaleAfterSeconds),
 			                 CacheItemPriority.High,
@@ -139,10 +139,11 @@ namespace Brettle.Web.NeatUpload
 
 		private static void CacheItem_Remove(string postBackID, object val, CacheItemRemovedReason reason)
 		{
-            EventHandler cleanUpIfStaleHandler = (EventHandler)val;
+            UploadStateStoreProvider.CleanUpIfStaleCallback cleanUpIfStaleCallback 
+                = (UploadStateStoreProvider.CleanUpIfStaleCallback)val;
 			if (reason == CacheItemRemovedReason.Removed)
 				return;
-            cleanUpIfStaleHandler(postBackID, null);
+            cleanUpIfStaleCallback(postBackID);
 		}
 
 		public static void UploadState_Changed(object sender, EventArgs args)

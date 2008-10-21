@@ -55,9 +55,8 @@ namespace Brettle.Web.NeatUpload
 			}
             else if (methodName == "CleanUpIfStale")
             {
-                object postBackID = (object)args[0];
-                EventArgs eventArgs = (EventArgs)args[1];
-                CleanUpIfStale(postBackID, eventArgs);
+                string postBackID = (string)args[0];
+                CleanUpIfStale(postBackID);
             }
             else if (methodName == "GetSessionStateMode")
             {
@@ -72,9 +71,9 @@ namespace Brettle.Web.NeatUpload
 
         public bool IsReusable { get { return true; } }
 
-        public override EventHandler GetCleanUpIfStaleHandler(string postBackID)
+        public override CleanUpIfStaleCallback GetCleanUpIfStaleCallback()
         {
-            throw new NotSupportedException("UploadStateStoreHandler does not support GetCleanUpIfStaleHandler().  It only derives from SessionBasedUploadStateStoreProviderBase for convenient access to its members.");
+            throw new NotSupportedException("UploadStateStoreHandler does not support GetCleanUpIfStaleCallBack().  It only derives from SessionBasedUploadStateStoreProviderBase for convenient access to its members.");
         }
 	}
 }
