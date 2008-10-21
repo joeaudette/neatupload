@@ -35,7 +35,8 @@ namespace Brettle.Web.NeatUpload
         public override string Description { get { return "Stores UploadState objects in the HttpApplicationState of the current process."; } }
 
 		private static string KeyPrefix = "NeatUpload_InProcUploadState_";
-		/// <summary>
+
+        /// <summary>
 		/// Returns an <see cref="IUploadState"/> for a given post-back ID.  
 		/// If one does not exist yet, a new one is created and returned.
 		/// </summary>
@@ -48,33 +49,73 @@ namespace Brettle.Web.NeatUpload
 		/// </returns>
 		public override UploadState Load(string postBackID)
 		{
-			HttpContext ctx = HttpContext.Current;
 			string key = KeyPrefix + postBackID;
-			return ctx.Application[key] as UploadState;
+			return Application[key] as UploadState;
 		}
 
 		public override void MergeAndSave(UploadState uploadState)
 		{
-			HttpContext ctx = HttpContext.Current;
 			string key = KeyPrefix + uploadState.PostBackID;
-			ctx.Application.Lock();
+			Application.Lock();
 			try
 			{
 				UploadState storedUploadState = Load(uploadState.PostBackID);
 				Merge(uploadState, storedUploadState);
-				ctx.Application[key] = uploadState;
+				Application[key] = uploadState;
 			}
 			finally
 			{
-				ctx.Application.UnLock();
+				Application.UnLock();
 			}
 		}
 
 		protected override void Delete (string postBackID)
 		{
-			HttpContext ctx = HttpContext.Current;
 			string key = KeyPrefix + postBackID;
-			ctx.Application.Remove(key);
+			Application.Remove(key);
 		}
+
+        private HttpApplicationState Application
+        {
+            get
+            {
+                HttpContext ctx = HttpContext.Current;
+                if (ctx != null)
+                    return ctx.Application;
+                if (ThreadStaticApplication != null)
+                    return ThreadStaticApplication;
+                throw new NullReferenceException("ThreadStaticApplication == null");
+            }
+        }
+
+        public override EventHandler GetCleanUpIfStaleHandler(string postBackID)
+        {
+            Cleaner cleaner = new Cleaner(postBackID, this);
+            return new EventHandler(cleaner.Invoke);
+        }
+
+
+        [ThreadStatic]
+        private static HttpApplicationState ThreadStaticApplication;
+
+        private class Cleaner
+        {
+            internal Cleaner(string postBackID, InProcUploadStateStoreProvider provider)
+            {
+                PostBackID = postBackID;
+                Provider = provider;
+                Application = HttpContext.Current.Application;
+            }
+
+            internal void Invoke(object source, EventArgs args)
+            {
+                InProcUploadStateStoreProvider.ThreadStaticApplication = Application;
+                Provider.CleanUpIfStale(source, args);
+            }
+
+            string PostBackID;
+            HttpApplicationState Application;
+            InProcUploadStateStoreProvider Provider;
+        }
 	}
 }

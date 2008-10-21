@@ -56,10 +56,7 @@ namespace Brettle.Web.NeatUpload
 
 		public abstract void MergeAndSave(UploadState uploadState);
 
-        public virtual EventHandler GetCleanUpIfStaleHandler(string postBackID)
-        {
-            return new EventHandler(CleanUpIfStale);
-        }
+        public abstract EventHandler GetCleanUpIfStaleHandler(string postBackID);
 
         protected virtual void Delete(string postBackID)
         {

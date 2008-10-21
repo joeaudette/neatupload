@@ -22,7 +22,7 @@ using System.Web;
 
 namespace Brettle.Web.NeatUpload
 {	
-	public class SessionBasedUploadStateStoreProviderBase : UploadStateStoreProvider
+	public abstract class SessionBasedUploadStateStoreProviderBase : UploadStateStoreProvider
 	{
         public override string Description { get { return "Stores UploadState objects in the HttpSessionState of the current request."; } }
         
