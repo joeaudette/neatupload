@@ -9,9 +9,17 @@ using System.Collections;
 
 namespace Brettle.Web.NeatUpload
 {
+    /// <summary>
+    /// The state of an upload, including references to the
+    /// <see cref="Status"/>, <see cref="UploadedFile"/>s, <see cref="BytesRead"/>, etc.
+    /// </summary>
 	[Serializable]
 	public class UploadState : ICopyFromObject
 	{
+        /// <summary>
+        /// Not for public use.  This is only public to allow deserialization.
+        /// UploadState objects are created by NeatUpload.
+        /// </summary>
 		public UploadState() { }
 		
 		internal UploadState(string postBackID)
@@ -21,6 +29,12 @@ namespace Brettle.Web.NeatUpload
 			_Files.Changed += new EventHandler(Files_Changed);
 		}
 
+        /// <summary>
+        /// Copies the upload state stored in the <paramref name="source"/> 
+        /// <see cref="UploadState"/> object into this object.
+        /// </summary>
+        /// <param name="source">the <see cref="UploadState"/> object to copy
+        /// the state from.</param>
         public void CopyFrom(object source)
         {
             UploadState src = (UploadState)source;
@@ -54,7 +68,8 @@ namespace Brettle.Web.NeatUpload
 		}
 
 		private UploadStatus _Status;
-		/// <value>
+
+        /// <value>
 		/// The status of the upload.
 		/// </value>
 		public UploadStatus Status {
@@ -75,9 +90,12 @@ namespace Brettle.Web.NeatUpload
 		}
 
 		private object _MultiRequestObject;
-		/// <value>
+
+        /// <value>
 		/// An object that is shared while processing multi-request uploads.
 		/// </value>
+        /// <remarks>This is used by the <see cref="UploadModule"/> to maintain
+        /// the state of a multi-request upload across requests.</remarks>
 		public object MultiRequestObject {
 			get {
 				return _MultiRequestObject;
@@ -89,7 +107,8 @@ namespace Brettle.Web.NeatUpload
 		}
 
 		private int _BytesPerSec;
-		/// <summary>
+
+        /// <summary>
 		/// An estimate of the number of bytes received during the past second 
         /// while the upload is in progress.  When the upload is finished this is
         /// an average over the entire upload.
@@ -106,7 +125,8 @@ namespace Brettle.Web.NeatUpload
 		}
 
 		internal Hashtable _ProcessingStateDict = new Hashtable();
-		/// <summary>
+
+        /// <summary>
 		/// Processing state objects associated with the upload, indexed by
 		/// control UniqueID.
 		/// </summary>
@@ -117,7 +137,8 @@ namespace Brettle.Web.NeatUpload
 		}
 
 		internal UploadedFileCollection _Files = new UploadedFileCollection();
-		/// <summary>
+
+        /// <summary>
 		/// A collection of the <see cref="UploadedFile"/> objects associated with the
 		/// the upload.
 		/// </summary>
@@ -161,7 +182,8 @@ namespace Brettle.Web.NeatUpload
 		}
 
 		private long _FileBytesRead;
-		/// <summary>
+
+        /// <summary>
 		/// The number of file bytes received for the upload.
 		/// </summary>
 		/// <value>
@@ -183,7 +205,8 @@ namespace Brettle.Web.NeatUpload
 		}
 
 		private long _BytesTotal;
-		/// <summary>
+
+        /// <summary>
 		/// The total number of bytes expected for the uploaded.
 		/// </summary>
 		/// <value>
@@ -217,7 +240,8 @@ namespace Brettle.Web.NeatUpload
 		}
 
 		private UploadException _Rejection;
-		/// <summary>
+
+        /// <summary>
 		/// If an <see cref="UploadException"/> (or subclass) was thrown while
 		/// processing the upload, that exception.  Otherwise, null.
 		/// </summary>
@@ -260,6 +284,13 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 
+        /// <summary>
+        /// The event handler that should be registered to be called whenever an
+        /// <see cref="UploadedFile"/> is added or removed from the <see cref="Files"/>
+        /// collection.
+        /// </summary>
+        /// <param name="sender">ignored</param>
+        /// <param name="args">ignored</param>
 		public void Files_Changed(object sender, EventArgs args)
 		{
 			OnChanged();
