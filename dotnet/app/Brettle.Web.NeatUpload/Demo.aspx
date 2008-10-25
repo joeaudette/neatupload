@@ -49,7 +49,7 @@
 			</Upload:MultiFile>
 			<asp:RegularExpressionValidator id="RegularExpressionValidator2" 
 				ControlToValidate="multiFile"
-				ValidationExpression="([^.]+[.](jpg|gif|png); *)*$"
+				ValidationExpression="([^.]+[.](jpg|gif|png|JPG|GIF|PNG); *)*$"
 				Display="Static"
 				ErrorMessage="Only jpg, gif, and png extensions allowed"
 				EnableClientScript="True" 
