@@ -52,7 +52,6 @@ namespace Brettle.Web.NeatUpload
             string responseBody = ObjectProtector.Protect(resultsArray.ToArray());
             context.Response.ContentType = "application/octet-stream";
             context.Response.Write(responseBody);
-            context.Response.Flush();
         }
 
         public static object MakeRemoteCall(Uri uri, params object[] methodCall)
