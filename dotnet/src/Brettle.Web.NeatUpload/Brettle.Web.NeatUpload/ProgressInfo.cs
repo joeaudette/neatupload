@@ -71,7 +71,7 @@ namespace Brettle.Web.NeatUpload
 
 		internal void UpdateProcessingState()
 		{
-			if (TimeOfLastSync.AddSeconds(1) > DateTime.Now)
+			if (TimeOfLastSync.AddSeconds(1) > DateTime.Now || ControlID == null)
 			{
 				return;
 			}

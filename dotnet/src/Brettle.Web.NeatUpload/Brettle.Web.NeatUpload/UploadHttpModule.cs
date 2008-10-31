@@ -120,6 +120,7 @@ namespace Brettle.Web.NeatUpload
 			if (uploadState != null && uploadState.Status == UploadStatus.Unknown)
 				return true;
 			uploadState.ProcessingStateDict[controlUniqueID] = state;
+            uploadState.OnChanged();
 			return true;
 		}
 

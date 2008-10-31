@@ -296,7 +296,7 @@ namespace Brettle.Web.NeatUpload
 			OnChanged();
 		}
 
-		private void OnChanged()
+		internal void OnChanged()
 		{
 			if (!IsMerging && Changed != null)
 				Changed(this, null);

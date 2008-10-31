@@ -59,7 +59,9 @@
 			</p>
 			<p>
 			This page has EnableSessionState="false" so that the session isn't locked by this page while the
-			ProgressBar is trying to use the session to update the display.<br />
+			ProgressBar is trying to use the session to update the display.  <b>Note: That means that if you are using
+			a web garden or web farm or the SessionBasedUploadStateStoreProvider, you will need to establish a
+			session by visiting a different page in order for the ProgressBar below to work.</b><br />
 			
 			<asp:Button id="submitButton" runat="server" Text="Submit" />
 			<asp:Button id="cancelButton" runat="server" Text="Cancel" CausesValidation="False"/><br />
