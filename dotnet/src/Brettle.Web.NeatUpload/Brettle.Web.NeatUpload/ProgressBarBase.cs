@@ -378,7 +378,7 @@ if (!NeatUploadPB.prototype.FirstBarID)
 			get { return _ProcessingProgress; }
 			set 
 			{
-				value.ControlID = UniqueID;
+				value.ControlID = ClientID;
 				_ProcessingProgress = value;
 				value.UpdateProcessingState();
 			}
