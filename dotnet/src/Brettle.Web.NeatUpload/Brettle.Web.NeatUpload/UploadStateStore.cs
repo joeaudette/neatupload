@@ -71,10 +71,17 @@ namespace Brettle.Web.NeatUpload
 		public static UploadState OpenReadWrite(string postBackID)
 		{			
 			UploadState uploadState = Provider.Load(postBackID);
-			if (uploadState != null && uploadState.DeleteAfterDelayWhenNotOpenReadWrite)
+			if (uploadState != null)
 			{
-                uploadState.IsWritable = true;
-                CancelDeleteAfterDelay(uploadState.PostBackID);
+                if (uploadState.DeleteAfterDelayWhenNotOpenReadWrite)
+                    CancelDeleteAfterDelay(uploadState.PostBackID);
+                UploadState uploadStateCopy = new UploadState();
+                uploadStateCopy.CopyFrom(uploadState);
+                uploadStateCopy.IsWritable = true;
+                uploadStateCopy.DeleteAfterDelayWhenNotOpenReadWrite 
+                    = uploadState.DeleteAfterDelayWhenNotOpenReadWrite;
+                uploadStateCopy.OnMerged();
+                uploadState = uploadStateCopy;
 			}
 			return uploadState;
 		}
@@ -152,7 +159,10 @@ namespace Brettle.Web.NeatUpload
 			DateTime now = DateTime.Now;
 			if (uploadState.TimeOfLastMerge == DateTime.MinValue)
 				uploadState.TimeOfLastMerge = now;
-			else if (uploadState.TimeOfLastMerge.AddSeconds(Config.Current.MergeIntervalSeconds) < now)
+            bool isInProgress = (uploadState.Status == UploadStatus.ChunkedInProgress
+                || uploadState.Status == UploadStatus.NormalInProgress
+                || uploadState.Status == UploadStatus.ProcessingCompleted);
+			if (!isInProgress || uploadState.TimeOfLastMerge.AddSeconds(Config.Current.MergeIntervalSeconds) < now)
 			{
 				MergeAndSave(uploadState);
 				uploadState.TimeOfLastMerge = now;

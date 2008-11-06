@@ -275,7 +275,12 @@ namespace Brettle.Web.NeatUpload
 		/// </remarks>
 		public static void CancelPostBack(string postBackID)
 		{
+            if (HttpContext.Current != null
+                && HttpContext.Current.Items["NeatUpload_Cancelled_" + postBackID] != null)
+                return;
 			InstalledModule.CancelPostBack(postBackID);
+            if (HttpContext.Current != null)
+                HttpContext.Current.Items["NeatUpload_Cancelled_" + postBackID] = true;
 		}
 
 		/// <summary>

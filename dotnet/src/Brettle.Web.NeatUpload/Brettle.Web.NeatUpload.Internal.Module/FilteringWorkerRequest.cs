@@ -384,7 +384,48 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 			isParsed = true;
 			try
 			{
-				ParseOrThrow();
+                bool readEntireRequest = ParseOrThrow();
+                if (!readEntireRequest)
+                {
+                    // Wait 5 seconds to see if the user cancelled the request.
+                    System.Threading.Thread.Sleep(5000);
+                    // Setting the status to Failed will force a MergeAndSave which
+                    // will change the status to Cancelled if the user cancelled
+                    // the request.
+                    UploadState.Status = UploadStatus.Failed;
+                    // If the user did cancel the request, then stop all further
+                    // processing of the request so that no exceptions are logged.
+                    if (UploadState.Status == UploadStatus.Cancelled)
+                    {
+                        // Make sure that all the files associated
+                        // with a cancelled multi-request upload get disposed.
+                        if (MultiRequestControlID != null)
+                        {
+                            RegisterFilesForDisposal(MultiRequestControlID);
+                        }
+                        HttpContext.Current.ApplicationInstance.CompleteRequest();
+                        return;
+                    }
+                    bool isClientConnected = false;
+                    try
+                    {
+                        isClientConnected = OrigWorker.IsClientConnected();
+                    }
+                    catch (Exception)
+                    {
+                        // Mono throws an exception if the client is no longer connected.
+                    }
+                    if (isClientConnected)
+                    {
+                        throw new HttpException(400, String.Format("Data length ({0}) is shorter than Content-Length ({1}) and client is still connected after {2} secs.",
+                                                                    grandTotalBytesRead, origContentLength, Math.Round(UploadState.TimeElapsed.TotalSeconds)));
+                    }
+                    else
+                    {
+                        throw new HttpException(400, String.Format("Client disconnected after receiving {0} of {1} bytes in {2} secs -- user probably cancelled upload.",
+                                                                    grandTotalBytesRead, origContentLength, Math.Round(UploadState.TimeElapsed.TotalSeconds)));
+                    }
+                }
 			}
 			catch (Exception ex)
 			{
@@ -447,7 +488,7 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 		
 		private Stream LogEntityBodyStream = null;
 		private StreamWriter LogEntityBodySizesStream = null;
-		private void ParseOrThrow()
+		private bool ParseOrThrow()
 		{			
 			origPreloadedBody = OrigWorker.GetPreloadedEntityBody();
 			string contentTypeHeader = OrigWorker.GetKnownRequestHeader(HttpWorkerRequest.HeaderContentType);
@@ -678,26 +719,9 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 			preloadedEntityBodyStream = null;
 			if (grandTotalBytesRead < origContentLength)
 			{
-				bool isClientConnected = false;
-				try
-				{
-					isClientConnected = OrigWorker.IsClientConnected();
-				}
-				catch (Exception)
-				{
-					// Mono throws an exception if the client is no longer connected.
-				}
-				if (isClientConnected)
-				{
-					throw new HttpException (400, String.Format("Data length ({0}) is shorter than Content-Length ({1}) and client is still connected after {2} secs.", 
-					                                            grandTotalBytesRead, origContentLength, Math.Round(UploadState.TimeElapsed.TotalSeconds)));
-				}
-				else
-				{
-					throw new HttpException (400, String.Format("Client disconnected after receiving {0} of {1} bytes in {2} secs -- user probably cancelled upload.", 
-					                                            grandTotalBytesRead, origContentLength, Math.Round(UploadState.TimeElapsed.TotalSeconds)));
-				}
+                return false;
 			}
+            return true;
 		}
 
 		internal void RegisterFilesForDisposal(string controlUniqueID)

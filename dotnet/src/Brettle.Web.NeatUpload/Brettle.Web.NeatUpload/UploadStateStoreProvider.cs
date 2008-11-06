@@ -31,6 +31,10 @@ namespace Brettle.Web.NeatUpload
 	/// </summary>
 	public abstract class UploadStateStoreProvider
 	{
+        // Create a logger for use in this class
+        private static readonly log4net.ILog log
+            = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public virtual void Initialize(string name, NameValueCollection attrs)
         {
             _name = name;
@@ -78,8 +82,13 @@ namespace Brettle.Web.NeatUpload
 
 		public static void Merge(UploadState uploadState, UploadState storedUploadState)
 		{
-			if (uploadState == storedUploadState)
-				return;
+            if (uploadState == storedUploadState)
+            {
+                uploadState.IsMerging = true;
+                uploadState.OnMerged();
+                uploadState.IsMerging = false;
+                return;
+            }
             if (storedUploadState != null)
             {
                 UploadState uploadStateAtLastMerge = uploadState.UploadStateAtLastMerge;
@@ -87,6 +96,13 @@ namespace Brettle.Web.NeatUpload
                     uploadStateAtLastMerge = new UploadState(uploadState.PostBackID);
 
                 uploadState.IsMerging = true;
+
+                if (uploadState.Status < storedUploadState.Status)
+                    uploadState.Status = storedUploadState.Status;
+
+                if (uploadState.BytesRead - uploadStateAtLastMerge.BytesRead + storedUploadState.BytesRead > uploadState.BytesTotal)
+                    if (log.IsDebugEnabled) log.Debug("Too many bytes read");
+
                 uploadState.BytesRead
                     = storedUploadState.BytesRead + (uploadState.BytesRead - uploadStateAtLastMerge.BytesRead);
 
@@ -114,8 +130,6 @@ namespace Brettle.Web.NeatUpload
                 if (uploadState.ProcessingStateDict == null || uploadState.ProcessingStateDict.Count == 0)
                     uploadState._ProcessingStateDict = storedUploadState._ProcessingStateDict;
 
-                if (uploadState.Status < storedUploadState.Status)
-                    uploadState.Status = storedUploadState.Status;
             }
 			uploadState.OnMerged();
 			uploadState.IsMerging = false;
