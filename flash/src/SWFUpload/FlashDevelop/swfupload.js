@@ -142,7 +142,7 @@ SWFUpload.prototype.loadFlash = function () {
     this.movieElement = document.getElementById(this.movieName);    // Save a reference to the flash node so we can make calls to it.
 
     // Fix IEs "Flash can't callback when in a form" issue (http://www.extremefx.com.ar/blog/fixing-flash-external-interface-inside-form-on-internet-explorer)
-    if (typeof(window[this.movieName]) === "undefined" || window[this.moveName] !== this.movieElement) {
+    if (typeof(window[this.movieName]) === "undefined" || window[this.movieName] !== this.movieElement) {
         window[this.movieName] = this.movieElement;
     }
 };
