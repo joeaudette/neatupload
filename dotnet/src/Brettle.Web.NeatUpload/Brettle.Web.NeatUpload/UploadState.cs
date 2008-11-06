@@ -54,7 +54,10 @@ namespace Brettle.Web.NeatUpload
             this.TimeOfFirstByte = src.TimeOfFirstByte;
             this.TimeOfLastMark = src.TimeOfLastMark;
             this.TimeOfLastMerge = src.TimeOfLastMerge;
-            this.UploadStateAtLastMerge = src.UploadStateAtLastMerge;
+            if (src.UploadStateAtLastMerge == null)
+                this.UploadStateAtLastMerge = null;
+            else
+                this.UploadStateAtLastMerge = (UploadState)src.UploadStateAtLastMerge.MemberwiseClone();
         }
 
 		private string _PostBackID;
