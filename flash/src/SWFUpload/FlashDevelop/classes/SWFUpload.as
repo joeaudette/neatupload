@@ -74,6 +74,13 @@ class SWFUpload {
 	function SWFUpload() {
 		System.security.allowDomain("*");	// Allow any domain to use this SWF to upload files
 
+		var playerVersion:String;
+		playerVersion = System.capabilities.version;
+		var majorVersion:String;
+		majorVersion = playerVersion.split(" ")[1].split(",")[0];
+		if (Number(majorVersion) > 9)
+			return;
+		
 		// Setup file FileReference Listener. This is attached to all FileReference objects (ie, every file the user uploads)
 		this.file_reference_listener = new Object();
 		this.file_reference_listener.onCancel = 		Delegate.Create(this, this.DialogCancelled_Handler);

@@ -214,6 +214,7 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
 		 '" + FileQueueControlID + @"',
 		 '" + FlashFilterExtensions + @"',
 		 '" + FlashFilterDescription + @"',
+		 '" + targetDivID + @"',
 		 '" + storageConfigName + @"'
 );
 // -->
@@ -235,7 +236,6 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
 				writer.RenderEndTag();
 			}
 			
-			writer.AddAttribute(HtmlTextWriterAttribute.Id, targetDivID);
  			writer.RenderBeginTag(HtmlTextWriterTag.Div);
             if (!IsDesignTime)
             {
@@ -249,8 +249,8 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
 
             if (UploadModule.IsEnabled)
 			{
-                writer.Write("<div style='position: relative; display: {0};'>",
-                    IsDesignTime ? "block" : "none");
+                writer.Write("<div id='{0}' style='position: relative; display: {1};'>",
+                    targetDivID, IsDesignTime ? "block" : "none");
                 if (!IsEmpty())
                     RenderChildren(writer);
                 else

@@ -866,6 +866,7 @@ function NeatUploadHiddenPostBackID(clientID, postBackID)
 	var nuf = NeatUploadForm.prototype.GetFor(document.getElementById(this.ClientID), postBackID);
 	nuf.AddSubmittingHandler(function () {
 		var hpi = document.getElementById(nuhpi.ClientID);
+		if (!hpi) return;
 		hpi.setAttribute('value', nuf.GetPostBackID());
 	});
 }
@@ -893,6 +894,7 @@ function NeatUploadInputFile(clientID, postBackID)
 	var nuf = NeatUploadForm.prototype.GetFor(document.getElementById(this.ClientID), postBackID);
 	nuf.AddSubmittingHandler(function () {
 		var inputFile = document.getElementById(nuif.ClientID);
+		if (!inputFile) return;
 		var name = inputFile.getAttribute('name');
 		name = name.replace(/^[^-]+/, 'NeatUpload_' + nuf.GetPostBackID())
 		inputFile.setAttribute('name', name);
@@ -910,12 +912,14 @@ NeatUploadInputFile.prototype.Controls = new Object();
 function NeatUploadMultiFileCreate(clientID, postBackID, appPath, uploadScript, postBackIDQueryParam, uploadParams,
 									useFlashIfAvailable, fileQueueControlID, 
 									flashFilterExtensions, flashFilterDescription,
+									targetDivID,
 									storageConfigFieldName)
 {
 	NeatUploadMultiFile.prototype.Controls[clientID] 
 		= new NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBackIDQueryParam, uploadParams,
 									useFlashIfAvailable, fileQueueControlID, 
 									flashFilterExtensions, flashFilterDescription,
+									targetDivID,
 									storageConfigFieldName);
 	return NeatUploadMultiFile.prototype.Controls[clientID];
 }
@@ -923,6 +927,7 @@ function NeatUploadMultiFileCreate(clientID, postBackID, appPath, uploadScript, 
 function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBackIDQueryParam, uploadParams,
 							useFlashIfAvailable, fileQueueControlID, 
 							flashFilterExtensions, flashFilterDescription,
+							targetDivID,
 							storageConfigFieldName)
 {
 	var numf = this;
@@ -960,6 +965,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	var nuf = NeatUploadForm.prototype.GetFor(GetInputFileElem(), postBackID);
 	nuf.AddSubmittingHandler(function () {
 		var inputFile = GetInputFileElem();
+		if (!inputFile) return;
 		var oldName = inputFile.getAttribute('name');
 		var newName = oldName.replace(/^[^-]+/, 'NeatUpload_' + nuf.GetPostBackID());
 		for (var n = inputFile.parentNode.firstChild; n; n = n.nextSibling)
@@ -1007,6 +1013,12 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 				flash_ready_handler : FlashReady,
 				file_types : flashFilterExtensions,
 				file_types_description : flashFilterDescription
+/*
+                ,
+				flash_width : "200px",
+				flash_height : "200px",
+				flash_container_id : targetDivID				
+*/
 			});
 	});
 	
