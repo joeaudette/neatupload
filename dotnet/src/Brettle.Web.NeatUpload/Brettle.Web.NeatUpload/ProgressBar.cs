@@ -79,6 +79,12 @@ namespace Brettle.Web.NeatUpload
 			set { InlineRequested = value; }
 		}
 
+        public bool AllowTransparency
+        {
+            get { return (ViewState["AllowTransparency"] != null && (bool)ViewState["AllowTransparency"]); }
+            set { ViewState["AllowTransparency"] = value; }
+        }
+
 		private HtmlTextWriterTag Tag = HtmlTextWriterTag.Div;		
 		
 		protected override void OnPreRender (EventArgs e)
@@ -97,6 +103,7 @@ namespace Brettle.Web.NeatUpload
 				Attributes["frameborder"] = "0";
 				Attributes["scrolling"] = "no";
 				Attributes["name"] = this.ClientID;
+                Attributes["allowTransparency"] = this.AllowTransparency.ToString();
 			}
 		}
 
