@@ -149,7 +149,11 @@ namespace Brettle.Web.NeatUpload
         /// </remarks>
         public static string ConfigFieldNamePrefix
         {
-			get { return InstalledModule.ConfigFieldNamePrefix; }
+			get { 
+                if (InstalledModule != null)
+                    return InstalledModule.ConfigFieldNamePrefix;
+                return Constants.ConfigNamePrefix;
+            }
 		}
 
 		/// <summary>
