@@ -81,6 +81,7 @@ namespace Brettle.Web.NeatUpload
                 uploadStateCopy.DeleteAfterDelayWhenNotOpenReadWrite 
                     = uploadState.DeleteAfterDelayWhenNotOpenReadWrite;
                 uploadStateCopy.OnMerged();
+                uploadStateCopy.Changed += new EventHandler(UploadState_Changed);
                 uploadState = uploadStateCopy;
 			}
 			return uploadState;
