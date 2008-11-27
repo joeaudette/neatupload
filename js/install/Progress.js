@@ -194,3 +194,12 @@ function NeatUpload_CancelClicked()
 	NeatUploadStop();
 	window.location.replace(NeatUploadRefreshUrl + '&cancelled=true');
 }
+
+function NeatUploadClose(progressBarID)
+{
+	if (NeatUploadMainWindow && NeatUploadMainWindow.NeatUploadPB 
+		&& NeatUploadMainWindow.NeatUploadPB.prototype.Bars[progressBarID].EvalOnClose)
+		eval(NeatUploadMainWindow.NeatUploadPB.prototype.Bars[progressBarID].EvalOnClose);
+	else
+		window.close();
+}

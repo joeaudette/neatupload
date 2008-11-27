@@ -269,8 +269,7 @@ window.onload = function() {
 				{
 					RegisterStartupScript("scrNeatUploadClose", @"<script type='text/javascript' language='javascript'>
 <!--
-if (NeatUploadMainWindow && NeatUploadMainWindow.NeatUploadPB && NeatUploadMainWindow.NeatUploadPB.prototype.Bars['" + ProgressBarID + @"'].EvalOnClose)
-	eval(NeatUploadMainWindow.NeatUploadPB.prototype.Bars['" + ProgressBarID + @"'].EvalOnClose);
+NeatUploadClose('" + ProgressBarID + @"');
 // -->
 </script>");
 				}
