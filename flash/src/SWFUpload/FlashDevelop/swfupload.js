@@ -115,7 +115,7 @@ SWFUpload.prototype.initSettings = function (init_settings) {
 SWFUpload.prototype.loadFlash = function () {
     var html, container, target_element, flash_container_id;
     html = this.getFlashHTML();
-
+    
     // Build the DOM nodes to hold the flash;
     container = document.createElement("div");
     container.style.width = this.getSetting("flash_width");
@@ -156,8 +156,8 @@ SWFUpload.prototype.getFlashHTML = function () {
         // Build the basic embed html
         html = '<embed type="application/x-shockwave-flash" src="' + this.getSetting("flash_url") + '" width="' + this.getSetting("flash_width") + '" height="' + this.getSetting("flash_height") + '"';
         html += ' id="' + this.movieName + '" name="' + this.movieName + '" ';
+        html += ' wmode="transparent" ';
         html += 'bgcolor="' + this.getSetting("flash_color") + '" quality="high" menu="false" flashvars="';
-
         html += this.getFlashVars();
 
         html += '" />';
@@ -172,6 +172,7 @@ SWFUpload.prototype.getFlashHTML = function () {
         html += '<param name="bgcolor" value="' + this.getSetting("flash_color") + '" />';
         html += '<param name="quality" value="high" />';
         html += '<param name="menu" value="false" />';
+        html += '<param name="wmode" value="transparent" />';
 
         html += '<param name="flashvars" value="';
 

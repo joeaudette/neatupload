@@ -991,36 +991,13 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	
 	// If the browser supports opacity and the div after the input file control has children,
 	// then use a variant of McGrady's technique to make the input file control look like those children.
-	StyleInputFile(GetInputFileElem());
+	StyleInputFileAndAddFlash(GetInputFileElem());
 	
 	// Don't use SWFUpload if Flash support wasn't requested or XMLHttpRequest isn't supported
 	var tmpXHR = GetXHR();
 	if (!useFlashIfAvailable || !tmpXHR)
 		return;
-	tmpXHR = null;
-	
-	nuf.AddHandler(window, "load", function ()	{
-		numf.Swfu = new SWFUpload({
-				debug : numf.debug_enabled,
-				flash_url : numf.AppPath + '/NeatUpload/SWFUpload.swf',
-				upload_target_url : numf.UploadScript,
-				upload_params : numf.UploadParams,
-				file_size_limit: 2097151,
-				begin_upload_on_queue : false,
-				file_queued_handler : FileQueued,
-				file_cancelled_handler : FileCancelled,
-				queue_complete_handler : QueueCompleted,
-				flash_ready_handler : FlashReady,
-				file_types : flashFilterExtensions,
-				file_types_description : flashFilterDescription
-/*
-                ,
-				flash_width : "200px",
-				flash_height : "200px",
-				flash_container_id : targetDivID				
-*/
-			});
-	});
+	tmpXHR = null;	
 	
 	// Hookup the upload trigger.
 	nuf.AddSubmitHandler(function (ev) {
@@ -1054,25 +1031,6 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
     		return []; // NeatUploadForm code handles all <input type=file> elements we might have added
     	}
 	});
-
-	// Make clicking 'Browse...' on the <input type='file'> call SWFUpload.browse().
-	GetInputFileElem().onclick = function(ev) {
-	    if (numf.IsFlashLoaded && numf.Swfu)
-	    {
-		    numf.Swfu.browse();
-		    ev = ev || window.event;
-		    ev.returnValue = false;
-		    if (ev.preventDefault)
-		    {
-			    ev.preventDefault();
-		    }
-		    return false;
-        }
-        else
-        {
-            return true;
-        }
-	};
 	
 	/* PRIVATE FUNCTIONS */	
 	
@@ -1199,7 +1157,15 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 			hiddenField.name = inputFileElem.name;
 			hiddenField.value = "not empty";
 			numf.debugMessage("FlashReady(): inputFileElem.name = " + inputFileElem.name);
-			inputFileElem.parentNode.insertBefore(hiddenField, inputFileElem);
+			var replacementDiv = inputFileElem.parentNode;
+			replacementDiv.insertBefore(hiddenField, inputFileElem);
+			var flashDiv = replacementDiv.lastChild;
+			flashDiv.style.position = "absolute";
+			flashDiv.style.textAlign = "right";
+			flashDiv.style.top = 0;
+			flashDiv.style.right = 0;
+			flashDiv.style.cursor = "pointer";
+			flashDiv.style.zIndex = 3;
 
 			// Change the <input type='file'> to an innocuous <input type='button'> so that
 			// clicking on it doesn't bring up an extra file selection dialog in FF.
@@ -1267,32 +1233,33 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 		UpdateFileNamesElem();		
 	}
 	
-	function StyleInputFile(inputFile)
+	function StyleInputFileAndAddFlash(inputFile)
 	{
 		var replacementDiv = inputFile.nextSibling;
 		if (!replacementDiv || !replacementDiv.tagName || replacementDiv.tagName.toLowerCase() != "div" 
 			|| !replacementDiv.firstChild)
 			return;
 		if (replacementDiv.offsetHeight)
-			MoveAndResizeDiv();
+			MoveAndResizeDivAndAddFlash();
 		else
 		{
 			// Do the styling in an onload handler to support controls in tables because offsetheight isn't 
 			// available in tables until the page has loaded.
-			nuf.AddHandler(window, "load", MoveAndResizeDiv);
+			nuf.AddHandler(window, "load", MoveAndResizeDivAndAddFlash);
 		}
 		return;
 		
-		function MoveAndResizeDiv()
+		function MoveAndResizeDivAndAddFlash()
 		{
+			var width, height;
 			replacementDiv.style.display = "block";
-			replacementDiv.style.height = replacementDiv.offsetHeight + "px";
+			height = replacementDiv.style.height = replacementDiv.offsetHeight + "px";
 			var w = 0;
 			for (var n = replacementDiv.firstChild; n; n = n.nextSibling)
 			{
 				w = ((n.offsetLeft + n.offsetWidth > w) ? (n.offsetLeft + n.offsetWidth) : w);
 			}	
-			replacementDiv.style.width = w + "px";
+			width = replacementDiv.style.width = w + "px";
 			replacementDiv.style.overflow = "hidden";
 			inputFile.style.display = "none";
 			inputFile.style.position = "absolute";
@@ -1310,9 +1277,36 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 			inputFile.style.zIndex = 2;
 			replacementDiv.insertBefore(inputFile, replacementDiv.firstChild);
 			inputFile.style.display = "block";
+
+			// Build the DOM nodes to hold the flash;
+			var container = document.createElement("div");
+			container.style.width = width;
+			container.style.height = height;
+			container.style.marginLeft = "-4000px";
+			container.id = targetDivID + "_flash";
+		    replacementDiv.appendChild(container);			
+
+			window.setTimeout(function () {
+				numf.Swfu = new SWFUpload({
+						debug : numf.debug_enabled,
+						flash_url : numf.AppPath + '/NeatUpload/SWFUpload.swf',
+						upload_target_url : numf.UploadScript,
+						upload_params : numf.UploadParams,
+						file_size_limit: 2097151,
+						begin_upload_on_queue : false,
+						file_queued_handler : FileQueued,
+						file_cancelled_handler : FileCancelled,
+						queue_complete_handler : QueueCompleted,
+						flash_ready_handler : FlashReady,
+						file_types : flashFilterExtensions,
+						file_types_description : flashFilterDescription,
+						flash_width : width,
+						flash_height : height,
+						flash_container_id : container.id				
+					});
+			}, 1);
 		}
 	}
-
 }
 
 NeatUploadMultiFile.prototype.debugMessage = NeatUploadConsole.debugMessage;
