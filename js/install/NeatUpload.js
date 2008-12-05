@@ -1148,6 +1148,25 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 		window.setTimeout(function () {
 			numf.IsFlashLoaded = true;
 			var inputFileElem = GetInputFileElem();
+			var replacementDiv = inputFileElem.parentNode;
+			
+			// Firefox does not start transparent flash movies unless they are
+			// visible, so we start the non-transparent movie offscreen, and then
+			// when FlashReady() is called to indicate that the necessary Flash
+			// support is available, we move the non-transparent movie onscreen,
+			// make the movie transparent, and restart it (by removing it and
+			// readding it to the DOM).  That means that FlashReady() will be
+			// called again.  To prevent an infinite loop, we detect that
+			// the movie is already transparent and just return.  Phew!
+			var flashDiv = replacementDiv.lastChild;
+			var em = flashDiv.firstChild.firstChild;
+			if (em.tagName.toLowerCase() == "embed")
+			{
+				if (em.getAttribute("wmode") == "transparent")
+					return;
+				else
+					em.setAttribute("wmode", "transparent");
+			}
 
 			// Add a hidden field with the same name as the input file to tell
 			// the UploadHttpModule that the form submission is the final request
@@ -1157,7 +1176,6 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 			hiddenField.name = inputFileElem.name;
 			hiddenField.value = "not empty";
 			numf.debugMessage("FlashReady(): inputFileElem.name = " + inputFileElem.name);
-			var replacementDiv = inputFileElem.parentNode;
 			replacementDiv.insertBefore(hiddenField, inputFileElem);
 			var flashDiv = replacementDiv.lastChild;
 			flashDiv.style.position = "absolute";
@@ -1175,7 +1193,15 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 			} catch (ex)
 			{
 			}
-
+			
+			if (em.tagName.toLowerCase() == "embed")
+			{
+				em.setAttribute("wmode", "transparent");
+				var parent = em.parentNode;
+				var next = em.nextSibling;
+				parent.removeChild(em);
+				parent.insertBefore(em, next);
+			}
 		}, 0);
 	}
 	
