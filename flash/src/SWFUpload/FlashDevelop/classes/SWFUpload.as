@@ -15,9 +15,28 @@ class SWFUpload {
 	{
 		_root.onEnterFrame = function() {
 			if (this.getBytesLoaded() / this.getBytesTotal() > 0.99) {
+				trace("Entering onEnterFrame()");
 				var SWFUpload:SWFUpload = new SWFUpload();
+				// Fill the flash area with the stage, and fill the root MovieClip
+				// with a transparent rectangle so that it will respond to mouse
+				// events, and then add an onMouseDown handler that calls
+				// SelectFiles().
+				Stage.scaleMode="exactFit";
 				_root.onEnterFrame = function() { };
+				_root.beginFill(0x00FF00, 0);
+				_root.moveTo(0, 0);
+				_root.lineTo(Stage.width, 0);
+				_root.lineTo(Stage.width, Stage.height);
+				_root.lineTo(0, Stage.height);
+				_root.lineTo(0, 0);
+				_root.endFill();
+				_root.onMouseDown = function() {
+					trace("Entering onMouseDown()");
+					SWFUpload.SelectFiles();
+					trace("Exiting onMouseDown()");
+				};
 				_root.stop();
+				trace("Exiting onEnterFrame()");
 			}
 		};
 	}
@@ -74,13 +93,6 @@ class SWFUpload {
 	function SWFUpload() {
 		System.security.allowDomain("*");	// Allow any domain to use this SWF to upload files
 
-		var playerVersion:String;
-		playerVersion = System.capabilities.version;
-		var majorVersion:String;
-		majorVersion = playerVersion.split(" ")[1].split(",")[0];
-		if (Number(majorVersion) > 9)
-			return;
-		
 		// Setup file FileReference Listener. This is attached to all FileReference objects (ie, every file the user uploads)
 		this.file_reference_listener = new Object();
 		this.file_reference_listener.onCancel = 		Delegate.Create(this, this.DialogCancelled_Handler);
