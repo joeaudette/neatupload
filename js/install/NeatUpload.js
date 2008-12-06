@@ -516,7 +516,7 @@ NeatUploadForm.prototype.OnSubmit = function(ev)
 	// Remember the button that was clicked to submit the form so we can fake it
 	// when we submit the form with the original submit().
     var submittingElem = NeatUploadForm.prototype.GetSubmittingElem();
-    NeatUploadConsole.debugMessage("submittingElem=" + submittingElem);
+    NeatUploadConsole.debugMessage("submittingElem = " + submittingElem);
 
 	// To avoid having OnSubmit() run twice for the same click
 	// (once from our form.submit() and again from our onsubmit handler),
@@ -1001,9 +1001,12 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	
 	// Hookup the upload trigger.
 	nuf.AddSubmitHandler(function (ev) {
+		numf.debugMessage("Entered MultiFile submit handler");
 	    if (numf.IsFlashLoaded && numf.Swfu && numf.FilesToUpload.length > 0)
 	    {
+			numf.debugMessage("Returning MultiFile async handler");
 			return function (ev, completeHandler) {
+				numf.debugMessage("Entered MultiFile async handler");
 				numf.QueueCompletedHandler = completeHandler;
 		    	StartAsyncUploads();
 			};
@@ -1102,6 +1105,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 		{
 			numf.debugMessage("StartSWFUploads(): Entered.");
 		    numf.Swfu.startUpload();
+			numf.debugMessage("StartSWFUploads(): Exiting.");
 		}
 	}
 			
@@ -1146,7 +1150,6 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	function FlashReady()
 	{
 		window.setTimeout(function () {
-			numf.IsFlashLoaded = true;
 			var inputFileElem = GetInputFileElem();
 			var replacementDiv = inputFileElem.parentNode;
 			
@@ -1156,14 +1159,36 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 			// support is available, we move the non-transparent movie onscreen,
 			// make the movie transparent, and restart it (by removing it and
 			// readding it to the DOM).  That means that FlashReady() will be
-			// called again.  To prevent an infinite loop, we detect that
-			// the movie is already transparent and just return.  Phew!
+			// called again.  Opera does not seem to support 
+			// calling AS from JS when wmode=transparent, so we check that one of
+			// the AS methods is accessible and if it isn't, we abandon using 
+			// Flash altogether.  If it is accessible we transform the 
+			// <input type=file> to an <input type=button> so that Firefox
+			// doesn't bring up a second file selection dialog.  Phew!
 			var flashDiv = replacementDiv.lastChild;
 			var em = flashDiv.firstChild.firstChild;
 			if (em.tagName.toLowerCase() == "embed")
 			{
 				if (em.getAttribute("wmode") == "transparent")
+				{
+					if (!numf.Swfu || !numf.Swfu.movieElement || !numf.Swfu.movieElement.StartUpload)
+					{
+						replacementDiv.removeChild(flashDiv);
+					}
+					else
+					{
+						// Change the <input type='file'> to an innocuous <input type='button'> so that
+						// clicking on it doesn't bring up an extra file selection dialog in FF.
+						try {
+							inputFileElem.type = 'button';
+							inputFileElem.value = 'Pick Files...';
+						} catch (ex)
+						{
+						}
+						numf.IsFlashLoaded = true;
+					}
 					return;
+				}
 				else
 					em.setAttribute("wmode", "transparent");
 			}
@@ -1177,22 +1202,12 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 			hiddenField.value = "not empty";
 			numf.debugMessage("FlashReady(): inputFileElem.name = " + inputFileElem.name);
 			replacementDiv.insertBefore(hiddenField, inputFileElem);
-			var flashDiv = replacementDiv.lastChild;
 			flashDiv.style.position = "absolute";
 			flashDiv.style.textAlign = "right";
 			flashDiv.style.top = 0;
 			flashDiv.style.right = 0;
 			flashDiv.style.cursor = "pointer";
 			flashDiv.style.zIndex = 3;
-
-			// Change the <input type='file'> to an innocuous <input type='button'> so that
-			// clicking on it doesn't bring up an extra file selection dialog in FF.
-			try {
-				inputFileElem.type = 'button';
-				inputFileElem.value = 'Pick Files...';
-			} catch (ex)
-			{
-			}
 			
 			if (em.tagName.toLowerCase() == "embed")
 			{
@@ -1201,6 +1216,10 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 				var next = em.nextSibling;
 				parent.removeChild(em);
 				parent.insertBefore(em, next);
+			}
+			else
+			{
+				numf.IsFlashLoaded = true;
 			}
 		}, 0);
 	}
