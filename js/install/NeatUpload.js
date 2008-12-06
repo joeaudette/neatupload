@@ -989,10 +989,19 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 	this.fqc = document.createElement('div');
 	GetInputFileElem().parentNode.insertBefore(this.fqc, GetInputFileElem());
 	
+	// Disable use of Flash for Linux Firefox < 3.0 because it doesn't support wmode=transparent. 
+	if (navigator && navigator.platform && navigator.platform.indexOf("Linux") != -1)
+	{		
+		var ua = navigator.userAgent;
+		var firefoxIndex = ua.indexOf("Firefox/");
+		if (firefoxIndex != -1 && parseFloat(ua.substring(firefoxIndex + 8)) < 3.0)
+			useFlashIfAvailable = false;
+	}
+
 	// If the browser supports opacity and the div after the input file control has children,
 	// then use a variant of McGrady's technique to make the input file control look like those children.
 	StyleInputFileAndAddFlash(GetInputFileElem());
-	
+
 	// Don't use SWFUpload if Flash support wasn't requested or XMLHttpRequest isn't supported
 	var tmpXHR = GetXHR();
 	if (!useFlashIfAvailable || !tmpXHR)
@@ -1322,6 +1331,11 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 			inputFile.style.zIndex = 2;
 			replacementDiv.insertBefore(inputFile, replacementDiv.firstChild);
 			inputFile.style.display = "block";
+
+			var tmpXHR = GetXHR();
+			if (!useFlashIfAvailable || !tmpXHR)
+				return;
+			tmpXHR = null;	
 
 			// Build the DOM nodes to hold the flash;
 			var container = document.createElement("div");
