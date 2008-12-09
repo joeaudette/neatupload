@@ -69,7 +69,9 @@ namespace Brettle.Web.NeatUpload
                 foreach (string name in httpCookies.AllKeys)
                 {
                     string quotedCookieValue = httpCookies[name].Value;
-                    if (quotedCookieValue.IndexOfAny(new char[] {',', ';'}) != -1)
+                    if (quotedCookieValue == null)
+                        quotedCookieValue = "";
+                    else if (quotedCookieValue.IndexOfAny(new char[] {',', ';'}) != -1)
                         quotedCookieValue = "\"" + quotedCookieValue.Replace("\"", "\\\"") + "\"";
                     try
                     {
