@@ -35,6 +35,7 @@ namespace Hitone.Web.SqlServerUploader
     /// <summary>
     /// Storage provider for NeatUpload that allows streaming uploaded files directly into a database
     /// </summary>
+    [Serializable]
     public class SqlServerUploadStorageProvider : UploadStorageProvider
     {
         //Private variables exposed by parameters below (see parameters for description)

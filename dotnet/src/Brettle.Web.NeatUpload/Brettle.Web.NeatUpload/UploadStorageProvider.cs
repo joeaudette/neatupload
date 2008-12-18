@@ -24,6 +24,7 @@ using System.Collections.Specialized;
 
 namespace Brettle.Web.NeatUpload
 {
+    [Serializable]
 	public abstract class UploadStorageProvider
 	{
 		public abstract void Initialize(string name, NameValueCollection attrs);

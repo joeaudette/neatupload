@@ -33,6 +33,7 @@ namespace Hitone.Web.SqlServerUploader
     /// <summary>
     /// Memory structure for one sql streamed file during upload
     /// </summary>
+    [Serializable]
     public class SqlServerUploadedFile : UploadedFile
     {
         /// <summary> Returns generated identity value if data was written to a table with an IDENTITY-column </summary>
@@ -53,7 +54,30 @@ namespace Hitone.Web.SqlServerUploader
 		}
 
         internal SqlServerUploadStorageProvider _provider = null;
-        private SqlServerBlobStream _blobStream = null;
+
+        [NonSerialized]
+        private SqlServerBlobStream _cachedBlobStream = null;
+
+        private SqlServerBlobStream _blobStream {
+            get
+            {
+                if (_cachedBlobStream == null)
+                {
+                    _cachedBlobStream
+                        = new SqlServerBlobStream(_provider.ConnectionString,
+                            _provider.TableName, _provider.DataColumnName,
+                            _provider.PartialFlagColumnName,
+                            _provider.FileNameColumnName,
+                            this.FileName, _provider.MIMETypeColumnName,
+                            this.ContentType, _provider.CreateProcedure,
+                            _provider.OpenProcedure, _provider.WriteProcedure,
+                            _provider.ReadProcedure, _provider.CleanupProcedure,
+                            _provider.RenameProcedure, _provider.StoreHashProcedure,
+                            _provider.DeleteProcedure, _identity);
+                }
+                return _cachedBlobStream;
+            }
+        }
 
         private void Initialize(SqlServerUploadStorageProvider provider,
                                         UploadStorageConfig storageConfig)
@@ -64,7 +88,6 @@ namespace Hitone.Web.SqlServerUploader
             // If hash algorithm is specified, create an object to calculate hash
             if (provider.HashAlgorithm != null && provider.HashAlgorithm.Length > 0){
                 _hashName = provider.HashAlgorithm;
-                _hashAlgorithm = System.Security.Cryptography.HashAlgorithm.Create(provider.HashAlgorithm);
             }
         }
 
@@ -75,11 +98,7 @@ namespace Hitone.Web.SqlServerUploader
 
         public override Stream CreateStream()
         {
-            // _blobStream = new SqlServerBlobStream(this);
-            // Use the BIG constructor that takes in _everything_ and figures out how to use it
-            _blobStream = new SqlServerBlobStream(_provider.ConnectionString, _provider.TableName, _provider.DataColumnName, _provider.PartialFlagColumnName, _provider.FileNameColumnName, this.FileName, _provider.MIMETypeColumnName, this.ContentType,
-                _provider.CreateProcedure, _provider.OpenProcedure, _provider.WriteProcedure, _provider.ReadProcedure, _provider.CleanupProcedure, _provider.RenameProcedure, _provider.StoreHashProcedure, _provider.DeleteProcedure);
-
+            // _blobStream will be created on first access.
             _identity = _blobStream.Identity;   //Get generated identity (if any) from the stream
 
             // If hash algorithm is specified, enlcose the blobstream in a hash crypto-transformation
@@ -231,7 +250,17 @@ namespace Hitone.Web.SqlServerUploader
 
 
         // Hash-Speicific code is below
-        private HashAlgorithm _hashAlgorithm = null;
+        [NonSerialized]
+        private HashAlgorithm _cachedHashAlgorithm = null;
+
+        private HashAlgorithm _hashAlgorithm {
+            get {
+                if (_cachedHashAlgorithm == null && _hashName != null)
+                    _cachedHashAlgorithm = System.Security.Cryptography.HashAlgorithm.Create(_hashName);
+                return _cachedHashAlgorithm;
+            }
+        }
+
         private string _hashName = string.Empty;
 
         /// <summary>

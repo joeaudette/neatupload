@@ -67,7 +67,7 @@ namespace Hitone.Web.SqlServerUploader
 
 
         /// <summary>
-        /// Main constructor; creates a SqlServerBlobStream agains given database using given settings
+        /// Main constructor; creates a SqlServerBlobStream against given database using given settings
         /// </summary>
         /// <param name="ConnectionString">Connections string agains the database to use</param>
         /// <param name="CreatorProcedure"><c>Optional</c> Procedure to use when creating the file-containing row in the database</param>
@@ -78,11 +78,32 @@ namespace Hitone.Web.SqlServerUploader
         /// <param name="FileName"><c>Optional</c> Name of the uploaded file</param>
         /// <param name="MIMETypeColumnName"><c>Optional</c> Name of table column where the MIME-type of the uploaded file will be stored</param>
         /// <param name="MIMEType"><c>Optional</c> MIME-type of the uploaded file</param>
-        public SqlServerBlobStream(string ConnectionString,  string TableName, string DataColumnName, string PartialFlagColumnName, string FileNameColumnName, string FileName, string MIMETypeColumnName, string MIMEType,
+        /// <param name="identity"><c>Optional</c>the identity of the row to open, -1 means create a new row.</param>
+        public SqlServerBlobStream(string ConnectionString, string TableName, string DataColumnName, string PartialFlagColumnName, string FileNameColumnName, string FileName, string MIMETypeColumnName, string MIMEType,
+             string createProcedure, string openProcedure, string writeProcedure, string readProcedure, string cleanupProcedure, string renameProcedure, string storeHashProcedure, string deleteProcedure, int identity)
+        {
+            Initialize(ConnectionString, TableName, DataColumnName, PartialFlagColumnName, FileNameColumnName, FileName, MIMETypeColumnName, MIMEType,
+                         createProcedure, openProcedure, writeProcedure, readProcedure, cleanupProcedure, renameProcedure, storeHashProcedure, deleteProcedure, identity);
+
+        }
+
+        /// <summary>
+        /// Main constructor; creates an SqlServerBlobStream against a new row in the given database using given settings
+        /// </summary>
+        /// <param name="ConnectionString">Connections string agains the database to use</param>
+        /// <param name="CreatorProcedure"><c>Optional</c> Procedure to use when creating the file-containing row in the database</param>
+        /// <param name="TableName">Name of table to which we write the streamed data</param>
+        /// <param name="DataColumnName">Name of table column to store data into (usually of type <c>Text</c> or <c>Image</c>)</param>
+        /// <param name="PartialFlagColumnName"><c>Optional</c> Name of table column to store a "partial"-flag in; while uploading this will be set to 1 (or set by CreatorProcedure), when done it will be set to 0</param>
+        /// <param name="FileNameColumnName"><c>Optional</c> Name of table column where the name of the uploaded file will be stored</param>
+        /// <param name="FileName"><c>Optional</c> Name of the uploaded file</param>
+        /// <param name="MIMETypeColumnName"><c>Optional</c> Name of table column where the MIME-type of the uploaded file will be stored</param>
+        /// <param name="MIMEType"><c>Optional</c> MIME-type of the uploaded file</param>
+        public SqlServerBlobStream(string ConnectionString, string TableName, string DataColumnName, string PartialFlagColumnName, string FileNameColumnName, string FileName, string MIMETypeColumnName, string MIMEType,
              string createProcedure, string openProcedure, string writeProcedure, string readProcedure, string cleanupProcedure, string renameProcedure, string storeHashProcedure, string deleteProcedure)
         {
             Initialize(ConnectionString, TableName, DataColumnName, PartialFlagColumnName, FileNameColumnName, FileName, MIMETypeColumnName, MIMEType,
-                         createProcedure, openProcedure, writeProcedure, readProcedure, cleanupProcedure, renameProcedure, storeHashProcedure, deleteProcedure);
+                         createProcedure, openProcedure, writeProcedure, readProcedure, cleanupProcedure, renameProcedure, storeHashProcedure, deleteProcedure, -1);
 
         }
 
@@ -121,11 +142,19 @@ namespace Hitone.Web.SqlServerUploader
             
             //Try to open the blob
             _connection.Open();
-            try { openSqlCommand.ExecuteNonQuery(); }
+            try { 
+                openSqlCommand.ExecuteNonQuery(); 
+            }
             finally { _connection.Close(); }
 
-            //Store pointer and length
-            _pointer = (byte[])openSqlCommand.Parameters["@Pointer"].Value;
+            _pointer = openSqlCommand.Parameters["@Pointer"].Value as byte[];
+            // If it is null or not a byte[], then the row doesn't exist so 
+            // just return;
+            if (_pointer == null)
+            {
+                Dispose();
+                return;
+            }
             _length = (int)openSqlCommand.Parameters["@Size"].Value;
 
             if (openProcedure != null || fileNameColumnName != null) _fileName = (string)openSqlCommand.Parameters["@FileName"].Value;
@@ -334,15 +363,21 @@ namespace Hitone.Web.SqlServerUploader
         /// <param name="FileName"><c>Optional</c> Name of the uploaded file</param>
         /// <param name="MIMETypeColumnName"><c>Optional</c> Name of table column where the MIME-type of the uploaded file will be stored</param>
         /// <param name="MIMEType"><c>Optional</c> MIME-type of the uploaded file</param>
+        /// <param name="identity"><c>Optional</c> the identity of the row to create the stream against, -1 means create a new row.</param>
         private void Initialize(string connectionString, string tableName, string dataColumnName, string partialFlagColumnName, string fileNameColumnName, string fileName, string mimeTypeColumnName, string mimeType,
-            string createProcedure, string openProcedure, string writeProcedure, string readProcedure, string cleanupProcedure, string renameProcedure, string storeHashProcedure, string deleteProcedure)
+            string createProcedure, string openProcedure, string writeProcedure, string readProcedure, string cleanupProcedure, string renameProcedure, string storeHashProcedure, string deleteProcedure,
+            int identity)
         {
             _fileName = fileName;
             _MIMEType = mimeType;
 
             _connection = new SqlConnection(connectionString);
 
-            if (createProcedure != null && createProcedure.Length > 0)
+            if (identity != -1)
+            {
+                OpenBlob(tableName, dataColumnName, openProcedure, identity, fileNameColumnName, mimeTypeColumnName);
+            }
+            else if (createProcedure != null && createProcedure.Length > 0)
             {
                 SqlCommand createCommand = _connection.CreateCommand();
                 createCommand.CommandType = System.Data.CommandType.StoredProcedure;
@@ -367,17 +402,19 @@ namespace Hitone.Web.SqlServerUploader
                 _pointer = (byte[])PointerOutParam.Value;
                 _identity = (int)IdentityOutParam.Value;
                 _offset = 0;
+                _isOpen = true;
             }
             else
+            {
                 CreateBlob(tableName, dataColumnName, partialFlagColumnName, fileNameColumnName, fileName, mimeTypeColumnName, mimeType);
-      
+                _isOpen = true;
+            }
 
             GenerateCleanupCommand(tableName, dataColumnName, partialFlagColumnName, cleanupProcedure);
             GenerateDeleteCommand(tableName, deleteProcedure);
             GenerateWriteCommand(tableName, dataColumnName, writeProcedure);
             GenerateReadCommand(tableName, dataColumnName, readProcedure);
 
-            _isOpen = true;
         }
 
 
@@ -557,6 +594,7 @@ namespace Hitone.Web.SqlServerUploader
         /// </summary>
         public void Delete()
         {
+            if (!_isOpen) return;
             if (_deleteCommand == null) throw new Exception("Not configured to delete posts");
             _connection.Open();
             try { _deleteCommand.ExecuteNonQuery(); }
