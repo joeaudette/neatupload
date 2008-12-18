@@ -314,8 +314,6 @@ namespace Brettle.Web.NeatUpload
 			app.ReleaseRequestState += new System.EventHandler(Application_ReleaseRequestState);
 			app.PreRequestHandlerExecute += new System.EventHandler(Application_PreRequestHandlerExecute);
 			app.Error += new System.EventHandler(Application_Error);
-			app.EndRequest += new EventHandler(Application_EndRequestOrError);
-			app.Error += new EventHandler(Application_EndRequestOrError);
 			RememberErrorHandler = new System.EventHandler(RememberError);
 			
 			lock (StaticSync)
@@ -844,7 +842,15 @@ namespace Brettle.Web.NeatUpload
 				app.Error -= RememberErrorHandler;
 			}
 
-			UploadState uploadState = CurrentUploadState;
+            HttpContext ctx = HttpContext.Current;
+            // Get the list of files to dispose to the current context if one hasn't been added yet
+            ArrayList filesToDispose = ctx.Items["NeatUpload_FilesToDispose"] as ArrayList;
+            if (filesToDispose == null) return; // Nothing to dispose, so return
+
+            foreach (UploadedFile file in filesToDispose)
+                file.Dispose();
+
+            UploadState uploadState = CurrentUploadState;
 			if (uploadState != null)
 			{
 				if (CurrentMultiRequestControlID == null
@@ -856,18 +862,5 @@ namespace Brettle.Web.NeatUpload
 				CurrentUploadState = null;
 			}
 		}
-
-		private void Application_EndRequestOrError(object sender, EventArgs args)
-		{
-			if (!Config.Current.UseHttpModule)
-				return;
-			HttpContext ctx = HttpContext.Current;
-			// Get the list of files to dispose to the current context if one hasn't been added yet
-			ArrayList filesToDispose = ctx.Items["NeatUpload_FilesToDispose"] as ArrayList;
-			if (filesToDispose == null) return; // Nothing to dispose, so return
-			
-			foreach (UploadedFile file in filesToDispose)
-				file.Dispose();
-		}		
 	}
 }
