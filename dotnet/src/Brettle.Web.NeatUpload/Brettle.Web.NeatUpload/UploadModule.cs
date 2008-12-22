@@ -336,6 +336,8 @@ namespace Brettle.Web.NeatUpload
         /// to be relative to the path of the current request.</param>
         /// <returns>A site-relative URL that ensures that the browser will
         /// retrieve the most recent version of the file.</returns>
+        /// <remarks>Based on code posted by Mike Lim in a feature request.
+        /// </remarks>
         public static string GetCacheBustedPath(string path)
         {
             string url;
