@@ -88,24 +88,6 @@ namespace Brettle.Web.NeatUpload
 				form.Method = "Post";
 			}
 		}
-
-		// This is used to ensure that the browser gets the latest NeatUpload.js each time this assembly is
-		// reloaded.  Strictly speaking the browser only needs to get the latest when NeatUpload.js changes,
-		// but computing a hash on that file everytime this assembly is loaded strikes me as overkill.
-		private static Guid CacheBustingGuid = System.Guid.NewGuid();
-
-		private string AppPath
-		{
-			get 
-			{
-				string appPath = Context.Request.ApplicationPath;
-				if (appPath == "/")
-				{
-					appPath = "";
-				}
-				return appPath;
-			}
-		}
 		
 		protected override void OnPreRender (EventArgs e)
 		{
@@ -114,8 +96,9 @@ namespace Brettle.Web.NeatUpload
 				if (!Page.IsClientScriptBlockRegistered("NeatUploadJs"))
 				{
 					Page.RegisterClientScriptBlock("NeatUploadJs", @"
-	<script type='text/javascript' language='javascript' src='" + AppPath + @"/NeatUpload/NeatUpload.js?guid=" 
-		+ CacheBustingGuid + @"'></script>");
+	<script type='text/javascript' language='javascript' src='" 
+                        + UploadModule.GetCacheBustedPath("/NeatUpload/NeatUpload.js")
+                        + @"'></script>");
 				}
 			}
 			base.OnPreRender(e);

@@ -85,11 +85,14 @@ namespace Brettle.Web.NeatUpload
 <script type='text/javascript' language='javascript'>
     var GB_ROOT_DIR = '{0}/';
 </script>
-<script type='text/javascript' language='javascript' src='{0}/AJS.js?guid={1}'></script>
-<script type='text/javascript' language='javascript' src='{0}/AJS_fx.js?guid={1}'></script>
-<script type='text/javascript' language='javascript' src='{0}/gb_scripts.js?guid={1}'></script>
+<script type='text/javascript' language='javascript' src='{1}'></script>
+<script type='text/javascript' language='javascript' src='{2}'></script>
+<script type='text/javascript' language='javascript' src='{3}'></script>
 <link href='{0}/gb_styles.css' rel='stylesheet' type='text/css' />
-", expandedGreyBoxRoot, CacheBustingGuid));
+", expandedGreyBoxRoot,
+ UploadModule.GetCacheBustedPath(expandedGreyBoxRoot + "/AJS.js"),
+ UploadModule.GetCacheBustedPath(expandedGreyBoxRoot + "/AJS_fx.js"),
+ UploadModule.GetCacheBustedPath(expandedGreyBoxRoot + "/gb_scripts.js")));
 			}
 		}
 		
@@ -106,12 +109,5 @@ NeatUploadPB.prototype.Bars['{0}'].EvalOnClose = ""NeatUploadMainWindow.GB_hide(
 // -->
 </script>", ClientID, (Height.IsEmpty ? 100 : Height.Value), (Width.IsEmpty ? 500 : Width.Value));
 		}
-			
-
-		// This is used to ensure that the browser gets the latest GreyBox files each time this assembly is
-		// reloaded.  Strictly speaking the browser only needs to get the latest when those files change,
-		// but computing a hash on those files everytime this assembly is loaded strikes me as overkill.
-		private static Guid CacheBustingGuid = System.Guid.NewGuid();
-		
 	}
 }

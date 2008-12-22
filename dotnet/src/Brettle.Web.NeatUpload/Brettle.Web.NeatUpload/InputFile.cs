@@ -203,8 +203,9 @@ namespace Brettle.Web.NeatUpload
 				if (!Page.IsClientScriptBlockRegistered("NeatUploadJs"))
 				{
 					Page.RegisterClientScriptBlock("NeatUploadJs", @"
-	<script type='text/javascript' language='javascript' src='" + AppPath + @"/NeatUpload/NeatUpload.js?guid=" 
-		+ CacheBustingGuid + @"'></script>");
+	<script type='text/javascript' language='javascript' src='" 
+                        + UploadModule.GetCacheBustedPath("/NeatUpload/NeatUpload.js") 
+                        + @"'></script>");
 				}
 			}
 			base.OnPreRender(e);

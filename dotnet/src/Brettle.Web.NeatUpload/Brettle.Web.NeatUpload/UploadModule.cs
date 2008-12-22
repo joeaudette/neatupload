@@ -327,6 +327,60 @@ namespace Brettle.Web.NeatUpload
             InstalledModule.AppendToLog(param);
         }
 
+        /// <summary>
+        /// Returns an URL that will ensure the browser retrieves the most recent
+        /// version file at the specified path, by adding a '?guid=...' to the URL.
+        /// </summary>
+        /// <param name="path">the virtual path of the file.  If it starts with
+        /// '/', it is assumed to be app-relative.  If it doesn't, it is assumed
+        /// to be relative to the path of the current request.</param>
+        /// <returns>A site-relative URL that ensures that the browser will
+        /// retrieve the most recent version of the file.</returns>
+        public static string GetCacheBustedPath(string path)
+        {
+            string url;
+            if (path.StartsWith("/"))
+                url = AppPath + path;
+            else
+            {
+                string filePath = HttpContext.Current.Request.FilePath;
+                string dirPath = filePath.Substring(0, filePath.LastIndexOf('/') + 1);
+                url = dirPath + path;
+            }
+
+            string cacheKey = url;
+            System.Web.Caching.Cache Cache = HttpContext.Current.Cache;
+            string guid = null;
+            if (Cache[url] is string)
+                guid = Cache[url] as string;  // get value from Cache
+            else
+            {
+                string filePath = HttpContext.Current.Server.MapPath(url);
+                System.IO.FileInfo fi = new System.IO.FileInfo(filePath);
+                guid = fi.LastWriteTime.ToString("yyMMddHHmmss");
+                Cache.Insert(url, guid, new System.Web.Caching.CacheDependency(filePath));
+            }
+            return url + "?guid=" + guid;
+        }
+
+        /// <summary>
+        /// The site-relative path of the application root, with no initial "/"
+        /// so that it is suitable for use as a prefix for application-relative
+        /// paths.
+        /// </summary>
+        public static string AppPath
+        {
+            get
+            {
+                string appPath = HttpContext.Current.Request.ApplicationPath;
+                if (appPath == "/")
+                {
+                    appPath = "";
+                }
+                return appPath;
+            }
+        }
+
 		private static bool _IsInstalled = true;
 		private static IUploadModule _InstalledModule;
 		internal static IUploadModule InstalledModule {

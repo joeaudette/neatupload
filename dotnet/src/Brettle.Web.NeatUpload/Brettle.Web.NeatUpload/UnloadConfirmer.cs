@@ -47,33 +47,16 @@ namespace Brettle.Web.NeatUpload
 			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 		*/
 
-        // This is used to ensure that the browser gets the latest SWFUpload.js each time this assembly is
-        // reloaded.  Strictly speaking the browser only needs to get the latest when SWFUpload.js changes,
-        // but computing a hash on that file everytime this assembly is loaded strikes me as overkill.
-        internal static Guid CacheBustingGuid = System.Guid.NewGuid();
-
         internal bool IsDesignTime = (HttpContext.Current == null);
-
-        private string AppPath
-        {
-            get
-            {
-                string appPath = Context.Request.ApplicationPath;
-                if (appPath == "/")
-                {
-                    appPath = "";
-                }
-                return appPath;
-            }
-        }
 
         protected override void OnPreRender(EventArgs e)
         {
             if (!Page.IsClientScriptBlockRegistered("NeatUploadJs"))
             {
                 Page.RegisterClientScriptBlock("NeatUploadJs", @"
-<script type='text/javascript' language='javascript' src='" + AppPath + @"/NeatUpload/NeatUpload.js?guid="
-    + CacheBustingGuid + @"'></script>");
+<script type='text/javascript' language='javascript' src='" 
+                    + UploadModule.GetCacheBustedPath("/NeatUpload/NeatUpload.js")
+                    + @"'></script>");
             }
             this.Page.RegisterStartupScript("NeatUploadUnloadConfirmer-" + this.UniqueID, GetStartupScript());
             base.OnPreRender(e);
