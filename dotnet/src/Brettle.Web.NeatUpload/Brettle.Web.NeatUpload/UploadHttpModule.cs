@@ -144,8 +144,7 @@ namespace Brettle.Web.NeatUpload
 				= (uploadState.BytesTotal <= 0 || uploadState.FileBytesRead <= 0) 
                 ? 0 
                 : ((double)uploadState.BytesRead / uploadState.BytesTotal);
-			if (uploadState.Files != null && uploadState.Files.Count > 0)
-				progressState.CurrentFileName = uploadState.Files[uploadState.Files.Count-1].FileName;
+            progressState.CurrentFileName = uploadState.CurrentFileName;
 			progressState.Files = uploadState.Files.GetReadOnlyCopy();
 			progressState.Failure = uploadState.Failure;
 			progressState.Rejection = uploadState.Rejection;
@@ -153,6 +152,7 @@ namespace Brettle.Web.NeatUpload
 			progressState.TimeElapsed = uploadState.TimeElapsed;
 			if (uploadState.BytesRead == 0 || uploadState.BytesTotal < 0)
 			{
+                progressState.Status = UploadStatus.Unknown;
 				progressState.TimeRemaining = TimeSpan.MaxValue;
 			}
 			else
@@ -845,10 +845,11 @@ namespace Brettle.Web.NeatUpload
             HttpContext ctx = HttpContext.Current;
             // Get the list of files to dispose to the current context if one hasn't been added yet
             ArrayList filesToDispose = ctx.Items["NeatUpload_FilesToDispose"] as ArrayList;
-            if (filesToDispose == null) return; // Nothing to dispose, so return
-
-            foreach (UploadedFile file in filesToDispose)
-                file.Dispose();
+            if (filesToDispose != null)
+            {
+                foreach (UploadedFile file in filesToDispose)
+                    file.Dispose();
+            }
 
             UploadState uploadState = CurrentUploadState;
 			if (uploadState != null)
