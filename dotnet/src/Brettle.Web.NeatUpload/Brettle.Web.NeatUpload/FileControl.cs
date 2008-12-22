@@ -233,24 +233,6 @@ namespace Brettle.Web.NeatUpload
 				foreach (UploadedFile f in Files)
 					f.Dispose();
 			base.OnUnload(e);
-		}
-		
-		// This is used to ensure that the browser gets the latest SWFUpload.js each time this assembly is
-		// reloaded.  Strictly speaking the browser only needs to get the latest when SWFUpload.js changes,
-		// but computing a hash on that file everytime this assembly is loaded strikes me as overkill.
-		internal static Guid CacheBustingGuid = System.Guid.NewGuid();
-
-		internal string AppPath
-		{
-			get 
-			{
-				string appPath = Context.Request.ApplicationPath;
-				if (appPath == "/")
-				{
-					appPath = "";
-				}
-				return appPath;
-			}
-		}
+		}	
 	}
 }
