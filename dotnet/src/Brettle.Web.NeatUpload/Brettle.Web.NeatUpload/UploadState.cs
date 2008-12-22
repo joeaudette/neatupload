@@ -26,7 +26,7 @@ namespace Brettle.Web.NeatUpload
 		{
 			_PostBackID = postBackID;
 			// TODO: If contents of _ProcessingStateDict change, we need to call OnChanged();
-			_Files.Changed += new EventHandler(Files_Changed);
+            _Files.UploadState = this;
 		}
 
         /// <summary>
@@ -44,14 +44,18 @@ namespace Brettle.Web.NeatUpload
             this._Failure = src._Failure;
             this._FileBytesRead = src._FileBytesRead;
             this._Files = src._Files;
+            if (this._Files != null)
+                this._Files.UploadState = this;
             this._MultiRequestObject = src._MultiRequestObject;
             this._PostBackID = src._PostBackID;
+            this._CurrentFileName = src._CurrentFileName;
             this._ProcessingStateDict = src._ProcessingStateDict;
             this._Rejection = src._Rejection;
             this._Status = src._Status;
             this.BytesReadAtLastMark = src.BytesReadAtLastMark;
             this.IsMerging = src.IsMerging;
             this.TimeOfFirstByte = src.TimeOfFirstByte;
+            this.TimeOfFinalByte = src.TimeOfFinalByte;
             this.TimeOfLastMark = src.TimeOfLastMark;
             this.TimeOfLastMerge = src.TimeOfLastMerge;
             if (src.UploadStateAtLastMerge == null)
@@ -82,6 +86,8 @@ namespace Brettle.Web.NeatUpload
 			set {
 				if (value != _Status)
 				{
+                    if (_Status == UploadStatus.NormalInProgress || _Status == UploadStatus.ChunkedInProgress)
+                        TimeOfFinalByte = DateTime.Now;
 					_Status = value;
                     if (_Status != UploadStatus.NormalInProgress && _Status != UploadStatus.ChunkedInProgress && TimeElapsed.TotalSeconds > 0)
                     {
@@ -92,7 +98,28 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 
-		private object _MultiRequestObject;
+        private string _CurrentFileName;
+
+        /// <value>
+        /// The name of the file currently being uploaded.
+        /// </value>
+        public string CurrentFileName
+        {
+            get
+            {
+                return _CurrentFileName;
+            }
+            set
+            {
+                if (value != _CurrentFileName)
+                {
+                    _CurrentFileName = value;
+                    OnChanged();
+                }
+            }
+        }
+        
+        private object _MultiRequestObject;
 
         /// <value>
 		/// An object that is shared while processing multi-request uploads.
@@ -238,7 +265,9 @@ namespace Brettle.Web.NeatUpload
 			get {
                 if (TimeOfFirstByte == DateTime.MaxValue)
                     return TimeSpan.FromSeconds(0);
-				return DateTime.Now - TimeOfFirstByte;
+                if (TimeOfFinalByte != DateTime.MaxValue)
+                    return TimeOfFinalByte - TimeOfFirstByte;
+                return DateTime.Now - TimeOfFirstByte;
 			}
 		}
 
@@ -317,7 +346,8 @@ namespace Brettle.Web.NeatUpload
 		private long BytesReadAtLastMark;
 		private DateTime TimeOfLastMark = DateTime.MinValue;
 		private DateTime TimeOfFirstByte = DateTime.MaxValue;
-		internal bool DeleteAfterDelayWhenNotOpenReadWrite = false;
+        private DateTime TimeOfFinalByte = DateTime.MaxValue;
+        internal bool DeleteAfterDelayWhenNotOpenReadWrite = false;
 		internal bool IsMerging = false;
         internal bool IsWritable = true;
 	}
