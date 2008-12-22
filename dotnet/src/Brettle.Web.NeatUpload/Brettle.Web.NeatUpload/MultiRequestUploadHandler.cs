@@ -51,7 +51,12 @@ namespace Brettle.Web.NeatUpload
                 long totalSize = 0;
                 for (int i = 0; i < fileSizeStrings.Length; i++)
                 {
-                    totalSize += Int64.Parse(fileSizeStrings[i]);
+                    long size = Int64.Parse(fileSizeStrings[i]);
+                    // fileSizesString contains a -1 for each non-Flash upload
+                    // associated with the request.  Ignore those so that the 
+                    // totalSize is not off by one.
+                    if (size > 0)
+                        totalSize += size;
                 }
                 uploadState.MultiRequestObject = secureStorageConfigString;
                 uploadState.BytesTotal = totalSize;
