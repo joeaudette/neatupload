@@ -26,46 +26,71 @@ using System.Security.Cryptography;
 
 namespace Brettle.Web.NeatUpload
 {
+    [Serializable]
 	public class HashingFilesystemUploadedFile : FilesystemUploadedFile
 	{
+
 		public HashingFilesystemUploadedFile(HashingFilesystemUploadStorageProvider provider, 
 									  string controlUniqueID, string fileName, string contentType) 
 			: base(provider, controlUniqueID, fileName, contentType)
 		{
-			Algorithm = HashAlgorithm.Create(provider.AlgorithmName);
+			AlgorithmName = provider.AlgorithmName;
 		}
 		
-		public override void Dispose()
-		{
-			if (Algorithm != null)
-				((IDisposable)Algorithm).Dispose();
-			base.Dispose();
-		}
-
 		public override Stream CreateStream()
 		{
-			return new CryptoStream(base.CreateStream(), Algorithm, CryptoStreamMode.Write);
+            HashAlgorithm algorithm = HashAlgorithm.Create(AlgorithmName);
+            return new MyCryptoStream(this, base.CreateStream(), algorithm);
 		}
-		
-		/// <summary>
+
+        byte[] _Hash;
+
+        /// <summary>
 		/// The cryptographic hash of the uploaded file.</summary>
 		/// <remarks>
 		/// <see cref="HashSize" /> provides the length of the
 		/// of the hash in bits.</remarks>
 		public byte[] Hash
 		{
-			get { return Algorithm.Hash; }
+			get { return _Hash; }
 		}
 		
+        int _HashSize;
 		/// <summary>
 		/// The length of the of the cryptographic hash in bits.</summary>
 		/// <remarks>
 		/// <see cref="Hash" /> provides the hash itself.</remarks>
 		public int HashSize
 		{
-			get { return Algorithm.HashSize; }
+			get { return _HashSize; }
 		}
-		
-		private HashAlgorithm Algorithm;
+
+        string AlgorithmName = null;
+
+        class MyCryptoStream : CryptoStream
+        {
+            public MyCryptoStream(HashingFilesystemUploadedFile hfuf, Stream destStream, HashAlgorithm algorithm)
+                : base(destStream, algorithm, CryptoStreamMode.Write)
+            {
+                Algorithm = algorithm;
+                Hfuf = hfuf;
+            }
+
+            bool IsAlgorithmDisposed = false;
+            public override void Close()
+            {
+                base.Close();
+                if (!IsAlgorithmDisposed)
+                {
+                    Hfuf._Hash = Algorithm.Hash;
+                    Hfuf._HashSize = Algorithm.HashSize;
+                    ((IDisposable)Algorithm).Dispose();
+                    IsAlgorithmDisposed = true;
+                }
+            }
+
+            HashAlgorithm Algorithm;
+            HashingFilesystemUploadedFile Hfuf;
+        }
 	}
 }
