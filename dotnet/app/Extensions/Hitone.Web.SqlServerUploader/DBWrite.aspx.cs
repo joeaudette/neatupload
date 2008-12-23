@@ -110,7 +110,7 @@ namespace UploaderTest
                 
                 inputFile.Verify();
 
-                bodyPre.InnerHtml += "File #1:\n";
+                bodyPre.InnerHtml += "File #1:<br />";
                 bodyPre.InnerHtml += "  Name: " + inputFile.FileName + "<br />";
                 bodyPre.InnerHtml += "  Size: " + inputFile.ContentLength + "<br />";
                 bodyPre.InnerHtml += "  Content type: " + inputFile.ContentType + "<br />";
@@ -131,7 +131,7 @@ namespace UploaderTest
 
                 inputFile2.MoveTo("newname.txt", null);
 
-                bodyPre.InnerHtml += "File #2:\n";
+                bodyPre.InnerHtml += "File #2:<br />";
                 bodyPre.InnerHtml += "  Name: " + inputFile2.FileName + "<br />";
                 bodyPre.InnerHtml += "  Size: " + inputFile2.ContentLength + "<br />";
                 bodyPre.InnerHtml += "  Content type: " + inputFile2.ContentType + "<br />";
