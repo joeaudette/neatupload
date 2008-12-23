@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <ProjectGuid>{05F3DC4F-E625-4CEB-BCDA-4B951AE98874}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AssemblyName>SWFUpload</AssemblyName>
+    <SchemaVersion>2.0</SchemaVersion>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>src\neatupload\trunk\flash\src\SWFUpload\ignore\</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="BeforeBuild" command="Build ${ProjectDir}" workingdir="${ProjectDir}" />
+      </CustomCommands>
+    </CustomCommands>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>ignore\</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="BeforeBuild" command="Build ${ProjectDir}" workingdir="${ProjectDir}" />
+      </CustomCommands>
+    </CustomCommands>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <GtkDesignInfo />
+      </Properties>
+    </MonoDevelop>
+    <VisualStudio />
+  </ProjectExtensions>
+  <ItemGroup>
+    <None Include="FlashDevelop\swfupload.js" />
+    <None Include="FlashDevelop\classes\Delegate.as" />
+    <None Include="FlashDevelop\classes\FileItem.as" />
+    <None Include="FlashDevelop\classes\SWFUpload.as" />
+    <None Include="Build" />
+    <None Include="Build.bat" />
+  </ItemGroup>
+  <PropertyGroup>
+    <PreBuildEvent>$(ProjectDir)Build $(ProjectDir)</PreBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+  </ItemGroup>
+</Project>
