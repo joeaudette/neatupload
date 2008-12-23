@@ -102,9 +102,12 @@ namespace Hitone.Web.SqlServerUploader
             _identity = _blobStream.Identity;   //Get generated identity (if any) from the stream
 
             // If hash algorithm is specified, enlcose the blobstream in a hash crypto-transformation
-            if (_hashAlgorithm != null)
-                return new CryptoStream(_blobStream, _hashAlgorithm, CryptoStreamMode.Write);
 
+            if (_hashName != null)
+            {
+                HashAlgorithm hashAlgorithm = System.Security.Cryptography.HashAlgorithm.Create(_hashName);
+                return new MyCryptoStream(this, _blobStream, hashAlgorithm);
+            }
             return _blobStream;
         }
 
@@ -148,7 +151,7 @@ namespace Hitone.Web.SqlServerUploader
                 command.CommandText = _provider.StoreHashProcedure;
             } else
                 command.CommandText = string.Format("UPDATE [{0}] Set [{1}]=@Hash Where $IDENTITY=@Identity", _provider.TableName, _provider.HashColumnName);
-            SqlServerBlobStream.AddWithValue(command.Parameters, "@Hash", ToHex(_hashAlgorithm.Hash));
+            SqlServerBlobStream.AddWithValue(command.Parameters, "@Hash", ToHex(Hash));
             SqlServerBlobStream.AddWithValue(command.Parameters, "@Identity", _blobStream.Identity);
 
             connection.Open();
@@ -189,11 +192,9 @@ namespace Hitone.Web.SqlServerUploader
             else
             {
                 //Check if we should store the hash in the database
-                if (_hashAlgorithm != null && (_provider.HashColumnName != null || _provider.StoreHashProcedure != null))
+                if (HashName != null && (_provider.HashColumnName != null || _provider.StoreHashProcedure != null))
                     SaveHash();
             }
-            if (_hashAlgorithm != null)
-                ((IDisposable)_hashAlgorithm).Dispose();
             _blobStream.Dispose();
             _disposed = true;
         }
@@ -247,41 +248,56 @@ namespace Hitone.Web.SqlServerUploader
             return _blobStream;
         }
 
-
-
-        // Hash-Speicific code is below
-        [NonSerialized]
-        private HashAlgorithm _cachedHashAlgorithm = null;
-
-        private HashAlgorithm _hashAlgorithm {
-            get {
-                if (_cachedHashAlgorithm == null && _hashName != null)
-                    _cachedHashAlgorithm = System.Security.Cryptography.HashAlgorithm.Create(_hashName);
-                return _cachedHashAlgorithm;
-            }
-        }
-
         private string _hashName = string.Empty;
+
+        private byte[] _Hash = null;
 
         /// <summary>
         /// The cryptographic hash of the uploaded file.</summary>
         /// <remarks><see cref="HashSize" /> provides the length of the hash in bits.</remarks>
         public byte[] Hash
         {
-            get { return _hashAlgorithm != null ? _hashAlgorithm.Hash : null; }
+            get { return _Hash; }
         }
 
+        int _HashSize = -1;
         /// <summary>
         /// The length of the of the cryptographic hash in bits.</summary>
         /// <remarks><see cref="Hash" /> provides the hash itself.</remarks>
         public int HashSize
         {
-            get { return _hashAlgorithm != null ? _hashAlgorithm.HashSize : -1; }
+            get { return _HashSize; }
         }
 
         /// <summary>
         /// Name of hash algorithm used
         /// </summary>
         public string HashName { get { return _hashName; } }
+
+        class MyCryptoStream : CryptoStream
+        {
+            public MyCryptoStream(SqlServerUploadedFile ssuf, Stream destStream, HashAlgorithm algorithm)
+                : base(destStream, algorithm, CryptoStreamMode.Write)
+            {
+                Algorithm = algorithm;
+                Ssuf = ssuf;
+            }
+
+            bool IsAlgorithmDisposed = false;
+            public override void Close()
+            {
+                base.Close();
+                if (!IsAlgorithmDisposed)
+                {
+                    Ssuf._Hash = Algorithm.Hash;
+                    Ssuf._HashSize = Algorithm.HashSize;
+                    ((IDisposable)Algorithm).Dispose();
+                    IsAlgorithmDisposed = true;
+                }
+            }
+
+            HashAlgorithm Algorithm;
+            SqlServerUploadedFile Ssuf;
+        }
     }
 }
