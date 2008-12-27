@@ -394,20 +394,30 @@ namespace Brettle.Web.NeatUpload
 				if (_InstalledModule == null)
 				{
                     HttpContext ctx = HttpContext.Current;
-                    System.Web.AspNetHostingPermission perm = new System.Web.AspNetHostingPermission(AspNetHostingPermissionLevel.High);
-                    if (ctx != null && perm.IsUnrestricted())
+                    try
                     {
-                        HttpModuleCollection modules = ctx.ApplicationInstance.Modules;
-                        foreach (string moduleName in modules.AllKeys)
+                        if (ctx != null)
                         {
-                            IHttpModule module = modules[moduleName];
-                            if (module is IUploadModule)
+                            HttpModuleCollection modules = ctx.ApplicationInstance.Modules;
+                            foreach (string moduleName in modules.AllKeys)
                             {
-                                _InstalledModule = (IUploadModule)module;
-                                break;
+                                IHttpModule module = modules[moduleName];
+                                if (module is IUploadModule)
+                                {
+                                    _InstalledModule = (IUploadModule)module;
+                                    break;
+                                }
                             }
                         }
                     }
+                    catch (System.Security.SecurityException)
+                    {
+                        // Ignored.  This occurs in medium trust when trying to access
+                        // ApplicationInstance.Modules if we aren't installed in the GAC.
+                        // This will cause _InstalledModule to be false and _IsInstalled
+                        // to be set to false below.
+                    }
+
 					if (_InstalledModule == null) 
 						_IsInstalled = false;
 				}
