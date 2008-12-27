@@ -250,7 +250,7 @@ namespace Brettle.Web.NeatUpload
 		public static void BindProgressState(string postBackID, string controlUniqueID, IUploadProgressState progressState)
 		{
             HttpContext ctx = HttpContext.Current;
-            if (ctx != null)
+            if (ctx == null)
             {
                 InstalledModule.BindProgressState(postBackID, controlUniqueID, progressState);
                 return;
