@@ -76,7 +76,7 @@ namespace Brettle.Web.NeatUpload
 	/// end of the request, and <see cref="ConvertToUploadedFile"/> to convert an
 	/// <see cref="HttpPostedFile"/> into an <see cref="UploadedFile"/></para>
 	/// </remarks>
-	public class UploadModule
+    public class UploadModule
 	{
 		// Only static members...
 		protected UploadModule() { }
@@ -385,14 +385,17 @@ namespace Brettle.Web.NeatUpload
 
 		private static bool _IsInstalled = true;
 		private static IUploadModule _InstalledModule;
-		internal static IUploadModule InstalledModule {
-			get {
+        internal static IUploadModule InstalledModule
+        {
+            get
+            {
 				if (!_IsInstalled) 
 					return null;
 				if (_InstalledModule == null)
 				{
                     HttpContext ctx = HttpContext.Current;
-                    if (ctx != null)
+                    System.Web.AspNetHostingPermission perm = new System.Web.AspNetHostingPermission(AspNetHostingPermissionLevel.High);
+                    if (ctx != null && perm.IsUnrestricted())
                     {
                         HttpModuleCollection modules = ctx.ApplicationInstance.Modules;
                         foreach (string moduleName in modules.AllKeys)
