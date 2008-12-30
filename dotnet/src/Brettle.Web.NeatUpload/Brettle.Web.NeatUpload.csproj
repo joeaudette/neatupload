@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -121,7 +121,6 @@
     </Compile>
     <Compile Include="Brettle.Web.NeatUpload\UploadTooLargeException.cs" />
     <Compile Include="Brettle.Web.NeatUpload.Internal\ResourceManagerSingleton.cs" />
-    <Compile Include="Brettle.Web.NeatUpload.Internal.Module\AspNetUploadedFile.cs" />
     <Compile Include="Brettle.Web.NeatUpload.Internal.Module\Config.cs" />
     <Compile Include="Brettle.Web.NeatUpload.Internal.Module\DecoratedWorkerRequest.cs" />
     <Compile Include="Brettle.Web.NeatUpload.Internal.Module\FieldNameTranslator.cs" />
@@ -169,6 +168,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="install\NeatUpload\SmoothProgress.aspx" />
+    <None Include="install\NeatUpload\cancel.png" />
+    <None Include="install\NeatUpload\default.css" />
+    <None Include="install\NeatUpload\Error413.aspx" />
+    <None Include="install\NeatUpload\MultiRequestUploadHandler.ashx" />
+    <None Include="install\NeatUpload\NeatUploadConfig.xsd" />
+    <None Include="install\NeatUpload\refresh.png" />
+    <None Include="install\NeatUpload\stop_refresh.png" />
+    <None Include="install\NeatUpload\SWFUpload-license.txt" />
+    <None Include="install\NeatUpload\Web.config" />
+    <None Include="install\NeatUpload\UploadStateStoreHandler.ashx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="install\NeatUpload\Progress.aspx" />
@@ -182,16 +191,4 @@
     </MonoDevelop>
     <VisualStudio />
   </ProjectExtensions>
-  <ItemGroup>
-    <None Include="install\NeatUpload\cancel.png" />
-    <None Include="install\NeatUpload\default.css" />
-    <None Include="install\NeatUpload\Error413.aspx" />
-    <None Include="install\NeatUpload\MultiRequestUploadHandler.ashx" />
-    <None Include="install\NeatUpload\NeatUploadConfig.xsd" />
-    <None Include="install\NeatUpload\refresh.png" />
-    <None Include="install\NeatUpload\stop_refresh.png" />
-    <None Include="install\NeatUpload\SWFUpload-license.txt" />
-    <None Include="install\NeatUpload\Web.config" />
-    <None Include="install\NeatUpload\UploadStateStoreHandler.ashx" />
-  </ItemGroup>
 </Project>
