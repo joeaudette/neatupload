@@ -304,16 +304,16 @@ namespace Brettle.Web.NeatUpload
 		/// The <see cref="UploadedFile"/> that corresponds to the <see cref="HttpPostedFile"/>.
 		/// </returns>
 		/// <remarks>If an <see cref="IUploadModule"/> is not installed or it does not support
-		/// conversion, this method will
-		/// wrap the <paramref name="file"/> in an <see cref="UploadedFile"/> subclass that
-		/// delegates all members to the corresponding members of <paramref name="file"/></remarks>
+		/// conversion, this method will delegate to <see cref="UploadStorage.ConvertToUploadedFile"/>
+		/// which will use the currently configured <see cref="UploadStorageProvider"/>
+		/// </remarks>
 		public static UploadedFile ConvertToUploadedFile(string controlUniqueID, HttpPostedFile file)
 		{
 			UploadedFile uploadedFile = null;
 			if (InstalledModule != null)
 				uploadedFile = InstalledModule.ConvertToUploadedFile(controlUniqueID, file);
 			if (uploadedFile == null)
-				uploadedFile = new AspNetUploadedFile(controlUniqueID, file);
+				uploadedFile = UploadStorage.ConvertToUploadedFile(controlUniqueID, file);
 			return uploadedFile;
 		}
 

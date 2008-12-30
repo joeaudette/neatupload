@@ -110,6 +110,42 @@ namespace Brettle.Web.NeatUpload
 			// Add the file to the list of files
 			filesToDispose.Add(file);
 		}
-		
+
+		public static UploadedFile ConvertToUploadedFile(string controlUniqueID, HttpPostedFile file)
+		{
+			// We use a temporary UploadContext so that we have something we can pass to the
+			// UploadStorageProvider.  Note that unlike when the UploadHttpModule is used,
+			// this temporary context is not shared between uploaded files.
+			UploadContext ctx = new UploadContext();
+			ctx._ContentLength = HttpContext.Current.Request.ContentLength;
+			UploadStorageConfig storageConfig = UploadStorage.CreateUploadStorageConfig();
+			string storageConfigString 
+				= HttpContext.Current.Request.Form[Constants.ConfigNamePrefix + "-" + controlUniqueID];
+			if (storageConfigString != null && storageConfigString != string.Empty)
+			{
+				storageConfig.Unprotect(storageConfigString);
+			}
+			UploadedFile uploadedFile 
+				= UploadStorage.CreateUploadedFile(ctx, controlUniqueID, file.FileName, file.ContentType, storageConfig);
+			System.IO.Stream outStream = null, inStream = null;
+			try
+			{
+				outStream = uploadedFile.CreateStream();
+				inStream = file.InputStream;
+				byte[] buf = new byte[4096];
+				int bytesRead = -1;
+				while (outStream.CanWrite && inStream.CanRead 
+					   && (bytesRead = inStream.Read(buf, 0, buf.Length)) > 0)
+				{
+					outStream.Write(buf, 0, bytesRead);
+				}
+			}
+			finally
+			{
+				if (inStream != null) inStream.Close();
+				if (outStream != null) outStream.Close();
+			}
+			return uploadedFile;
+		}
 	}
 }
