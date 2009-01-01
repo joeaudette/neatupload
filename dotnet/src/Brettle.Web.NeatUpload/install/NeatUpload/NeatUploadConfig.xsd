@@ -171,15 +171,41 @@
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
+      <xs:attribute name="decryption" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+            The algorithm used to encrypt/decrypt
+            protected data that might be received from or pass through an
+            untrusted entity.  For example, this is used for UploadStorageConfig
+            objects.  By default, the .NET default Rinjdael algorithm is used.  If
+            you require FIPS compliance, you might need to set it to "3DES".
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="encryption" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+            Obsolete.  Same meaning as decryption attribute.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="validation" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+            The algorithm used to validate that
+            protected data that might be received from or pass through an
+            untrusted entity hasn't been tampered with.  For example, this is 
+            used for UploadStorageConfig
+            objects.  By default, the .NET default algorithm is used.  If
+            you require FIPS compliance, you might need to set it to "SHA1".
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
       <xs:attribute name="validationKey" type="xs:hexBinary" use="optional">
         <xs:annotation>
           <xs:documentation xml:lang="en">
-            The 40 hex-digit key used to sign and validate the signature on
-            protected data that might be received from or pass through an 
-            untrusted entity.  For example, this is used for UploadStorageConfig
-            objects.  By default, the key is generated randomly each time the
-            application starts.  In web gardens/farms, you must set this attribute
-            on all servers to the same manually generated random value.
+            Obsolete.  NeatUpload no longer signs protected data.  Encrypting
+            it is sufficient.
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>

@@ -83,14 +83,16 @@ namespace Brettle.Web.NeatUpload
         /// <returns>the object that was passed to <see cref="Protect(object)"/></returns>
         /// <exception>throws an <see cref="Exception"/> if the signature is
         /// not valid.</exception>
-        /// <remarks>The encryption and validation keys specified in the encryptionKey
-        /// and validationKey attributes of the &lt;neatUpload&gt; element are used
-        /// to verify the signature and decrypt the ciphertext.  They must have
+        /// <remarks>The encryption key and algorithms specified in the encryptionKey,
+        /// encryption, and validation attributes of the &lt;neatUpload&gt; element are used
+        /// to decrypt the ciphertext.  They must have
         /// the same values as they did when <see cref="Protect(object)"/> was called or
         /// an exception will occur.</remarks>
         public static object Unprotect(string secureString)
 		{
-            return Unprotect(secureString, Config.Current.EncryptionKey, Config.Current.ValidationKey);
+            return Unprotect(secureString, 
+                Config.Current.EncryptionKey, Config.Current.ValidationKey, 
+                Config.Current.EncryptionAlgorithm, Config.Current.ValidationAlgorithm);
 		}
 
         /// <summary>
@@ -99,17 +101,37 @@ namespace Brettle.Web.NeatUpload
         /// <param name="secureString">a <see cref="string"/> returned by an earlier
         /// call to <see cref="Protect(object)"/></param>
         /// <param name="encryptionKey">the key to use to decrypt the ciphertext</param>
-        /// <param name="validationKey">the key to use to verify the signature</param>
+        /// <param name="validationKey">ignored</param>
         /// <returns>the object that was passed to <see cref="Protect(object)"/></returns>
         /// <exception>throws an <see cref="Exception"/> if the signature is
         /// not valid.</exception>
-        /// <remarks>The encryption and validation keys must have
-        /// the same values as they did when <see cref="Protect(object, byte[], byte[])"/> was called or
+        /// <remarks>The encryption key must have
+        /// the same value as it did when <see cref="Protect(object, byte[], byte[])"/> was called or
         /// an exception will occur.</remarks>
         public static object Unprotect(string secureString, byte[] encryptionKey, byte[] validationKey)
         {
+            return Unprotect(secureString, encryptionKey, validationKey, (string)null, (string)null);
+        }
+
+        /// <summary>
+        /// Converts a secure string back to the object tree it represents.
+        /// </summary>
+        /// <param name="secureString">a <see cref="string"/> returned by an earlier
+        /// call to <see cref="Protect(object)"/></param>
+        /// <param name="encryptionKey">the key to use to decrypt the ciphertext</param>
+        /// <param name="validationKey">ignored</param>
+        /// <param name="encryptionAlgorithm">the algorithm to use to decrypt the ciphertext, null means use the default</param>
+        /// <param name="validationAlgorithm">the algorithm to use to verify the signature, null means use the default</param>
+        /// <returns>the object that was passed to <see cref="Protect(object)"/></returns>
+        /// <exception>throws an <see cref="Exception"/> if the signature is
+        /// not valid.</exception>
+        /// <remarks>The encryption key and algorithms must have
+        /// the same values as they did when <see cref="Protect(object, byte[], byte[])"/> was called or
+        /// an exception will occur.</remarks>
+        public static object Unprotect(string secureString, byte[] encryptionKey, byte[] validationKey, string encryptionAlgorithm, string validationAlgorithm)
+        {
             SelfSerializingObject obj = new SelfSerializingObject();
-            Unprotect(secureString, encryptionKey, validationKey, obj.Deserialize, AssertSignaturesAreEqual);
+            Unprotect(secureString, encryptionKey, validationKey, encryptionAlgorithm, validationAlgorithm, obj.Deserialize, AssertSignaturesAreEqual);
             return obj.Obj;
         }
 
@@ -120,14 +142,16 @@ namespace Brettle.Web.NeatUpload
         /// to protect.</param>
         /// <returns>a secure string that can be passed to <see cref="Unprotect(string)"/> to
         /// retrieve the original object.</returns>
-        /// <remarks>The encryption and validation keys specified in the encryptionKey
-        /// and validationKey attributes of the &lt;neatUpload&gt; element are used
+        /// <remarks>The encryption key and algorithms specified in the encryptionKey,
+        /// encryption, and validation attributes of the &lt;neatUpload&gt; element are used
         /// to encrypt the serialized object and sign it, respectively.  They must have
         /// the same values when <see cref="Unprotect(string)"/> is called or
         /// an exception will occur.</remarks>
         public static string Protect(object objectToSerialize)
 		{
-            return Protect(objectToSerialize, Config.Current.EncryptionKey, Config.Current.ValidationKey);
+            return Protect(objectToSerialize, 
+                Config.Current.EncryptionKey, Config.Current.ValidationKey,
+                Config.Current.EncryptionAlgorithm, Config.Current.ValidationAlgorithm);
 		}
 
         /// <summary>
@@ -136,18 +160,38 @@ namespace Brettle.Web.NeatUpload
         /// <param name="objectToSerialize">the object at the root of the object tree
         /// to protect.</param>
         /// <param name="encryptionKey">the key to use to encrypt the object</param>
-        /// <param name="validationKey">the key to use for signing</param>
+        /// <param name="validationKey">ignored</param>
         /// <returns>a secure string that can be passed to <see cref="Unprotect(string)"/> to
         /// retrieve the original object.</returns>
-        /// <remarks>The encryption and validation keys are used
-        /// to encrypt the serialized object and sign it, respectively.  They must have
+        /// <remarks>The encryption key is used
+        /// to encrypt the serialized object and sign it, respectively.  It must have
         /// the same values when <see cref="Unprotect(string, byte[], byte[])"/> is called or
         /// an exception will occur.</remarks>
         public static string Protect(object objectToSerialize, byte[] encryptionKey, byte[] validationKey)
         {
+            return Protect(objectToSerialize, encryptionKey, validationKey, null, null);
+        }
+
+        /// <summary>
+        /// Converts an object tree to a secure string.
+        /// </summary>
+        /// <param name="objectToSerialize">the object at the root of the object tree
+        /// to protect.</param>
+        /// <param name="encryptionKey">the key to use to encrypt the object</param>
+        /// <param name="validationKey">ignored</param>
+        /// <param name="encryptionAlgorithm">the name of the encryption algorithm to use, null means use default</param>
+        /// <param name="validationAlgorithm">the name of the signing algorithm to use, null means use default</param>
+        /// <returns>a secure string that can be passed to <see cref="Unprotect(string)"/> to
+        /// retrieve the original object.</returns>
+        /// <remarks>The encryption key and algorithms are used
+        /// to encrypt the serialized object.  They must have
+        /// the same values when <see cref="Unprotect(string, byte[], byte[])"/> is called or
+        /// an exception will occur.</remarks>
+        public static string Protect(object objectToSerialize, byte[] encryptionKey, byte[] validationKey, string encryptionAlgorithm, string validationAlgorithm)
+        {
             SelfSerializingObject obj = new SelfSerializingObject();
             obj.Obj = objectToSerialize;
-            return Protect(obj.Serialize, encryptionKey, validationKey);
+            return Protect(obj.Serialize, encryptionKey, validationKey, encryptionAlgorithm, validationAlgorithm);
         }
 
         /// <summary>
@@ -168,6 +212,30 @@ namespace Brettle.Web.NeatUpload
         /// the same values as they did when <see cref="Protect(Serializer, byte[], byte[])"/> was called or
         /// an exception will occur.</remarks>
         public static void Unprotect(string secureString, byte[] encryptionKey, byte[] validationKey, Deserializer deserializer, SignatureChecker sigChecker)
+        {
+            Unprotect(secureString, encryptionKey, validationKey, null, null, deserializer, sigChecker);
+        }
+        
+        /// <summary>
+        /// Converts a secure string back to the object tree it represents, using
+        /// a custom <see cref="Deserializer"/> and <see cref="SignatureChecker"/>.
+        /// </summary>
+        /// <param name="secureString">the secure string to be converted back to an
+        /// object tree.</param>
+        /// <param name="encryptionKey">the key to use to decrypt the ciphertext</param>
+        /// <param name="validationKey">ignored</param>
+        /// <param name="encryptionAlgorithm">the name of the encryption algorithm to use, null means use default</param>
+        /// <param name="validationAlgorithm">the name of the signing algorithm to use, null means use default</param>
+        /// <param name="deserializer">a <see cref="Deserializer"/> delegate from the
+        /// root object of the object tree that can recreate the object tree from a
+        /// <see cref="Stream"/> of serialized bytes.</param>
+        /// <param name="sigChecker">a <see cref="SignatureChecker"/> delegate that
+        /// compares an actual signature to the expected signature, throwin an exception
+        /// if they don't match.</param>
+        /// <remarks>The encryption key and algorithms must have
+        /// the same values as they did when <see cref="Protect(Serializer, byte[], byte[])"/> was called or
+        /// an exception will occur.</remarks>
+        public static void Unprotect(string secureString, byte[] encryptionKey, byte[] unused, string encryptionAlgorithm, string validationAlgorithm, Deserializer deserializer, SignatureChecker sigChecker)
 		{			
 			byte[] secureBytes = Convert.FromBase64String(secureString);
 			MemoryStream secureStream = new MemoryStream(secureBytes);
@@ -177,14 +245,19 @@ namespace Brettle.Web.NeatUpload
 			byte[] cipherText = binaryReader.ReadBytes((int)(secureStream.Length - secureStream.Position));
 			
 			// Verify the hash
-			KeyedHashAlgorithm macAlgorithm = KeyedHashAlgorithm.Create();
-			macAlgorithm.Key = validationKey;
-			byte[] expectedHash = macAlgorithm.ComputeHash(cipherText);
+			HashAlgorithm hashAlgorithm 
+                = validationAlgorithm != null
+                ? HashAlgorithm.Create(validationAlgorithm)
+                : HashAlgorithm.Create();
+            byte[] expectedHash = hashAlgorithm.ComputeHash(cipherText);
 			sigChecker(actualHash, expectedHash);
 			
 			// Decrypt the ciphertext
 			MemoryStream cipherTextStream = new MemoryStream(cipherText);
-			SymmetricAlgorithm cipher = SymmetricAlgorithm.Create();
+			SymmetricAlgorithm cipher 
+                = encryptionAlgorithm != null
+                ? SymmetricAlgorithm.Create(encryptionAlgorithm)
+                : SymmetricAlgorithm.Create();
 			cipher.Mode = CipherMode.CBC;
 			cipher.Padding = PaddingMode.PKCS7;
 			cipher.Key = encryptionKey;
@@ -208,15 +281,37 @@ namespace Brettle.Web.NeatUpload
         /// root object of the object tree that can serialize the object tree into a
         /// <see cref="Stream"/> of serialized bytes.</param>
         /// <param name="encryptionKey">the key to use to encrypt the object</param>
-        /// <param name="validationKey">the key to use for signing</param>
-        /// <remarks>The encryption and validation keys  must have
-        /// the same values when <see cref="Unprotect(string, byte[], byte[], Deserializer, SignatureChecker)"/> is called or
+        /// <param name="validationKey">ignored</param>
+        /// <remarks>The encryption key  must have
+        /// the same value when <see cref="Unprotect(string, byte[], byte[], Deserializer, SignatureChecker)"/> is called or
         /// an exception will occur.</remarks>
         public static string Protect(Serializer serializer, byte[] encryptionKey, byte[] validationKey)
+        {
+            return Protect(serializer, encryptionKey, validationKey, null, null);
+        }
+
+        /// <summary>
+        /// Converts am object tree to a secure string, using
+        /// a custom <see cref="Serializer"/>.
+        /// </summary>
+        /// <param name="serializer">a <see cref="Serializer"/> delegate from the
+        /// root object of the object tree that can serialize the object tree into a
+        /// <see cref="Stream"/> of serialized bytes.</param>
+        /// <param name="encryptionKey">the key to use to encrypt the object</param>
+        /// <param name="validationKey">ignored</param>
+        /// <param name="encryptionAlgorithm">the name of the encryption algorithm to use, null means use default</param>
+        /// <param name="validationAlgorithm">the name of the hash algorithm to use, null means use default</param>
+        /// <remarks>The encryption key and algorithms must have
+        /// the same values when <see cref="Unprotect(string, byte[], byte[], Deserializer, SignatureChecker)"/> is called or
+        /// an exception will occur.</remarks>
+        public static string Protect(Serializer serializer, byte[] encryptionKey, byte[] unused, string encryptionAlgorithm, string validationAlgorithm)
 		{
 			// Encrypt it
 			MemoryStream cipherTextStream = new MemoryStream();
-			SymmetricAlgorithm cipher = SymmetricAlgorithm.Create();
+            SymmetricAlgorithm cipher 
+                = encryptionAlgorithm != null 
+                ? SymmetricAlgorithm.Create(encryptionAlgorithm) 
+                : SymmetricAlgorithm.Create();
 			cipher.Mode = CipherMode.CBC;
 			cipher.Padding = PaddingMode.PKCS7;
 			cipher.Key = encryptionKey;
@@ -225,12 +320,14 @@ namespace Brettle.Web.NeatUpload
 			cryptoStream.Close();
 			byte[] cipherText = cipherTextStream.ToArray();
 			
-			// MAC the ciphertext
-			KeyedHashAlgorithm macAlgorithm = KeyedHashAlgorithm.Create();
-			macAlgorithm.Key = validationKey;
-			byte[] hash = macAlgorithm.ComputeHash(cipherText);
+			// hash the ciphertext
+			HashAlgorithm hashAlgorithm
+                = validationAlgorithm != null
+                ? HashAlgorithm.Create(validationAlgorithm)
+                : HashAlgorithm.Create();
+            byte[] hash = hashAlgorithm.ComputeHash(cipherText);
 			
-			// Concatenate MAC length, MAC, IV length, IV, and ciphertext into an array.
+			// Concatenate hash length, hash, IV length, IV, and ciphertext into an array.
 			MemoryStream secureStream = new MemoryStream();
 			BinaryWriter binaryWriter = new BinaryWriter(secureStream);
 			binaryWriter.Write((byte)hash.Length);
