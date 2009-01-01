@@ -6,15 +6,13 @@
 	<head runat="server">
 		<title>NeatUpload Test of Inline ProgressBars in Opera</title>
 		<style type="text/css">
-<!--
-		.ProgressBar {
-			margin: 0px;
-			border: 0px;
-			padding: 0px;
-			width: 100%;
-			height: 2em;
-		}
--->
+.ProgressBar {
+	margin: 0px;
+	border: 0px;
+	padding: 0px;
+	width: 100%;
+	height: 2em;
+}
 		</style>
 	</head>
 	<body>

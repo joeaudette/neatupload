@@ -67,6 +67,7 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 				{
 					config = new Config();
 				}
+                config.InitEncryptionKey();
 
 				if (HttpContext.Current != null)
 				{
@@ -142,7 +143,9 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 				config.DebugDirectory = parent.DebugDirectory;
 				config.ValidationKey = parent.ValidationKey;
 				config.EncryptionKey = parent.EncryptionKey;
-				config.PostBackIDQueryParam = parent.PostBackIDQueryParam;
+                config.ValidationAlgorithm = parent.ValidationAlgorithm;
+                config.EncryptionAlgorithm = parent.EncryptionAlgorithm;
+                config.PostBackIDQueryParam = parent.PostBackIDQueryParam;
 				config.MergeIntervalSeconds = parent.MergeIntervalSeconds;
 				config.StateStaleAfterSeconds = parent.StateStaleAfterSeconds;
 			}
@@ -199,14 +202,22 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 						config.ValidationKey = FromHexString(val);
 					}
 				}
-				else if (name == "encryptionKey")
+				else if (name == "encryptionKey" || name == "decryptionKey")
 				{
 					if (val != "AutoGenerate")
 					{
 						config.EncryptionKey = FromHexString(val);
 					}
 				}
-				else if (name == "postBackIDQueryParam")
+                else if (name == "encryption" || name == "decryption")
+                {
+                    config.EncryptionAlgorithm = val;
+                }
+                else if (name == "validation")
+                {
+                    config.ValidationAlgorithm = val;
+                }
+                else if (name == "postBackIDQueryParam")
 				{
 					config.PostBackIDQueryParam = val;
 				}
@@ -223,6 +234,9 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 					throw new XmlException("Unrecognized unqualified attribute: " + name);
 				}
 			}
+
+            config.InitEncryptionKey();
+
             XmlNamespaceManager nsm = new XmlNamespaceManager(new NameTable());
             nsm.AddNamespace("nu", "http://www.brettle.com/neatupload/config/2008");
             XmlNode providersElem = section.SelectSingleNode("nu:providers | providers", nsm);
@@ -276,6 +290,29 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 			}
 			return config;
 		}
+
+        private void InitEncryptionKey()
+        {
+
+            if (EncryptionKey == null)
+            {
+                lock (DefaultEncryptionKeyByAlg.SyncRoot)
+                {
+                    string algo = EncryptionAlgorithm != null ? EncryptionAlgorithm : "";
+                    if (DefaultEncryptionKeyByAlg[algo] == null)
+                    {
+                        using (SymmetricAlgorithm cipher = algo != ""
+                            ? SymmetricAlgorithm.Create(algo)
+                            : SymmetricAlgorithm.Create())
+                        {
+                            cipher.GenerateKey();
+                            DefaultEncryptionKeyByAlg[algo] = cipher.Key;
+                        }
+                    }
+                    EncryptionKey = (byte[])DefaultEncryptionKeyByAlg[algo];
+                }
+            }
+        }
 
         private static object CreateProvider(System.Xml.XmlNode providerActionElem)
         {
@@ -342,14 +379,15 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 		}
 		
 		internal DirectoryInfo DebugDirectory = null;
-		internal byte[] ValidationKey = Config.DefaultValidationKey;
-		internal byte[] EncryptionKey = Config.DefaultEncryptionKey;
-		internal string PostBackIDQueryParam = "NeatUpload_PostBackID";
+        internal byte[] ValidationKey;
+        internal byte[] EncryptionKey;
+        internal string ValidationAlgorithm;
+        internal string EncryptionAlgorithm;
+        internal string PostBackIDQueryParam = "NeatUpload_PostBackID";
 		internal double MergeIntervalSeconds = 1.0;
 		internal double StateStaleAfterSeconds = 60.0;
-		
-		private static byte[] DefaultValidationKey = null;
-		private static byte[] DefaultEncryptionKey = null;
+
+        private static Hashtable DefaultEncryptionKeyByAlg;
 
         private bool CanGetWorkerRequestInited = false;
         private bool _CanGetWorkerRequest = false;
@@ -398,18 +436,7 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 
 		static Config()
 		{
-			using (KeyedHashAlgorithm macAlg = KeyedHashAlgorithm.Create())
-			{
-				DefaultValidationKey = new byte[(macAlg.HashSize+7)/8];
-				RandomNumberGenerator rng = RandomNumberGenerator.Create();
-				rng.GetBytes(DefaultValidationKey);
-			}
-			
-			using (SymmetricAlgorithm cipher = SymmetricAlgorithm.Create())
-			{
-				cipher.GenerateKey();
-				DefaultEncryptionKey = cipher.Key;
-			}
-		}
+            DefaultEncryptionKeyByAlg = new Hashtable();
+        }
 	}
 }
