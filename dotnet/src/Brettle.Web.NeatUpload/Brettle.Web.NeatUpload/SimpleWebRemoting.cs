@@ -57,11 +57,15 @@ namespace Brettle.Web.NeatUpload
         public static object MakeRemoteCall(Uri uri, params object[] methodCall)
         {
             HttpCookieCollection httpCookies = HttpContext.Current.Request.Cookies;
-            return MakeRemoteCall(uri, httpCookies, Config.Current.EncryptionKey, Config.Current.ValidationKey,
-                                    methodCall);
+            return MakeRemoteCall(uri, httpCookies, 
+                Config.Current.EncryptionKey, Config.Current.ValidationKey,
+                Config.Current.EncryptionAlgorithm, Config.Current.ValidationAlgorithm,
+                methodCall);
         }
 
-        internal static object MakeRemoteCall(Uri uri, HttpCookieCollection httpCookies, byte[] encryptionKey, byte[] validationKey, 
+        internal static object MakeRemoteCall(Uri uri, HttpCookieCollection httpCookies, 
+                                            byte[] encryptionKey, byte[] validationKey, 
+                                            string encryptionAlgorithm, string validationAlgorithm,
                                             params object[] methodCall)
         {
             CookieContainer cookieContainer = new CookieContainer();
@@ -89,7 +93,7 @@ namespace Brettle.Web.NeatUpload
             try
 			{
 	            wc.Headers.Add("Cookie", cookieContainer.GetCookieHeader(uri));
-	            string protectedRequestPayload = ObjectProtector.Protect(methodCall, encryptionKey, validationKey);
+	            string protectedRequestPayload = ObjectProtector.Protect(methodCall, encryptionKey, validationKey, encryptionAlgorithm, validationAlgorithm);
 	            NameValueCollection formValues = new NameValueCollection();
 	            formValues.Add("ProtectedPayload", protectedRequestPayload);
 	            responseBytes = wc.UploadValues(uri.ToString(), formValues);
@@ -108,7 +112,7 @@ namespace Brettle.Web.NeatUpload
             if (protectedResponsePayload != null && protectedResponsePayload.Length > 0)
             {
                 object[] results = null;
-                results = (object[])ObjectProtector.Unprotect(protectedResponsePayload, encryptionKey, validationKey);
+                results = (object[])ObjectProtector.Unprotect(protectedResponsePayload, encryptionKey, validationKey, encryptionAlgorithm, validationAlgorithm);
                 int j = 1;
                 for (int i = 1; i < methodCall.Length; i++)
                 {

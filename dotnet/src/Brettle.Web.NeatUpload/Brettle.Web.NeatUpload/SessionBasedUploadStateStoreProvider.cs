@@ -103,17 +103,21 @@ namespace Brettle.Web.NeatUpload
                 Cookies = HttpContext.Current.Request.Cookies;
                 EncryptionKey = Config.Current.EncryptionKey;
                 ValidationKey = Config.Current.ValidationKey;
+                EncryptionAlgorithm = Config.Current.EncryptionAlgorithm;
+                ValidationAlgorithm = Config.Current.ValidationAlgorithm;
             }
 
             internal void CleanUpIfStale(string postBackID)
             {
-                SimpleWebRemoting.MakeRemoteCall(HandlerUri, Cookies, EncryptionKey, ValidationKey, "CleanUpIfStale", postBackID);
+                SimpleWebRemoting.MakeRemoteCall(HandlerUri, Cookies, EncryptionKey, ValidationKey, EncryptionAlgorithm, ValidationAlgorithm, "CleanUpIfStale", postBackID);
             }
 
             Uri HandlerUri;
             HttpCookieCollection Cookies;
             byte[] EncryptionKey;
             byte[] ValidationKey;
+            string EncryptionAlgorithm;
+            string ValidationAlgorithm;
         }
 
         internal string HandlerUrl = "~/NeatUpload/UploadStateStoreHandler.ashx";
