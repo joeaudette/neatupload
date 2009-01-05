@@ -43,9 +43,11 @@ namespace Brettle.Web.NeatUpload
 	public abstract class FileControl : System.Web.UI.WebControls.WebControl
 	{
 
+#pragma warning disable 0169
 		// Create a logger for use in this class
 		private static readonly log4net.ILog log
 			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+#pragma warning restore 0169
 		
 		internal bool IsDesignTime = (HttpContext.Current == null);
 
