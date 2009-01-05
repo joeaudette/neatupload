@@ -350,7 +350,6 @@ namespace Brettle.Web.NeatUpload
                 url = dirPath + path;
             }
 
-            string cacheKey = url;
             System.Web.Caching.Cache Cache = HttpContext.Current.Cache;
             string guid = null;
             if (Cache[url] is string)

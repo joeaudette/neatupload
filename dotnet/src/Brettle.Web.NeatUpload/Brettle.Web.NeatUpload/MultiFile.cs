@@ -56,10 +56,11 @@ namespace Brettle.Web.NeatUpload
 	public class MultiFile : FileControl, System.Web.UI.IPostBackDataHandler
 	{
 
+#pragma warning disable 0169
 		// Create a logger for use in this class
 		private static readonly log4net.ILog log
 			= log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-		
+#pragma warning restore 0169		
 
 		public new UploadedFile[] Files
 		{
