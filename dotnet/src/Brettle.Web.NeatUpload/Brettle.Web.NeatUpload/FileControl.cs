@@ -200,8 +200,12 @@ namespace Brettle.Web.NeatUpload
 					{
 						UploadedFile uploadedFile 
 								= UploadModule.ConvertToUploadedFile(this.ClientID, (HttpPostedFile)allFiles[i]);
-						if (uploadedFile != null && uploadedFile.IsUploaded)
+						if (uploadedFile == null)
+							continue;
+						if (uploadedFile.IsUploaded)
 							fileArrayList.Add(uploadedFile);
+						else
+							uploadedFile.Dispose();
 					}
 				}
 			}
