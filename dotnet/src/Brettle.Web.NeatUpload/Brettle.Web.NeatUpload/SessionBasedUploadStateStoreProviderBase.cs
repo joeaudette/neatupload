@@ -21,7 +21,16 @@ using System;
 using System.Web;
 
 namespace Brettle.Web.NeatUpload
-{	
+{
+	/// <summary>
+	/// Base class for <see cref="UploadStateProvider"/>s that store upload state in the session.
+	/// </summary>
+	/// <remarks>Subclasses are responsible
+	/// for ensuring that the current HttpContext has a Session object before calling the methods of this
+	/// base class.  See <see cref="SessionBasedUploadStateStoreProvider"/> for an example.
+	/// Subclasses are instantiated by NeatUpload if it is added in the &lt;providers&gt; section of the &lt;neatUpload&gt;
+	/// section.  Application developers should not instantiate it directly.
+	/// </remarks>
 	public abstract class SessionBasedUploadStateStoreProviderBase : UploadStateStoreProvider
 	{
         public override string Description { get { return "Stores UploadState objects in the HttpSessionState of the current request."; } }
