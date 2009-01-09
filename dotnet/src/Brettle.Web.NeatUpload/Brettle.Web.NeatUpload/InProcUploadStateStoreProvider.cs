@@ -23,12 +23,14 @@ using System.Web;
 namespace Brettle.Web.NeatUpload
 {
 	/// <summary>
-	/// Retrieves or creates <see cref="IUploadState"/> objects associated
-	/// with particular post-back IDs.
+	/// Stores and retrieves <see cref="IUploadState"/> objects in the 
+	/// <see cref="ApplicationState"/> so they are not shared across processes
 	/// </summary>
 	/// <remarks>The <see cref="IUploadState"/> objects are stored in the
 	/// <see cref="ApplicationState"/> so they are not shared across processes.
-	/// As a result, this class will not work with web gardens/farms.
+	/// As a result, this class will not work with web gardens/farms.    This class
+	/// is instantiated by NeatUpload if it is added in the &lt;providers&gt; section of the &lt;neatUpload&gt;
+	/// section.  Application developers should not instantiate it directly.
 	/// </remarks>
 	public class InProcUploadStateStoreProvider : UploadStateStoreProvider
 	{

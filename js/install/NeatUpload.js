@@ -1300,6 +1300,8 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 			// Do the styling in an onload handler to support controls in tables because offsetheight isn't 
 			// available in tables until the page has loaded.
 			nuf.AddHandler(window, "load", MoveAndResizeDivAndAddFlash);
+			// In the meantime, hide the original element.
+			inputFile.style.display = "none";
 		}
 		return;
 		
@@ -1333,7 +1335,7 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 			inputFile.style.display = "block";
 
 			var tmpXHR = GetXHR();
-			if (!useFlashIfAvailable || !tmpXHR)
+			if (!useFlashIfAvailable || !tmpXHR || inputFile.getAttribute("disabled"))
 				return;
 			tmpXHR = null;	
 

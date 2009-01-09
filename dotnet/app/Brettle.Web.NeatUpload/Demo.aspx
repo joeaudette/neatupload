@@ -45,11 +45,11 @@
 			</p>
 			<p>File(s) to upload: 
 			<Upload:MultiFile id="multiFile" runat="server" useFlashIfAvailable="true" flashFilterExtensions="*.jpg;*.gif;*.png">
-				<input type="button" id="multiFileButton" value="Add File..." />
+				<asp:Button id="multiFileButton" Text="Add File..." Enabled="<%# multiFile.Enabled %>" runat="server"/>
 			</Upload:MultiFile>
 			<asp:RegularExpressionValidator id="RegularExpressionValidator2" 
 				ControlToValidate="multiFile"
-				ValidationExpression="([^.]+[.](jpg|gif|png|JPG|GIF|PNG); *)*$"
+				ValidationExpression="([^.]+[.](jpg|gif|png|JPG|GIF|PNG))|([^.]+[.](jpg|gif|png|JPG|GIF|PNG); *)*$"
 				Display="Static"
 				ErrorMessage="Only jpg, gif, and png extensions allowed"
 				EnableClientScript="True" 
@@ -57,7 +57,7 @@
 			</p>
 			<p>Other file(s) to upload (just to demonstrate multiple MultiFileControls on the same page): 
 			<Upload:MultiFile id="multiFile2" runat="server" useFlashIfAvailable="true">
-				<input type="button" id="multiFileButton2" value="Add File..." />
+				<asp:Button id="multiFileButton2" Text="Add File..." Enabled="<%# multiFile2.Enabled %>" runat="server"/>
 			</Upload:MultiFile>
 			</p>
 			<p>
@@ -93,7 +93,6 @@
 			<input type="Button" id="htmlInputButtonButton" runat="server" name="htmlInputButtonButton" value="Submit" />
 			<input type="Button" id="cancelhtmlInputButtonButton" runat="server" name="htmlInputButtonButton" value="Cancel" /><br />
 			</span>
-			
 			<span id="htmlInputButtonSubmitSpan" runat="server">
 			<input type="Submit" id="htmlInputButtonSubmit" runat="server" name="htmlInputButtonSubmit" value="Submit" />
 			<input type="Submit" id="cancelhtmlInputButtonSubmit" runat="server" name="htmlInputButtonSubmit" value="Cancel" /><br />

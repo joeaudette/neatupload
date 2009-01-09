@@ -26,7 +26,15 @@ using Brettle.Web.NeatUpload.Internal.Module;
 
 namespace Brettle.Web.NeatUpload
 {
-		
+
+	/// <summary>
+	/// Stores and retrieves <see cref="IUploadState"/> objects in the user's session.
+	/// </summary>
+	/// <remarks>If the application is configured to share session state across a web garden/farm,
+	/// this provider will ensure that upload state will be shared in the same way.  This class
+	/// is instantiated by NeatUpload if it is added in the &lt;providers&gt; section of the &lt;neatUpload&gt;
+	/// section.  Application developers should not instantiate it directly.
+	/// </remarks>
 	public class SessionBasedUploadStateStoreProvider : SessionBasedUploadStateStoreProviderBase
 	{
         public override void Initialize(string name, System.Collections.Specialized.NameValueCollection attrs)
