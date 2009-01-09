@@ -260,6 +260,8 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
                 {
                     writer.AddAttribute(HtmlTextWriterAttribute.Type, "button");
                     writer.AddAttribute(HtmlTextWriterAttribute.Value, "Pick Files...");
+                    if (!Enabled)
+                        writer.AddAttribute(HtmlTextWriterAttribute.Disabled, "disabled");
                     writer.RenderBeginTag(HtmlTextWriterTag.Input);
                     writer.RenderEndTag();
                 }
