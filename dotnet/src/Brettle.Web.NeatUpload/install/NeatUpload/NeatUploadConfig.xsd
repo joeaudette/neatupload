@@ -209,15 +209,22 @@
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="encryptionKey" type="xs:hexBinary" use="optional">
+      <xs:attribute name="decryptionKey" type="xs:hexBinary" use="optional">
         <xs:annotation>
           <xs:documentation xml:lang="en">
-            The 32 hex-digit key used to encrypt/decrypt 
+            The 32 hex-digit key used to encrypt/decrypt
             protected data that might be received from or pass through an
             untrusted entity.  For example, this is used for UploadStorageConfig
             objects.  By default, the key is generated randomly each time the
             application starts.  In web gardens/farms, you must set this attribute
             on all servers to the same manually generated random value.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="encryptionKey" type="xs:hexBinary" use="optional">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+            Obsolete.  Same meaning as decryptionKey.
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>

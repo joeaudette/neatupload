@@ -61,6 +61,10 @@ namespace Brettle.Web.NeatUpload
                 uploadState.MultiRequestObject = secureStorageConfigString;
                 uploadState.BytesTotal = totalSize;
             }
+            // MacOSX Flash player won't fire FileReference.onComplete unless something is returned.
+            context.Response.Clear();
+            context.Response.Write(" ");
+            context.Response.End();
         }
 
         public bool IsReusable { get { return true; } }
