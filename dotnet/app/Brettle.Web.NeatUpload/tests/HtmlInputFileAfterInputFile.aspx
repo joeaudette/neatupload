@@ -25,14 +25,6 @@
 					bodyPre.InnerText += "Name: " + inputFile.FileName + "\n";
 					bodyPre.InnerText += "Size: " + inputFile.ContentLength + "\n";
 					bodyPre.InnerText += "Content type: " + inputFile.ContentType + "\n";
-					string destPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), inputFile.FileName); 
-					inputFile.MoveTo(destPath, Brettle.Web.NeatUpload.MoveToOptions.Overwrite);
-					if (inputFile.ContentType.StartsWith("text/"))
-					{
-						System.IO.StreamReader r = new System.IO.StreamReader(inputFile.FileContent);
-						bodyPre.InnerText += r.ReadToEnd();
-						r.Close();
-					}
 				}
 				if (htmlInputFile.PostedFile != null 
 					&& htmlInputFile.PostedFile.FileName != null
@@ -42,14 +34,6 @@
 					bodyPre.InnerText += "Name: " + htmlInputFile.PostedFile.FileName + "\n";
 					bodyPre.InnerText += "Size: " + htmlInputFile.PostedFile.ContentLength + "\n";
 					bodyPre.InnerText += "Content type: " + htmlInputFile.PostedFile.ContentType + "\n";
-					string destPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), htmlInputFile.PostedFile.FileName); 
-					htmlInputFile.PostedFile.SaveAs(destPath);
-					if (htmlInputFile.PostedFile.ContentType.StartsWith("text/"))
-					{
-						System.IO.StreamReader r = new System.IO.StreamReader(htmlInputFile.PostedFile.InputStream);
-						bodyPre.InnerText += r.ReadToEnd();
-						r.Close();
-					}
 				}
 			}
 		}
@@ -62,6 +46,8 @@
 		<form id="uploadForm" runat="server">
 			<Upload:InputFile id="inputFile" runat="server" /><br/>
 			<input id="htmlInputFile" type="file" runat="server" /><br/>
+            <Upload:ProgressBar ID="ProgressBar1" runat='server' Inline="False" Triggers="submitButton">
+            </Upload:ProgressBar>
 			<asp:Button id="submitButton" runat="server" Text="Submit"/><br/>
 			<pre id="bodyPre" runat="server">
 			</pre>
