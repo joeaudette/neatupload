@@ -7,7 +7,7 @@
     <ProjectGuid>{8C57C0B1-A668-4CDD-BE3B-54B15175BEC2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AssemblyName>Brettle.Web.NeatUpload</AssemblyName>
-    <TargetFrameworkVersion>v1.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -40,7 +40,6 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <AssemblyKeyFile>..\..\..\..\keypair.snk</AssemblyKeyFile>
-    <SignAssembly>true</SignAssembly>
     <EnvironmentVariables>
       <EnvironmentVariables />
     </EnvironmentVariables>
@@ -57,6 +56,7 @@
     <DebugSymbols>true</DebugSymbols>
     <GenerateDocumentation>true</GenerateDocumentation>
     <DocumentationFile>install\bin\Brettle.Web.NeatUpload.XML</DocumentationFile>
+    <AssemblyKeyFile>..\..\..\..\keypair.snk</AssemblyKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -142,28 +142,24 @@
   <ItemGroup>
     <EmbeddedResource Include="NeatUpload.Strings.resx">
       <SubType>Designer</SubType>
+      <LogicalName>Brettle.Web.NeatUpload.Strings.resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NeatUpload.Strings.en-US.resx">
+      <LogicalName>Brettle.Web.NeatUpload.Strings.en-US.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
       <Visible>False</Visible>
-      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
-      <Install>false</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
       <Visible>False</Visible>
-      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
-      <Install>false</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
       <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5</ProductName>
-      <Install>true</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
       <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
@@ -185,7 +181,7 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <MonoDevelop>
-      <Properties>
+      <Properties InternalTargetFrameworkVersion="1.1">
         <GtkDesignInfo />
       </Properties>
     </MonoDevelop>
