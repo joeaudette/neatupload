@@ -24,7 +24,8 @@
 					bodyPre.InnerText = "Name: " + testControl.inputFile.FileName + "\n";
 					bodyPre.InnerText += "Size: " + testControl.inputFile.ContentLength + "\n";
 					bodyPre.InnerText += "Content type: " + testControl.inputFile.ContentType + "\n";
-					string destPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), testControl.inputFile.FileName); 
+/*
+                    string destPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), testControl.inputFile.FileName); 
 					testControl.inputFile.MoveTo(destPath, Brettle.Web.NeatUpload.MoveToOptions.Overwrite);
 					if (testControl.inputFile.ContentType.StartsWith("text/"))
 					{
@@ -32,6 +33,7 @@
 						bodyPre.InnerText += r.ReadToEnd();
 						r.Close();
 					}
+ */
 				}
 			}
 		}
