@@ -130,9 +130,7 @@ namespace Brettle.Web.NeatUpload
                     {
                         UriBuilder handlerUriBuilder = new UriBuilder(HttpContext.Current.Request.Url);
                         handlerUriBuilder.Path = HttpContext.Current.Response.ApplyAppPathModifier(SessionBasedProvider.HandlerUrl);
-                        Console.WriteLine("handlerUriBuilder.Uri={0}", handlerUriBuilder.Uri);
                         mode = (SessionStateMode)SimpleWebRemoting.MakeRemoteCall(handlerUriBuilder.Uri, "GetSessionStateMode");
-                        Console.WriteLine("GetSessionStateMode() returned {0}", mode);
                     }
                     if (mode == SessionStateMode.Off || mode == SessionStateMode.InProc)
                         provider = InProcProvider;
