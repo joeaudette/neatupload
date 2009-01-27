@@ -111,31 +111,42 @@ namespace Brettle.Web.NeatUpload
                 if (_Provider != null)
                     return _Provider;
 
+                UploadStateStoreProvider provider = null;
                 lock (SyncRoot)
                 {
-                    if (_Provider == null)
-                    {
-                        HttpSessionState session = HttpContext.Current.Session;
-                        SessionStateMode mode;
-                        if (session != null)
-                        {
-                            mode = session.Mode;
-                        }
-                        else
-                        {
-                            UriBuilder handlerUriBuilder = new UriBuilder(HttpContext.Current.Request.Url);
-                            handlerUriBuilder.Path = HttpContext.Current.Response.ApplyAppPathModifier(SessionBasedProvider.HandlerUrl);
-                            mode = (SessionStateMode)SimpleWebRemoting.MakeRemoteCall(handlerUriBuilder.Uri, "GetSessionStateMode");
-                        }
-                        if (mode == SessionStateMode.Off || mode == SessionStateMode.InProc)
-                            _Provider = InProcProvider;
-                        else
-                        {
-                            _Provider = SessionBasedProvider;
-                        }
-                    }
-                    return _Provider;
+                    provider = _Provider;
                 }
+
+                // Don't hold the lock while we make the remote call to avoid deadlocks.
+                if (provider == null)
+                {
+                    HttpSessionState session = HttpContext.Current.Session;
+                    SessionStateMode mode;
+                    if (session != null)
+                    {
+                        mode = session.Mode;
+                    }
+                    else
+                    {
+                        UriBuilder handlerUriBuilder = new UriBuilder(HttpContext.Current.Request.Url);
+                        handlerUriBuilder.Path = HttpContext.Current.Response.ApplyAppPathModifier(SessionBasedProvider.HandlerUrl);
+                        Console.WriteLine("handlerUriBuilder.Uri={0}", handlerUriBuilder.Uri);
+                        mode = (SessionStateMode)SimpleWebRemoting.MakeRemoteCall(handlerUriBuilder.Uri, "GetSessionStateMode");
+                        Console.WriteLine("GetSessionStateMode() returned {0}", mode);
+                    }
+                    if (mode == SessionStateMode.Off || mode == SessionStateMode.InProc)
+                        provider = InProcProvider;
+                    else
+                    {
+                        provider = SessionBasedProvider;
+                    }
+                    lock (SyncRoot)
+                    {
+                        if (_Provider == null)
+                            _Provider = provider;
+                    }
+                }
+                return _Provider;
             }
         }
 	}
