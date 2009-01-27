@@ -819,7 +819,11 @@ namespace Brettle.Web.NeatUpload
                     file.Dispose();
             }
 
-            UploadState uploadState = CurrentUploadState;
+            // Get CurrentUploadState only if it has already been set to
+            // avoid deadlocks.
+            UploadState uploadState = null;
+            if (HttpContext.Current != null)
+                uploadState = (UploadState)HttpContext.Current.Items["NeatUpload_UploadState"];
 			if (uploadState != null)
 			{
 				if (CurrentMultiRequestControlID == null
