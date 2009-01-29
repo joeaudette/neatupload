@@ -1,6 +1,6 @@
 <%@ Control language="c#" Src="TrickyTestControl.ascx.cs" AutoEventWireup="false" Inherits="Brettle.Web.NeatUpload.TrickyTestControl" %>
 <%@ Register TagPrefix="Upload" Namespace="Brettle.Web.NeatUpload" Assembly="Brettle.Web.NeatUpload" %>
-<table>
+<table width="100%">
     <thead>
         <tr>
             <td colspan="2" align="center">A Flash-enabled MultiFile control in a table</td>
