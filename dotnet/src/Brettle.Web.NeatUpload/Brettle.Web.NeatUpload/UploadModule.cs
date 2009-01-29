@@ -235,7 +235,8 @@ namespace Brettle.Web.NeatUpload
 		/// The post-back ID for which the progress state should be retrieved.
 		/// </param>
 		/// <param name="controlUniqueID">
-		/// The UniqueID of the control for which the progress state should be retrieved.
+		/// The UniqueID of the control for which the processing state should be retrieved,
+        /// or null to not retrieve progress state without processing state.
 		/// </param>
 		/// <param name="progressState">
 		/// A <see cref="IUploadProgressState"/> to be filled in with the progress state

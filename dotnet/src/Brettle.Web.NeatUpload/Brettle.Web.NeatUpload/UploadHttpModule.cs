@@ -117,7 +117,7 @@ namespace Brettle.Web.NeatUpload
 		{
 			
 			UploadState uploadState = CurrentUploadState;
-			if (uploadState != null && uploadState.Status == UploadStatus.Unknown)
+			if (uploadState == null || uploadState.Status == UploadStatus.Unknown)
 				return true;
 			uploadState.ProcessingStateDict[controlUniqueID] = state;
             uploadState.OnChanged();
@@ -148,7 +148,8 @@ namespace Brettle.Web.NeatUpload
 			progressState.Files = uploadState.Files.GetReadOnlyCopy();
 			progressState.Failure = uploadState.Failure;
 			progressState.Rejection = uploadState.Rejection;
-			progressState.ProcessingState = uploadState.ProcessingStateDict[controlUniqueID];
+            if (controlUniqueID != null)
+			    progressState.ProcessingState = uploadState.ProcessingStateDict[controlUniqueID];
 			progressState.TimeElapsed = uploadState.TimeElapsed;
 			if (uploadState.BytesRead == 0 || uploadState.BytesTotal < 0)
 			{
