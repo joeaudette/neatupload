@@ -22,6 +22,8 @@ using System;
 using System.Web;
 using System.Web.SessionState;
 using System.IO;
+using System.Xml;
+using System.Xml.XPath;
 
 namespace Brettle.Web.NeatUpload
 {
@@ -108,34 +110,22 @@ namespace Brettle.Web.NeatUpload
         private UploadStateStoreProvider Provider {
             get
             {
-                if (_Provider != null)
-                    return _Provider;
-
                 lock (SyncRoot)
                 {
                     if (_Provider == null)
                     {
-                        HttpSessionState session = HttpContext.Current.Session;
-                        SessionStateMode mode;
-                        if (session != null)
-                        {
-                            mode = session.Mode;
-                        }
-                        else
-                        {
-                            UriBuilder handlerUriBuilder = new UriBuilder(HttpContext.Current.Request.Url);
-                            handlerUriBuilder.Path = HttpContext.Current.Response.ApplyAppPathModifier(SessionBasedProvider.HandlerUrl);
-                            mode = (SessionStateMode)SimpleWebRemoting.MakeRemoteCall(handlerUriBuilder.Uri, "GetSessionStateMode");
-                        }
-                        if (mode == SessionStateMode.Off || mode == SessionStateMode.InProc)
+                        string webConfigPath = HttpContext.Current.Server.MapPath("~/Web.config");
+                        XPathDocument webConfigDoc = new XPathDocument(webConfigPath);
+                        XPathNavigator nav = webConfigDoc.CreateNavigator();
+                        string modeString = nav.Evaluate("string(/configuration/system.web/sessionState/@mode)") as string;
+                        if (modeString == null || modeString == "" 
+                            || modeString.ToLower() == "inproc" || modeString.ToLower() == "off")
                             _Provider = InProcProvider;
                         else
-                        {
                             _Provider = SessionBasedProvider;
-                        }
                     }
-                    return _Provider;
                 }
+                return _Provider;
             }
         }
 	}
