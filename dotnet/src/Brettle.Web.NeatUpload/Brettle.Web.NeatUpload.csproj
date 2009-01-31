@@ -45,6 +45,7 @@
     </EnvironmentVariables>
     <GenerateDocumentation>true</GenerateDocumentation>
     <DocumentationFile>install\bin\Brettle.Web.NeatUpload.XML</DocumentationFile>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -57,6 +58,7 @@
     <GenerateDocumentation>true</GenerateDocumentation>
     <DocumentationFile>install\bin\Brettle.Web.NeatUpload.XML</DocumentationFile>
     <AssemblyKeyFile>..\..\..\..\keypair.snk</AssemblyKeyFile>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
