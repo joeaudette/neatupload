@@ -14,3 +14,4 @@ cp "$1"/../../js/install/*.js "$2"/NeatUpload/
 cp "$1"/../../flash/src/SWFUpload/install/* "$2"/NeatUpload/
 cp "$1"/../src/Brettle.Web.NeatUpload/install/NeatUpload/* "$2"/NeatUpload/
 cp "$1"/bin/* "$2"/bin
+cp -r "$1"/../src/Brettle.Web.NeatUpload/install/bin/* "$2"/bin
