@@ -149,6 +149,9 @@
     <EmbeddedResource Include="NeatUpload.Strings.en-US.resx">
       <LogicalName>Brettle.Web.NeatUpload.Strings.en-US.resources</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="NeatUpload.Strings.fr.resx">
+      <LogicalName>Brettle.Web.NeatUpload.Strings.fr.resources</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
