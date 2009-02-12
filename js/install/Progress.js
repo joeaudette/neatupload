@@ -19,15 +19,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 function NeatUploadGetMainWindow() 
 {
-	var mainWindow = window;
-	while (!mainWindow.NeatUploadPB)
+    var mainWindow = window;
+	try 
 	{
-		if (mainWindow.parent && mainWindow.parent != mainWindow)
-			mainWindow = mainWindow.parent;
-		else if (mainWindow.opener && mainWindow.opener != mainWindow)
-			mainWindow = mainWindow.opener;
-		else
-			break;
+	    while (!mainWindow.NeatUploadPB)
+	    {
+		    if (mainWindow.parent && mainWindow.parent != mainWindow)
+			    mainWindow = mainWindow.parent;
+		    else if (mainWindow.opener && mainWindow.opener != mainWindow)
+			    mainWindow = mainWindow.opener;
+		    else
+			    break;
+	    }
+	} 
+	catch (ex)
+	{
+	    mainWindow = window;
 	}
 	return mainWindow;
 }
