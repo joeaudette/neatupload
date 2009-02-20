@@ -115,16 +115,18 @@ namespace Brettle.Web.NeatUpload
 <!--
 NeatUploadPB.prototype.Bars['{0}'].DisplayUrl = function(progressUrl) {{
 	var pb = this;
-    frames[pb.ClientID].document.body.innerHTML = '';
-	setTimeout(function () {{ frames[pb.ClientID].location.href = progressUrl; }}, 0);
+    var iframeWindow = document.getElementById(pb.ClientID).contentWindow || frames[pb.ClientID];
+    iframeWindow.document.body.innerHTML = '';
+	setTimeout(function () {{ iframeWindow.location.href = progressUrl; }}, 0);
 }};
 
 NeatUploadPB.prototype.Bars['{0}'].EvalOnClose = null;
 
 (function() {{
 	var pb = NeatUploadPB.prototype.Bars['{0}'];
-	if (frames[pb.ClientID]) 
-		frames[pb.ClientID].location.replace(pb.UploadProgressPath + '{1}&postBackID=' + pb.UploadForm.GetPostBackID() + '&canScript=true&canCancel=' + NeatUploadPB.prototype.CanCancel());
+    var iframeWindow = document.getElementById(pb.ClientID).contentWindow || frames[pb.ClientID];
+	if (iframeWindow) 
+		iframeWindow.location.replace(pb.UploadProgressPath + '{1}&postBackID=' + pb.UploadForm.GetPostBackID() + '&canScript=true&canCancel=' + NeatUploadPB.prototype.CanCancel());
 }})();
 // -->
 </script>", ClientID, LastPostBackIDQueryStringPortion);
