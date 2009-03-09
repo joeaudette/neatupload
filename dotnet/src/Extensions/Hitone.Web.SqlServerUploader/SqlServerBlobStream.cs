@@ -107,6 +107,24 @@ namespace Hitone.Web.SqlServerUploader
 
         }
 
+        private string _DataFieldType = null;
+        private string GetDataFieldType(string TableName, string DataColumnName)
+        {
+            if (_DataFieldType == null)
+            {
+                SqlCommand sqlCommand = _connection.CreateCommand();
+                sqlCommand.CommandText = String.Format("SELECT data_type FROM information_schema.columns WHERE table_schema = 'dbo' AND table_name = '{0}' AND column_name = '{1}';",
+                    TableName, DataColumnName);
+                _connection.Open();
+                try
+                {
+                    _DataFieldType = sqlCommand.ExecuteScalar() as string;
+                }
+                finally { _connection.Close(); }
+            }
+            return _DataFieldType;
+        }
+
         /// <summary>
         /// Opens an exising blob for read/write access
         /// </summary>
@@ -127,8 +145,10 @@ namespace Hitone.Web.SqlServerUploader
             else //We should generate SQL Queries
             {
                 if (openProcedure != null) openProcedure = null; //Make sure the openProcedure parameter is null so future tests are simpler
-
-                openSqlCommand.CommandText = string.Format("SELECT @Pointer = TEXTPTR([{0}]), @Size=datalength([{0}]){2}{3} FROM [{1}] WHERE $IDENTITY = @Identity", dataColumnName, tableName,
+                // Only use TEXTPTR() with image fields.  We don't need the @Pointer value for non-image fields, so we just use an
+                // empty (but non-null) byte array.
+                string pointerValue = GetDataFieldType(tableName, dataColumnName) == "image" ? string.Format("TEXTPTR([{0}])", dataColumnName) : "0x";
+                openSqlCommand.CommandText = string.Format("SELECT @Pointer = {0}, @Size=datalength([{1}]){3}{4} FROM [{2}] WHERE $IDENTITY = @Identity", pointerValue, dataColumnName, tableName,
                     fileNameColumnName != null ? ",@FileName=" + fileNameColumnName : string.Empty,
                     MIMETypeColumnName != null ? ",@MIMEType=" + MIMETypeColumnName : string.Empty);
             }
@@ -207,7 +227,10 @@ namespace Hitone.Web.SqlServerUploader
             createCommand.Parameters["@Bytes"].Size = 0;
             createCommand.Parameters["@Bytes"].Offset = 0;
 
-            sql.AppendFormat(");SELECT @Identity = SCOPE_IDENTITY(); SELECT @Pointer = TEXTPTR([{0}]) FROM [{1}] WHERE $IDENTITY = @Identity", dataColumnName, tableName);
+            // Only use TEXTPTR() with SqlServer 2000 and below.  We don't need the @Pointer value in later versions, so we just use an
+            // empty (but non-null) byte array.
+            string pointerValue = GetDataFieldType(tableName, dataColumnName) == "image" ? string.Format("TEXTPTR([{0}])", dataColumnName) : string.Format("[{0}]", dataColumnName);
+            sql.AppendFormat(");SELECT @Identity = SCOPE_IDENTITY(); SELECT @Pointer = {0} FROM [{1}] WHERE $IDENTITY = @Identity", pointerValue, tableName);
 
             createCommand.CommandText = sql.ToString();
 
@@ -237,8 +260,15 @@ namespace Hitone.Web.SqlServerUploader
                 if (readProcedure != null && readProcedure.Length > 0) {
                     _readCommand.CommandType = CommandType.StoredProcedure;
                     _readCommand.CommandText = readProcedure;
-                } else
+                }
+                else if (GetDataFieldType(tableName, dataColumnName) == "image")
+                {
                     _readCommand.CommandText = string.Format("READTEXT [{0}].[{1}] @Pointer @Offset @Size", tableName, dataColumnName);
+                }
+                else
+                {
+                    _readCommand.CommandText = string.Format("SELECT SUBSTRING([{1}], @Offset+1, @Size) FROM [{0}] WHERE ($IDENTITY = @Identity)", tableName, dataColumnName);
+                }
 
                 //@Identity is not used by the created code, but may be used by the procedure (if they choose to go with the "SUBSTRING"-approach)
                 AddWithValue(_readCommand.Parameters, "@Identity", _identity);
@@ -279,8 +309,14 @@ namespace Hitone.Web.SqlServerUploader
                     _writeCommand.CommandType = CommandType.StoredProcedure;
                     _writeCommand.CommandText = writeProcedure;
                 }
-                else
+                else if (GetDataFieldType(tableName, dataColumnName) == "image")
+                {
                     _writeCommand.CommandText = string.Format("UPDATETEXT [{0}].[{1}] @Pointer @Offset @Delete WITH LOG @Bytes", tableName, dataColumnName);
+                }
+                else
+                {
+                    _writeCommand.CommandText = string.Format("UPDATE [{0}] SET [{1}].write(@Bytes, null, null) WHERE $IDENTITY = @Identity", tableName, dataColumnName);
+                }
 
                 //@Identity is not used by the created code, but may be used by the procedure (if they choose to go with the ".WRITE"-approach)
                 AddWithValue(_writeCommand.Parameters, "@Identity", _identity);
