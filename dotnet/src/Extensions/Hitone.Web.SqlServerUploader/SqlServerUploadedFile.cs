@@ -101,9 +101,9 @@ namespace Hitone.Web.SqlServerUploader
             // _blobStream will be created on first access.
             _identity = _blobStream.Identity;   //Get generated identity (if any) from the stream
 
-            // If hash algorithm is specified, enlcose the blobstream in a hash crypto-transformation
+            // If hash algorithm is specified, enclose the blobstream in a hash crypto-transformation
 
-            if (_hashName != null)
+            if (_hashName != null && _hashName.Length > 0)
             {
                 HashAlgorithm hashAlgorithm = System.Security.Cryptography.HashAlgorithm.Create(_hashName);
                 return new MyCryptoStream(this, _blobStream, hashAlgorithm);
@@ -192,7 +192,7 @@ namespace Hitone.Web.SqlServerUploader
             else
             {
                 //Check if we should store the hash in the database
-                if (HashName != null && (_provider.HashColumnName != null || _provider.StoreHashProcedure != null))
+                if (HashName != null && HashName.Length > 0 && (_provider.HashColumnName != null || _provider.StoreHashProcedure != null))
                     SaveHash();
             }
             _blobStream.Dispose();
