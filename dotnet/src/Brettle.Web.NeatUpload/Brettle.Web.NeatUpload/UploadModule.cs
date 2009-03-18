@@ -339,6 +339,7 @@ namespace Brettle.Web.NeatUpload
         /// retrieve the most recent version of the file.</returns>
         /// <remarks>Based on code posted by Mike Lim in a feature request.
         /// </remarks>
+        [Obsolete("Use UploadModule.BustCache(ResolveUrl(relativeUrl)) instead.")]
         public static string GetCacheBustedPath(string path)
         {
             string url;
@@ -351,6 +352,20 @@ namespace Brettle.Web.NeatUpload
                 url = dirPath + path;
             }
 
+			return BustCache(url);
+		}
+
+        /// <summary>
+        /// Adds '?guid=value' to the URL with a value that ensures the browser 
+        /// retrieves the most recent version of the file at the URL.
+        /// </summary>
+        /// <param name="url">the absolute URL of the file.</param>
+        /// <returns>an URL that ensures that the browser will
+        /// retrieve the most recent version of the file.</returns>
+        /// <remarks>Based on code posted by Mike Lim in a feature request.
+        /// </remarks>
+		public static string BustCache(string url)
+		{
             System.Web.Caching.Cache Cache = HttpContext.Current.Cache;
             string guid = null;
             if (Cache[url] is string)
