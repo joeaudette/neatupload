@@ -77,7 +77,7 @@ namespace Brettle.Web.NeatUpload
 			{
 				expandedGreyBoxRoot = "~/greybox";
 			}
-			expandedGreyBoxRoot = HttpContext.Current.Response.ApplyAppPathModifier(expandedGreyBoxRoot);
+			expandedGreyBoxRoot = ResolveUrl(expandedGreyBoxRoot);
 
 			if (!Page.IsClientScriptBlockRegistered("GreyBoxJs"))
 			{
@@ -90,9 +90,9 @@ namespace Brettle.Web.NeatUpload
 <script type='text/javascript' language='javascript' src='{3}'></script>
 <link href='{0}/gb_styles.css' rel='stylesheet' type='text/css' />
 ", expandedGreyBoxRoot,
- UploadModule.GetCacheBustedPath(expandedGreyBoxRoot + "/AJS.js"),
- UploadModule.GetCacheBustedPath(expandedGreyBoxRoot + "/AJS_fx.js"),
- UploadModule.GetCacheBustedPath(expandedGreyBoxRoot + "/gb_scripts.js")));
+ UploadModule.BustCache(expandedGreyBoxRoot + "/AJS.js"),
+ UploadModule.BustCache(expandedGreyBoxRoot + "/AJS_fx.js"),
+ UploadModule.BustCache(expandedGreyBoxRoot + "/gb_scripts.js")));
 			}
 		}
 		

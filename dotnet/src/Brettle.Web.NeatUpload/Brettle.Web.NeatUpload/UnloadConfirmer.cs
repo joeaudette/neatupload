@@ -55,7 +55,7 @@ namespace Brettle.Web.NeatUpload
             {
                 Page.RegisterClientScriptBlock("NeatUploadJs", @"
 <script type='text/javascript' language='javascript' src='" 
-                    + UploadModule.GetCacheBustedPath("/NeatUpload/NeatUpload.js")
+                    + UploadModule.BustCache(ResolveUrl("~/NeatUpload/NeatUpload.js"))
                     + @"'></script>");
             }
             this.Page.RegisterStartupScript("NeatUploadUnloadConfirmer-" + this.UniqueID, GetStartupScript());
