@@ -210,7 +210,7 @@ namespace Brettle.Web.NeatUpload
 		protected override void OnLoad(EventArgs e)
 		{
 			RegisterClientScriptBlock("NeatUpload-ProgressPage", "<script type='text/javascript' language='javascript' src='"
-                + UploadModule.GetCacheBustedPath("Progress.js") + @"'></script>");
+                + UploadModule.BustCache(ResolveUrl("Progress.js")) + @"'></script>");
 			SetupContext();
 			SetupBindableProps();
 			
