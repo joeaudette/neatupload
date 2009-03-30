@@ -363,6 +363,13 @@ namespace Brettle.Web.NeatUpload
 			form.Method = "post";
 		}
 				
+		protected override void OnPreRender (EventArgs e)
+		{
+			if (!IsDesignTime)
+				Page.RegisterRequiresPostBack(this);
+			base.OnPreRender(e);
+		}
+
 		private void Control_Unload(object sender, EventArgs e)
 		{
 			if (_file != null && !Config.Current.UseHttpModule)
@@ -406,7 +413,7 @@ namespace Brettle.Web.NeatUpload
 		/// Called by ASP.NET so that controls can find and process their post back data</summary>
 		/// <returns>the true if a file was uploaded with this control</returns>
 		public virtual bool LoadPostData(string postDataKey, NameValueCollection postCollection)
-		{		
+		{
 			return HasFile;
 		}
 		
