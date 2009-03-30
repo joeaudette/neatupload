@@ -187,6 +187,8 @@ namespace Brettle.Web.NeatUpload
                         + @"'></script>");
 				}
 			}
+			if (!IsDesignTime)
+				Page.RegisterRequiresPostBack(this);
 			base.OnPreRender(e);
 		}
 
