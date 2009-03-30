@@ -208,6 +208,8 @@ namespace Brettle.Web.NeatUpload
                         + @"'></script>");
 				}
 			}
+			if (!IsDesignTime)
+				Page.RegisterRequiresPostBack(this);
 			base.OnPreRender(e);
 		}
 
@@ -280,7 +282,7 @@ NeatUploadInputFileCreate('" + this.ClientID + @"','"
 		/// Called by ASP.NET so that controls can find and process their post back data</summary>
 		/// <returns>the true if a file was uploaded with this control</returns>
 		public virtual bool LoadPostData(string postDataKey, NameValueCollection postCollection)
-		{		
+		{
 			return HasFile;
 		}
 		
