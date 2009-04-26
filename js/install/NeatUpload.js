@@ -232,7 +232,9 @@ function NeatUploadForm(formElem, postBackID)
 		Event.prototype.NeatUpload_OrigPreventDefault = Event.prototype.preventDefault;
 		Event.prototype.preventDefault = function () {
 			this.NeatUpload_PreventDefaultCalled = true;
-			return this.NeatUpload_OrigPreventDefault();
+	        this.returnValue = false; // For IE 8, which doesn't define preventDefault but does allow it to be set.
+			if (this.NeatUpload_OrigPreventDefault)
+				return this.NeatUpload_OrigPreventDefault();
 		};
 		this.debugMessage("Hooked preventDefault");
 	}

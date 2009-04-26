@@ -1,5 +1,5 @@
 The source for the manual is in Manual.flatxml.  To open/edit it:
-1. Install OpenOffice 2.3 or later.  You can choose to install only the
+1. Install OpenOffice 3.0 or later.  You can choose to install only the
    Writer application from the installer.
 2. Run OpenOffice Writer.
 3. Select Tools > XML Filter Settings > Open Package, and then select 
