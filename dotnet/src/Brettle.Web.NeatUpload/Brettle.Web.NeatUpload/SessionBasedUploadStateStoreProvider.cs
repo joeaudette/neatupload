@@ -96,18 +96,33 @@ namespace Brettle.Web.NeatUpload
 
         private object MakeRemoteCall(params object[] methodCall)
         {
-            UriBuilder handlerUriBuilder = new UriBuilder(HttpContext.Current.Request.Url);
-            handlerUriBuilder.Path = HttpContext.Current.Response.ApplyAppPathModifier(HandlerUrl);
-            return SimpleWebRemoting.MakeRemoteCall(handlerUriBuilder.Uri, methodCall);
+            Uri handlerUri = GetHandlerUri(HttpContext.Current.Request.Url, HandlerUrl);
+            return SimpleWebRemoting.MakeRemoteCall(handlerUri, methodCall);
+        }
+
+        private static Uri GetHandlerUri(Uri requestUri, string handlerUrl)
+        {
+            // Build the handler URI using the absolute request URL and the configured handler URL.
+            // The handler URL could be absolute or relative and could contain "~" which should be replaced
+            // by the app path and any cookieless session ID.
+
+            // First, use the authority (scheme, host and port) from the request URI if the handler URL
+            // is relative.
+            Uri handlerUri = new Uri(new Uri(requestUri.GetLeftPart(UriPartial.Authority)), handlerUrl);
+            UriBuilder uriBuilder = new UriBuilder(handlerUri);
+
+            // If the path starts with "/~" we need to pass the path through ApplyAppPathModifier()
+            // to add the app path and any cookieless session ID.
+            if (uriBuilder.Path.StartsWith("/~"))
+                uriBuilder.Path = HttpContext.Current.Response.ApplyAppPathModifier(uriBuilder.Path.Substring(1));
+            return uriBuilder.Uri;
         }
 
         private class Cleaner
         {
             internal Cleaner(SessionBasedUploadStateStoreProvider provider)
             {
-                UriBuilder handlerUriBuilder = new UriBuilder(HttpContext.Current.Request.Url);
-                handlerUriBuilder.Path = HttpContext.Current.Response.ApplyAppPathModifier(provider.HandlerUrl);
-                HandlerUri = handlerUriBuilder.Uri;
+                HandlerUri = GetHandlerUri(HttpContext.Current.Request.Url, provider.HandlerUrl);
                 Cookies = HttpContext.Current.Request.Cookies;
                 EncryptionKey = Config.Current.EncryptionKey;
                 ValidationKey = Config.Current.ValidationKey;
