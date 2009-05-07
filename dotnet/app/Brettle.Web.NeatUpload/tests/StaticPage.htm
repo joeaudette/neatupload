@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<script type="text/javascript" src="../../NeatUpload/NeatUpload.js"></script>
+    <title>Static Upload Page Example</title>
+</head>
+<body>
+<form id="formID" action="StaticUploadHandler.ashx" method="post" enctype="multipart/form-data">
+<input id="fileID" type="file" name="NeatUpload_replacedByScript-fileField" /><br />
+<div id="progressID"></div><br />
+<input id="uploadButtonID" type="submit" name="submit" value="Upload" />
+<input id="cancelButtonID" type="submit" name="cancel" value="Cancel" />
+</form>
+<script type="text/javascript">
+	// Generate long random string so uploads don't interfere with each other.
+	// TODO: Move to NeatUpload.js
+	var postBackID = Math.round(Math.random() * 1000000000);
+	
+	// Must be called after form element has closed.
+	NeatUploadInputFileCreate("fileID", postBackID);
+</script>
+<script type="text/javascript">
+	// Must be called after form element has closed.
+	var pb = new NeatUploadPB("progressID", postBackID, "", "500px", "100px", ["uploadButtonID"], "IsFilesToUpload()");
+	NeatUploadPB.prototype.Bars["progressID"] = pb;
+	pb.Display = function() {
+		var progressDiv = document.getElementById("progressID");
+		progressDiv.innerHTML = "Upload in progress";
+	}
+</script>
+</body>
+</html>
