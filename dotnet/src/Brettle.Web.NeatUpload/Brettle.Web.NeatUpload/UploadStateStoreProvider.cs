@@ -127,7 +127,7 @@ namespace Brettle.Web.NeatUpload
         protected void CleanUpIfStale(string postBackID)
         {
             UploadState uploadState = Load(postBackID);
-            if (uploadState != null && uploadState.TimeOfLastMerge.AddSeconds(Config.Current.StateStaleAfterSeconds) < DateTime.Now)
+            if (uploadState != null && IsStale(uploadState))
             {
                 foreach (UploadedFile f in uploadState.Files)
                     f.Dispose();
@@ -192,6 +192,9 @@ namespace Brettle.Web.NeatUpload
                 if (uploadState.MultiRequestObject == null)
                     uploadState.MultiRequestObject = storedUploadState.MultiRequestObject;
 
+                if (!uploadState.IsMultiRequest && storedUploadState.IsMultiRequest)
+                    uploadState.IsMultiRequest = storedUploadState.IsMultiRequest;
+
                 if (uploadState.ProcessingStateDict == null || uploadState.ProcessingStateDict.Count == 0)
                     uploadState._ProcessingStateDict = storedUploadState._ProcessingStateDict;
 
@@ -211,10 +214,10 @@ namespace Brettle.Web.NeatUpload
 		/// </returns>
 		/// <remarks>The <see cref="UploadState"/> is considered stale if it has not been updated in the
 		/// number of seconds indicated by the stateStaleAfterSeconds attribute of the &lt;neatUpload&gt;
-		/// element.</remarks>
+		/// element or it has been forced stale.</remarks>
 		protected bool IsStale(UploadState uploadState)
 		{
-			return (uploadState.TimeOfLastMerge.AddSeconds(Config.Current.StateStaleAfterSeconds) > DateTime.Now);				
+			return (uploadState.TimeOfLastMerge.AddSeconds(Config.Current.StateStaleAfterSeconds) < DateTime.Now);				
 		}
 
 		/// <summary>
