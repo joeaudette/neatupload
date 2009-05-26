@@ -324,6 +324,7 @@ function NeatUploadForm(formElem, postBackID)
 
 	this.debugMessage("Adding submitting handler");	
 	this.AddSubmittingHandler(function () {
+		f.PostBackID = postBackID + (new Date()).getTime();
 		f.SubmitCount++;
 		var url = f.FormElem.getAttribute('action');
 		f.debugMessage("url=" + url);
