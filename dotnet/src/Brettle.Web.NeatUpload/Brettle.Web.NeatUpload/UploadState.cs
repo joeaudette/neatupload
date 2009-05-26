@@ -47,6 +47,7 @@ namespace Brettle.Web.NeatUpload
             if (this._Files != null)
                 this._Files.UploadState = this;
             this._MultiRequestObject = src._MultiRequestObject;
+            this._IsMultiRequest = src._IsMultiRequest;
             this._PostBackID = src._PostBackID;
             this._CurrentFileName = src._CurrentFileName;
             this._ProcessingStateDict = src._ProcessingStateDict;
@@ -118,6 +119,22 @@ namespace Brettle.Web.NeatUpload
                 }
             }
         }
+
+        private bool _IsMultiRequest;
+
+        internal bool IsMultiRequest
+        {
+            get
+            {
+                return _IsMultiRequest;
+            }
+            set
+            {
+                _IsMultiRequest = value;
+                OnChanged();
+            }
+        }
+               
         
         private object _MultiRequestObject;
 

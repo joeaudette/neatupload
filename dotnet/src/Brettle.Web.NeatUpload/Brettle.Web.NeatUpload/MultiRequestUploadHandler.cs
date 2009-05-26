@@ -58,6 +58,7 @@ namespace Brettle.Web.NeatUpload
                     if (size > 0)
                         totalSize += size;
                 }
+                uploadState.IsMultiRequest = true;
                 uploadState.MultiRequestObject = secureStorageConfigString;
                 uploadState.BytesTotal = totalSize;
             }
