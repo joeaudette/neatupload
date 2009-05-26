@@ -28,7 +28,8 @@ using System.IO;
 namespace Brettle.Web.NeatUpload
 {
 	public class TrickyTestControl : System.Web.UI.UserControl
-	{	
+	{
+		public InputFile inputFile;
 		public MultiFile multiFile;
 		public Button submitButton;
 		protected ProgressBar inlineProgressBar;
