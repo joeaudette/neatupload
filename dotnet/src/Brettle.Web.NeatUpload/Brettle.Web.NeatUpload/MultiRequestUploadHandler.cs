@@ -45,6 +45,7 @@ namespace Brettle.Web.NeatUpload
             string fileSizesString = context.Request.Form[MultiRequestUploadModule.FileSizesFieldName];
             if (log.IsDebugEnabled) log.DebugFormat("fileSizesString={0}", fileSizesString);
 
+            context.Response.Clear();
             if (postBackID != null && fileSizesString != null && fileSizesString.Length > 0)
             {
                 string[] fileSizeStrings = fileSizesString.Split(' ');
@@ -61,9 +62,11 @@ namespace Brettle.Web.NeatUpload
                 uploadState.IsMultiRequest = true;
                 uploadState.MultiRequestObject = secureStorageConfigString;
                 uploadState.BytesTotal = totalSize;
+                context.Response.Write(String.Format(@"{{
+  ""ArmoredCookies"" : ""{0}""
+}}", MultiRequestUploadModule.GetArmoredCookies()));
             }
             // MacOSX Flash player won't fire FileReference.onComplete unless something is returned.
-            context.Response.Clear();
             context.Response.Write(" ");
             context.Response.End();
         }

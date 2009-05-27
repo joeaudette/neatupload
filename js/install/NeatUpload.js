@@ -1106,8 +1106,19 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 			{
 				numf.debugMessage("onreadstatechange(): req.status=" + req.status);
 				numf.debugMessage("onreadstatechange(): req.responseText=" + req.responseText);
-				if (req.status == 200)
-					StartSWFUploads();
+				if (req.status == 200) {
+					// Fill in the ArmoredCookies if none were specified.
+					if (!numf.UploadParams.NeatUpload_ArmoredCookies)
+					{
+						var result = eval("(" + req.responseText + ")");
+						if (result && result.ArmoredCookies) {
+							numf.UploadParams.NeatUpload_ArmoredCookies = result.ArmoredCookies;
+							numf.Swfu.setUploadParams(numf.UploadParams);
+							numf.Swfu.updateUploadStrings();
+						}
+					}
+					StartSWFUploads();					
+				}
 				req = null;
 			}
 		};
