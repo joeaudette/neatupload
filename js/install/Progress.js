@@ -151,9 +151,8 @@ function NeatUploadUpdateHtml()
 			{
 				NeatUploadRefreshPage();
 			}
-			var lastMillis = NeatUploadLastUpdate.getTime();
-			NeatUploadLastUpdate = new Date();
-			var delay = Math.max(lastMillis + 1000 - NeatUploadLastUpdate.getTime(), 1);
+			var curTime = (new Date()).getTime();
+			var delay = Math.max(1000 - (curTime - NeatUploadRefreshStartTime), 1);
 			NeatUploadReloadTimeoutId = setTimeout('NeatUploadRefresh()', delay);
 		}
 		catch (ex)
@@ -163,7 +162,7 @@ function NeatUploadUpdateHtml()
 	}
 }
 
-NeatUploadLastUpdate = new Date(); 
+NeatUploadRefreshStartTime = (new Date()).getTime(); 
 NeatUploadReloadTimeoutId = null;
 
 window.onunload = NeatUpload_CombineHandlers(window.onunload, function () 
@@ -182,6 +181,7 @@ NeatUploadMainWindow = NeatUploadGetMainWindow();
 
 function NeatUploadRefresh()
 {
+	NeatUploadRefreshStartTime = (new Date()).getTime(); 
 	if (!NeatUploadRefreshWithAjax(NeatUploadRefreshUrl + '&useXml=true'))
 	{
 		NeatUploadRefreshPage();
