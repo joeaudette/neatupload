@@ -19,14 +19,44 @@
 	
 	// Must be called after form element has closed.
 	NeatUploadInputFileCreate("fileID", postBackID);
-</script>
-<script type="text/javascript">
+
 	// Must be called after form element has closed.
 	var pb = new NeatUploadPB("progressID", postBackID, "", "500px", "100px", ["uploadButtonID"], "IsFilesToUpload()");
 	NeatUploadPB.prototype.Bars["progressID"] = pb;
+	var ProgressHandlerPath = "/app/Brettle.Web.NeatUpload/tests/ProgressHandler.ashx";
+	var UpdateDelayMs = 1000;
 	pb.Display = function() {
+		var postBackID = this.UploadForm.GetPostBackID();
 		var progressDiv = document.getElementById("progressID");
-		progressDiv.innerHTML = "Upload in progress";
+		var lastUpdate = new Date();
+		var timeoutId = null;
+		RefreshWithAjax();
+
+		function RefreshWithAjax() {
+			var startTime = (new Date()).getTime();
+			var req = null;
+			if (typeof (XMLHttpRequest) != 'undefined') {
+				req = new XMLHttpRequest();
+			} else {
+				req = new ActiveXObject('MSXML2.XMLHTTP.3.0');
+			}
+			req.onreadystatechange = UpdateHtml;
+			req.open('GET', ProgressHandlerPath + "?postBackID=" + postBackID);
+			req.send(null);
+
+			function UpdateHtml() {
+				if (typeof (req) != 'undefined' && req != null && req.readyState == 4 && req.status == 200) {
+					var responseText = req.responseText;
+					var uploadState = eval("(" + responseText + ")");
+					progressDiv.innerHTML = "<pre>" + responseText + "</pre>";
+					if (uploadState.Status == 'NormalInProgress' || uploadState.Status == 'ChunkedInProgress' || uploadState.Status == 'ProcessingInProgress' || uploadState.Status == 'Unknown') {
+						var curTime = (new Date()).getTime();
+						var delay = Math.max(UpdateDelayMs - (curTime - startTime), 1);
+						timeoutId = setTimeout(RefreshWithAjax, delay);
+					}
+				}
+			}
+		}
 	}
 </script>
 </body>
