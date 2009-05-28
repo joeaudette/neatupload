@@ -25,6 +25,22 @@ public class ProgressHandler : IHttpHandler, IUploadProgressState
 			processingStateJson = String.Format(@"{{ ""Value"" : {0}, ""Maximum"" : {1}, ""Units"" : {2}, ""Text"" : ""{3}"" }}",
 				progressInfo.Value, progressInfo.Maximum, progressInfo.Units, progressInfo.Text != null ? progressInfo.Text : "");
 		}
+
+		System.Text.StringBuilder filesJson = new System.Text.StringBuilder();
+		bool isFirstFile = true;
+		for (int i = 0; i < Files.Count; i++)
+		{
+			UploadedFile file = Files[i];
+			if (file.IsUploaded)
+			{
+				if (!isFirstFile)
+					filesJson.Append(",");
+				isFirstFile = false;
+				filesJson.AppendFormat(@"
+    {{ ""ControlUniqueID"" : ""{0}"", ""FileName"" : ""{1}"", ""ContentType"" : ""{2}"", ""ContentLength"" : {3} }}",
+										file.ControlUniqueID, file.FileName, file.ContentType, file.ContentLength);
+			}
+		}
 		
 		string jsonFormat = @"{{ 
   ""Status"" : ""{0}"",
@@ -36,12 +52,13 @@ public class ProgressHandler : IHttpHandler, IUploadProgressState
   ""SecsRemaining"" : {6},
   ""SecsElapsed"" : {7},
   ""CurrentFileName"" : ""{8}"",
-  ""ProcessingState"" : {9}  
+  ""ProcessingState"" : {9},
+  ""Files"" : [{10}]  
 }}
 ";
 		string json = String.Format(jsonFormat,
 Status, BytesRead, BytesTotal, percentComplete, BytesPerSec, message,
-Math.Floor(TimeRemaining.TotalSeconds), Math.Floor(TimeElapsed.TotalSeconds), CurrentFileName, processingStateJson);
+Math.Floor(TimeRemaining.TotalSeconds), Math.Floor(TimeElapsed.TotalSeconds), CurrentFileName, processingStateJson, filesJson.ToString());
 		context.Response.Cache.SetCacheability(System.Web.HttpCacheability.NoCache);
 		context.Response.Write(json);
     }
