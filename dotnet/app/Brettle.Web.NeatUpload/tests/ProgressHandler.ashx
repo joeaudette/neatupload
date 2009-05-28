@@ -3,12 +3,14 @@
 using System;
 using System.Web;
 using Brettle.Web.NeatUpload;
+using System.Text.RegularExpressions;
 
 public class ProgressHandler : IHttpHandler, IUploadProgressState
 {
 	public void ProcessRequest (HttpContext context) {
 		string postBackID = context.Request.Params["postBackID"];
-		UploadModule.BindProgressState(postBackID, null, this);
+		string controlID = context.Request.Params["controlID"];
+		UploadModule.BindProgressState(postBackID, controlID, this);
 		string message = "";
 		if (Status == UploadStatus.Rejected)
 			message = Rejection.Message;
@@ -22,13 +24,13 @@ public class ProgressHandler : IHttpHandler, IUploadProgressState
 		if (progressInfo != null)
 		{
 			percentComplete = Math.Floor(100.0 * progressInfo.Value / progressInfo.Maximum);
-			processingStateJson = String.Format(@"{{ ""Value"" : {0}, ""Maximum"" : {1}, ""Units"" : {2}, ""Text"" : ""{3}"" }}",
-				progressInfo.Value, progressInfo.Maximum, progressInfo.Units, progressInfo.Text != null ? progressInfo.Text : "");
+			processingStateJson = String.Format(@"{{ ""Value"" : {0}, ""Maximum"" : {1}, ""Units"" : ""{2}"", ""Text"" : ""{3}"" }}",
+				progressInfo.Value, progressInfo.Maximum, Quote(progressInfo.Units), progressInfo.Text != null ? Quote(progressInfo.Text) : "");
 		}
 
 		System.Text.StringBuilder filesJson = new System.Text.StringBuilder();
 		bool isFirstFile = true;
-		for (int i = 0; i < Files.Count; i++)
+		for (int i = 0; Files != null && i < Files.Count; i++)
 		{
 			UploadedFile file = Files[i];
 			if (file.IsUploaded)
@@ -38,7 +40,7 @@ public class ProgressHandler : IHttpHandler, IUploadProgressState
 				isFirstFile = false;
 				filesJson.AppendFormat(@"
     {{ ""ControlUniqueID"" : ""{0}"", ""FileName"" : ""{1}"", ""ContentType"" : ""{2}"", ""ContentLength"" : {3} }}",
-										file.ControlUniqueID, file.FileName, file.ContentType, file.ContentLength);
+										Quote(file.ControlUniqueID), Quote(file.FileName), Quote(file.ContentType), file.ContentLength);
 			}
 		}
 		
@@ -57,8 +59,8 @@ public class ProgressHandler : IHttpHandler, IUploadProgressState
 }}
 ";
 		string json = String.Format(jsonFormat,
-Status, BytesRead, BytesTotal, percentComplete, BytesPerSec, message,
-Math.Floor(TimeRemaining.TotalSeconds), Math.Floor(TimeElapsed.TotalSeconds), CurrentFileName, processingStateJson, filesJson.ToString());
+Status, BytesRead, BytesTotal, percentComplete, BytesPerSec, Quote(message),
+Math.Floor(TimeRemaining.TotalSeconds), Math.Floor(TimeElapsed.TotalSeconds), Quote(CurrentFileName), processingStateJson, filesJson.ToString());
 		context.Response.Cache.SetCacheability(System.Web.HttpCacheability.NoCache);
 		context.Response.Write(json);
     }
@@ -68,7 +70,30 @@ Math.Floor(TimeRemaining.TotalSeconds), Math.Floor(TimeElapsed.TotalSeconds), Cu
             return false;
         }
     }
+	
+	private static Regex QuotedCharsRe = new Regex(@"[\u0000-\u001f\u007f-\uffff""\\]", RegexOptions.Compiled);
+	private string Quote(string s)
+	{
+		if (s == null) return null;
+		string quoted = QuotedCharsRe.Replace(s, new MatchEvaluator(ReplaceMatch));
+		return quoted;
+	}
 
+	private string ReplaceMatch(Match m)
+	{
+		char c = m.Value.ToCharArray()[0];
+		switch (c)
+		{
+			case '"': return @"\""";
+			case '\\': return @"\\";
+			case '\n': return @"\n";
+			case '\r': return @"\r";
+			case '\t': return @"\t";
+			case '\b': return @"\b";
+			case '\f': return @"\f";
+			default: return String.Format(@"\u{0:X4}", (int)c);
+		}
+	}
 
 	#region IUploadProgressState Members
 
