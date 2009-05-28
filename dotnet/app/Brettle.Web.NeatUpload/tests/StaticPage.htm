@@ -50,7 +50,7 @@
 	
 	var progressDiv = document.getElementById("progressID");
 	pb.Display = function() {
-		RefreshWithAjax(appPath + "/Brettle.Web.NeatUpload/tests/ProgressHandler.ashx", this.UploadForm.GetPostBackID(), UpdateHtml, 1000);
+		RefreshWithAjax(appPath + "/Brettle.Web.NeatUpload/tests/ProgressHandler.ashx", this.UploadForm.GetPostBackID(), pb.ClientID, UpdateHtml, 1000);
 	};
 
 	// If the upload succeeds, StaticUploadHandler.ashx will redirecte the browser back to this page but
@@ -64,7 +64,7 @@
 		queryObj[qp[0]] = qp[1];
 	}
 	if (queryObj.postBackID) {
-		RefreshWithAjax(appPath + "/Brettle.Web.NeatUpload/tests/ProgressHandler.ashx", queryObj.postBackID, UpdateHtml, 1000);
+		RefreshWithAjax(appPath + "/Brettle.Web.NeatUpload/tests/ProgressHandler.ashx", queryObj.postBackID, pb.ClientID, UpdateHtml);
 	}
 
 	function UpdateHtml(uploadState, uploadStateJson) {
@@ -72,8 +72,7 @@
 	}		
 
 	// This function can be reused as is.
-	function RefreshWithAjax(progressHandlerPath, postBackID, updateFunc, updateDelayMs) {
-		updateDelayMs = updateDelayMs || 1000;
+	function RefreshWithAjax(progressHandlerPath, postBackID, controlID, updateFunc, updateDelayMs) {
 		var timeoutId = null;
 		SendRequest();
 
@@ -86,7 +85,7 @@
 				req = new ActiveXObject('MSXML2.XMLHTTP.3.0');
 			}
 			req.onreadystatechange = HandleResponse;
-			req.open('GET', progressHandlerPath + "?postBackID=" + postBackID);
+			req.open('GET', progressHandlerPath + "?postBackID=" + postBackID + "&controlID=" + controlID);
 			req.send(null);
 
 			function HandleResponse() {
@@ -94,6 +93,7 @@
 					var responseText = req.responseText;
 					var uploadState = eval("(" + responseText + ")");
 					updateFunc(uploadState, responseText);
+					if (!updateDelayMs) return;
 					if (uploadState.Status == 'NormalInProgress' || uploadState.Status == 'ChunkedInProgress' || uploadState.Status == 'ProcessingInProgress' || uploadState.Status == 'Unknown') {
 						var curTime = (new Date()).getTime();
 						var delay = Math.max(updateDelayMs - (curTime - startTime), 1);

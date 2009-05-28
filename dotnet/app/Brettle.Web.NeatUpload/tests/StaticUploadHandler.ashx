@@ -22,6 +22,17 @@ public class StaticUploadHandler : IHttpHandler {
 				numFilesReceived++;
 			}
 		}
+
+		// Uncomment the next section for a simple example showing updating of processing state
+		/*
+		ProgressInfo progressInfo = new ProgressInfo(numFilesReceived, "Files");
+		for (int i = 0; i < numFilesReceived; i++)
+		{
+			progressInfo.Value++;
+			UploadModule.SetProcessingState("progressID", progressInfo);
+			System.Threading.Thread.Sleep(1000);
+		}
+		*/
 		
 		// Write a response or redirect as desired.
 		// This example redirects back to the upload page, passing the number of files received
