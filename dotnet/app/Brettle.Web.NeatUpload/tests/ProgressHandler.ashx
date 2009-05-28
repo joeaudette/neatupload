@@ -27,20 +27,28 @@ public class ProgressHandler : IHttpHandler, IUploadProgressState
 			processingStateJson = String.Format(@"{{ ""Value"" : {0}, ""Maximum"" : {1}, ""Units"" : ""{2}"", ""Text"" : ""{3}"" }}",
 				progressInfo.Value, progressInfo.Maximum, Quote(progressInfo.Units), progressInfo.Text != null ? Quote(progressInfo.Text) : "");
 		}
-
+			
 		System.Text.StringBuilder filesJson = new System.Text.StringBuilder();
 		bool isFirstFile = true;
 		for (int i = 0; Files != null && i < Files.Count; i++)
 		{
 			UploadedFile file = Files[i];
-			if (file.IsUploaded)
+			if (Status == UploadStatus.NormalInProgress || Status == UploadStatus.ChunkedInProgress || Status == UploadStatus.ProcessingInProgress)
 			{
-				if (!isFirstFile)
-					filesJson.Append(",");
-				isFirstFile = false;
-				filesJson.AppendFormat(@"
-    {{ ""ControlUniqueID"" : ""{0}"", ""FileName"" : ""{1}"", ""ContentType"" : ""{2}"", ""ContentLength"" : {3} }}",
-										Quote(file.ControlUniqueID), Quote(file.FileName), Quote(file.ContentType), file.ContentLength);
+				AppendFileJson(filesJson, file, ref isFirstFile);
+			}
+			else
+			{
+				// If the upload isn't in progress, the file might have been disposed which
+				// can cause exceptions, so we only make a best effort. 
+				try
+				{
+					AppendFileJson(filesJson, file, ref isFirstFile);
+				}
+				catch (Exception ex)
+				{
+					// File was probably disposed so ignore the error.
+				}
 			}
 		}
 		
@@ -92,6 +100,25 @@ Math.Floor(TimeRemaining.TotalSeconds), Math.Floor(TimeElapsed.TotalSeconds), Qu
 			case '\b': return @"\b";
 			case '\f': return @"\f";
 			default: return String.Format(@"\u{0:X4}", (int)c);
+		}
+	}
+
+	private void AppendFileJson(System.Text.StringBuilder filesJson, UploadedFile file, ref bool isFirstFile)
+	{
+		// We only count uploaded files with non-empty names.  We don't use file.IsUploaded here because
+		// it can return false if the file was uploaded and has since been disposed.
+		if (file.FileName != null && file.FileName.Length > 0)
+		{
+			// If file was already disposed, ContentLength might be unavailable.  If so, use -1.
+			long contentLength = -1;
+			try { contentLength = file.ContentLength; }	catch (Exception) { }
+
+			if (!isFirstFile)
+				filesJson.Append(",");
+			filesJson.AppendFormat(@"
+    {{ ""ControlUniqueID"" : ""{0}"", ""FileName"" : ""{1}"", ""ContentType"" : ""{2}"", ""ContentLength"" : {3} }}",
+									Quote(file.ControlUniqueID), Quote(file.FileName), Quote(file.ContentType), contentLength);
+			isFirstFile = false;
 		}
 	}
 
