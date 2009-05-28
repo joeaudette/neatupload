@@ -23,10 +23,11 @@
 	// Generate long random string so uploads don't interfere with each other.
 	// TODO: Move to NeatUpload.js
 	var postBackID = Math.round(Math.random() * 1000000000);
-	
+	// The application path is the path to this page with the last 3 elements removed.
+	var appPath = document.location.pathname.split('/').slice(0, -3).join('/');
 	NeatUploadMultiFileCreate("multiFileID", postBackID,
-		'/app',
-		'/app/NeatUpload/MultiRequestUploadHandler.ashx',
+		appPath,
+		appPath + '/NeatUpload/MultiRequestUploadHandler.ashx',
 		'NeatUpload_PostBackID',
 		{NeatUpload_PostBackID : postBackID,
 		 NeatUpload_MultiRequestControlID: 'multiFileID',
@@ -44,7 +45,7 @@
 
 	var pb = new NeatUploadPB("progressID", postBackID, "", "500px", "100px", ["uploadButtonID", "uploadButtonID2"], "IsFilesToUpload()");
 	NeatUploadPB.prototype.Bars["progressID"] = pb;
-	var ProgressHandlerPath = "/app/Brettle.Web.NeatUpload/tests/ProgressHandler.ashx";
+	var ProgressHandlerPath = appPath + "/Brettle.Web.NeatUpload/tests/ProgressHandler.ashx";
 	var UpdateDelayMs = 1000;
 	pb.Display = function() {
 		var postBackID = this.UploadForm.GetPostBackID();
