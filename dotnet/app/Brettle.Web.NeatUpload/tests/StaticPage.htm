@@ -5,55 +5,6 @@
     <title>Static Upload Page Example</title>
 	<script type="text/javascript" src="../../NeatUpload/SWFUpload.js"></script>
 	<script type="text/javascript" src="../../NeatUpload/NeatUpload.js"></script>
-	<link rel="stylesheet" type="text/css" title="default" href="../../NeatUpload/default.css" />		
-	<style type="text/css">
-	table, tr, td {
-		margin: 0px;
-		border: 0px none;
-		padding: 0px;
-	}
-
-	#progressDisplayCenterer {
-		width: 100%;
-		height: 100%;
-	}
-	
-	#progressDisplayCenterer {
-		vertical-align: middle;
-		margin: 0 auto;
-	}
-	
-	#progressDisplay {
-		vertical-align: middle;
-		width: 100%;
-	}
-	
-	#barTd {
-		width: 100%;
-	}
-	
-	#statusDiv {
-		border-width: 1px;
-		border-style: solid;
-		padding: 0px;
-		position: relative;
-		width: 100%;
-		text-align: center;
-		z-index: 1; 
-	}
-	
-	#barDiv,#barDetailsDiv {
-		border: 0px none ; 
-		margin: 0px; 
-		padding: 0px; 
-		position: absolute; 
-		top: 0pt; 
-		left: 0pt; 
-		z-index: -1; 
-		height: 100%;
-		width: 75%;
-	}
-	</style>
 </head>
 <body>
 <form id="formID" action="StaticUploadHandler.ashx" method="post" enctype="multipart/form-data">
@@ -66,24 +17,7 @@
 	<input id="uploadButtonID" type="submit" name="upload" value="Upload with type='submit' Button" />
 	<input id="uploadButtonID2" type="button" onclick="document.getElementById('formID').submit()" name="upload2" value="Upload by calling form.submit()" />
 	<input id="cancelButtonID" type="submit" name="cancel" value="Cancel" /><br />
-	<div id="progressDiv" style="display: none;">
-		Here is a simple progress display:<br />
-		<table id="progressDisplayCenterer"><tr><td>
-			<table id="progressDisplay" class="ProgressDisplay"><tr>
-				<td id="barTd" >
-					<div id="statusDiv" class="StatusMessage"><span id="statusSpan">&nbsp;</span>	
-						<div id="barDetailsDiv" style="width: 0%" class="ProgressBar"></div>
-					</div>
-				</td>
-				<td>
-					<input id="stopButton" type="button" onclick="StopUpload()" value="Stop Upload" style="display: none;"/>
-				</td>
-			</tr></table>
-		</td></tr></table>
-		And here is the raw JSON representing the upload state:<br />
-		<div id="rawJsonDiv">
-		</div>
-	</div>
+	<iframe id="progressDiv" style="width: 100%; height: 20em; border-width: 0px" src="Progress.htm"></iframe>
 <script type="text/javascript">
 	// Generate long random string so uploads don't interfere with each other.
 	var initialPostBackID = Math.round(Math.random() * 1000000000);
@@ -110,12 +44,19 @@
 
 	NeatUploadInputFileCreate("fileID", initialPostBackID);
 
-	var pb = new NeatUploadPB("progressDiv", initialPostBackID, "", "500px", "100px", ["uploadButtonID", "uploadButtonID2"], "IsFilesToUpload()");
+	var pb = new NeatUploadPB("progressDiv", initialPostBackID, "Progress.htm?barID=progressDiv", "500px", "100px", ["uploadButtonID", "uploadButtonID2"], "IsFilesToUpload()");
 	NeatUploadPB.prototype.Bars["progressDiv"] = pb;
 
-	pb.Display = function() {
-		RefreshWithAjax(appPath + "/NeatUpload/ProgressJsonHandler.ashx", this.UploadForm.GetPostBackID(), pb.ClientID, UpdateHtml, 1000);
+	var progressDiv = document.getElementById("progressDiv");
+	pb.DisplayUrl = function(progressUrl) {
+		var pb = this;
+		var iframeWindow = document.getElementById(pb.ClientID).contentWindow || frames[pb.ClientID];
+		// iframeWindow.document.body.innerHTML = '';
+		// setTimeout(function() { iframeWindow.location.href = progressUrl; }, 0);
+		iframeWindow.setTimeout("queryObj = { postBackID: '" + pb.UploadForm.GetPostBackID() + "', barID: '" + pb.ClientID + "', canCancel: " + pb.CanCancel() + " };", 1);
 	};
+
+	pb.EvalOnClose = null;
 
 	// If the upload succeeds, StaticUploadHandler.ashx will redirecte the browser back to this page but
 	// the postBackID of the upload will be passed in the query string.
@@ -128,114 +69,9 @@
 		queryObj[qp[0]] = qp[1];
 	}
 	if (queryObj.postBackID) {
-		RefreshWithAjax(appPath + "/NeatUpload/ProgressJsonHandler.ashx", queryObj.postBackID, pb.ClientID, UpdateHtml);
-	}
-
-	var progressDiv = document.getElementById("progressDiv");
-	var stopButton = document.getElementById("stopButton");
-	var barDetailsDiv = document.getElementById("barDetailsDiv");
-	var statusSpan = document.getElementById("statusSpan");
-	var rawJsonDiv = document.getElementById("rawJsonDiv");
-
-	function UpdateHtml(uploadState, uploadStateJson) {
-		barDetailsDiv.style.width = uploadState.PercentComplete + "%";
-		statusSpan.innerHTML = uploadState.BytesRead + "/" + uploadState.BytesTotal + " bytes";
-		progressDiv.style.display = "block";
-		switch (uploadState.Status)
-		{
-			case "NormalInProgress":
-				statusSpan.innerHTML = uploadState.BytesRead + "/" + uploadState.BytesTotal + " bytes";
-				stopButton.style.display = "block";
-				break;
-			case "ChunkedInProgress":
-				statusSpan.innerHTML = uploadState.BytesRead + " bytes";
-				stopButton.style.display = "block";
-				break;
-			case "ProcessingInProgress":
-				if (uploadState.ProcessingState) {
-					var ps = uploadState.ProcessingState;
-					statusSpan.innerHTML
-						= "Processing " + ps.Value + "/" + ps.Maximum + " " + EncodeHtml(ps.Units);
-				}
-				stopButton.style.display = "block";
-				break;
-			case "Completed":
-				statusSpan.innerHTML = "<b>Upload Complete!</b>";
-				stopButton.style.display = "none";
-				break;
-			case "ProcessingCompleted":
-				statusSpan.innerHTML = "<b>Processing Complete!</b>";
-				stopButton.style.display = "none";
-				break;
-			case "Canceled":
-				statusSpan.innerHTML = "<b>Upload Cancelled!</b>";
-				stopButton.style.display = "none";
-				break;
-			case "Rejected":
-				statusSpan.innerHTML = "<b>Upload Rejected: " + EncodeHtml(uploadState.Message) + "</b>";
-				stopButton.style.display = "none";
-				break;
-			case "Failed":
-				statusSpan.innerHTML = "<b>Upload Failed: " + EncodeHtml(uploadState.Message) + "</b>";
-				stopButton.style.display = "none";
-				break;
-			default:
-				progressDiv.style.display = "none";
-		}
-		if (!pb.CanCancel)
-			stopButton.style.display = "none";
-		rawJsonDiv.innerHTML = "<pre>" + EncodeHtml(uploadStateJson) + "</pre>";
-	}
-	
-	function EncodeHtml(s)
-	{
-		return s.replace("&", "&amp;", "gm").replace("<", "&lt;", "gm");
-	}
-
-	function StopUpload() {
-		var req = null;
-		if (typeof (XMLHttpRequest) != 'undefined') {
-			req = new XMLHttpRequest();
-		} else {
-			req = new ActiveXObject('MSXML2.XMLHTTP.3.0');
-		}
-		req.open('GET', appPath + "/NeatUpload/ProgressJsonHandler.ashx" + "?postBackID=" + pb.UploadForm.GetPostBackID() + "&cancel=true");
-		req.send(null);
-	}
-
-	// This function can be reused as is.
-	function RefreshWithAjax(progressHandlerPath, postBackID, controlID, updateFunc, updateDelayMs) {
-		var timeoutId = null;
-		SendRequest();
-
-		function SendRequest() {
-			var req = null;
-			var startTime = (new Date()).getTime();
-			if (typeof (XMLHttpRequest) != 'undefined') {
-				req = new XMLHttpRequest();
-			} else {
-				req = new ActiveXObject('MSXML2.XMLHTTP.3.0');
-			}
-			req.onreadystatechange = HandleResponse;
-			req.open('GET', progressHandlerPath + "?postBackID=" + postBackID + "&controlID=" + controlID);
-			req.send(null);
-
-			function HandleResponse() {
-				if (typeof (req) != 'undefined' && req != null && req.readyState == 4 && req.status == 200) {
-					var responseText = req.responseText;
-					var uploadState = eval("(" + responseText + ")");
-					updateFunc(uploadState, responseText);
-					if (!updateDelayMs) return;
-					if (uploadState.Status == 'NormalInProgress' || uploadState.Status == 'ChunkedInProgress' || uploadState.Status == 'ProcessingInProgress' || uploadState.Status == 'Unknown') {
-						var curTime = (new Date()).getTime();
-						var delay = Math.max(updateDelayMs - (curTime - startTime), 1);
-						timeoutId = setTimeout(SendRequest, delay);
-					} else if (uploadState.Status == 'Cancelled' || uploadState.Status == 'Rejected' || uploadState.Status == 'Failed') {
-						NeatUploadForm.prototype.StopUpload(uploadState.Status);
-					}					
-				}
-			}
-		}
+		var iframeWindow = document.getElementById(pb.ClientID).contentWindow || frames[pb.ClientID];
+		if (iframeWindow)
+			iframeWindow.location.replace(pb.UploadProgressPath + '&postBackID=' + queryObj.postBackID + '&canCancel=' + pb.CanCancel());
 	}
 </script>
 </form>

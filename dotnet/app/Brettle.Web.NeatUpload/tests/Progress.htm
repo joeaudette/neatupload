@@ -1,0 +1,216 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Static Upload Progress</title>
+	<link rel="stylesheet" type="text/css" title="default" href="../../NeatUpload/default.css" />		
+	<style type="text/css">
+	table, tr, td {
+		margin: 0px;
+		border: 0px none;
+		padding: 0px;
+	}
+
+	#progressDisplayCenterer {
+		width: 100%;
+		height: 100%;
+	}
+	
+	#progressDisplayCenterer {
+		vertical-align: middle;
+		margin: 0 auto;
+	}
+	
+	#progressDisplay {
+		vertical-align: middle;
+		width: 100%;
+	}
+	
+	#barTd {
+		width: 100%;
+	}
+	
+	#statusDiv {
+		border-width: 1px;
+		border-style: solid;
+		padding: 0px;
+		position: relative;
+		width: 100%;
+		text-align: center;
+		z-index: 1; 
+	}
+	
+	#barDiv,#barDetailsDiv {
+		border: 0px none ; 
+		margin: 0px; 
+		padding: 0px; 
+		position: absolute; 
+		top: 0pt; 
+		left: 0pt; 
+		z-index: -1; 
+		height: 100%;
+		width: 75%;
+	}
+	</style>
+</head>
+<body>
+	<div id="progressDiv" style="display: none;">
+		Here is a simple progress display:<br />
+		<table id="progressDisplayCenterer"><tr><td>
+			<table id="progressDisplay" class="ProgressDisplay"><tr>
+				<td id="barTd" >
+					<div id="statusDiv" class="StatusMessage"><span id="statusSpan">&nbsp;</span>	
+						<div id="barDetailsDiv" style="width: 0%" class="ProgressBar"></div>
+					</div>
+				</td>
+				<td>
+					<input id="stopButton" type="button" onclick="StopUpload()" value="Stop Upload" style="display: none;"/>
+				</td>
+			</tr></table>
+		</td></tr></table>
+		And here is the raw JSON representing the upload state:<br />
+		<div id="rawJsonDiv">
+		</div>
+	</div>
+<script type="text/javascript">
+	// The application path is the path to this page with the last 3 elements removed.
+	var appPath = document.location.pathname.split('/').slice(0, -3).join('/');
+
+	var queryParams = (document.location.search || '?').substring(1).split('&');
+	var queryObj = { postBackID: null, barID: null, canCancel: null };
+	for (var i = 0; i < queryParams.length; i++) {
+		var qp = queryParams[i].split('=');
+		queryObj[qp[0]] = qp[1];
+	}
+
+	var OnQueryObjFound = RefreshWithQueryObj;
+	
+	function RefreshWithQueryObj(queryObj) {
+		RefreshWithAjax(appPath + "/NeatUpload/ProgressJsonHandler.ashx", queryObj.postBackID, queryObj.barID, UpdateHtml, 1000);
+	}
+
+	function PollQueryObj() {
+		if (queryObj && queryObj.postBackID) {
+			if (OnQueryObjFound) {
+				var func = OnQueryObjFound;
+				OnQueryObjFound = null;
+				func(queryObj);
+			}
+		}
+	}
+
+	PollQueryObj();	
+	var intervalID = setInterval(PollQueryObj, 100);
+
+	var progressDiv = document.getElementById("progressDiv");
+	var stopButton = document.getElementById("stopButton");
+	var barDetailsDiv = document.getElementById("barDetailsDiv");
+	var statusSpan = document.getElementById("statusSpan");
+	var rawJsonDiv = document.getElementById("rawJsonDiv");
+
+	function UpdateHtml(uploadState, uploadStateJson) {
+		barDetailsDiv.style.width = uploadState.PercentComplete + "%";
+		statusSpan.innerHTML = uploadState.BytesRead + "/" + uploadState.BytesTotal + " bytes";
+		progressDiv.style.display = "block";
+		switch (uploadState.Status)
+		{
+			case "NormalInProgress":
+				statusSpan.innerHTML = uploadState.BytesRead + "/" + uploadState.BytesTotal + " bytes";
+				stopButton.style.display = "block";
+				break;
+			case "ChunkedInProgress":
+				statusSpan.innerHTML = uploadState.BytesRead + " bytes";
+				stopButton.style.display = "block";
+				break;
+			case "ProcessingInProgress":
+				if (uploadState.ProcessingState) {
+					var ps = uploadState.ProcessingState;
+					statusSpan.innerHTML
+						= "Processing " + ps.Value + "/" + ps.Maximum + " " + EncodeHtml(ps.Units);
+				}
+				stopButton.style.display = "block";
+				break;
+			case "Completed":
+				statusSpan.innerHTML = "<b>Upload Complete!</b>";
+				stopButton.style.display = "none";
+				break;
+			case "ProcessingCompleted":
+				statusSpan.innerHTML = "<b>Processing Complete!</b>";
+				stopButton.style.display = "none";
+				break;
+			case "Canceled":
+				statusSpan.innerHTML = "<b>Upload Cancelled!</b>";
+				stopButton.style.display = "none";
+				break;
+			case "Rejected":
+				statusSpan.innerHTML = "<b>Upload Rejected: " + EncodeHtml(uploadState.Message) + "</b>";
+				stopButton.style.display = "none";
+				break;
+			case "Failed":
+				statusSpan.innerHTML = "<b>Upload Failed: " + EncodeHtml(uploadState.Message) + "</b>";
+				stopButton.style.display = "none";
+				break;
+			default:
+				progressDiv.style.display = "none";
+		}
+		if (!queryObj.canCancel)
+			stopButton.style.display = "none";
+		rawJsonDiv.innerHTML = "<pre>" + EncodeHtml(uploadStateJson) + "</pre>";
+	}
+	
+	function EncodeHtml(s)
+	{
+		return s.replace("&", "&amp;", "gm").replace("<", "&lt;", "gm");
+	}
+
+	function StopUpload() {
+		var req = null;
+		if (typeof (XMLHttpRequest) != 'undefined') {
+			req = new XMLHttpRequest();
+		} else {
+			req = new ActiveXObject('MSXML2.XMLHTTP.3.0');
+		}
+		req.open('GET', appPath + "/NeatUpload/ProgressJsonHandler.ashx?postBackID=" + queryObj.postBackID + "&cancel=true");
+		req.send(null);
+	}
+
+	// This function can be reused as is.
+	function RefreshWithAjax(progressHandlerPath, postBackID, controlID, updateFunc, updateDelayMs) {
+		var timeoutId = null;
+		SendRequest();
+
+		function SendRequest() {
+			var req = null;
+			var startTime = (new Date()).getTime();
+			if (typeof (XMLHttpRequest) != 'undefined') {
+				req = new XMLHttpRequest();
+			} else {
+				req = new ActiveXObject('MSXML2.XMLHTTP.3.0');
+			}
+			req.onreadystatechange = HandleResponse;
+			req.open('GET', progressHandlerPath + "?postBackID=" + postBackID + "&controlID=" + controlID);
+			req.send(null);
+
+			function HandleResponse() {
+				if (typeof (req) != 'undefined' && req != null && req.readyState == 4 && req.status == 200) {
+					var responseText = req.responseText;
+					var uploadState = eval("(" + responseText + ")");
+					updateFunc(uploadState, responseText);
+					if (!updateDelayMs) return;
+					if (uploadState.Status == 'NormalInProgress' || uploadState.Status == 'ChunkedInProgress' || uploadState.Status == 'ProcessingInProgress' || uploadState.Status == 'Unknown') {
+						var curTime = (new Date()).getTime();
+						var delay = Math.max(updateDelayMs - (curTime - startTime), 1);
+						timeoutId = setTimeout(SendRequest, delay);
+					} else {
+						queryObj = null;
+						OnQueryObjFound = RefreshWithQueryObj;
+						if (uploadState.Status == 'Cancelled' || uploadState.Status == 'Rejected' || uploadState.Status == 'Failed') {
+							NeatUploadForm.prototype.StopUpload(uploadState.Status);
+						}
+					}				
+				}
+			}
+		}
+	}
+</script>
+</body>
+</html>
