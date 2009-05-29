@@ -56,7 +56,7 @@
 	</style>
 </head>
 <body>
-<form id="formID" name="formID" action="StaticUploadHandler.ashx" method="post" enctype="multipart/form-data">
+<form id="formID" action="StaticUploadHandler.ashx" method="post" enctype="multipart/form-data">
 	InputFile: <input id="fileID" type="file" name="NeatUpload_replacedByScript-fileField" /><br />
 	MultiFile:<br />
 	<!-- Note: No space allowed between the next 2 elements.  The div must be the nextSibling of the input element. -->
@@ -114,7 +114,7 @@
 	NeatUploadPB.prototype.Bars["progressDiv"] = pb;
 
 	pb.Display = function() {
-		RefreshWithAjax(appPath + "/Brettle.Web.NeatUpload/tests/ProgressHandler.ashx", this.UploadForm.GetPostBackID(), pb.ClientID, UpdateHtml, 1000);
+		RefreshWithAjax(appPath + "/NeatUpload/ProgressJsonHandler.ashx", this.UploadForm.GetPostBackID(), pb.ClientID, UpdateHtml, 1000);
 	};
 
 	// If the upload succeeds, StaticUploadHandler.ashx will redirecte the browser back to this page but
@@ -128,7 +128,7 @@
 		queryObj[qp[0]] = qp[1];
 	}
 	if (queryObj.postBackID) {
-		RefreshWithAjax(appPath + "/Brettle.Web.NeatUpload/tests/ProgressHandler.ashx", queryObj.postBackID, pb.ClientID, UpdateHtml);
+		RefreshWithAjax(appPath + "/NeatUpload/ProgressJsonHandler.ashx", queryObj.postBackID, pb.ClientID, UpdateHtml);
 	}
 
 	var progressDiv = document.getElementById("progressDiv");
@@ -199,7 +199,7 @@
 		} else {
 			req = new ActiveXObject('MSXML2.XMLHTTP.3.0');
 		}
-		req.open('GET', appPath + "/Brettle.Web.NeatUpload/tests/ProgressHandler.ashx" + "?postBackID=" + pb.UploadForm.GetPostBackID() + "&cancel=true");
+		req.open('GET', appPath + "/NeatUpload/ProgressJsonHandler.ashx" + "?postBackID=" + pb.UploadForm.GetPostBackID() + "&cancel=true");
 		req.send(null);
 	}
 
