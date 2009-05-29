@@ -29,7 +29,7 @@ public class StaticUploadHandler : IHttpHandler {
 		for (int i = 0; i < numFilesReceived; i++)
 		{
 			progressInfo.Value++;
-			UploadModule.SetProcessingState("progressID", progressInfo);
+			UploadModule.SetProcessingState("progressDiv", progressInfo);
 			System.Threading.Thread.Sleep(1000);
 		}
 		*/

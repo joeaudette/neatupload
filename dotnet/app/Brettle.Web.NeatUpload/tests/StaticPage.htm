@@ -2,9 +2,58 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+    <title>Static Upload Page Example</title>
 	<script type="text/javascript" src="../../NeatUpload/SWFUpload.js"></script>
 	<script type="text/javascript" src="../../NeatUpload/NeatUpload.js"></script>
-    <title>Static Upload Page Example</title>
+	<link rel="stylesheet" type="text/css" title="default" href="../../NeatUpload/default.css" />		
+	<style type="text/css">
+	table, tr, td {
+		margin: 0px;
+		border: 0px none;
+		padding: 0px;
+	}
+
+	#progressDisplayCenterer {
+		width: 100%;
+		height: 100%;
+	}
+	
+	#progressDisplayCenterer {
+		vertical-align: middle;
+		margin: 0 auto;
+	}
+	
+	#progressDisplay {
+		vertical-align: middle;
+		width: 100%;
+	}
+	
+	#barTd {
+		width: 100%;
+	}
+	
+	#statusDiv {
+		border-width: 1px;
+		border-style: solid;
+		padding: 0px;
+		position: relative;
+		width: 100%;
+		text-align: center;
+		z-index: 1; 
+	}
+	
+	#barDiv,#barDetailsDiv {
+		border: 0px none ; 
+		margin: 0px; 
+		padding: 0px; 
+		position: absolute; 
+		top: 0pt; 
+		left: 0pt; 
+		z-index: -1; 
+		height: 100%;
+		width: 75%;
+	}
+	</style>
 </head>
 <body>
 <form id="formID" name="formID" action="StaticUploadHandler.ashx" method="post" enctype="multipart/form-data">
@@ -17,9 +66,24 @@
 	<input id="uploadButtonID" type="submit" name="upload" value="Upload with type='submit' Button" />
 	<input id="uploadButtonID2" type="button" onclick="document.getElementById('formID').submit()" name="upload2" value="Upload by calling form.submit()" />
 	<input id="cancelButtonID" type="submit" name="cancel" value="Cancel" /><br />
-	Progress:<br />
-	<input id="stopButton" type="button" onclick="StopUpload()" value="Stop Upload" style="display: none;"/><br />
-	<div id="progressID"></div><br />
+	<div id="progressDiv" style="display: none;">
+		Here is a simple progress display:<br />
+		<table id="progressDisplayCenterer"><tr><td>
+			<table id="progressDisplay" class="ProgressDisplay"><tr>
+				<td id="barTd" >
+					<div id="statusDiv" class="StatusMessage"><span id="statusSpan">&nbsp;</span>	
+						<div id="barDetailsDiv" style="width: 0%" class="ProgressBar"></div>
+					</div>
+				</td>
+				<td>
+					<input id="stopButton" type="button" onclick="StopUpload()" value="Stop Upload" style="display: none;"/>
+				</td>
+			</tr></table>
+		</td></tr></table>
+		And here is the raw JSON representing the upload state:<br />
+		<div id="rawJsonDiv">
+		</div>
+	</div>
 <script type="text/javascript">
 	// Generate long random string so uploads don't interfere with each other.
 	var initialPostBackID = Math.round(Math.random() * 1000000000);
@@ -46,11 +110,9 @@
 
 	NeatUploadInputFileCreate("fileID", initialPostBackID);
 
-	var pb = new NeatUploadPB("progressID", initialPostBackID, "", "500px", "100px", ["uploadButtonID", "uploadButtonID2"], "IsFilesToUpload()");
-	NeatUploadPB.prototype.Bars["progressID"] = pb;
+	var pb = new NeatUploadPB("progressDiv", initialPostBackID, "", "500px", "100px", ["uploadButtonID", "uploadButtonID2"], "IsFilesToUpload()");
+	NeatUploadPB.prototype.Bars["progressDiv"] = pb;
 
-	var progressDiv = document.getElementById("progressID");
-	var stopButton = document.getElementById("stopButton");
 	pb.Display = function() {
 		RefreshWithAjax(appPath + "/Brettle.Web.NeatUpload/tests/ProgressHandler.ashx", this.UploadForm.GetPostBackID(), pb.ClientID, UpdateHtml, 1000);
 	};
@@ -69,12 +131,65 @@
 		RefreshWithAjax(appPath + "/Brettle.Web.NeatUpload/tests/ProgressHandler.ashx", queryObj.postBackID, pb.ClientID, UpdateHtml);
 	}
 
+	var progressDiv = document.getElementById("progressDiv");
+	var stopButton = document.getElementById("stopButton");
+	var barDetailsDiv = document.getElementById("barDetailsDiv");
+	var statusSpan = document.getElementById("statusSpan");
+	var rawJsonDiv = document.getElementById("rawJsonDiv");
+
 	function UpdateHtml(uploadState, uploadStateJson) {
-		if (pb.CanCancel && uploadState.Status.indexOf("InProgress") != -1)
-			stopButton.style.display = "block";
-		else
+		barDetailsDiv.style.width = uploadState.PercentComplete + "%";
+		statusSpan.innerHTML = uploadState.BytesRead + "/" + uploadState.BytesTotal + " bytes";
+		progressDiv.style.display = "block";
+		switch (uploadState.Status)
+		{
+			case "NormalInProgress":
+				statusSpan.innerHTML = uploadState.BytesRead + "/" + uploadState.BytesTotal + " bytes";
+				stopButton.style.display = "block";
+				break;
+			case "ChunkedInProgress":
+				statusSpan.innerHTML = uploadState.BytesRead + " bytes";
+				stopButton.style.display = "block";
+				break;
+			case "ProcessingInProgress":
+				if (uploadState.ProcessingState) {
+					var ps = uploadState.ProcessingState;
+					statusSpan.innerHTML
+						= "Processing " + ps.Value + "/" + ps.Maximum + " " + EncodeHtml(ps.Units);
+				}
+				stopButton.style.display = "block";
+				break;
+			case "Completed":
+				statusSpan.innerHTML = "<b>Upload Complete!</b>";
+				stopButton.style.display = "none";
+				break;
+			case "ProcessingCompleted":
+				statusSpan.innerHTML = "<b>Processing Complete!</b>";
+				stopButton.style.display = "none";
+				break;
+			case "Canceled":
+				statusSpan.innerHTML = "<b>Upload Cancelled!</b>";
+				stopButton.style.display = "none";
+				break;
+			case "Rejected":
+				statusSpan.innerHTML = "<b>Upload Rejected: " + EncodeHtml(uploadState.Message) + "</b>";
+				stopButton.style.display = "none";
+				break;
+			case "Failed":
+				statusSpan.innerHTML = "<b>Upload Failed: " + EncodeHtml(uploadState.Message) + "</b>";
+				stopButton.style.display = "none";
+				break;
+			default:
+				progressDiv.style.display = "none";
+		}
+		if (!pb.CanCancel)
 			stopButton.style.display = "none";
-		progressDiv.innerHTML = "Upload State in JSON:<br/><pre>" + uploadStateJson + "</pre>";
+		rawJsonDiv.innerHTML = "<pre>" + EncodeHtml(uploadStateJson) + "</pre>";
+	}
+	
+	function EncodeHtml(s)
+	{
+		return s.replace("&", "&amp;", "gm").replace("<", "&lt;", "gm");
 	}
 
 	function StopUpload() {
