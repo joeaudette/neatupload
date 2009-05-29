@@ -10,6 +10,11 @@ public class ProgressHandler : IHttpHandler, IUploadProgressState
 	public void ProcessRequest (HttpContext context) {
 		string postBackID = context.Request.Params["postBackID"];
 		string controlID = context.Request.Params["controlID"];
+		string cancel = context.Request.Params["cancel"];
+
+		if (cancel != null && Boolean.Parse(cancel))
+			UploadModule.CancelPostBack(postBackID);
+		
 		UploadModule.BindProgressState(postBackID, controlID, this);
 		string message = "";
 		if (Status == UploadStatus.Rejected)

@@ -18,6 +18,7 @@
 	<input id="uploadButtonID2" type="button" onclick="document.getElementById('formID').submit()" name="upload2" value="Upload by calling form.submit()" />
 	<input id="cancelButtonID" type="submit" name="cancel" value="Cancel" /><br />
 	Progress:<br />
+	<input id="stopButton" type="button" onclick="StopUpload()" value="Stop Upload" style="display: none;"/><br />
 	<div id="progressID"></div><br />
 <script type="text/javascript">
 	// Generate long random string so uploads don't interfere with each other.
@@ -47,8 +48,9 @@
 
 	var pb = new NeatUploadPB("progressID", initialPostBackID, "", "500px", "100px", ["uploadButtonID", "uploadButtonID2"], "IsFilesToUpload()");
 	NeatUploadPB.prototype.Bars["progressID"] = pb;
-	
+
 	var progressDiv = document.getElementById("progressID");
+	var stopButton = document.getElementById("stopButton");
 	pb.Display = function() {
 		RefreshWithAjax(appPath + "/Brettle.Web.NeatUpload/tests/ProgressHandler.ashx", this.UploadForm.GetPostBackID(), pb.ClientID, UpdateHtml, 1000);
 	};
@@ -68,8 +70,23 @@
 	}
 
 	function UpdateHtml(uploadState, uploadStateJson) {
+		if (pb.CanCancel && uploadState.Status.indexOf("InProgress") != -1)
+			stopButton.style.display = "block";
+		else
+			stopButton.style.display = "none";
 		progressDiv.innerHTML = "Upload State in JSON:<br/><pre>" + uploadStateJson + "</pre>";
-	}		
+	}
+
+	function StopUpload() {
+		var req = null;
+		if (typeof (XMLHttpRequest) != 'undefined') {
+			req = new XMLHttpRequest();
+		} else {
+			req = new ActiveXObject('MSXML2.XMLHTTP.3.0');
+		}
+		req.open('GET', appPath + "/Brettle.Web.NeatUpload/tests/ProgressHandler.ashx" + "?postBackID=" + pb.UploadForm.GetPostBackID() + "&cancel=true");
+		req.send(null);
+	}
 
 	// This function can be reused as is.
 	function RefreshWithAjax(progressHandlerPath, postBackID, controlID, updateFunc, updateDelayMs) {
@@ -98,7 +115,9 @@
 						var curTime = (new Date()).getTime();
 						var delay = Math.max(updateDelayMs - (curTime - startTime), 1);
 						timeoutId = setTimeout(SendRequest, delay);
-					}
+					} else if (uploadState.Status == 'Cancelled' || uploadState.Status == 'Rejected' || uploadState.Status == 'Failed') {
+						NeatUploadForm.prototype.StopUpload(uploadState.Status);
+					}					
 				}
 			}
 		}
