@@ -51,9 +51,9 @@
 	pb.DisplayUrl = function(progressUrl) {
 		var pb = this;
 		var iframeWindow = document.getElementById(pb.ClientID).contentWindow || frames[pb.ClientID];
-		// iframeWindow.document.body.innerHTML = '';
-		// setTimeout(function() { iframeWindow.location.href = progressUrl; }, 0);
-		iframeWindow.setTimeout("queryObj = { postBackID: '" + pb.UploadForm.GetPostBackID() + "', barID: '" + pb.ClientID + "', canCancel: " + pb.CanCancel() + " };", 1);
+		iframeWindow.setTimeout(function() {
+			iframeWindow.RefreshProgress(window, pb.UploadForm.GetPostBackID(), pb.ClientID, pb.CanCancel, 1000);
+		}, 1);
 	};
 
 	pb.EvalOnClose = null;
@@ -68,10 +68,16 @@
 		var qp = queryParams[i].split('=');
 		queryObj[qp[0]] = qp[1];
 	}
-	if (queryObj.postBackID) {
-		var iframeWindow = document.getElementById(pb.ClientID).contentWindow || frames[pb.ClientID];
-		if (iframeWindow)
-			iframeWindow.location.replace(pb.UploadProgressPath + '&postBackID=' + queryObj.postBackID + '&canCancel=' + pb.CanCancel());
+	window.onload = function() {
+		if (queryObj.postBackID) {
+			var iframeWindow = document.getElementById(pb.ClientID).contentWindow || frames[pb.ClientID];
+			iframeWindow.onload = function() {
+				iframeWindow.RefreshProgress(window, queryObj.postBackID, pb.ClientID, pb.CanCancel, 0);
+			};
+			if (iframeWindow.RefreshProgress) {
+				iframeWindow.setTimeout(iframeWindow.onload, 1);
+			}
+		}
 	}
 </script>
 </form>
