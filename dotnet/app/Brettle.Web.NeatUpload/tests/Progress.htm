@@ -74,40 +74,18 @@
 <script type="text/javascript">
 	// The application path is the path to this page with the last 3 elements removed.
 	var appPath = document.location.pathname.split('/').slice(0, -3).join('/');
-
-	var queryParams = (document.location.search || '?').substring(1).split('&');
-	var queryObj = { postBackID: null, barID: null, canCancel: null };
-	for (var i = 0; i < queryParams.length; i++) {
-		var qp = queryParams[i].split('=');
-		queryObj[qp[0]] = qp[1];
-	}
-
-	var OnQueryObjFound = RefreshWithQueryObj;
-	
-	function RefreshWithQueryObj(queryObj) {
-		RefreshWithAjax(appPath + "/NeatUpload/ProgressJsonHandler.ashx", queryObj.postBackID, queryObj.barID, UpdateHtml, 1000);
-	}
-
-	function PollQueryObj() {
-		if (queryObj && queryObj.postBackID) {
-			if (OnQueryObjFound) {
-				var func = OnQueryObjFound;
-				OnQueryObjFound = null;
-				func(queryObj);
-			}
-		}
-	}
-
-	PollQueryObj();	
-	var intervalID = setInterval(PollQueryObj, 100);
-
 	var progressDiv = document.getElementById("progressDiv");
 	var stopButton = document.getElementById("stopButton");
 	var barDetailsDiv = document.getElementById("barDetailsDiv");
 	var statusSpan = document.getElementById("statusSpan");
 	var rawJsonDiv = document.getElementById("rawJsonDiv");
 
-	function UpdateHtml(uploadState, uploadStateJson) {
+	function RefreshProgress(uploadWindow, postBackID, controlID, canCancel, updateDelayMs) {
+		RefreshWithAjax(uploadWindow, appPath + "/NeatUpload/ProgressJsonHandler.ashx", postBackID, controlID, UpdateHtml, canCancel, updateDelayMs);
+	}
+
+	function UpdateHtml(uploadState, uploadStopper, uploadStateJson) {
+		stopButton.onclick = uploadStopper;
 		barDetailsDiv.style.width = uploadState.PercentComplete + "%";
 		statusSpan.innerHTML = uploadState.BytesRead + "/" + uploadState.BytesTotal + " bytes";
 		progressDiv.style.display = "block";
@@ -137,7 +115,7 @@
 				statusSpan.innerHTML = "<b>Processing Complete!</b>";
 				stopButton.style.display = "none";
 				break;
-			case "Canceled":
+			case "Cancelled":
 				statusSpan.innerHTML = "<b>Upload Cancelled!</b>";
 				stopButton.style.display = "none";
 				break;
@@ -149,10 +127,12 @@
 				statusSpan.innerHTML = "<b>Upload Failed: " + EncodeHtml(uploadState.Message) + "</b>";
 				stopButton.style.display = "none";
 				break;
-			default:
+			case "Unknown":
 				progressDiv.style.display = "none";
+			default:
+				statusSpan.innerHTML = "Unrecognized status: " + EncodeHtml(uploadState.Status);
 		}
-		if (!queryObj.canCancel)
+		if (!uploadStopper)
 			stopButton.style.display = "none";
 		rawJsonDiv.innerHTML = "<pre>" + EncodeHtml(uploadStateJson) + "</pre>";
 	}
@@ -162,21 +142,22 @@
 		return s.replace("&", "&amp;", "gm").replace("<", "&lt;", "gm");
 	}
 
-	function StopUpload() {
-		var req = null;
-		if (typeof (XMLHttpRequest) != 'undefined') {
-			req = new XMLHttpRequest();
-		} else {
-			req = new ActiveXObject('MSXML2.XMLHTTP.3.0');
-		}
-		req.open('GET', appPath + "/NeatUpload/ProgressJsonHandler.ashx?postBackID=" + queryObj.postBackID + "&cancel=true");
-		req.send(null);
-	}
-
 	// This function can be reused as is.
-	function RefreshWithAjax(progressHandlerPath, postBackID, controlID, updateFunc, updateDelayMs) {
+	function RefreshWithAjax(uploadWindow, progressHandlerPath, postBackID, controlID, updateFunc, canCancel, updateDelayMs) {
 		var timeoutId = null;
+		var uploadStopper = canCancel ? StopUpload : null;
 		SendRequest();
+
+		function StopUpload() {
+			var req = null;
+			if (typeof (XMLHttpRequest) != 'undefined') {
+				req = new XMLHttpRequest();
+			} else {
+				req = new ActiveXObject('MSXML2.XMLHTTP.3.0');
+			}
+			req.open('GET', progressHandlerPath + "?postBackID=" + postBackID + "&cancel=true");
+			req.send(null);
+		}
 
 		function SendRequest() {
 			var req = null;
@@ -194,17 +175,19 @@
 				if (typeof (req) != 'undefined' && req != null && req.readyState == 4 && req.status == 200) {
 					var responseText = req.responseText;
 					var uploadState = eval("(" + responseText + ")");
-					updateFunc(uploadState, responseText);
+					updateFunc(uploadState, uploadStopper, responseText);
 					if (!updateDelayMs) return;
 					if (uploadState.Status == 'NormalInProgress' || uploadState.Status == 'ChunkedInProgress' || uploadState.Status == 'ProcessingInProgress' || uploadState.Status == 'Unknown') {
 						var curTime = (new Date()).getTime();
 						var delay = Math.max(updateDelayMs - (curTime - startTime), 1);
 						timeoutId = setTimeout(SendRequest, delay);
 					} else {
-						queryObj = null;
-						OnQueryObjFound = RefreshWithQueryObj;
 						if (uploadState.Status == 'Cancelled' || uploadState.Status == 'Rejected' || uploadState.Status == 'Failed') {
-							NeatUploadForm.prototype.StopUpload(uploadState.Status);
+							try {
+								uploadWindow.setTimeout(function() { uploadWindow.NeatUploadForm.prototype.StopUpload(uploadState.Status); }, 1);
+							} catch (ex) {
+								// Nothing we can do.
+							}
 						}
 					}				
 				}
