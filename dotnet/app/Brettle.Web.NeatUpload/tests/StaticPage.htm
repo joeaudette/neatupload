@@ -84,7 +84,6 @@
 		<div id="rawJsonDiv">
 		</div>
 	</div>
-	<iframe id="hiddenIframe" src="Progress.htm" style="display: none;"></iframe>
 <script type="text/javascript">
 	// Generate long random string so uploads don't interfere with each other.
 	var initialPostBackID = Math.round(Math.random() * 1000000000);
@@ -144,10 +143,7 @@
 	var rawJsonDiv = document.getElementById("rawJsonDiv");
 
 	function RefreshProgress(postBackID, controlID, canCancel, updateDelayMs) {
-		var hiddenIframeWindow = document.getElementById("hiddenIframe").contentWindow || frames["hiddenIframe"];
-		hiddenIframeWindow.setTimeout(function() {
-			hiddenIframeWindow.RefreshWithAjax(window, appPath + "/NeatUpload/ProgressJsonHandler.ashx", postBackID, controlID, UpdateHtml, canCancel, updateDelayMs);
-		}, 1);
+		RefreshWithAjax(appPath + "/NeatUpload/ProgressJsonHandler.ashx", postBackID, controlID, UpdateHtml, canCancel, updateDelayMs);
 	}
 
 	function UpdateHtml(uploadState, uploadStopper, uploadStateJson) {
@@ -205,6 +201,86 @@
 	function EncodeHtml(s) {
 		return s.replace("&", "&amp;", "gm").replace("<", "&lt;", "gm");
 	}
+
+	function RefreshWithAjax(progressHandlerPath, postBackID, controlID, updateFunc, canCancel, updateDelayMs) {
+		var uploadStopper = canCancel ? StopUpload : null;
+
+		var hiddenIframeWindow = GetHiddenIframeWindow();
+		hiddenIframeWindow.setTimeout(function() {
+			hiddenIframeWindow.XHRPoll(progressHandlerPath + "?postBackID=" + postBackID + "&controlID=" + controlID, function(req, startTime) {
+				if (typeof (req) == 'undefined' || req == null || req.readyState != 4 || req.status != 200)
+					return 0;
+				var responseText = req.responseText;
+				var uploadState = eval("(" + responseText + ")");
+				updateFunc(uploadState, uploadStopper, responseText);
+				if (!updateDelayMs) return 0;
+				if (uploadState.Status == 'NormalInProgress' || uploadState.Status == 'ChunkedInProgress' || uploadState.Status == 'ProcessingInProgress' || uploadState.Status == 'Unknown') {
+					var curTime = (new Date()).getTime();
+					var delay = Math.max(updateDelayMs - (curTime - startTime), 1);
+					return delay;
+				} else {
+					if (uploadState.Status == 'Cancelled' || uploadState.Status == 'Rejected' || uploadState.Status == 'Failed') {
+						try {
+							setTimeout(function() { NeatUploadForm.prototype.StopUpload(uploadState.Status); }, 1);
+						} catch (ex) {
+							// Nothing we can do.
+						}
+					}
+					return 0;
+				}
+			});
+		}, 1);
+
+		function GetHiddenIframeWindow() {
+			var hiddenIframe = document.getElementById("NeatUpload_HiddenIframe");
+			if (hiddenIframe) {
+				return hiddenIframe.contentWindow || frames["NeatUpload_HiddenIframe"];
+			}
+			hiddenIframe = document.createElement("iframe");
+			hiddenIframe.setAttribute("id", "NeatUpload_HiddenIframe");
+			hiddenIframe.style.display = "none";
+			document.body.appendChild(hiddenIframe);
+			var hiddenIframeWindow = hiddenIframe.contentWindow || frames["NeatUpload_HiddenIframe"];
+			hiddenIframeWindow.document.open();
+			hiddenIframeWindow.document.write('<script type="text/javascript">\n\
+	// This function can be reused as is.\n\
+	function XHRPoll(url, callback) {\n\
+		SendRequest();\n\
+		function SendRequest() {\n\
+			var req = null;\n\
+			var startTime = (new Date()).getTime();\n\
+			if (typeof (XMLHttpRequest) != "undefined") {\n\
+				req = new XMLHttpRequest();\n\
+			} else {\n\
+				req = new ActiveXObject("MSXML2.XMLHTTP.3.0");\n\
+			}\n\
+			req.onreadystatechange = HandleResponse;\n\
+			req.open("GET", url);\n\
+			req.send(null);\n\
+			function HandleResponse() {\n\
+				var delay = callback(req, startTime);\n\
+				if (!delay) return;\n\
+				setTimeout(SendRequest, delay);\n\
+			}\n\
+		}\n\
+	}\n\
+</s' + 'cript>');
+			hiddenIframeWindow.document.close();
+			return hiddenIframeWindow;
+		}
+
+		function StopUpload() {
+			var req = null;
+			if (typeof (XMLHttpRequest) != 'undefined') {
+				req = new XMLHttpRequest();
+			} else {
+				req = new ActiveXObject('MSXML2.XMLHTTP.3.0');
+			}
+			req.open('GET', progressHandlerPath + "?postBackID=" + postBackID + "&cancel=true");
+			req.send(null);
+		}
+	}
+	
 </script>
 </form>
 </body>
