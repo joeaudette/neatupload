@@ -236,7 +236,7 @@ namespace Brettle.Web.NeatUpload
 		/// </param>
 		/// <param name="controlUniqueID">
 		/// The UniqueID of the control for which the processing state should be retrieved,
-        /// or null to not retrieve progress state without processing state.
+        /// or null to retrieve progress state without processing state.
 		/// </param>
 		/// <param name="progressState">
 		/// A <see cref="IUploadProgressState"/> to be filled in with the progress state
@@ -366,6 +366,8 @@ namespace Brettle.Web.NeatUpload
         /// </remarks>
 		public static string BustCache(string url)
 		{
+            // Remove any cookieless session ID from the URL.
+            url = System.Text.RegularExpressions.Regex.Replace(url, @"/\(S\([^\)]+\)\)/", "/");
             System.Web.Caching.Cache Cache = HttpContext.Current.Cache;
             string guid = null;
             if (Cache[url] is string)

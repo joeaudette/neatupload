@@ -59,21 +59,12 @@ namespace Brettle.Web.NeatUpload
 		}
 			
 		/// <summary>
-		/// Whether to display the progress bar inline or as a pop-up.  Under Opera, this property will always 
-		/// return false, even if you set it to true.  Popup progress bars are automatically used under Opera 
-		/// because Opera doesn't refresh the iframe used to display inline progress bars.</summary>
+		/// Whether to display the progress bar inline or as a pop-up.</summary>
 		[DefaultValue(false)]
 		public bool Inline
 		{
 			get
 			{
-				// Return false when browser is Opera because Opera won't refresh the iframe until the upload completes.
-				if (HttpContext.Current != null)
-				{
-					string userAgent = HttpContext.Current.Request.UserAgent;
-					if (userAgent != null && userAgent.ToLower().IndexOf("opera") != -1)
-						return false;
-				}
 				return InlineRequested;
 			}
 			set { InlineRequested = value; }
@@ -117,7 +108,7 @@ NeatUploadPB.prototype.Bars['{0}'].DisplayUrl = function(progressUrl) {{
 	var pb = this;
     var iframeWindow = document.getElementById(pb.ClientID).contentWindow || frames[pb.ClientID];
     iframeWindow.document.body.innerHTML = '';
-	setTimeout(function () {{ iframeWindow.location.href = progressUrl; }}, 0);
+	iframeWindow.setTimeout(function () {{ iframeWindow.location.href = progressUrl; }}, 0);
 }};
 
 NeatUploadPB.prototype.Bars['{0}'].EvalOnClose = null;

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -96,6 +96,7 @@
     <Compile Include="Brettle.Web.NeatUpload\ProgressBarBase.cs" />
     <Compile Include="Brettle.Web.NeatUpload\ProgressBarBaseDesigner.cs" />
     <Compile Include="Brettle.Web.NeatUpload\ProgressInfo.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\ProgressJsonHandler.cs" />
     <Compile Include="Brettle.Web.NeatUpload\ProgressPage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -168,6 +169,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="install\NeatUpload\ProgressJsonHandler.ashx" />
     <None Include="install\NeatUpload\SmoothProgress.aspx" />
     <None Include="install\NeatUpload\cancel.png" />
     <None Include="install\NeatUpload\default.css" />

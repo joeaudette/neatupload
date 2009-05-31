@@ -101,6 +101,33 @@ namespace Brettle.Web.NeatUpload
 		public static UploadState OpenReadWriteOrCreate(string postBackID)
 		{
 			UploadState uploadState = OpenReadWrite(postBackID);
+            if (uploadState != null && !uploadState.IsMultiRequest
+                && HttpContext.Current != null
+                && HttpContext.Current.Items["NeatUpload_CalledOpenReadWriteOrCreate"] == null)
+            {
+                // This is not a multi-request upload and this is the first time 
+                // we've been called during this request, so the uploadState we 
+                // found must be from a previous postback with the same postback ID.
+                // That can happen if the user has scripting disabled and the current
+                // postback is from a cached page.  So, we need to delete the old 
+                // upload state and pretend we didn't get it.
+
+                // Make it stale and save it so it can be cleaned up
+                uploadState.TimeOfLastMerge = DateTime.MinValue;
+                MergeAndSave(uploadState);
+                
+                // Clean it up
+                UploadStateStoreProvider.CleanUpIfStaleCallback cleanUpIfStaleCallback
+                    = Provider.GetCleanUpIfStaleCallback();
+                cleanUpIfStaleCallback(postBackID);
+
+                // Pretend we didn't get it
+                uploadState = null;
+
+                // Don't do the above again during this request.
+                HttpContext.Current.Items["NeatUpload_CalledOpenReadWriteOrCreate"] = true;
+            }
+
 			if (uploadState == null)
 			{
 				uploadState = new UploadState(postBackID);
