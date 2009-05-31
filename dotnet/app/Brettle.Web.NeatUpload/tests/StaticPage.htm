@@ -3,11 +3,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Static Upload Page Example</title>
+    <!-- NeatUpload needs both of these -->
 	<script type="text/javascript" src="../../NeatUpload/SWFUpload.js"></script>
 	<script type="text/javascript" src="../../NeatUpload/NeatUpload.js"></script>
+	<!-- These are just the styles used for the progress bar on this page. -->
 	<link rel="stylesheet" type="text/css" title="default" href="../../NeatUpload/default.css" />		
 	<style type="text/css">
-	table, tr, td {
+	#progressDisplayCenterer, #progressDisplayCenterer tr, #progressDisplayCenterer td {
 		margin: 0px;
 		border: 0px none;
 		padding: 0px;
@@ -56,16 +58,40 @@
 	</style>
 </head>
 <body>
+<!-- Your form needs to use method="post" and enctype="multipart/form-data".
+     See StaticUploadHandler.ashx for an example of how to handle the upload.  -->
 <form id="formID" action="StaticUploadHandler.ashx" method="post" enctype="multipart/form-data">
-	InputFile: <input id="fileID" type="file" name="NeatUpload_replacedByScript-fileField" /><br />
+	InputFile: 
+	<!-- The HTML for an InputFile control is a normal <input type="file"> control with a name
+	     field that has the form "NeatUpload_" + any alphanumeric numeric string + "-" + a name
+	     that you can use to access the uploaded file from your handler using  
+	     UploadModule.Files.   In this example, you would use UploadModule.Files["fileField"] -->
+	<input id="fileID" type="file" name="NeatUpload_replacedByScript-fileField" /><br />
+	
 	MultiFile:<br />
-	<!-- Note: No space allowed between the next 2 elements.  The div must be the nextSibling of the input element. -->
+	<!-- The HTML for a MultiFile control is the same as for an InputFile control, but is
+	     *immediately* followed (no blank space) by a <div style='position: relative; display: none;'> 
+	     containing the replacement HTML to display for the MultiFile control.  NeatUpload will
+	     make it visible but the content won't actually receive any user clicks because it will be
+	     covered with a transparent element that will open the file dialog when the user clicks on it. -->
 	<input id="multiFileID" type="file" name="NeatUpload_replacedByScript-multiFileField" /><div id='NeatUploadDiv_multiFileID' style='position: relative; display: none;'>
 		<input type="button" name="multiFileButton" value="Add Files..." id="multiFileButton" />
 	</div><br />
+	<!-- NeatUpload will automatically start the progress display when the browser starts submitting
+	     the form to the server in response to a user clicking on a trigger.  The array of trigger IDs
+	     is passed to the NeatUploadPB constructor below.  If the array is empty, anything that causes
+	     the form to be submitted would start the progress bar. If the array is not empty and the form 
+	     is submitted in response to a non-trigger (e.g. cancelButtonID below), NeatUpload will clear
+	     all InputFile and MultiFile controls before the form is submitted, so that no files are 
+	     uploaded. -->  
 	<input id="uploadButtonID" type="submit" name="upload" value="Upload with type='submit' Button" />
 	<input id="uploadButtonID2" type="button" onclick="document.getElementById('formID').submit()" name="upload2" value="Upload by calling form.submit()" />
 	<input id="cancelButtonID" type="submit" name="cancel" value="Cancel" /><br />
+	
+	<!-- The static HTML associated with the ProgressBar control can be any element that has an ID and is
+	     within the form.  It is only needed so that NeatUpload can find the containing form.  It could even
+	     be an empty placeholder element.  This page uses an hidden div that will we will display when 
+	     the upload starts.  -->
 	<div id="progressDiv" style="display: none;">
 		Here is a simple progress display:<br />
 		<table id="progressDisplayCenterer"><tr><td>
@@ -88,36 +114,69 @@
 	// Generate long random string so uploads don't interfere with each other.
 	var initialPostBackID = Math.round(Math.random() * 1000000000);
 	
-	// The application path is the path to this page with the last 3 elements removed.
+	// The application path is the path to the top-level directory of the app.
+	// In our case it is the path to this page with the last 3 elements removed.
 	var appPath = document.location.pathname.split('/').slice(0, -3).join('/');
 
-	NeatUploadMultiFileCreate("multiFileID", initialPostBackID,
+	// Change the element with an id of "multiFileID" into a NeatUpload MultiFile control.
+	NeatUploadMultiFileCreate(
+		// The id of the <input type="file"> element
+		"multiFileID", 
+		initialPostBackID,
 		appPath,
+		// Needed for Flash-based multi-file uploads
 		appPath + '/NeatUpload/MultiRequestUploadHandler.ashx',
-		'NeatUpload_PostBackID',
-		{ 
+		// The default postback id query param
+		'NeatUpload_PostBackID', 
+		{
 			NeatUpload_PostBackID: initialPostBackID,
+			// The id of the <input type="file"> element
 			NeatUpload_MultiRequestControlID: 'multiFileID',
+			// This page doesn't use it, so it needs to be null
 			NeatUpload_ArmoredCookies: null
 		},
-		 true,
-		 '',
-		 '*.*',
-		 '',
-		 'NeatUploadDiv_multiFileID',
-		 'NeatUploadConfig_multiFileID'
-);
+		// Whether to use Flash if it is available
+		true,
+		// The id of the FileQueueControlID, see
+		// http://www.brettle.com/NeatUpload-1.3/dotnet/docs/Manual.html#5.5.Customizing%20MultiFile%27s%20Handling%20of%20Queued%20Files|outline
+		'',
+		// The FlashFilterExtensions and FlashFilterDescription properties, see
+		// http://www.brettle.com/NeatUpload-1.3/dotnet/docs/Manual.html#3.4.Allowing%20Users%20with%20Flash%20to%20Select%20Multiple%20Files%20from%20One%20File%20Selection%20Dialog|outline
+		'*.*', '',
+		// An id that is just used to construct a unique id for the flash element
+		'NeatUploadDiv_multiFileID',
+		// Any id that doesn't exist in the form.
+		'NeatUploadConfig_multiFileID'
+	);
 
+	// Change the element with an id of "fileID" into a NeatUpload InputFile control.
 	NeatUploadInputFileCreate("fileID", initialPostBackID);
 
-	var pb = new NeatUploadPB("progressDiv", initialPostBackID, "Progress.htm?barID=progressDiv", "500px", "100px", ["uploadButtonID", "uploadButtonID2"], "IsFilesToUpload()");
-	NeatUploadPB.prototype.Bars["progressDiv"] = pb;
+	// Create a NeatUploadPB object associated with the element with id "progressDiv".
+	var pb = new NeatUploadPB(
+		// The id of the element in the form.  Also use to identify this object.
+		"progressDiv", 
+		// The initial postBackID
+		initialPostBackID,
+		// We are going to override pb.Display(), so these 3 arguments will not be used.
+		// If we didn't override pb.Display(), they would control the URL and size of a
+		// popup window used to display progress by default.
+		appPath + "/NeatUpload/Progress.aspx?barID=progressDiv", "500px", "100px",
+		// The array of trigger IDs.
+		["uploadButtonID", "uploadButtonID2"],
+		// The function to eval() that determines whether to start the progress display.
+		// IsFilesToUpload() is already defined in NeatUpload.js.
+		"IsFilesToUpload()");
 
-	pb.DisplayUrl = function(progressUrl) {
+	// These two lines are only necessary if you are using Progress.aspx/Progress.js.
+	// We aren't but we leave them here as a reminder.
+	NeatUploadPB.prototype.Bars["progressDiv"] = pb;
+	pb.EvalOnClose = null;
+
+	// Override pb.Display() to start refreshing out progress display every 1000ms.
+	pb.Display = function() {
 		RefreshProgress(pb.UploadForm.GetPostBackID(), pb.ClientID, pb.CanCancel, 1000);
 	};
-
-	pb.EvalOnClose = null;
 
 	// If the upload succeeds, StaticUploadHandler.ashx will redirecte the browser back to this page but
 	// the postBackID of the upload will be passed in the query string.
@@ -129,23 +188,39 @@
 		var qp = queryParams[i].split('=');
 		queryObj[qp[0]] = qp[1];
 	}
-
 	if (queryObj.postBackID) {
 		window.onload = function() {
-			RefreshProgress(queryObj.postBackID, pb.ClientID, pb.CanCancel, 0);
+			RefreshProgress(queryObj.postBackID, pb.ClientID, pb.CanCancel, 0); // 0 means only refresh once
 		};
 	};
 
+	// Useful vars for updating our progress bar HTML.
 	var progressDiv = document.getElementById("progressDiv");
 	var stopButton = document.getElementById("stopButton");
 	var barDetailsDiv = document.getElementById("barDetailsDiv");
 	var statusSpan = document.getElementById("statusSpan");
 	var rawJsonDiv = document.getElementById("rawJsonDiv");
+	
+	/**** FUNCTIONS ****/
 
+	// Refreshes our progress display using the upload state associated with a postBackID and controlID
+	// every updateDelayMs.
+	// The progress display will only be refreshed once if updateDelayMs == 0 and it will stop
+	// refreshing once the upload is completed, cancelled, rejected, or fails.
 	function RefreshProgress(postBackID, controlID, canCancel, updateDelayMs) {
+		// The real work is done by RefreshWithAjax().  We just need to tell it where to get the
+		// up upload state JSON and what function (UpdateHtml) to call with that state.
 		RefreshWithAjax(appPath + "/NeatUpload/ProgressJsonHandler.ashx", postBackID, controlID, UpdateHtml, canCancel, updateDelayMs);
 	}
 
+	// Updates the progress bar HTML to reflect the uploadState.
+	// uploadStopper is a function that can be called to cancel the upload.
+	// uploadStateJson is the uploadState as a JSON string which can be useful for debugging.
+	// Note: the exact data available for the files in uploadState.Files may vary
+	// depending on the UploadStorageProvider being used.  For the default provider,
+	// ControlUniqueID, FileName and ContentType are available during the upload and after it
+	// completes until it is stale.  However ContentLength may be -1 after the entire upload
+	// completes if MoveTo() hasn't been called.
 	function UpdateHtml(uploadState, uploadStopper, uploadStateJson) {
 		stopButton.onclick = uploadStopper;
 		barDetailsDiv.style.width = uploadState.PercentComplete + "%";
@@ -202,9 +277,16 @@
 		return s.replace("&", "&amp;", "gm").replace("<", "&lt;", "gm");
 	}
 
+
+	// Every updateDelayMs (or once if updateDelayMs == 0), retrieves from progressHandlerPath
+	// the upload state associated with postBackID and controlID, and passes it to updateFunc, 
+	// stopping once the upload is completed, cancelled, rejected, or fails.
+	// This function is independent of this page and something like it might be included
+	// in a future version of NeatUpload.js.
 	function RefreshWithAjax(progressHandlerPath, postBackID, controlID, updateFunc, canCancel, updateDelayMs) {
 		var uploadStopper = canCancel ? StopUpload : null;
 
+		// See GetHiddenIframeWindow() for why we need a hidden iframe.
 		var hiddenIframeWindow = GetHiddenIframeWindow();
 		hiddenIframeWindow.setTimeout(function() {
 			hiddenIframeWindow.XHRPoll(progressHandlerPath + "?postBackID=" + postBackID + "&controlID=" + controlID, function(req, startTime) {
@@ -231,6 +313,11 @@
 			});
 		}, 1);
 
+		// For non-IE browsers we can't update a submitting window from an event that occurs
+		// in that window, so we make the event occur on a hidden iframe.  Opera will only let
+		// the send() method be called on an XMLHttpRequest object that was created in that window,
+		// so we need to inject the code that actually uses XMLHttpRequest to poll the server into
+		// that iframe.
 		function GetHiddenIframeWindow() {
 			var hiddenIframe = document.getElementById("NeatUpload_HiddenIframe");
 			if (hiddenIframe) {
