@@ -7,6 +7,9 @@
         </tr>
     </thead>
     <tr>
+        <td colspan="2"><Upload:InputFile id="inputFile" runat="server"/></td>
+    </tr>
+    <tr>
         <td><Upload:MultiFile id="multiFile" runat="server" useFlashIfAvailable="true"/></td>
         <td><asp:Button id="submitButton" runat="server" Text="Submit" /></td>
     </tr>

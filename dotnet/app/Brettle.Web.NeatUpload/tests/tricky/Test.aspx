@@ -17,12 +17,19 @@
 
 		private void submitButton_Click(object sender, EventArgs e)
 		{
-			if (this.IsValid)
+			bodyPre.InnerText = "";
+			if (!IsValid)
+				return;
+			if (testControl.inputFile.HasFile)
 			{
-			    bodyPre.InnerText = "";
+				bodyPre.InnerText += String.Format("InputFile has {0}: {1}, {2} bytes\n", testControl.inputFile.FileName, testControl.inputFile.ContentType, testControl.inputFile.ContentLength);
+			}
+			if (testControl.multiFile.Files.Length > 0)
+			{
+				bodyPre.InnerText += "MultiFile has:\n";
 				foreach (Brettle.Web.NeatUpload.UploadedFile file in testControl.multiFile.Files)
 				{
-					bodyPre.InnerText += String.Format("{0}: {1}, {2} bytes\n", file.FileName, file.ContentType, file.ContentLength);
+					bodyPre.InnerText += String.Format("       {0}: {1}, {2} bytes\n", file.FileName, file.ContentType, file.ContentLength);
 				}
 			}
 		}
