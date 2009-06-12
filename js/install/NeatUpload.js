@@ -207,7 +207,7 @@ function NeatUploadForm(formElem, postBackID)
 			f.debugMessage("In submit()");
 			f.FormElem.NeatUpload_OnSubmitting();
 			var status = f.FormElem.NeatUpload_OnSubmit();
-			if (status)
+			if (status != false)
 				f.FormElem.NeatUpload_OrigSubmit();
 			f.debugMessage("Leaving submit()");
 		};
@@ -283,7 +283,7 @@ function NeatUploadForm(formElem, postBackID)
 				if (ev.NeatUpload_PreventDefaultCalled)
 					return false;
 				// asp:ScriptManager moves form.onsubmit into an event handler and sets form.onsubmit=null.
-				// That means that we can't know the value that the orign form.onsubmit returned.  As a 
+				// That means that we can't know the value that the original form.onsubmit returned.  As a 
 				// workaround, we check Page_IsValid which validators will set.
 				if (typeof(Page_IsValid) != "undefined" && !Page_IsValid) 
 				    return false;
@@ -305,12 +305,12 @@ function NeatUploadForm(formElem, postBackID)
 			ev = NeatUploadForm.prototype.ClickEvent || ev || window.event;
 			if (!ev)
 			{
-				return true;
+				return;
 			}
 			var src = ev.srcElement || ev.target;
 			if (!src)
 			{
-				return true;
+				return;
 			}
 			NeatUpload_LastEventType = ev.type;
 			NeatUpload_LastEventSource = src;
@@ -318,7 +318,7 @@ function NeatUploadForm(formElem, postBackID)
 			if (f.GetSubmittingElem())
 				f.FormElem.NeatUpload_OnSubmitting();
 			
-			return true;
+			return;
 		}, true);
 	}
 
@@ -511,7 +511,6 @@ NeatUploadForm.prototype.OnSubmitting = function()
 	{
 		this.NeatUpload_OnSubmittingHandlers[i].call(this);
 	}
-	return true;
 };
 
 NeatUploadForm.prototype.OnSubmit = function(ev)
@@ -541,15 +540,13 @@ NeatUploadForm.prototype.OnSubmit = function(ev)
 	for (var i=0; i < this.NeatUpload_OnSubmitHandlers.length; i++)
 	{
 		var status = this.NeatUpload_OnSubmitHandlers[i].call(this, ev);
-		if (status === true)
-			continue;
 		if (status === false)
 			return false;
 		else if (typeof(status) == "function")
 			asyncHandlers.push(status);
 	}
 	if (asyncHandlers.length == 0)
-		return true;
+		return;
 
 	// The rest of this function runs the async handlers sequentially and then submits
 	// the form faking any button that was pressed to start the submit.
@@ -621,7 +618,6 @@ NeatUploadForm.prototype.OnNonupload = function(elem)
 	{
 		this.OnNonuploadHandlers[i].call(elem);
 	}
-	return true;
 };
 
 NeatUploadForm.prototype.AddGetFileSizesCallback = function(callback)
@@ -751,7 +747,6 @@ function NeatUploadPB(id, postBackID, uploadProgressPath, popupWidth, popupHeigh
 			pb.debugMessage("Calling pb.Display()");
 			pb.Display();
 		}
-		return true;
 	});
 						
 	for (var i = 0; i < triggerIDs.length; i++)
@@ -1023,7 +1018,6 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 		    	StartAsyncUploads();
 			};
 		}
-		return true;
 	});
 	
 	// Hookup the non-upload handler.
