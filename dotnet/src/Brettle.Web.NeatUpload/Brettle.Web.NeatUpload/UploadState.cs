@@ -214,7 +214,8 @@ namespace Brettle.Web.NeatUpload
 				DateTime now = DateTime.Now;
 				if (now < TimeOfFirstByte)
 					TimeOfFirstByte = now;
-				if (now > TimeOfLastMark.AddSeconds(1))
+				if (now > TimeOfLastMark.AddSeconds(1) && 
+                    (_Status == UploadStatus.Unknown || _Status == UploadStatus.NormalInProgress || _Status == UploadStatus.ChunkedInProgress))
 				{
 					_BytesPerSec = (int)((value - BytesReadAtLastMark) / (now - TimeOfLastMark).TotalSeconds);
 					TimeOfLastMark = now;
