@@ -198,6 +198,7 @@ namespace Brettle.Web.NeatUpload
 		/// </param>
 		public void SaveAs(string path) { MoveTo(path, MoveToOptions.Overwrite); }
 
+		[NonSerialized]
 		private Stream _InputStream;
 	}
 }
