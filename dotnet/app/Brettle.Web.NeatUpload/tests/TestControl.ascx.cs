@@ -28,8 +28,10 @@ using System.IO;
 namespace Brettle.Web.NeatUpload
 {
 	public class TestControl : System.Web.UI.UserControl
-	{	
+	{
 		public InputFile inputFile;
+		public MultiFile multiFile;
+		public HtmlInputFile htmlInputFile;
 		public Button submitButton;
 		protected ProgressBar inlineProgressBar;
 		

@@ -9,14 +9,14 @@ set -e
 set -x
 # Generating API docs
 cp ../src/Brettle.Web.NeatUpload/install/bin/*.xml ../src/Extensions/*/install/bin/*.xml bin
-ndoc bin/*.dll \
+script -c 'ndoc bin/*.dll \
 	-Documenter=MSDN \
 	-SkipCompile=true \
 	-OutputDirectory=api \
 	-SdkLinksOnWeb=true \
 	-OutputTarget=Web \
 	-CleanIntermediates=false \
-	-Title="NeatUpload Documentation"
+	-Title="NeatUpload Documentation"'
 
 # Converting Manual.flatxml to Manual.html via OpenOffice...
 ooffice -invisible 'macro:///SaveAsHtml.Module1.SaveAsHTML("'`pwd`'/Manual.flatxml")'
