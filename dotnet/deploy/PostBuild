@@ -2,8 +2,10 @@
 rm "$1"/bin/SWFUpload.*
 rm "$1"/bin/js.*
 rm "$1"/bin/deploy.*
+rm "$1"/bin/*.js
 rm -rf "$1"/bin/Debug
 rm -rf "$1"/bin/Release
+rm -rf "$1"/bin/install
 mkdir "$1"/NeatUpload
 
 # Return an error if any of these fail
