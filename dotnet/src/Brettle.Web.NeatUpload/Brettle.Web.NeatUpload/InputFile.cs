@@ -48,7 +48,7 @@ namespace Brettle.Web.NeatUpload
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[ValidationProperty("ValidationFileName")]
-	public class InputFile : FileControl, System.Web.UI.IPostBackDataHandler
+	public class InputFile : FileControl
 	{
 
 		// Create a logger for use in this class
@@ -221,8 +221,8 @@ namespace Brettle.Web.NeatUpload
 			if (!IsDesignTime && UploadModule.IsEnabled)
 			{
 				// Generate a special name recognized by the UploadHttpModule
-				name = FormContext.Current.GenerateFileID(this.ClientID);
-				storageConfigName = FormContext.Current.GenerateStorageConfigID(this.ClientID);
+				name = FormContext.Current.GenerateFileID(this.UniqueID);
+				storageConfigName = FormContext.Current.GenerateStorageConfigID(this.UniqueID);
 
 				this.Page.RegisterStartupScript("NeatUploadInputFile-" + this.UniqueID, @"
 <script type='text/javascript' language='javascript'>
@@ -234,9 +234,9 @@ NeatUploadInputFileCreate('" + this.ClientID + @"','"
 			}
 			else
 			{
-				name = this.ClientID;
+				name = this.UniqueID;
                 if (!IsDesignTime)
-				    storageConfigName = FormContext.Current.GenerateStorageConfigID(this.ClientID);
+				    storageConfigName = FormContext.Current.GenerateStorageConfigID(this.UniqueID);
 			}
 			// Store the StorageConfig in a hidden form field with a related name
 			if (StorageConfig != null && StorageConfig.Count > 0)
@@ -277,28 +277,5 @@ NeatUploadInputFileCreate('" + this.ClientID + @"','"
 				writer.RenderEndTag(); // span
 			}
 		}
-
-		/// <summary>
-		/// Called by ASP.NET so that controls can find and process their post back data</summary>
-		/// <returns>the true if a file was uploaded with this control</returns>
-		public virtual bool LoadPostData(string postDataKey, NameValueCollection postCollection)
-		{
-			return HasFile;
-		}
-		
-		/// <summary>
-		/// Called by ASP.NET if <see cref="LoadPostData"/> returns true (i.e. if a file was uploaded to this 
-		/// control).  Fires the <see cref="FileUploaded"/> event.</summary>
-		public virtual void RaisePostDataChangedEvent()
-		{
-			if (FileUploaded != null)
-			{
-				FileUploaded(this, EventArgs.Empty);
-			}
-		}
-		
-		/// <summary>
-		/// Fired when a file is uploaded to this control.</summary>
-		public event System.EventHandler FileUploaded;
 	}
 }

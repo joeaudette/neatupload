@@ -40,7 +40,7 @@ namespace Brettle.Web.NeatUpload
 	/// </summary>
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public abstract class FileControl : System.Web.UI.WebControls.WebControl
+    public abstract class FileControl : System.Web.UI.WebControls.WebControl, System.Web.UI.IPostBackDataHandler
 	{
 
 #pragma warning disable 0169
@@ -62,6 +62,7 @@ namespace Brettle.Web.NeatUpload
 		{
 			get 
 			{
+                InitializeFiles();
 				return _files;
 			}
 		}		
@@ -77,7 +78,7 @@ namespace Brettle.Web.NeatUpload
 					// Keep the storage config associated with the previous upload, if any
 					if (!IsDesignTime && Files != null  && Files.Length > 0 && HttpContext.Current != null)
 					{
-						string secureStorageConfig = HttpContext.Current.Request.Form[FormContext.Current.GenerateStorageConfigID(ClientID)];
+						string secureStorageConfig = HttpContext.Current.Request.Form[FormContext.Current.GenerateStorageConfigID(UniqueID)];
 						if (secureStorageConfig != null)
 						{
 							_StorageConfig = UploadModule.CreateUploadStorageConfig();
@@ -160,7 +161,6 @@ namespace Brettle.Web.NeatUpload
 
         protected override void OnInit(EventArgs e)
         {
-            InitializeFiles();
             base.OnInit(e);
         }
 
@@ -169,10 +169,11 @@ namespace Brettle.Web.NeatUpload
 			InitializeForm();
 			base.OnLoad(e);
 		}
-		
+
+        private bool IsFilesInitialized = false;
 		private void InitializeFiles()
 		{
-			if (IsDesignTime)
+			if (IsDesignTime || IsFilesInitialized)
 				return;
 			// Initialize the Files property
 			ArrayList fileArrayList = new ArrayList();
@@ -182,7 +183,7 @@ namespace Brettle.Web.NeatUpload
 				// Get only the files that were uploaded from this control
 				for (int i = 0; allFiles != null && i < allFiles.Count; i++)
 				{
-					if (allFiles.GetKey(i) == this.ClientID)
+					if (allFiles.GetKey(i) == this.UniqueID)
 					{
 						UploadedFile uploadedFile = allFiles[i];
 						if (uploadedFile.IsUploaded)
@@ -196,10 +197,10 @@ namespace Brettle.Web.NeatUpload
 				// Get only the files that were uploaded from this control
 				for (int i = 0; allFiles != null && i < allFiles.Count; i++)
 				{
-					if (allFiles.GetKey(i) == this.ClientID)
+					if (allFiles.GetKey(i) == this.UniqueID)
 					{
 						UploadedFile uploadedFile 
-								= UploadModule.ConvertToUploadedFile(this.ClientID, (HttpPostedFile)allFiles[i]);
+								= UploadModule.ConvertToUploadedFile(this.UniqueID, (HttpPostedFile)allFiles[i]);
 						if (uploadedFile == null)
 							continue;
 						if (uploadedFile.IsUploaded)
@@ -211,6 +212,7 @@ namespace Brettle.Web.NeatUpload
 			}
 			_files = new UploadedFile[fileArrayList.Count];
 			Array.Copy(fileArrayList.ToArray(), _files, _files.Length);
+            IsFilesInitialized = true;
 		}
 
 		private void InitializeForm()
@@ -231,9 +233,34 @@ namespace Brettle.Web.NeatUpload
 				form.Enctype = "multipart/form-data";
 				form.Method = "post";
 			}
-		}			
+		}
 
-		protected override void OnUnload(EventArgs e)
+        /// <summary>
+        /// Called by ASP.NET so that controls can find and process their post back data</summary>
+        /// <returns>the true if a file was uploaded with this control</returns>
+        public virtual bool LoadPostData(string postDataKey, NameValueCollection postCollection)
+        {
+            InitializeFiles();
+            return Files.Length > 0;
+        }
+
+        /// <summary>
+        /// Called by ASP.NET if <see cref="LoadPostData"/> returns true (i.e. if a file was uploaded to this 
+        /// control).  Fires the <see cref="FileUploaded"/> event.</summary>
+        public virtual void RaisePostDataChangedEvent()
+        {
+            if (FileUploaded != null)
+            {
+                FileUploaded(this, EventArgs.Empty);
+            }
+        }
+
+        /// <summary>
+        /// Fired when a file is uploaded to this control.</summary>
+        public event System.EventHandler FileUploaded;
+
+
+        protected override void OnUnload(EventArgs e)
 		{
 			if (Files != null)
 				foreach (UploadedFile f in Files)

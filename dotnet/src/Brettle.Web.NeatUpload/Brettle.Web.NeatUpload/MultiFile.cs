@@ -53,7 +53,7 @@ namespace Brettle.Web.NeatUpload
 	[ValidationProperty("ValidationFileNames")]
 	[ParseChildren(false)]
 	[PersistChildren(true)]
-	public class MultiFile : FileControl, System.Web.UI.IPostBackDataHandler
+	public class MultiFile : FileControl
 	{
 
 #pragma warning disable 0169
@@ -198,11 +198,11 @@ namespace Brettle.Web.NeatUpload
 			string name;
             string storageConfigName = null;
             if (!IsDesignTime)
-                storageConfigName = FormContext.Current.GenerateStorageConfigID(this.ClientID);
+                storageConfigName = FormContext.Current.GenerateStorageConfigID(this.UniqueID);
 			if (!IsDesignTime && UploadModule.IsEnabled)
 			{
 				// Generate a special name recognized by the UploadHttpModule
-				name = FormContext.Current.GenerateFileID(this.ClientID);
+				name = FormContext.Current.GenerateFileID(this.UniqueID);
 				this.Page.RegisterStartupScript("NeatUploadMultiFile-" + this.UniqueID, @"
 <script type='text/javascript' language='javascript'>
 <!--
@@ -212,7 +212,7 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
 		'" + (MultiRequestUploadModule.IsEnabled ? (HttpContext.Current.Response.ApplyAppPathModifier(MultiRequestUploadModule.UploadPath)) : "") + @"',
 		'" + UploadModule.PostBackIDQueryParam + @"',
 		{" + UploadModule.PostBackIDQueryParam + @" : '" + FormContext.Current.PostBackID + @"',
-		 " + (MultiRequestUploadModule.IsEnabled ? MultiRequestUploadModule.ControlIDQueryParam : "ignore") + @": '" + this.ClientID + @"',
+		 " + (MultiRequestUploadModule.IsEnabled ? MultiRequestUploadModule.ControlIDQueryParam : "ignore") + @": '" + this.UniqueID + @"',
 		 " + (MultiRequestUploadModule.IsEnabled ? MultiRequestUploadModule.ArmoredCookiesQueryParam : "ignore2") + @": '" + MultiRequestUploadModule.GetArmoredCookies() + @"'
 		},
 		 " + (MultiRequestUploadModule.IsEnabled && UseFlashIfAvailable ? "true" : "false") + @",
@@ -227,7 +227,7 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
 			}
 			else
 			{
-				name = this.ClientID;
+				name = this.UniqueID;
 			}
 
 			// Store the StorageConfig in a hidden form field with a related name
@@ -306,28 +306,5 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
                 return true;
             return false;
         }
-
-		/// <summary>
-		/// Called by ASP.NET so that controls can find and process their post back data</summary>
-		/// <returns>true if a file was uploaded with this control</returns>
-		public virtual bool LoadPostData(string postDataKey, NameValueCollection postCollection)
-		{		
-			return (Files.Length > 0);
-		}		
-
-		/// <summary>
-		/// Called by ASP.NET if <see cref="LoadPostData"/> returns true (i.e. if a file was uploaded to this 
-		/// control).  Fires the <see cref="FileUploaded"/> event.</summary>
-		public virtual void RaisePostDataChangedEvent()
-		{
-			if (FileUploaded != null)
-			{
-				FileUploaded(this, EventArgs.Empty);
-			}
-		}
-		
-		/// <summary>
-		/// Fired when at least one file is uploaded to this control.</summary>
-		public event System.EventHandler FileUploaded;
 	}
 }
