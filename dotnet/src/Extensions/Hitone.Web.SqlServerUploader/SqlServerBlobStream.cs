@@ -630,6 +630,7 @@ namespace Hitone.Web.SqlServerUploader
         /// </summary>
         public void Delete()
         {
+            if (_disposed) return;
             if (_deleteCommand == null) throw new Exception("Not configured to delete posts");
             _connection.Open();
             try { _deleteCommand.ExecuteNonQuery(); }

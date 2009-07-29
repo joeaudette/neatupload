@@ -367,7 +367,7 @@ namespace Brettle.Web.NeatUpload
 		public static string BustCache(string url)
 		{
             // Remove any cookieless session ID from the URL.
-            url = System.Text.RegularExpressions.Regex.Replace(url, @"/\(S\([^\)]+\)\)/", "/");
+            url = System.Text.RegularExpressions.Regex.Replace(url, @"/\([SF]\([^\)]+\)\)/", "/");
             System.Web.Caching.Cache Cache = HttpContext.Current.Cache;
             string guid = null;
             if (Cache[url] is string)

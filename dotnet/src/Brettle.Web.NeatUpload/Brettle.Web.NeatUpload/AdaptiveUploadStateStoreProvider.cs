@@ -117,7 +117,7 @@ namespace Brettle.Web.NeatUpload
                         string webConfigPath = HttpContext.Current.Server.MapPath("~/Web.config");
                         XPathDocument webConfigDoc = new XPathDocument(webConfigPath);
                         XPathNavigator nav = webConfigDoc.CreateNavigator();
-                        string modeString = nav.Evaluate("string(/configuration/system.web/sessionState/@mode)") as string;
+                        string modeString = nav.Evaluate("string(/*[local-name(.)='configuration']/*[local-name(.)='system.web']/*[local-name(.)='sessionState']/@mode)") as string;
                         if (modeString == null || modeString == "" 
                             || modeString.ToLower() == "inproc" || modeString.ToLower() == "off")
                             _Provider = InProcProvider;
