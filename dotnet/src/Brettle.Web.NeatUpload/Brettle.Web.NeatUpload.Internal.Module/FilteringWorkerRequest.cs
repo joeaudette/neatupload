@@ -404,6 +404,7 @@ namespace Brettle.Web.NeatUpload.Internal.Module
                         if (MultiRequestControlID != null)
                         {
                             RegisterFilesForDisposal(MultiRequestControlID);
+                            UploadStorage.DisposeAtEndOfRequest(uploadedFile);
                         }
                         HttpContext.Current.ApplicationInstance.CompleteRequest();
                         return;
@@ -458,6 +459,7 @@ namespace Brettle.Web.NeatUpload.Internal.Module
                     if (MultiRequestControlID != null)
                     {
                         RegisterFilesForDisposal(MultiRequestControlID);
+                        UploadStorage.DisposeAtEndOfRequest(uploadedFile);
                     }
 				}
 					
