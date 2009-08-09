@@ -96,6 +96,7 @@ namespace Brettle.Web.NeatUpload
 
 		internal static void DisposeAtEndOfRequest(UploadedFile file)
 		{
+            if (file == null) return;
 			HttpContext ctx = HttpContext.Current;
 			if (ctx == null) return; // Not in an ASP.NET request, so nothing to do
 						
