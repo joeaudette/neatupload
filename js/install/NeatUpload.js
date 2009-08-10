@@ -1301,21 +1301,20 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 		if (!replacementDiv || !replacementDiv.tagName || replacementDiv.tagName.toLowerCase() != "div" 
 			|| !replacementDiv.firstChild)
 			return;
-		if (replacementDiv.offsetHeight)
-			MoveAndResizeDivAndAddFlash();
-		else
-		{
-			// Do the styling in an onload handler to support controls in tables because offsetheight isn't 
-			// available in tables until the page has loaded.
-			nuf.AddHandler(window, "load", MoveAndResizeDivAndAddFlash);
-			// In the meantime, hide the original element.
-			inputFile.style.display = "none";
-		}
+		MoveAndResizeDivAndAddFlash();
 		return;
 		
 		function MoveAndResizeDivAndAddFlash()
 		{
-			var width, height;
+		    // If we are in something that isn't yet visible, hide the original element
+		    // and check again shortly.
+		    if (!replacementDiv || !replacementDiv.parentNode || !replacementDiv.parentNode || !replacementDiv.parentNode.parentNode
+		        || !replacementDiv.parentNode.parentNode.offsetHeight || !replacementDiv.parentNode.parentNode.offsetWidth) {
+		        inputFile.style.display = "none";
+		        window.setTimeout(MoveAndResizeDivAndAddFlash, 100);
+		        return;
+		    }
+		    var width, height;
 			replacementDiv.style.display = "block";
 			height = replacementDiv.style.height = replacementDiv.offsetHeight + "px";
 			var w = 0;
