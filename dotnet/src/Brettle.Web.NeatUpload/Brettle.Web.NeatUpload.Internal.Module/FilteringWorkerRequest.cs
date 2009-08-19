@@ -440,8 +440,8 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 					this.Exception = ex;
 					if (ex is UploadException)
 					{
-						UploadState.Status = UploadStatus.Rejected;
 						UploadState.Rejection = (UploadException)ex;
+						UploadState.Status = UploadStatus.Rejected;
 						// Wait 5 seconds to give the client a chance to stop the request.  If the client
 						// stops the request, the user will see the original form instead of an error page.
 						// Regardless, the progress display will show the error so the user knows what went wrong.
