@@ -153,7 +153,6 @@ namespace Brettle.Web.NeatUpload
 			progressState.TimeElapsed = uploadState.TimeElapsed;
 			if (uploadState.BytesRead == 0 || uploadState.BytesTotal < 0)
 			{
-                progressState.Status = UploadStatus.Unknown;
 				progressState.TimeRemaining = TimeSpan.MaxValue;
 			}
 			else
