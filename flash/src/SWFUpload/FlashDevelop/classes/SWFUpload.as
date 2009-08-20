@@ -170,6 +170,30 @@ class SWFUpload {
 		callbacks_set = callbacks_set && ExternalInterface.addCallback("RemoveFileParam", this, this.RemoveFileParam);
 		if (!callbacks_set)	this.Debug("Callbacks where not set.");
 
+		if (System.capabilities.os.indexOf("Linux") != -1) {
+			var version:String = System.capabilities.version;
+			this.Debug("System.capabilities.version = " + version);
+			var startIndex:Number = version.indexOf("LNX");
+			if (startIndex == -1)
+			{
+				this.Debug("'LNX' not found in version string");
+				return;
+			}
+			startIndex = startIndex + 4;
+			var endIndex:Number = version.indexOf(",", startIndex);
+			if (endIndex == -1)
+			{
+				this.Debug("comma not found after 'LNX'");
+				return;
+			}
+			var majorVersion:Number = new Number(version.substring(startIndex, endIndex));
+			this.Debug("Flash player major version = " + majorVersion);
+			this.Debug("Flash uploads not supported on Linux due to http://bugs.adobe.com/jira/browse/FP-377");
+			// If the aforementioned bug is fixed in Flash Player 11, uncomment the following line
+			//if (majorVersion < 11)
+				return;
+		}
+	
 		this.Debug("SWFUpload Init Complete");
 		this.PrintDebugInfo();
 
