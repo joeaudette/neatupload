@@ -99,12 +99,6 @@ NeatUploadConsole.open = function(message) {
 	this.debugMessage(message);
 };
 
-// Have SWFUpload use the same console
-if (typeof(SWFUpload) != "undefined" && SWFUpload && SWFUpload.prototype)
-{
-	SWFUpload.prototype.debugMessage = NeatUploadConsole.debugMessage;
-}
-
 function NeatUploadCloneInputFile (inputFile)
 {
 	var newInputFile = document.createElement('input');
@@ -1355,6 +1349,8 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 		    replacementDiv.appendChild(container);			
 
 			window.setTimeout(function () {
+				// Have SWFUpload use the same console
+				SWFUpload.prototype.debugMessage = NeatUploadConsole.debugMessage;
 				numf.Swfu = new SWFUpload({
 						debug : numf.debug_enabled,
 						flash_url : numf.AppPath + '/NeatUpload/SWFUpload.swf',
