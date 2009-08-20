@@ -153,6 +153,16 @@ namespace Brettle.Web.NeatUpload
 			progressState.TimeElapsed = uploadState.TimeElapsed;
 			if (uploadState.BytesRead == 0 || uploadState.BytesTotal < 0)
 			{
+				// If the upload is in progress but we haven't received any bytes yet,
+				// pretend that the upload hasn't started yet because there is no way
+				// to estimate TimeRemaining.  This situation occurs during a Flash-upload
+				// or other upload where the postBackID is passed in the query string.
+				// Note that we don't want to lie about the upload status if the status is
+				// something other than NormalInProgress.  For example, if the status is
+				// Rejected then pretending the upload hasn't started would hide the rejection
+				// message.
+				if (uploadState.Status == UploadStatus.NormalInProgress)
+					progressState.Status = UploadStatus.Unknown;
 				progressState.TimeRemaining = TimeSpan.MaxValue;
 			}
 			else
