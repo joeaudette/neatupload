@@ -88,6 +88,10 @@ namespace Brettle.Web.NeatUpload
 <script type='text/javascript' language='javascript' src='{1}'></script>
 <script type='text/javascript' language='javascript' src='{2}'></script>
 <script type='text/javascript' language='javascript' src='{3}'></script>
+<script type='text/javascript'>
+    // Opera can't do fade-in effect during postback
+	if (window.opera) AJS.fx = null;
+</script>
 <link href='{0}/gb_styles.css' rel='stylesheet' type='text/css' />
 ", expandedGreyBoxRoot,
  UploadModule.BustCache(expandedGreyBoxRoot + "/AJS.js"),
