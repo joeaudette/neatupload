@@ -3,7 +3,7 @@ branch=$1
 shift
 point_release_number=$1
 shift
-if [ -z "$branch_name" -o -z "$point_release_number" ]; then
+if [ -z "$branch" -o -z "$point_release_number" ]; then
 	echo "Usage: make_release.sh BRANCH POINT_RELEASE_NUMBER"
 	echo "For example make_release.sh NeatUpload-1.0 3"
 	exit 1
