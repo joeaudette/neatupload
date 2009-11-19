@@ -110,7 +110,18 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 			int colonPos = header.IndexOf(':');
 			string nameEqual = " " + attrName + "=";
 			int valPos = header.IndexOf(nameEqual, colonPos+1);
-			if (valPos < 0) return null;
+			if (valPos < 0) 
+            {
+			    nameEqual = ";" + attrName + "=";
+			    valPos = header.IndexOf(nameEqual, colonPos+1);
+            }
+            if (valPos < 0)
+            {
+                nameEqual = "\t" + attrName + "=";
+                valPos = header.IndexOf(nameEqual, colonPos + 1);
+            }
+            if (valPos < 0)
+                return null;
 			valPos += nameEqual.Length;
 			int endValPos;
 			if (header[valPos] == '"')
