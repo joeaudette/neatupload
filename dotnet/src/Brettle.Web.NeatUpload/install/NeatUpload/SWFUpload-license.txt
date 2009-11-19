@@ -1,0 +1,9 @@
+The following license only applies to SWFUpload.  The remainder of NeatUpload
+is licensed under the LGPL. 
+/**
+ * mmSWFUpload 1.0: Flash upload dialog - http://profandesign.se/swfupload/
+ *
+ * SWFUpload is (c) 2006 Lars Huring and Mammon Media and is released under the MIT License:
+ * http://www.opensource.org/licenses/mit-license.php
+ *
+ */
