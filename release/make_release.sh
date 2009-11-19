@@ -1,4 +1,5 @@
 #!/bin/sh
+pushd ..
 branch=$1
 shift
 point_release_number=$1
@@ -11,9 +12,10 @@ fi
 git checkout $branch
 tag="${branch}.${point_release_number}"
 git tag $tag
-exportdir=../../neatupload-release/"$tag"/
+exportdir=../neatupload-release/"$tag"/
+mkdir -p "$exportdir"
 git checkout-index -a --prefix="$exportdir"
-pushd "$exportdir" 
+cd "$exportdir" 
 
 # Set informational version to the name of the current directory
 informational_version=`basename "$PWD"`
