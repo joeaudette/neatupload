@@ -165,7 +165,7 @@ if (!Function.prototype.call)
 		return result;
 	};
 }
-
+NeatUpload_BlockSubmit = false;
 function NeatUploadForm(formElem, postBackID)
 {
 	var f = this;
@@ -240,53 +240,60 @@ function NeatUploadForm(formElem, postBackID)
 	// This next bit of code needs to run after any other JS has set onsubmit or added any onsubmit handlers,
 	// so we do it after a short delay after window.onload has fired
 	this.debugMessage("hooking form.onsubmit()");
-	this.AddHandler(window, "load", function ()	{
-		window.setTimeout(function () {
-			// Hook form.onsubmit so that we know whether it returned false (which would prevent the upload)
-			f.FormElem.NeatUpload_OrigOnSubmit = f.FormElem.onsubmit;
-			if (f.FormElem.NeatUpload_OrigOnSubmit)
-			{
-			    f.OnUnloadHandlers.push(function () { f.FormElem.onsubmit = f.FormElem.NeatUpload_OrigOnSubmit; });
-			    f.FormElem.onsubmit = function (oev)
-			    {
-				    ev = NeatUploadForm.prototype.ClickEvent || oev || window.event;
-				    var returnValue = this.NeatUpload_OrigOnSubmit(ev);
-				    if (ev)
-					    ev.NeatUpload_OrigOnSubmitReturnValue = returnValue;
-				    return returnValue;
-			    }
-		    }
-			// Add our own onsubmit handler (which will hopefully be the last one) so that it can check whether
-			// another onsubmit handler prevented the upload
-			f.AddHandler(f.FormElem, "submit", function (oev) {
-				f.debugMessage("Checking whether another onsubmit handler prevented the upload");
-				ev = NeatUploadForm.prototype.ClickEvent || oev || window.event;
-				if (typeof(ev.returnValue) != "undefined" && !ev.returnValue)
-				{
-				    // In Opera window.event.returnValue is always false and can't be changed.
-				    // Detect that case and ignore it.
-				    ev.returnValue = true; // Try to change it
-				    if (ev.returnValue) // If it changed, change it back and return false.
-				    {
-				        ev.returnValue = false;
-				        return false;
-				    }
-				}
-				if (typeof(ev.NeatUpload_OrigOnSubmitReturnValue) != "undefined" && !ev.NeatUpload_OrigOnSubmitReturnValue)
-					return false;
-				if (ev.NeatUpload_PreventDefaultCalled)
-					return false;
-				// asp:ScriptManager moves form.onsubmit into an event handler and sets form.onsubmit=null.
-				// That means that we can't know the value that the original form.onsubmit returned.  As a 
-				// workaround, we check Page_IsValid which validators will set.
-				if (typeof(Page_IsValid) != "undefined" && !Page_IsValid) 
-				    return false;
-				f.debugMessage("Calling NeatUpload_OnSubmit");
-				var retVal = f.FormElem.NeatUpload_OnSubmit(ev);
-				f.debugMessage("returned " + retVal);
-				return retVal;
-			});
-		}, 1);
+	this.AddHandler(window, "load", function() {
+	    // asp:ScriptManager moves form.onsubmit into an event handler and sets form.onsubmit=null.
+	    // That means that we can't know the value that the original form.onsubmit returned.  As a 
+	    // workaround, we hook Page_ClientValidate to set NeatUpload_BlockSubmit if Page_IsValid is false.
+	    if (typeof (window.Page_ClientValidate) == "function") {
+	        NeatUpload_Page_ClientValidate_orig = window.Page_ClientValidate;
+	        window.Page_ClientValidate = function(validationGroup) {
+	            var result = NeatUpload_Page_ClientValidate_orig(validationGroup);
+	            NeatUpload_BlockSubmit = !Page_IsValid;
+	            return result;
+	        };
+	    }
+	    window.setTimeout(function() {
+	        // Hook form.onsubmit so that we know whether it returned false (which would prevent the upload)
+	        f.FormElem.NeatUpload_OrigOnSubmit = f.FormElem.onsubmit;
+	        if (f.FormElem.NeatUpload_OrigOnSubmit) {
+	            f.OnUnloadHandlers.push(function() { f.FormElem.onsubmit = f.FormElem.NeatUpload_OrigOnSubmit; });
+	            f.FormElem.onsubmit = function(oev) {
+	                ev = NeatUploadForm.prototype.ClickEvent || oev || window.event;
+	                var returnValue = this.NeatUpload_OrigOnSubmit(ev);
+	                if (ev)
+	                    ev.NeatUpload_OrigOnSubmitReturnValue = returnValue;
+	                return returnValue;
+	            }
+	        }
+	        // Add our own onsubmit handler (which will hopefully be the last one) so that it can check whether
+	        // another onsubmit handler prevented the upload
+	        f.AddHandler(f.FormElem, "submit", function(oev) {
+	            var blockSubmit = NeatUpload_BlockSubmit;
+	            NeatUpload_BlockSubmit = false;
+	            f.debugMessage("Checking whether another onsubmit handler prevented the upload");
+	            ev = NeatUploadForm.prototype.ClickEvent || oev || window.event;
+	            if (typeof (ev.returnValue) != "undefined" && !ev.returnValue) {
+	                // In Opera window.event.returnValue is always false and can't be changed.
+	                // Detect that case and ignore it.
+	                ev.returnValue = true; // Try to change it
+	                if (ev.returnValue) // If it changed, change it back and return false.
+	                {
+	                    ev.returnValue = false;
+	                    return false;
+	                }
+	            }
+	            if (typeof (ev.NeatUpload_OrigOnSubmitReturnValue) != "undefined" && !ev.NeatUpload_OrigOnSubmitReturnValue)
+	                return false;
+	            if (ev.NeatUpload_PreventDefaultCalled)
+	                return false;
+	            if (blockSubmit)
+	                return false;
+	            f.debugMessage("Calling NeatUpload_OnSubmit");
+	            var retVal = f.FormElem.NeatUpload_OnSubmit(ev);
+	            f.debugMessage("returned " + retVal);
+	            return retVal;
+	        });
+	    }, 1);
 	});
 
 	// Note when an event that could trigger a postback occurs so that we can check whether it is a trigger.	
@@ -295,24 +302,21 @@ function NeatUploadForm(formElem, postBackID)
 	for (var i = 0; i < eventsThatCouldTriggerPostBack.length; i++)
 	{
 		var eventName = eventsThatCouldTriggerPostBack[i];
-		this.AddHandler(f.FormElem, eventName, function (ev) {
-			ev = NeatUploadForm.prototype.ClickEvent || ev || window.event;
-			if (!ev)
-			{
-				return;
-			}
-			var src = ev.srcElement || ev.target;
-			if (!src)
-			{
-				return;
-			}
-			NeatUpload_LastEventType = ev.type;
-			NeatUpload_LastEventSource = src;
-			NeatUploadForm.prototype.EventData = new Object();
-			if (f.GetSubmittingElem())
-				f.FormElem.NeatUpload_OnSubmitting();
-			
-			return;
+		this.AddHandler(f.FormElem, eventName, function(ev) {
+		    ev = NeatUploadForm.prototype.ClickEvent || ev || window.event;
+		    if (!ev) {
+		        return;
+		    }
+		    var src = ev.srcElement || ev.target;
+		    if (!src) {
+		        return;
+		    }
+		    NeatUpload_LastEventType = ev.type;
+		    NeatUpload_LastEventSource = src;
+		    NeatUploadForm.prototype.EventData = new Object();
+		    if (f.GetSubmittingElem())
+		        f.FormElem.NeatUpload_OnSubmitting();
+		    return;
 		}, true);
 	}
 
