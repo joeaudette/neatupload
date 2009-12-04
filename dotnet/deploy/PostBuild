@@ -6,7 +6,8 @@ rm "$1"/bin/*.js
 rm -rf "$1"/bin/Debug
 rm -rf "$1"/bin/Release
 rm -rf "$1"/bin/install
-mkdir "$1"/NeatUpload
+mkdir "$2"/NeatUpload
+mkdir "$2"/bin
 
 # Return an error if any of these fail
 set -e
