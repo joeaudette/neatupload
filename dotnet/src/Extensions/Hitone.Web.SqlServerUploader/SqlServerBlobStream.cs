@@ -177,8 +177,8 @@ namespace Hitone.Web.SqlServerUploader
             }
             _length = (int)openSqlCommand.Parameters["@Size"].Value;
 
-            if (openProcedure != null || fileNameColumnName != null) _fileName = (string)openSqlCommand.Parameters["@FileName"].Value;
-            if (openProcedure != null || MIMETypeColumnName != null) _MIMEType = (string)openSqlCommand.Parameters["@MIMEType"].Value;
+            if (openProcedure != null || fileNameColumnName != null) _fileName = openSqlCommand.Parameters["@FileName"].Value as string;
+			if (openProcedure != null || MIMETypeColumnName != null) _MIMEType = openSqlCommand.Parameters["@MIMEType"].Value as string;
 
             //Start reading at the beginning
             _offset = 0;
