@@ -248,7 +248,9 @@ function NeatUploadForm(formElem, postBackID)
 	        NeatUpload_Page_ClientValidate_orig = window.Page_ClientValidate;
 	        window.Page_ClientValidate = function(validationGroup) {
 	            var result = NeatUpload_Page_ClientValidate_orig(validationGroup);
-	            NeatUpload_BlockSubmit = !Page_IsValid;
+	            NeatUpload_BlockSubmit = false;
+	            if (typeof(Page_IsValid) != "undefined")
+	            	NeatUpload_BlockSubmit = !Page_IsValid;
 	            return result;
 	        };
 	    }
