@@ -274,17 +274,6 @@ namespace Brettle.Web.NeatUpload
 		public void Init(HttpApplication app)
 		{
 			if (log.IsDebugEnabled) log.Debug("In UploadHttpModule.Init()");
-			// When tracing is enabled at the application level ASP.NET reads the entire request before
-			// BeginRequest is fired.  So, we should not use our module at all.
-			bool isTracingEnabled = HttpContext.Current.Trace.IsEnabled;
-			if (isTracingEnabled)
-			{
-				lock (StaticSync)
-				{
-					_isInited = false;
-				}
-				return;
-			}
 			app.BeginRequest += new System.EventHandler(Application_BeginRequest);
 			app.EndRequest += new System.EventHandler(Application_EndRequest);
 			app.ResolveRequestCache += new System.EventHandler(Application_ResolveRequestCache);
@@ -293,11 +282,6 @@ namespace Brettle.Web.NeatUpload
 			app.PreRequestHandlerExecute += new System.EventHandler(Application_PreRequestHandlerExecute);
 			app.Error += new System.EventHandler(Application_Error);
 			RememberErrorHandler = new System.EventHandler(RememberError);
-			
-			lock (StaticSync)
-			{
-				_isInited = true;
-			}
 			if (log.IsDebugEnabled) log.Debug("Leaving UploadHttpModule.Init()");
 		}		
 		
@@ -336,12 +320,23 @@ namespace Brettle.Web.NeatUpload
 
 		private void Application_Error(object sender, EventArgs e)
 		{
-			if (log.IsDebugEnabled) log.Debug("In Application_Error");
+            if (!IsInited) return;
+            if (log.IsDebugEnabled) log.Debug("In Application_Error");
 		}
 		
 		private void Application_BeginRequest(object sender, EventArgs e)
 		{
             if (log.IsDebugEnabled) log.Debug("In Application_BeginRequest");
+            // When tracing is enabled at the application level ASP.NET reads the entire request before
+            // BeginRequest is fired.  So, we should not use our module at all.  We can't do this
+            // check from Init() when using Integrated Pipeline Mode because the following line
+            // will throw an exception if tracing is enabled.
+            lock (StaticSync)
+            {
+                _isInited = !HttpContext.Current.Trace.IsEnabled;
+                if (!IsInited) return;
+            }
+
             HttpApplication app = sender as HttpApplication;
 
 			// Restore the cookies for the MultiRequestUploadModule.UploadPath page.
@@ -551,7 +546,8 @@ namespace Brettle.Web.NeatUpload
 
 		private void Application_ResolveRequestCache(object sender, EventArgs e)
 		{
-			if (log.IsDebugEnabled) log.Debug("In Application_ResolveRequestCache");
+            if (!IsInited) return;
+            if (log.IsDebugEnabled) log.Debug("In Application_ResolveRequestCache");
 			if (!Config.Current.UseHttpModule)
 			{
 				return;
@@ -727,7 +723,8 @@ namespace Brettle.Web.NeatUpload
 
 		private void Application_AcquireRequestState(object sender, EventArgs e)
 		{
-			if (log.IsDebugEnabled) log.Debug("In Application_AcquireRequestState");
+            if (!IsInited) return;
+            if (log.IsDebugEnabled) log.Debug("In Application_AcquireRequestState");
 			if (!Config.Current.UseHttpModule)
 			{
 				return;
@@ -737,7 +734,8 @@ namespace Brettle.Web.NeatUpload
 
 		private void Application_ReleaseRequestState(object sender, EventArgs e)
 		{
-			if (log.IsDebugEnabled) log.Debug("In Application_ReleaseRequestState");
+            if (!IsInited) return;
+            if (log.IsDebugEnabled) log.Debug("In Application_ReleaseRequestState");
 			if (!Config.Current.UseHttpModule)
 			{
 				return;
@@ -747,7 +745,8 @@ namespace Brettle.Web.NeatUpload
 
 		private void Application_PreRequestHandlerExecute(object sender, EventArgs e)
 		{
-			if (log.IsDebugEnabled) log.Debug("In Application_PreRequestHandlerExecute");
+            if (!IsInited) return;
+            if (log.IsDebugEnabled) log.Debug("In Application_PreRequestHandlerExecute");
 			if (!Config.Current.UseHttpModule)
 			{
 				return;
@@ -757,7 +756,8 @@ namespace Brettle.Web.NeatUpload
 		private EventHandler RememberErrorHandler; 
 		private void RememberError(object sender, EventArgs e)
 		{
-			if (!Config.Current.UseHttpModule)
+            if (!IsInited) return;
+            if (!Config.Current.UseHttpModule)
 			{
 				return;
 			}
@@ -808,7 +808,8 @@ namespace Brettle.Web.NeatUpload
 
 		private void Application_EndRequest(object sender, EventArgs e)
 		{
-			if (log.IsDebugEnabled) log.Debug("In Application_EndRequest");
+            if (!IsInited) return;
+            if (log.IsDebugEnabled) log.Debug("In Application_EndRequest");
 			if (!Config.Current.UseHttpModule)
 			{
 				return;
