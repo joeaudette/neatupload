@@ -551,6 +551,7 @@ NeatUploadForm.prototype.OnSubmit = function(ev)
 	// The rest of this function runs the async handlers sequentially and then submits
 	// the form faking any button that was pressed to start the submit.
 	// Don't submit the form yet.  We do that after SWFUpload finishes uploading.
+    formElem.NeatUpload_NUForm.asyncInProgress = true;
     ev = ev || window.event;
     NeatUploadConsole.debugMessage("ev=" + ev);
     if (ev)
@@ -562,7 +563,8 @@ NeatUploadForm.prototype.OnSubmit = function(ev)
 				
 	// Add an async handler to fake submission of the form
 	asyncHandlers.push(function(ev, completeHandler) {
-		// If the form was submitted via a submit button, we need to fake that it was
+	    formElem.NeatUpload_NUForm.asyncInProgress = false;
+	    // If the form was submitted via a submit button, we need to fake that it was
 		// pressed when submitting the form.  We do this be creating a hidden form
 		// field with the same name and value.
 		if (submittingElem)
@@ -1442,8 +1444,7 @@ function NeatUploadUnloadConfirmer(clientID, postBackID, msg)
     });
 
     nuf.AddHandler(window, "beforeunload", function(ev) {
-        if (onBeforeUnloadCalled && confirmUnload)
-        {
+        if ((onBeforeUnloadCalled || nuf.asyncInProgress) && confirmUnload) {
             ev.returnValue = msg;
             return msg;
         }
