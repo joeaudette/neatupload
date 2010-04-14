@@ -315,6 +315,7 @@ function NeatUploadForm(formElem, postBackID)
 		    }
 		    NeatUpload_LastEventType = ev.type;
 		    NeatUpload_LastEventSource = src;
+	        SetLastEventElemCoords(ev);
 		    NeatUploadForm.prototype.EventData = new Object();
 		    if (f.GetSubmittingElem())
 		        f.FormElem.NeatUpload_OnSubmitting();
@@ -347,14 +348,45 @@ function NeatUploadForm(formElem, postBackID)
 			f.OnNonupload(f.FormElem);
 		}
 	});
-	this.debugMessage("Submitting handler added");	
+	this.debugMessage("Submitting handler added");
+
+	function SetLastEventElemCoords(ev) {
+	    if (ev.type != "click") {
+	        NeatUpload_LastEventX = null;
+	        NeatUpload_LastEventY = null;
+	        return;
+	    }
+	    var posx;
+	    var posy;
+	    if (ev.pageX || ev.pageY) {
+	        posx = ev.pageX;
+	        posy = ev.pageY;
+	    }
+	    else if (ev.clientX || ev.clientY) {
+	        posx = ev.clientX + document.body.scrollLeft
+			    + document.documentElement.scrollLeft;
+	        posy = ev.clientY + document.body.scrollTop
+			    + document.documentElement.scrollTop;
+	    }
+	    var src = ev.srcElement || ev.target;
+	    while (src.offsetParent) {
+	        posx = posx - src.offsetLeft;
+	        posy = posy - src.offsetTop;
+	        src = src.offsetParent;
+	    }
+	    NeatUpload_LastEventX = posx;
+	    NeatUpload_LastEventY = posy;
+	}
 }
 
 NeatUploadForm.prototype.debugMessage = NeatUploadConsole.debugMessage;
 
 NeatUpload_LastEventSource = null;
 NeatUpload_LastEventType = null;
+NeatUpload_LastEventX = null;
+NeatUpload_LastEventY = null;
 NeatUploadForm.prototype.EventData = new Object();
+
 
 NeatUploadForm.prototype.GetSubmittingElem = function()
 {
@@ -513,90 +545,101 @@ NeatUploadForm.prototype.OnSubmitting = function()
 	}
 };
 
-NeatUploadForm.prototype.OnSubmit = function(ev)
-{
-	// Remember the button that was clicked to submit the form so we can fake it
-	// when we submit the form with the original submit().
+NeatUploadForm.prototype.OnSubmit = function(ev) {
+    // Remember the button that was clicked to submit the form so we can fake it
+    // when we submit the form with the original submit().
     var submittingElem = NeatUploadForm.prototype.GetSubmittingElem();
     NeatUploadConsole.debugMessage("submittingElem = " + submittingElem);
 
-	// To avoid having OnSubmit() run twice for the same click
-	// (once from our form.submit() and again from our onsubmit handler),
-	// we set a flag to note that we've already called it, and add a timer handler 
-	// that will reset it once all other pending events are
-	// processed, and a and stop upload handler that will reset it if the upload
-	// is stopped.
-	var formElem = this;
-	if (formElem.NeatUpload_OnSubmitCalled)
-		return false;
-	formElem.NeatUpload_OnSubmitCalled = true;
+    // To avoid having OnSubmit() run twice for the same click
+    // (once from our form.submit() and again from our onsubmit handler),
+    // we set a flag to note that we've already called it, and add a timer handler 
+    // that will reset it once all other pending events are
+    // processed, and a and stop upload handler that will reset it if the upload
+    // is stopped.
+    var formElem = this;
+    if (formElem.NeatUpload_OnSubmitCalled)
+        return false;
+    formElem.NeatUpload_OnSubmitCalled = true;
     NeatUploadForm.prototype.AddStopUploadHandler(function() {
         formElem.NeatUpload_OnSubmitCalled = false;
     });
-	var timeoutId = window.setTimeout(function () { formElem.NeatUpload_OnSubmitCalled = false; }, 1);
+    var timeoutId = window.setTimeout(function() { formElem.NeatUpload_OnSubmitCalled = false; }, 1);
 
-	var retVal = true;
-	var asyncHandlers = [];
-	for (var i=0; i < this.NeatUpload_OnSubmitHandlers.length; i++)
-	{
-		var status = this.NeatUpload_OnSubmitHandlers[i].call(this, ev);
-		if (status === false)
-			return false;
-		else if (typeof(status) == "function")
-			asyncHandlers.push(status);
-	}
-	if (asyncHandlers.length == 0)
-		return;
+    var retVal = true;
+    var asyncHandlers = [];
+    for (var i = 0; i < this.NeatUpload_OnSubmitHandlers.length; i++) {
+        var status = this.NeatUpload_OnSubmitHandlers[i].call(this, ev);
+        if (status === false)
+            return false;
+        else if (typeof (status) == "function")
+            asyncHandlers.push(status);
+    }
+    if (asyncHandlers.length == 0)
+        return;
 
-	// The rest of this function runs the async handlers sequentially and then submits
-	// the form faking any button that was pressed to start the submit.
-	// Don't submit the form yet.  We do that after SWFUpload finishes uploading.
+    // The rest of this function runs the async handlers sequentially and then submits
+    // the form faking any button that was pressed to start the submit.
+    // Don't submit the form yet.  We do that after SWFUpload finishes uploading.
     formElem.NeatUpload_NUForm.asyncInProgress = true;
     ev = ev || window.event;
     NeatUploadConsole.debugMessage("ev=" + ev);
-    if (ev)
-    {
-    	ev.returnValue = false;
-    	if (ev.preventDefault)
-		    ev.preventDefault();
-	}
-				
-	// Add an async handler to fake submission of the form
-	asyncHandlers.push(function(ev, completeHandler) {
-	    formElem.NeatUpload_NUForm.asyncInProgress = false;
-	    // If the form was submitted via a submit button, we need to fake that it was
-		// pressed when submitting the form.  We do this be creating a hidden form
-		// field with the same name and value.
-		if (submittingElem)
-		{
-			var submitHiddenField = document.createElement("input");
-			submitHiddenField.type = "hidden"
-			submitHiddenField.name = submittingElem.name;
-			var val = submittingElem.value;
-			if (typeof(val) == "undefined" || val == null || val == "")
-				val = submitHiddenField.name;
-			submitHiddenField.value = val;
-			submittingElem.parentNode.insertBefore(submitHiddenField, submittingElem);
-			// Remove the field after giving time for the original submit() to be called so it
-			// doesn't stick around if the user stops the upload.
-			window.setTimeout(function() {
-				submittingElem.parentNode.removeChild(submitHiddenField);
-			}, 1);
-		}
-		formElem.NeatUpload_OrigSubmit();
-		formElem.NeatUpload_OnSubmitCalled = false;
-	});
-	window.clearTimeout(timeoutId);
-	DoAsyncHandlers();
-	return false;
-	
-	function DoAsyncHandlers()
-	{
-		if (asyncHandlers.length == 0)
-			return;
-		var handler = asyncHandlers.shift();
-		handler.call(this, ev, DoAsyncHandlers);
-	}
+    if (ev) {
+        ev.returnValue = false;
+        if (ev.preventDefault)
+            ev.preventDefault();
+    }
+
+    // Add an async handler to fake submission of the form
+    asyncHandlers.push(function(ev, completeHandler) {
+        formElem.NeatUpload_NUForm.asyncInProgress = false;
+        // If the form was submitted via a submit button, we need to fake that it was
+        // pressed when submitting the form.  We do this be creating a hidden form
+        // field with the same name and value.
+        if (submittingElem) {
+            var inputType = submittingElem.getAttribute('type');
+            if (inputType) inputType = inputType.toLowerCase();
+            if (inputType == 'image') {
+                AddSubmitHiddenField(submittingElem, submittingElem.name + ".x", NeatUpload_LastEventX);
+                AddSubmitHiddenField(submittingElem, submittingElem.name + ".y", NeatUpload_LastEventY);
+            }
+            else {
+                AddSubmitHiddenField(submittingElem);
+            }
+        }
+        formElem.NeatUpload_OrigSubmit();
+        formElem.NeatUpload_OnSubmitCalled = false;
+        return;
+
+        function AddSubmitHiddenField(submittingElem, name, val) {
+            if (typeof (name) == "undefined")
+                name = submittingElem.name;
+            if (typeof (val) == "undefined")
+                val = submittingElem.value;
+            if (typeof (val) == "undefined" || val == null || val == "")
+                val = name;
+            var submitHiddenField = document.createElement("input");
+            submitHiddenField.type = "hidden"
+            submitHiddenField.name = name;
+            submitHiddenField.value = val;
+            submittingElem.parentNode.insertBefore(submitHiddenField, submittingElem);
+            // Remove the field after giving time for the original submit() to be called so it
+            // doesn't stick around if the user stops the upload.
+            window.setTimeout(function() {
+                submittingElem.parentNode.removeChild(submitHiddenField);
+            }, 1);
+        }
+    });
+    window.clearTimeout(timeoutId);
+    DoAsyncHandlers();
+    return false;
+
+    function DoAsyncHandlers() {
+        if (asyncHandlers.length == 0)
+            return;
+        var handler = asyncHandlers.shift();
+        handler.call(this, ev, DoAsyncHandlers);
+    }
 };
 
 NeatUploadForm.prototype.OnUnload = function()
