@@ -1,0 +1,7 @@
+#!/bin/sh
+# Return an error if any of these fail
+set -e
+# Display the commands as they are executed
+set -x
+mtasc -v -swf "$1"/install/SWFUpload.swf -version 8 -main -frame 1 -header 1:1:12 "$1"/FlashDevelop/classes/*.as
+jsmin < "$1"/FlashDevelop/swfupload.js > "$1"/install/SWFUpload.js

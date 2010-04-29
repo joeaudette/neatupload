@@ -1,0 +1,197 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <ProjectGuid>{8C57C0B1-A668-4CDD-BE3B-54B15175BEC2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Brettle.Web.NeatUpload</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>install\bin</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <AssemblyKeyFile>..\..\..\..\keypair.snk</AssemblyKeyFile>
+    <EnvironmentVariables>
+      <EnvironmentVariables />
+    </EnvironmentVariables>
+    <GenerateDocumentation>true</GenerateDocumentation>
+    <DocumentationFile>install\bin\Brettle.Web.NeatUpload.XML</DocumentationFile>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>install\bin</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <DebugSymbols>true</DebugSymbols>
+    <GenerateDocumentation>true</GenerateDocumentation>
+    <DocumentationFile>install\bin\Brettle.Web.NeatUpload.XML</DocumentationFile>
+    <AssemblyKeyFile>..\..\..\..\keypair.snk</AssemblyKeyFile>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Design" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Brettle.Web.NeatUpload.Internal.Module\Constants.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\AdaptiveUploadStateStoreProvider.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\ArmoredNameValueCollection.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\ConfigSectionHandler.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\DetailsControl.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\DetailsDiv.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\DetailsSpan.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\FileControl.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\FilesystemUploadedFile.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\FilesystemUploadStorageProvider.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\HiddenPostBackID.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\ICopyFromObject.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\InputFile.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\InvalidStorageConfigException.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\IUploadModule.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\IUploadProgressState.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\MoveToOptions.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\MultiFile.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\MultiRequestUploadHandler.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\NonfilePortionTooLargeException.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\Progress-1.0.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Brettle.Web.NeatUpload\ProgressBar.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\ProgressBarBase.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\ProgressBarBaseDesigner.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\ProgressInfo.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\ProgressJsonHandler.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\ProgressPage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Brettle.Web.NeatUpload\SessionBasedUploadStateStoreProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Brettle.Web.NeatUpload\SimpleWebRemoting.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UnloadConfirmer.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadContext.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadedFile.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadedFileCollection.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadException.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadHttpModule.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadModule.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadStateStoreHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Brettle.Web.NeatUpload\UploadStateStoreProviderCollection.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadStatus.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadStorage.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadStorageConfig.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadStorageProvider.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadStorageProviderCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Brettle.Web.NeatUpload\UploadTooLargeException.cs" />
+    <Compile Include="Brettle.Web.NeatUpload.Internal\ResourceManagerSingleton.cs" />
+    <Compile Include="Brettle.Web.NeatUpload.Internal.Module\Config.cs" />
+    <Compile Include="Brettle.Web.NeatUpload.Internal.Module\DecoratedWorkerRequest.cs" />
+    <Compile Include="Brettle.Web.NeatUpload.Internal.Module\FieldNameTranslator.cs" />
+    <Compile Include="Brettle.Web.NeatUpload.Internal.Module\FilteringWorkerRequest.cs" />
+    <Compile Include="Brettle.Web.NeatUpload.Internal.Module\SizeLimitingWorkerRequest.cs" />
+    <Compile Include="Brettle.Web.NeatUpload.Internal.UI\FormContext.cs" />
+    <Compile Include="Brettle.Web.NeatUpload.Internal.UI\UploadProgressState.cs" />
+    <Compile Include="Brettle.Web.NeatUpload.log4net\MyLog4net.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\IMultiRequestUploadModule.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\MultiRequestUploadModule.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadStateStore.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadStateStoreProvider.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\InProcUploadStateStoreProvider.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\UploadState.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\ObjectProtector.cs" />
+    <Compile Include="Brettle.Web.NeatUpload\SessionBasedUploadStateStoreProviderBase.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="NeatUpload.Strings.resx">
+      <SubType>Designer</SubType>
+      <LogicalName>Brettle.Web.NeatUpload.Strings.resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NeatUpload.Strings.en-US.resx">
+      <LogicalName>Brettle.Web.NeatUpload.Strings.en-US.resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NeatUpload.Strings.fr.resx">
+      <LogicalName>Brettle.Web.NeatUpload.Strings.fr.resources</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="install\NeatUpload\ProgressJsonHandler.ashx" />
+    <None Include="install\NeatUpload\SmoothProgress.aspx" />
+    <None Include="install\NeatUpload\cancel.png" />
+    <None Include="install\NeatUpload\default.css" />
+    <None Include="install\NeatUpload\Error413.aspx" />
+    <None Include="install\NeatUpload\MultiRequestUploadHandler.ashx" />
+    <None Include="install\NeatUpload\NeatUploadConfig.xsd" />
+    <None Include="install\NeatUpload\refresh.png" />
+    <None Include="install\NeatUpload\stop_refresh.png" />
+    <None Include="install\NeatUpload\SWFUpload-license.txt" />
+    <None Include="install\NeatUpload\Web.config" />
+    <None Include="install\NeatUpload\UploadStateStoreHandler.ashx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="install\NeatUpload\Progress.aspx" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties InternalTargetFrameworkVersion="1.1">
+        <GtkDesignInfo />
+      </Properties>
+    </MonoDevelop>
+    <VisualStudio />
+  </ProjectExtensions>
+</Project>
