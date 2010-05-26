@@ -481,6 +481,8 @@ namespace Brettle.Web.NeatUpload
 			}
 		}
 
+        [SecurityPermission(SecurityAction.Assert, SerializationFormatter=true)]
+        [ReflectionPermission(SecurityAction.Assert, MemberAccess=true)]
         private bool ReplaceWorkerRequest(HttpApplication app, DecoratedWorkerRequest subWorker)
         {
             BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;

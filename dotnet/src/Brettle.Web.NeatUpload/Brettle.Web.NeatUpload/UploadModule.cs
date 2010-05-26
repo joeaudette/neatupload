@@ -19,6 +19,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Web;
+using System.Security.Permissions;
 using System.Collections.Specialized;
 using Brettle.Web.NeatUpload.Internal.Module;
 using Brettle.Web.NeatUpload.Internal.UI;
@@ -402,6 +403,13 @@ namespace Brettle.Web.NeatUpload
 
 		private static bool _IsInstalled = true;
 		private static IUploadModule _InstalledModule;
+
+        [AspNetHostingPermission(SecurityAction.Assert, Unrestricted=true)]
+        private static HttpModuleCollection _GetModules(HttpContext ctx)
+        {
+            return ctx.ApplicationInstance.Modules;
+        }
+
         internal static IUploadModule InstalledModule
         {
             get
@@ -415,7 +423,8 @@ namespace Brettle.Web.NeatUpload
                     {
                         if (ctx != null)
                         {
-                            HttpModuleCollection modules = ctx.ApplicationInstance.Modules;
+                            HttpModuleCollection modules = _GetModules(ctx);
+                            
                             foreach (string moduleName in modules.AllKeys)
                             {
                                 IHttpModule module = modules[moduleName];
