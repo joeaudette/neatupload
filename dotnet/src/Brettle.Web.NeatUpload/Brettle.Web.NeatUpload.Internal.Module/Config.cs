@@ -88,9 +88,16 @@ namespace Brettle.Web.NeatUpload.Internal.Module
 			}
 		}
 
-        [SecurityPermission(SecurityAction.Assert, SerializationFormatter=true)]
 		private Config()
 		{
+            // SerializationFormatter permission must be asserted for .NET 1.1 but not 2.0 or later.  Asserting it
+            // under .NET 4 under medium trust causes a SecurityException, so we have to assert it programmatically
+            // not declaratively.
+            if (System.Environment.Version.Major < 2)
+            {
+                SecurityPermission perm = new SecurityPermission(SecurityPermissionFlag.SerializationFormatter);
+                perm.Assert();
+            }
 			this.ResourceManager = ResourceManagerSingleton.ResourceManager;
 		}
 
