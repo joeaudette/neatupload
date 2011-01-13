@@ -1211,6 +1211,11 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 
 	function FlashReady()
 	{
+		// this check added by Joe Audette 2010-10-23 because we added a line to call it again after instantiating the swfupload because it does not always fire this event
+	    if (numf.IsFlashLoaded) {
+	        //alert('flashalreadyloaded');
+	        return;
+	    }
 		window.setTimeout(function () {
 			var inputFileElem = GetInputFileElem();
 			var replacementDiv = inputFileElem.parentNode;
@@ -1419,7 +1424,10 @@ function NeatUploadMultiFile(clientID, postBackID, appPath, uploadScript, postBa
 						flash_height : height,
 						flash_container_id : container.id				
 					});
+					//added here by Joe Audette because of an issue where it doe snot always get called in IE 8 since recent flash upgrades
+					FlashReady();
 			}, 1);
+			
 		}
 	}
 }

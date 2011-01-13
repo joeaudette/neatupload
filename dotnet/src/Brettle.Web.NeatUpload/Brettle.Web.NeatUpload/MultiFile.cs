@@ -277,17 +277,19 @@ NeatUploadMultiFileCreate('" + this.ClientID + @"',
 				// always have someone more capable find and remove the code for them (probably for a fee).
 				// For more information, see the "Branding, Licensing, and the Trademark" section in 
 				// docs/Manual.html.
-				writer.AddStyleAttribute(HtmlTextWriterStyle.FontSize, "smal" + "ler");
-				writer.RenderBeginTag(HtmlTextWriterTag.Span);
-				writer.Write("&nbsp;(Po" + "wer" +"ed&nb" + "sp;by&nb" + "sp;");
-				writer.AddAttribute(HtmlTextWriterAttribute.Target, "_bla" + "nk");
-				writer.AddAttribute(HtmlTextWriterAttribute.Href, 
-					"htt" +"p://ww" + "w.bre"+ "ttle." + "com/" + "neat" + "upload");
-				writer.RenderBeginTag(HtmlTextWriterTag.A);
-				writer.Write("Neat" + "Upload");
-				writer.RenderEndTag(); // a
-				writer.Write(")");
-				writer.RenderEndTag(); // span
+
+                //commented out 2010-05-30 by Joe Audette with Dean's permission since he is no longer maintaining the project
+                //writer.AddStyleAttribute(HtmlTextWriterStyle.FontSize, "smal" + "ler");
+                //writer.RenderBeginTag(HtmlTextWriterTag.Span);
+                //writer.Write("&nbsp;(Po" + "wer" +"ed&nb" + "sp;by&nb" + "sp;");
+                //writer.AddAttribute(HtmlTextWriterAttribute.Target, "_bla" + "nk");
+                //writer.AddAttribute(HtmlTextWriterAttribute.Href, 
+                //    "htt" +"p://ww" + "w.bre"+ "ttle." + "com/" + "neat" + "upload");
+                //writer.RenderBeginTag(HtmlTextWriterTag.A);
+                //writer.Write("Neat" + "Upload");
+                //writer.RenderEndTag(); // a
+                //writer.Write(")");
+                //writer.RenderEndTag(); // span
 			}
 
  			writer.RenderEndTag(); // div

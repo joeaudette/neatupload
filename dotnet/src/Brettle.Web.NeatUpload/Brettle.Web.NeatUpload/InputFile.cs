@@ -254,28 +254,29 @@ NeatUploadInputFileCreate('" + this.ClientID + @"','"
 			writer.RenderBeginTag(HtmlTextWriterTag.Input);
 			writer.RenderEndTag();
 
-			if (UploadModule.IsEnabled)
-			{
-				// The constant strings below are broken apart so that you couldn't just search for the text and
-				// remove it.  To find this code, you probably had to understand enough about custom web controls
-				// to know where to look.  People who can't find this code are generally less experienced, harder
-				// to support, and less likely to submit patches.  So they contribute in another way when they
-				// use NeatUpload - they contribute by advertising it.  If they don't want to do that, they can
-				// always have someone more capable find and remove the code for them (probably for a fee).
-				// For more information, see the "Branding, Licensing, and the Trademark" section in 
-				// docs/Manual.html.
-				writer.AddStyleAttribute(HtmlTextWriterStyle.FontSize, "smal" + "ler");
-				writer.RenderBeginTag(HtmlTextWriterTag.Span);
-				writer.Write("&nbsp;(Po" + "wer" +"ed&nb" + "sp;by&nb" + "sp;");
-				writer.AddAttribute(HtmlTextWriterAttribute.Target, "_bla" + "nk");
-				writer.AddAttribute(HtmlTextWriterAttribute.Href, 
-					"htt" +"p://ww" + "w.bre"+ "ttle." + "com/" + "neat" + "upload");
-				writer.RenderBeginTag(HtmlTextWriterTag.A);
-				writer.Write("Neat" + "Upload");
-				writer.RenderEndTag(); // a
-				writer.Write(")");
-				writer.RenderEndTag(); // span
-			}
+            //commented out 2010-05-30 by Joe Audette with Dean's approval since he is no longer maintaining the project
+            //if (UploadModule.IsEnabled)
+            //{
+            //    // The constant strings below are broken apart so that you couldn't just search for the text and
+            //    // remove it.  To find this code, you probably had to understand enough about custom web controls
+            //    // to know where to look.  People who can't find this code are generally less experienced, harder
+            //    // to support, and less likely to submit patches.  So they contribute in another way when they
+            //    // use NeatUpload - they contribute by advertising it.  If they don't want to do that, they can
+            //    // always have someone more capable find and remove the code for them (probably for a fee).
+            //    // For more information, see the "Branding, Licensing, and the Trademark" section in 
+            //    // docs/Manual.html.
+            //    writer.AddStyleAttribute(HtmlTextWriterStyle.FontSize, "smal" + "ler");
+            //    writer.RenderBeginTag(HtmlTextWriterTag.Span);
+            //    writer.Write("&nbsp;(Po" + "wer" +"ed&nb" + "sp;by&nb" + "sp;");
+            //    writer.AddAttribute(HtmlTextWriterAttribute.Target, "_bla" + "nk");
+            //    writer.AddAttribute(HtmlTextWriterAttribute.Href, 
+            //        "htt" +"p://ww" + "w.bre"+ "ttle." + "com/" + "neat" + "upload");
+            //    writer.RenderBeginTag(HtmlTextWriterTag.A);
+            //    writer.Write("Neat" + "Upload");
+            //    writer.RenderEndTag(); // a
+            //    writer.Write(")");
+            //    writer.RenderEndTag(); // span
+            //}
 		}
 	}
 }
