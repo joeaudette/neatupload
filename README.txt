@@ -2,21 +2,28 @@ This is NeatUpload.
 
 If you aren't sure what NeatUpload is, see:
 
-http://www.brettle.com/neatupload
+http://neatupload.codeplex.com/
 
 If are just trying to use NeatUpload, download a release from that same page.
+http://www.codeplex.com/neatupload/Release/ProjectReleases.aspx
 
 The remainder of this file is dedicated to building NeatUpload from source.
 
 To build the code you will need:
 
-1. mtasc from http://mtasc.org.  The mtasc executable needs to be on your PATH.
+1. mtasc from http://mtasc.org.  The mtasc executable needs to be on your PATH. (this is used to compile the ActionScript fot SWFUpload)
 2. jsmin from http://crockford.com/javascript/jsmin.html.  The jsmin
    executable needs to be on your PATH.
 3. Either VS2008 or MonoDevelop 1.0.  Msbuild or xbuild might work as well.
 
 To build the Manual.html, you will OpenOffice.org Writer and some files in
 the dotnet/docs directory.  For details, see dotnet/docs/README.txt.
+
+/** Update 2011-01-13 - changes by Joe Audette **/
+Added NeatUpload-VS2010.sln file
+Removed the docs project as I don't care to use Open Office plus plugins to maintain the documentation, too complicated and requires installing things I'd rather not install.
+I've left the project existing just not included in the VS2010 solution.
+I will convert the Open Office doc to Word and just export as Html from Word
 
 To build, open the NeatUpload.sln in your IDE and build it.  If you have met
 all of the above requirements, the build should succeed.  If you are using

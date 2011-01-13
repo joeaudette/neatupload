@@ -28,7 +28,7 @@ using System.IO;
 
 [assembly: AssemblyVersion("1.3.*")]
 
-[assembly: AssemblyInformationalVersion("trunk")]
+[assembly: AssemblyInformationalVersion("1.3.26")]
 
 // This helps with VS designer support.
 [assembly: TagPrefix("Brettle.Web.NeatUpload", "Upload")]
