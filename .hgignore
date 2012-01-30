@@ -1,0 +1,15 @@
+syntax: glob
+NeatUpload-VS2010.suo
+*.user
+dotnet/deploy/obj
+js/ignore
+flash/src/SWFUpload/obj
+js/obj
+dotnet/src/Brettle.Web.NeatUpload/install/bin
+dotnet/src/Brettle.Web.NeatUpload/obj
+dotnet/src/Extensions/Brettle.Web.NeatUpload.GreyBoxProgressBar/install/bin
+dotnet/src/Extensions/Brettle.Web.NeatUpload.GreyBoxProgressBar/obj
+dotnet/src/Extensions/Brettle.Web.NeatUpload.HashedInputFile/install/bin
+dotnet/src/Extensions/Brettle.Web.NeatUpload.HashedInputFile/obj
+dotnet/src/Extensions/Hitone.Web.SqlServerUploader/install/bin
+dotnet/src/Extensions/Hitone.Web.SqlServerUploader/obj
