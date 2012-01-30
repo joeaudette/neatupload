@@ -146,6 +146,9 @@
     <Compile Include="Brettle.Web.NeatUpload\SessionBasedUploadStateStoreProviderBase.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="NeatUpload.Strings.es.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="NeatUpload.Strings.resx">
       <SubType>Designer</SubType>
       <LogicalName>Brettle.Web.NeatUpload.Strings.resources</LogicalName>
