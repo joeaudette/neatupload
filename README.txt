@@ -1,11 +1,6 @@
 This is NeatUpload.
 
-If you aren't sure what NeatUpload is, see:
-
-http://neatupload.codeplex.com/
-
-If are just trying to use NeatUpload, download a release from that same page.
-http://www.codeplex.com/neatupload/Release/ProjectReleases.aspx
+This project is not maintained, it was migrated from codeplex to preserve history since codeplex is shutting down.
 
 The remainder of this file is dedicated to building NeatUpload from source.
 
